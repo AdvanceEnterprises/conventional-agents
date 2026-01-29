@@ -34,6 +34,16 @@ Reusable document and code templates for common development activities:
 
 See `templates/` directory.
 
+ADR canonical sources:
+- ADR templates live in `vendor/madr/template`.
+- Additional ADR documentation lives in `vendor/madr/docs`.
+
+### Architecture
+
+This project's architecture follows ARC42, documented in
+`vendor/arc42-template/dist/arc42-template-EN-withhelp-markdown/`. 
+You may need to first unzip the archive in 'vendor/arc42-template/dist/' to view the markdown content.
+
 ## Installation
 
 ### As a Git Submodule (Recommended)
@@ -62,6 +72,9 @@ cd ..
 git add .agents
 git commit -m "Update agent-dev-kit to latest"
 ```
+
+Note: Full upstream projects are included as git submodules, as documented in
+`docs/decisions/ADR-0003.md`.
 
 ### Manual Copy
 
