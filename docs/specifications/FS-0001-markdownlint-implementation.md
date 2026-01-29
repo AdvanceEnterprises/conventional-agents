@@ -1,9 +1,9 @@
 ---
 type: feature-spec
 id: FS-0001
-status: draft
+status: approved
 title: Markdownlint Integration for ADR Quality Gates
-owner: TBD
+owner: ajoeofalltrades
 test_required: true
 interfaces: [CI, Config]
 related_adrs: [ADR-0008]
