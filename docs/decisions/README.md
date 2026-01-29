@@ -25,21 +25,18 @@ All ADRs must comply with markdown formatting standards enforced by markdownlint
 **Optional: Local linting (recommended)**
 
 ```bash
-# Install markdownlint
+# Install markdownlint-cli2
 npm install
 
 # Run linting on all ADRs
-npx markdownlint docs/decisions/ADR-*.md
-
-# Fix common issues automatically (where possible)
-npx markdownlint --fix docs/decisions/ADR-*.md
+npm run lint:adrs
 ```
 
 **Automatic: CI enforcement**
 
-- CI pipeline runs markdownlint on all ADRs automatically.
+- CI runs markdownlint on ADRs only (`docs/decisions/ADR-*.md`).
 - PR will fail if any ADR violates linting rules.
-- See `.markdownlint.yml` for the active ruleset (derived from MADR's configuration).
+- Config lives at `docs/decisions/.markdownlint.yml` (copied from MADR).
 
 ### Common Issues and Fixes
 
@@ -52,12 +49,12 @@ npx markdownlint --fix docs/decisions/ADR-*.md
 
 ### Configuration
 
-- Config file: `vendor/madr/.markdownlint.yml` (referenced from CI)
+- Config file: `docs/decisions/.markdownlint.yml` (exact copy of MADR baseline)
 - Disabled rules:
   - `MD013`: Line length (MADR uses one-sentence-per-line, which may exceed 80 chars)
   - `MD024`: Duplicate headings (ADRs intentionally reuse headings like "Options", "Consequences")
 
-For more info: https://github.com/DavidAnson/markdownlint/doc/Rules.md
+For more info: [markdownlint rules](https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md).
 
 ## Status Values
 
