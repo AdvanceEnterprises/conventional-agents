@@ -28,7 +28,7 @@ PARSING_HINTS:
 
 ## Status
 
-Draft
+Approved
 
 ## Summary
 
@@ -81,7 +81,7 @@ This is NOT a deviation from ADR-0008; it's the concrete implementation of "mark
 ### CI Workflow
 - **Type:** CI (GitHub Actions)
 - **File:** `.github/workflows/lint-adrs.yml`
-- **Trigger:** On push and pull_request to main/master branches
+- **Trigger:** On push and pull_request to the default branch (`trunk`)
 - **Trigger paths:** Only watch for changes in `docs/decisions/ADR-*.md` and `docs/decisions/.markdownlint.yml`
 - **Target:** Only files matching `docs/decisions/ADR-*.md` (using glob pattern)
 - **Action:** `markdownlint-cli2-action@v17` with globs parameter set to `docs/decisions/ADR-*.md`
@@ -191,7 +191,7 @@ The following are explicitly excluded from this specification:
 ### Phase 2: Enable CI
 
 1. Create `.github/workflows/lint-adrs.yml` with:
-   - Trigger: `on: [push, pull_request]` to main/master branches
+   - Trigger: `on: [push, pull_request]` to `trunk`
    - Trigger paths: Only watch `docs/decisions/ADR-*.md` and `docs/decisions/.markdownlint.yml` (skip if unchanged)
    - Step: `markdownlint-cli2-action@v17` with globs: `docs/decisions/ADR-*.md`
 2. Merge workflow to main branch

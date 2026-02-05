@@ -38,7 +38,11 @@ npm run lint:adrs
 - PR will fail if any ADR violates linting rules.
 - Config lives at `docs/decisions/.markdownlint.yml` (copied from MADR).
 
-### Common Issues and Fixes
+### Troubleshooting
+
+If linting fails in CI, copy the rule name (e.g., `MD010`) and search for it in the ADR.
+
+#### Common Issues and Fixes
 
 | Issue | Cause | Fix |
 |-------|-------|-----|
