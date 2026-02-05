@@ -40,7 +40,7 @@ setup() {
   assert_file_exists "$pkg"
   assert_file_contains "$pkg" "\"markdownlint-cli2\""
   assert_file_contains "$pkg" "\"lint:adrs\""
-  assert_file_contains "$pkg" "markdownlint-cli2 \\\"docs/decisions/ADR-\\*.md\\\""
+  assert_file_contains "$pkg" "markdownlint-cli2 \\\"docs/decisions/ADR-*.md\\\""
 }
 
 @test "docs include local setup and troubleshooting for linting" {

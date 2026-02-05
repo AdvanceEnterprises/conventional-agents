@@ -27,7 +27,9 @@ assert_files_equal() {
 assert_file_contains() {
   local path="$1"
   local pattern="$2"
-  if ! rg -n "$pattern" "$path" >/dev/null 2>&1; then
+  # Use fixed-string matching so callers can pass patterns that include regex
+  # metacharacters (e.g., "ADR-*.md") without having to escape them.
+  if ! rg -F -n -- "$pattern" "$path" >/dev/null 2>&1; then
     echo "expected $path to contain pattern: $pattern"
     return 1
   fi
