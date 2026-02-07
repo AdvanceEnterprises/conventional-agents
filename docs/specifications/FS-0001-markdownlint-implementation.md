@@ -119,29 +119,34 @@ This is NOT a deviation from ADR-0008; it's the concrete implementation of "mark
 Each criterion is objectively testable and verifiable:
 
 ### 1. Configuration Management
-- **Given** a fresh clone of the repository without running any installation commands, **when** checking `docs/decisions/.markdownlint.yml`, **then** the file exists and is an exact copy of `vendor/madr/.markdownlint.yml` (MADR v4.0.0)
-- **Given** the configuration file, **when** examining it, **then** it contains exactly two disabled rules: `MD013: false` and `MD024: false`, with comments explaining each
+
+- **Given** a fresh clone of the repository without running any installation commands, **when** checking `docs/decisions/.markdownlint.yml`, **then** the file exists and is an exact copy of `vendor/madr/.markdownlint.yml` (MADR v4.0.0).
+- **Given** the configuration file, **when** examining it, **then** it contains exactly two disabled rules: `MD013: false` and `MD024: false`, with comments explaining each.
 
 ### 2. CI Integration
-- **Given** a new pull request that modifies an ADR with markdown violations (e.g., missing blank line before heading, incorrect list formatting), **when** the CI workflow runs, **then** the lint-adrs GitHub Actions check fails with status "failure" and displays readable error output including line numbers and rule names
-- **Given** a new pull request with ADRs that comply with all linting rules, **when** the CI workflow runs, **then** the lint-adrs GitHub Actions check passes with status "success"
-- **Given** the CI workflow configuration, **when** examining `.github/workflows/lint-adrs.yml`, **then** the workflow uses `markdownlint-cli2-action@v17` (pinned version, not @latest) with globs parameter set to `docs/decisions/ADR-*.md`
-- **Given** a PR that only modifies non-ADR files (e.g., README.md, `docs/decisions/examples.md`, or other markdown not matching `ADR-*.md`), **when** CI runs, **then** the lint-adrs workflow is skipped (trigger paths: only watch `docs/decisions/ADR-*.md` and `.markdownlint.yml`)
-- **Given** a non-ADR markdown file in `docs/decisions/` (e.g., `docs/decisions/README.md`), **when** the CI workflow runs on a PR that touches only ADRs, **then** the non-ADR file is excluded from linting (only `ADR-*.md` pattern matched)
+
+- **Given** a new pull request that modifies an ADR with markdown violations (e.g., missing blank line before heading, incorrect list formatting), **when** the CI workflow runs, **then** the lint-adrs GitHub Actions check fails with status "failure" and displays readable error output including line numbers and rule names.
+- **Given** a new pull request with ADRs that comply with all linting rules, **when** the CI workflow runs, **then** the lint-adrs GitHub Actions check passes with status "success".
+- **Given** the CI workflow configuration, **when** examining `.github/workflows/lint-adrs.yml`, **then** the workflow uses `markdownlint-cli2-action@v17` (pinned version, not @latest) with globs parameter set to `docs/decisions/ADR-*.md`.
+- **Given** a PR that only modifies non-ADR files (e.g., README.md, `docs/decisions/examples.md`, or other markdown not matching `ADR-*.md`), **when** CI runs, **then** the lint-adrs workflow is skipped (trigger paths: only watch `docs/decisions/ADR-*.md` and `.markdownlint.yml`).
+- **Given** a non-ADR markdown file in `docs/decisions/` (e.g., `docs/decisions/README.md`), **when** the CI workflow runs on a PR that touches only ADRs, **then** the non-ADR file is excluded from linting (only `ADR-*.md` pattern matched).
 
 ### 3. Local Development Setup
-- **Given** a contributor with Node.js and npm installed, **when** they run `npm install` in the repository root, **then** markdownlint-cli2 is installed in `node_modules/` and available via `npx`
-- **Given** markdownlint-cli2 installed locally, **when** running `npm run lint:adrs`, **then** the script executes `markdownlint-cli2 "docs/decisions/ADR-*.md"` and reports violations to stdout with line numbers and rule names
-- **Given** markdownlint-cli2 run with the npm script, **when** examining the linting rules applied, **then** the tool uses the `.markdownlint.yml` configuration in `docs/decisions/` (same config as CI workflow)
-- **Given** no npm or Node.js installed locally, **when** a contributor opens a PR with an ADR, **then** CI still enforces linting (local tooling is optional and not required for contribution)
+
+- **Given** a contributor with Node.js and npm installed, **when** they run `npm install` in the repository root, **then** markdownlint-cli2 is installed in `node_modules/` and available via `npx`.
+- **Given** markdownlint-cli2 installed locally, **when** running `npm run lint:adrs`, **then** the script executes `markdownlint-cli2 "docs/decisions/ADR-*.md"` and reports violations to stdout with line numbers and rule names.
+- **Given** markdownlint-cli2 run with the npm script, **when** examining the linting rules applied, **then** the tool uses the `.markdownlint.yml` configuration in `docs/decisions/` (same config as CI workflow).
+- **Given** no npm or Node.js installed locally, **when** a contributor opens a PR with an ADR, **then** CI still enforces linting (local tooling is optional and not required for contribution).
 
 ### 4. Documentation
-- **Given** a new contributor unfamiliar with the linting process, **when** reading `docs/decisions/README.md`, **then** they find a section explaining: (a) how to install markdownlint locally, (b) how to run linting before submitting a PR, (c) what to do if linting fails
-- **Given** a linting failure with output like "MD010: Hard tabs", **when** a contributor consults the troubleshooting section in `docs/decisions/README.md`, **then** they find an explanation of the violation and how to fix it (e.g., "replace tabs with spaces")
+
+- **Given** a new contributor unfamiliar with the linting process, **when** reading `docs/decisions/README.md`, **then** they find a section explaining: (a) how to install markdownlint locally, (b) how to run linting before submitting a PR, (c) what to do if linting fails.
+- **Given** a linting failure with output like "MD010: Hard tabs", **when** a contributor consults the troubleshooting section in `docs/decisions/README.md`, **then** they find an explanation of the violation and how to fix it (e.g., "replace tabs with spaces").
 
 ### 5. Backward Compatibility
-- **Given** all existing ADRs in the repository (ADR-0000 through ADR-0009), **when** markdownlint is run against them, **then** all pass without violations or warnings (no reformatting required before CI is enabled)
-- **Given** the markdownlint configuration scoped to `docs/decisions/ADR-*.md`, **when** other markdown files in the repository (README.md, INTEGRATION.md, docs/*.md) are checked, **then** they are not affected by the linting rules (scope enforced at CI level)
+
+- **Given** all existing ADRs in the repository (ADR-0000 through ADR-0009), **when** markdownlint is run against them, **then** all pass without violations or warnings (no reformatting required before CI is enabled).
+- **Given** the markdownlint configuration scoped to `docs/decisions/ADR-*.md`, **when** other markdown files in the repository (README.md, INTEGRATION.md, docs/*.md) are checked, **then** they are not affected by the linting rules (scope enforced at CI level).
 
 ## Edge Cases
 
@@ -254,6 +259,7 @@ Not applicable. This is static analysis with no runtime tracing needed.
 None blocking implementation. ADR-0008 provides sufficient detail on the decision, configuration, and scope.
 
 **Non-blocking considerations (optional to address during implementation):**
+
 - Should we create a `.markdownlintignore` file to explicitly list excluded files? (Decision: Defer unless needed; glob pattern in CI is sufficient)
 - Should the npm script be called `lint:adrs` or `lint:decisions`? (Decision: `lint:adrs` for clarity, matching ADR-specific scope)
 
