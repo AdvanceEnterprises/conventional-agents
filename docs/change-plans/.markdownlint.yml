@@ -1,0 +1,12 @@
+default: true
+
+# Allow arbitrary line length
+MD013: false
+
+# Allow duplicate headings
+MD024: false
+
+# First line in a file should be a top-level heading
+#
+# Reason: change plans use YAML front matter + structured sections and may not begin with an H1.
+MD041: false
