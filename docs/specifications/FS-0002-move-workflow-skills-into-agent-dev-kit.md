@@ -74,21 +74,26 @@ Each Python helper script MUST be runnable via `python3` and support `--self-tes
 
 ## Success Criteria
 
-1) Skill content relocation
-- Given a checkout of the `agent-dev-kit` repo, when listing `skills/`, then the workflow skills (adrgen/specgen/changeplangen/stubgen/instructionlint/skillindex/prreview/specreview/testreview/newskill) exist as directories under `skills/` with a `SKILL.md` in each.
+1. Skill content relocation
 
-2) Dual-mode template path resolution
-- Given running a generator script from within the `agent-dev-kit` repo (no `vendor/agent-dev-kit` parent), when executing its `--self-test`, then it succeeds and reads templates from `./templates/...`.
-- Given running the same generator script from a host repo that contains `vendor/agent-dev-kit/`, when executing its `--self-test`, then it succeeds and reads templates from `./vendor/agent-dev-kit/templates/...`.
+   - Given a checkout of the `agent-dev-kit` repo, when listing `skills/`, then the workflow skills (adrgen/specgen/changeplangen/stubgen/instructionlint/skillindex/prreview/specreview/testreview/newskill) exist as directories under `skills/` with a `SKILL.md` in each.
 
-3) Canonical skills index
-- Given a fresh checkout of `agent-dev-kit`, when opening `skills/index.md`, then it lists each moved skill with: purpose, location, and the primary invocation (script + key flags).
+2. Dual-mode template path resolution
 
-4) Backward compatibility guidance
-- Given a consumer repo that previously referenced skills at `vendor/agent-dev-kit/skills/{skill-name}/...`, when reading `INTEGRATION.md` (or an equivalent doc chosen during implementation), then there is a section describing the new canonical paths and how to invoke the helper scripts in both contexts.
+   - Given running a generator script from within the `agent-dev-kit` repo (no `vendor/agent-dev-kit` parent), when executing its `--self-test`, then it succeeds and reads templates from `./templates/...`.
+   - Given running the same generator script from a host repo that contains `vendor/agent-dev-kit/`, when executing its `--self-test`, then it succeeds and reads templates from `./vendor/agent-dev-kit/templates/...`.
 
-5) Local validation
-- Given Node/npm is not installed, when running the Python helpers' `--self-test` commands, then all self-tests still work (Python-only).
+3. Canonical skills index
+
+   - Given a fresh checkout of `agent-dev-kit`, when opening `skills/index.md`, then it lists each moved skill with: purpose, location, and the primary invocation (script + key flags).
+
+4. Backward compatibility guidance
+
+   - Given a consumer repo that previously referenced skills at `vendor/agent-dev-kit/skills/{skill-name}/...`, when reading `INTEGRATION.md` (or an equivalent doc chosen during implementation), then there is a section describing the new canonical paths and how to invoke the helper scripts in both contexts.
+
+5. Local validation
+
+   - Given Node/npm is not installed, when running the Python helpers' `--self-test` commands, then all self-tests still work (Python-only).
 
 ## Edge Cases
 

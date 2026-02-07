@@ -63,12 +63,14 @@ Implement automated markdown linting for ADRs using markdownlint, as decided in 
 This spec uses `markdownlint-cli2` (both locally and in CI) for both purposes:
 
 **Why cli2 (not plain cli):**
+
 - MADR upstream uses `markdownlint-cli2-action@v17` in their reference CI workflow
 - cli2 is the current recommended tool from markdownlint maintainers
 - cli2 has better performance and configuration handling than cli v0.x
 - Consistent tool across local and CI environments reduces friction
 
 **How the MADR baseline is respected:**
+
 - Configuration: `docs/decisions/.markdownlint.yml` is an exact copy of `vendor/madr/.markdownlint.yml`
 - Tool invocation respects the config file in the same directory as targets
 - CLI: `markdownlint-cli2 "docs/decisions/ADR-*.md"` automatically finds and uses `docs/decisions/.markdownlint.yml`
@@ -79,6 +81,7 @@ This is NOT a deviation from ADR-0008; it's the concrete implementation of "mark
 ## Interfaces
 
 ### CI Workflow
+
 - **Type:** CI (GitHub Actions)
 - **File:** `.github/workflows/lint-adrs.yml`
 - **Trigger:** On push and pull_request to the default branch (`trunk`)
@@ -88,6 +91,7 @@ This is NOT a deviation from ADR-0008; it's the concrete implementation of "mark
 - **Failure behavior:** CI check fails with readable error output (line numbers, rule violations)
 
 ### Configuration
+
 - **Type:** Config (YAML)
 - **File:** `docs/decisions/.markdownlint.yml`
 - **Provenance:** Exact copy of `vendor/madr/.markdownlint.yml` (pinned to MADR v4.0.0 per submodule)
@@ -96,6 +100,7 @@ This is NOT a deviation from ADR-0008; it's the concrete implementation of "mark
 - **Maintenance:** If `vendor/madr/.markdownlint.yml` changes in future updates, manual review required before syncing
 
 ### Local Development (Optional)
+
 - **Type:** Config (package.json) + CLI
 - **Setup:** `npm install` (one-time, optional)
 - **Tooling choice:** `markdownlint-cli2` (same tool as GitHub Actions, ensures consistency)
@@ -105,6 +110,7 @@ This is NOT a deviation from ADR-0008; it's the concrete implementation of "mark
 - **Failure behavior:** Reports violations to console with line numbers and rule names, exits with status code 1 on errors
 
 ### Documentation
+
 - **File:** `docs/decisions/README.md`
 - **Contents:** Setup instructions, usage commands, troubleshooting for common violations
 
@@ -254,9 +260,9 @@ None blocking implementation. ADR-0008 provides sufficient detail on the decisio
 ## Links
 
 - **ADR-0008:** [Adopt markdownlint for ADR Formatting Consistency](../decisions/ADR-0008.md)
-- **MADR repository:** https://github.com/adr/madr
+- **MADR repository:** <https://github.com/adr/madr>
 - **MADR configuration reference:** `vendor/madr/.markdownlint.yml`
 - **MADR CI example:** `vendor/madr/.github/workflows/lint.yaml`
-- **markdownlint documentation:** https://github.com/DavidAnson/markdownlint
+- **markdownlint documentation:** <https://github.com/DavidAnson/markdownlint>
 - **Feature spec template:** `templates/core/feature-spec.md`
 - **ADR process documentation:** `docs/decisions/README.md` (to be updated)
