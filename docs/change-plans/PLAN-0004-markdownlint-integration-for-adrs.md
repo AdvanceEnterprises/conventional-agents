@@ -92,9 +92,9 @@ Only list files that will be changed.
 ### Phase 2: Enable CI
 
 1. Create `.github/workflows/lint-adrs.yml` with:
-   - Trigger: `on: [push, pull_request]` to `trunk`
-   - Trigger paths: only watch `docs/decisions/ADR-*.md` and `docs/decisions/.markdownlint.yml`
-   - Step: use `markdownlint-cli2-action@v17` with globs parameter set to `docs/decisions/ADR-*.md`
+   * Trigger: `on: [push, pull_request]` to `trunk`
+   * Trigger paths: only watch `docs/decisions/ADR-*.md` and `docs/decisions/.markdownlint.yml`
+   * Step: use `markdownlint-cli2-action@v17` with globs parameter set to `docs/decisions/ADR-*.md`
 2. Verify workflow syntax (GitHub Actions will validate on PR)
 3. Test with intentional violation in a PR: add a markdown violation to an ADR, verify CI fails with readable error
 4. Fix the test violation and verify CI passes on second attempt

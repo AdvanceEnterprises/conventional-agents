@@ -77,7 +77,7 @@ This change will NOT:
 ## 7. Risks and Edge Cases
 
 - Renames can break deep links; mitigate by updating internal references and keeping commit message clear.
-- Repo already contains both CP-* and PLAN-*; migration must avoid filename collisions.
+- Repo already contains both `CP-*` and `PLAN-*`; migration must avoid filename collisions.
 
 ## 8. Validation
 
