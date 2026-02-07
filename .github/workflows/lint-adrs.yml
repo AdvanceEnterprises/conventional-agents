@@ -1,16 +1,30 @@
-name: lint-adrs
+name: lint-docs
 
 on:
   push:
     branches: [trunk]
     paths:
+      - ".github/workflows/lint-adrs.yml"
       - "docs/decisions/ADR-*.md"
       - "docs/decisions/.markdownlint.yml"
+      - "docs/specifications/FS-*.md"
+      - "docs/specifications/.markdownlint.yml"
+      - "docs/change-plans/PLAN-*.md"
+      - "docs/change-plans/.markdownlint.yml"
+      - "docs/workflows/*.md"
+      - "docs/workflows/.markdownlint.yml"
   pull_request:
     branches: [trunk]
     paths:
+      - ".github/workflows/lint-adrs.yml"
       - "docs/decisions/ADR-*.md"
       - "docs/decisions/.markdownlint.yml"
+      - "docs/specifications/FS-*.md"
+      - "docs/specifications/.markdownlint.yml"
+      - "docs/change-plans/PLAN-*.md"
+      - "docs/change-plans/.markdownlint.yml"
+      - "docs/workflows/*.md"
+      - "docs/workflows/.markdownlint.yml"
 
 jobs:
   lint-adrs:
@@ -20,3 +34,27 @@ jobs:
       - uses: davidanson/markdownlint-cli2-action@v17
         with:
           globs: "docs/decisions/ADR-*.md"
+
+  lint-specs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: davidanson/markdownlint-cli2-action@v17
+        with:
+          globs: "docs/specifications/FS-*.md"
+
+  lint-change-plans:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: davidanson/markdownlint-cli2-action@v17
+        with:
+          globs: "docs/change-plans/PLAN-*.md"
+
+  lint-workflows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: davidanson/markdownlint-cli2-action@v17
+        with:
+          globs: "docs/workflows/*.md"
