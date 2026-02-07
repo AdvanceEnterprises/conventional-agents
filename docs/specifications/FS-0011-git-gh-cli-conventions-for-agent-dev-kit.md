@@ -95,7 +95,7 @@ Define opinionated, copy/pasteable Git and GitHub (gh CLI) conventions for Tai�
 - Commit signing (GPG/SSH “Verified”) is NICE-TO-HAVE, not required.
 
 ## Success Criteria
-- Given a new repo initialized locally, when Tai runs `git init`, then the default branch is named `trunk`.
+- Given a machine without prior git defaults configured, when following the kit’s documented setup step `git config --global init.defaultBranch trunk`, then `git init` creates a repo whose default branch is named `trunk`.
 - Given a repo cloned from GitHub, when following the kit’s setup steps, then the canonical remote is named `origin`.
 - Given a feature branch, when following the kit’s documented workflow, then a PR can be created using `gh pr create --fill` without additional undocumented steps.
 - Given a PR opened by an agent, when viewing the PR in GitHub, then the PR author is the agent account (not the human account).
