@@ -365,36 +365,44 @@ Accepted ADRs:
   - Status: accepted
   - Source: docs/decisions/ADR-0003.md
 
-Proposed ADRs (under review):
+Accepted ADRs:
+- ADR-0003: Mirror arc42-template as an upstream-tracking git submodule
+  - Status: accepted
+  - Source: docs/decisions/ADR-0003.md
+
 - ADR-0004: AGENTS.md as Canonical Integration Surface
-  - Status: proposed
+  - Status: accepted
   - Source: docs/decisions/ADR-0004.md
   - Summary: AGENTS.md is the primary cross-tool integration surface with defined precedence hierarchy.
+
 - ADR-0005: Submodule-First Referencing Strategy
-  - Status: proposed
+  - Status: accepted
   - Source: docs/decisions/ADR-0005.md
   - Summary: Recommend submodule deployment as primary pattern; support copy-in and hybrid as valid alternatives.
+
 - ADR-0006: Role-as-Skill-Card Format
-  - Status: proposed
+  - Status: accepted
   - Source: docs/decisions/ADR-0006.md
   - Summary: Use skill-card format (Purpose, Inputs, Outputs, Guardrails, Gates, Checks) for role contracts.
+
 - ADR-0007: Adjacent-to-Spec-Kit Positioning
-  - Status: proposed
+  - Status: accepted
   - Source: docs/decisions/ADR-0007.md
   - Summary: Stay adjacent to Spec Kit (quality standards only, never workflow orchestration); never modify .specify/.
+
 - ADR-0008: Adopt markdownlint for ADR Formatting Consistency
-  - Status: proposed
+  - Status: accepted
   - Source: docs/decisions/ADR-0008.md
   - Summary: Use markdownlint with MADR-derived config to enforce consistent markdown formatting in ADRs via CI and optional local tooling.
+
 - ADR-0009: Feature Specification Template Selection
-  - Status: proposed
+  - Status: accepted
   - Source: docs/decisions/ADR-0009.md
   - Summary: Keep current feature-spec.md template as v1.0 with versioned evolution strategy; position GitHub Spec Kit as complementary (orchestration) not competing (standards).
 
 Notes:
-- ADR-0000.md, ADR-0001.md, and ADR-0002.md are present but empty.
-- ADR lifecycle rules and status conventions are documented in
-  docs/decisions/README.md.
+- ADR-0000, ADR-0001, and ADR-0002 are not empty (they define skills and role/skill referencing conventions).
+- ADR lifecycle rules and status conventions are documented in docs/decisions/README.md.
 
 # 10. Quality Requirements
 
