@@ -140,9 +140,9 @@ After you push follow-up commits (especially in response to review feedback), ad
 Example:
 
 - Addressed review feedback:
-  - ✅ <item>
-  - ✅ <item>
-- Validation: <commands> (or "not run")
+  - ✅ ITEM_1
+  - ✅ ITEM_2
+- Validation: COMMANDS_RUN (or "not run")
 
 ### 7) Checks + review
 
