@@ -66,7 +66,7 @@ Comment **why**, not **what**:
 sleep 2
 
 # Use 'true' to prevent "no such file" errors when nothing matches
-rm -f /tmp/deploy-ducky-*.log || true
+rm -f /tmp/myapp-*.log || true
 
 # Only quote if contains spaces or special chars
 if [[ $var == *[[:space:]]* ]]; then ...

@@ -1,0 +1,6 @@
+[submodule "vendor/madr"]
+	path = vendor/madr
+	url = https://github.com/adr/madr.git
+[submodule "vendor/arc42-template"]
+	path = vendor/arc42-template
+	url = https://github.com/arc42/arc42-template.git
