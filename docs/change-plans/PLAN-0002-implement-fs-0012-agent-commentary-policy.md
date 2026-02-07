@@ -44,8 +44,8 @@ This change will NOT:
 ## 4. Files to Be Modified
 - docs/workflows/git-and-gh-conventions.md
 - docs/workflows/README.md (if adding links)
-- docs/change-plans/CP-0001.md (rename)
-- docs/change-plans/CP-0002.md (rename)
+- docs/change-plans/PLAN-0004-markdownlint-integration-for-adrs.md (renamed from CP-0001)
+- docs/change-plans/PLAN-0005-move-workflow-skills-into-agent-dev-kit.md (renamed from CP-0002)
 - Any docs that link to CP-*.md (update references)
 
 ## 5. Implementation Steps (High-Level)
@@ -55,10 +55,10 @@ This change will NOT:
    - Add a “After pushing updates” section requiring a short PR comment summarizing addressed feedback + validation.
 2. (Optional) Add an at-a-glance template block that agents can copy/paste into PR bodies.
 3. Perform the change plan name migration:
-   - Rename `docs/change-plans/CP-0001.md` → `docs/change-plans/PLAN-0004-<slug>.md` (choose appropriate numbering/slug)
-   - Rename `docs/change-plans/CP-0002.md` → `docs/change-plans/PLAN-0005-<slug>.md` (choose appropriate numbering/slug)
+   - Rename `docs/change-plans/CP-0001.md` → `docs/change-plans/PLAN-0004-markdownlint-integration-for-adrs.md`
+   - Rename `docs/change-plans/CP-0002.md` → `docs/change-plans/PLAN-0005-move-workflow-skills-into-agent-dev-kit.md`
    - Ensure numbering does not collide with existing PLAN files.
-4. Search for references to `CP-0001`/`CP-0002` and update links.
+4. Search for references to `CP-0001`/`CP-0002` and update links (including implementation plans).
 5. Run markdownlint locally (or rely on CI once FS-0013 is implemented).
 
 ## 6. Constraints and Guardrails

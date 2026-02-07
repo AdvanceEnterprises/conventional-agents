@@ -65,7 +65,18 @@ Optional scope is allowed:
 
 - `feat(api): ...`
 
-Guideline: optimize commit bodies for *why*, not *what*.
+### Commit bodies (agents)
+
+Agent-authored commits SHOULD include a useful body unless the change is truly trivial.
+
+Recommended body fields:
+
+- Why: intent / context
+- What: high-level summary
+- Risk: what could break
+- Validation: what was run (or explicitly "not run")
+
+Do not include secrets (tokens, private keys, credentials) in commit messages.
 
 ## Standard workflow
 
@@ -95,6 +106,18 @@ Use `--draft` if you expect iteration:
 
 - `gh pr create --fill --draft`
 
+#### PR body template (agents)
+
+Agent-authored PRs MUST include enough context for review. Use this template (copy/paste):
+
+- Summary:
+- Context / Why:
+- Changes:
+- Validation:
+- Risk / Rollback:
+
+Do not include secrets (tokens, private keys, credentials) in PR descriptions.
+
 ### 6) Keep your branch updated
 
 Preferred: rebase on `trunk`.
@@ -105,6 +128,21 @@ Preferred: rebase on `trunk`.
 If you already pushed, update the PR branch safely:
 
 - `git push --force-with-lease`
+
+#### PR update comment (agents)
+
+After you push follow-up commits (especially in response to review feedback), add a PR comment summarizing:
+
+- what feedback was addressed
+- what changed
+- what validation was performed (or explicitly "not run")
+
+Example:
+
+- Addressed review feedback:
+  - ✅ <item>
+  - ✅ <item>
+- Validation: <commands> (or "not run")
 
 ### 7) Checks + review
 
