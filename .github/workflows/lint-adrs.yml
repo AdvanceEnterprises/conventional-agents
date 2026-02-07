@@ -1,0 +1,22 @@
+name: lint-adrs
+
+on:
+  push:
+    branches: [trunk]
+    paths:
+      - "docs/decisions/ADR-*.md"
+      - "docs/decisions/.markdownlint.yml"
+  pull_request:
+    branches: [trunk]
+    paths:
+      - "docs/decisions/ADR-*.md"
+      - "docs/decisions/.markdownlint.yml"
+
+jobs:
+  lint-adrs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: davidanson/markdownlint-cli2-action@v17
+        with:
+          globs: "docs/decisions/ADR-*.md"

@@ -1,0 +1,10 @@
+{
+  "name": "agent-dev-kit",
+  "private": true,
+  "devDependencies": {
+    "markdownlint-cli2": "0.13.0"
+  },
+  "scripts": {
+    "lint:adrs": "markdownlint-cli2 \"docs/decisions/ADR-*.md\""
+  }
+}
