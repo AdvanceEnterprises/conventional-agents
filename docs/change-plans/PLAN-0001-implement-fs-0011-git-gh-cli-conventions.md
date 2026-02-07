@@ -18,7 +18,7 @@ updated: 2026-02-07
 ## 1. Feature / Issue Reference
 - Feature Spec ID(s): FS-0011
 - Related ADR ID(s): ADR-0011
-- Issue / PR Reference: (to be created)
+- Issue / PR Reference: PR #3 https://github.com/Tais-Den/agent-dev-kit/pull/3
 
 ## 2. Scope of Change
 
@@ -95,7 +95,7 @@ This change will NOT:
 - No automation (hooks/CI) added.
 
 ## 10. Readiness Check
-- [ ] FS-0011 is approved (required before treating as binding)
+- [x] FS-0011 is approved (required before treating as binding)
 - [x] Scope is minimal and explicit
 - [x] No architectural/code changes implied
 
