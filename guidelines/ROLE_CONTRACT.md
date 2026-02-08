@@ -28,6 +28,13 @@ Modification rules
 
 Violating any of the above is a failure, even if the code works.
 
+Pre-commit testing gate (BDD/TDD)
+	•	Agents MUST run the project's test suite before committing code changes.
+	•	Agents MUST NOT commit code that causes test failures.
+	•	If tests fail after a change, the agent must fix the issue or revert before committing.
+	•	For documentation-only changes in repos with no code tests, markdownlint (or equivalent doc linting) serves as the quality gate.
+	•	The workflow is: Docs → Tests → Code. Tests are written first from approved specs; implementation follows to make tests pass.
+
 ⸻
 
 Role 1: Spec Reader and Test Planner
@@ -86,17 +93,22 @@ Responsibilities
 	•	Make tests pass with the smallest viable change.
 	•	Respect all documented constraints.
 	•	Preserve existing behavior unless tests require change.
+	•	Run the full test suite (or targeted tests) after each change.
+	•	Run lint/format tools before committing.
+	•	Confirm all tests pass before committing. Never commit with failing tests.
 
 Prohibited Actions
 	•	Modifying specs, ADRs, or architecture docs
 	•	Introducing new features or behaviors
 	•	Refactoring unrelated code
 	•	Rewriting architecture or changing system boundaries
+	•	Committing code with failing tests
 
 Stop Conditions
 	•	A test requires behavior not specified
 	•	An ADR constrains the implementation path
 	•	Architecture boundaries are violated
+	•	Tests fail and the cause is unclear
 
 ⸻
 
