@@ -44,12 +44,12 @@ This change will NOT:
 
 - docs/specifications/FS-0011-git-gh-cli-conventions-for-agentic-dev-kit.md
 - docs/decisions/ADR-0011-adopt-multi-identity-github-model-human-agent-committer-agent-reviewer.md
-- Add: docs/workflows/git-and-gh-conventions.md
+- Add: workflows/git-and-gh-conventions.md
 
 ## 5. Implementation Steps (High-Level)
 
-1. Create `docs/workflows/` directory if it does not exist.
-2. Write `docs/workflows/git-and-gh-conventions.md` containing:
+1. Create `workflows/` directory if it does not exist.
+2. Write `workflows/git-and-gh-conventions.md` containing:
    - Branch defaults (`trunk`) and branch naming prefixes.
    - Remote conventions: keep `origin` as canonical; optional `upstream`.
    - Commit message conventions (Conventional Commits-lite).
@@ -63,7 +63,7 @@ This change will NOT:
      - merge policy (squash-merge) and branch deletion.
    - Multi-identity guidance.
 3. Update FS-0011 to reference ADR-0011.
-4. (Optional) Add a short pointer index in `docs/workflows/README.md`.
+4. (Optional) Add a short pointer index in `workflows/README.md`.
 5. Run a quick docs sanity check:
    - links resolve
    - commands are consistent with `trunk`/`origin`

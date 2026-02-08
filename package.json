@@ -8,7 +8,7 @@
     "lint:adrs": "npx markdownlint-cli2 \"docs/decisions/ADR-*.md\"",
     "lint:specs": "npx markdownlint-cli2 \"docs/specifications/FS-*.md\"",
     "lint:plans": "npx markdownlint-cli2 \"docs/change-plans/PLAN-*.md\"",
-    "lint:workflows": "npx markdownlint-cli2 \"docs/workflows/*.md\"",
+    "lint:workflows": "npx markdownlint-cli2 \"workflows/*.md\"", 
     "lint:docs": "npm run -s lint:adrs && npm run -s lint:specs && npm run -s lint:plans && npm run -s lint:workflows"
   }
 }

@@ -136,7 +136,7 @@ your-repo/
 ├── AGENTS.md
 ├── CLAUDE.md (optional)
 └── vendor/
-    └── agentic-dev-kit/
+    └── agent-dev-kit/
 
 Pros:
 -	Single source of truth
