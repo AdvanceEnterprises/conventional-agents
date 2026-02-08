@@ -14,6 +14,29 @@ This framework is based on evidence-based practices, not opinions. Every guideli
 
 ## What's Included
 
+### Exported Surface vs Internal Governance (the “recursive” property)
+
+This repository is designed to be **vendored into other projects** (typically as a git submodule at `vendor/agent-dev-kit/`) to provide baseline guidance and templates.
+
+At the same time, **this repo uses its own exported guidance to develop itself**.
+To support that recursion, we keep a clear split:
+
+- **Exported surface (meant to be consumed by host repos / agents):**
+  - `INTEGRATION.md` (how to integrate + precedence)
+  - `guidelines/` (normative standards)
+  - `roles/` (role contracts + universal gates)
+  - `skills/` (portable SKILL.md modules)
+  - `templates/` (FS/ADR/PLAN/review scaffolds)
+  - `workflows/` (process docs you can follow in *any* repo)
+
+- **Internal governance (how this kit evolves):**
+  - `docs/decisions/` (ADRs)
+  - `docs/specifications/` (Feature Specs)
+  - `docs/change-plans/` (Change Plans)
+  - `docs/ARC42.md` (architecture)
+
+Rule of thumb: if a document is intended to be a reusable instruction/process for downstream work, it belongs in the exported surface (usually `workflows/`, `guidelines/`, `roles/`, `skills/`, `templates/`).
+
 ### Guidelines
 
 Language-specific best practices for code quality, testing, and implementation:
