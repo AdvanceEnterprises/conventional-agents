@@ -1,4 +1,4 @@
-# agent-dev-kit
+# agentic-dev-kit
 
 Prescriptive framework for LLM-driven development workflows. Guidelines, templates, and patterns for building and maintaining software with AI assistance.
 
@@ -52,7 +52,7 @@ For projects that want to stay in sync with upstream changes:
 
 ```bash
 cd /path/to/your-project
-git submodule add https://github.com/anthropics/agent-dev-kit.git .agents
+git submodule add https://github.com/Tais-Den/agentic-dev-kit.git .agents
 git submodule update --init
 ```
 
@@ -67,10 +67,10 @@ Update to latest version:
 
 ```bash
 cd .agents
-git pull origin main
+git pull origin trunk
 cd ..
 git add .agents
-git commit -m "Update agent-dev-kit to latest"
+git commit -m "Update agentic-dev-kit to latest"
 ```
 
 Note: Full upstream projects are included as git submodules, as documented in
@@ -81,8 +81,8 @@ Note: Full upstream projects are included as git submodules, as documented in
 For one-time use or custom modifications:
 
 ```bash
-git clone https://github.com/anthropics/agent-dev-kit.git
-cp -r agent-dev-kit/.agents /path/to/your-project/
+git clone https://github.com/Tais-Den/agentic-dev-kit.git
+cp -r agentic-dev-kit/.agents /path/to/your-project/
 ```
 
 ## Usage
@@ -94,7 +94,7 @@ Reference in your project's `CLAUDE.md` (Claude Code guidance file):
 ```markdown
 ## Agent Guidelines
 
-The development process follows evidence-based practices defined in agent-dev-kit:
+The development process follows evidence-based practices defined in agentic-dev-kit:
 
 - [Bash Style Guide](./.agents/guidelines/bash/BASH_STYLE_GUIDE.md)
 - [Bash Testing Guide](./.agents/guidelines/bash/BASH_TESTING_GUIDE.md)
