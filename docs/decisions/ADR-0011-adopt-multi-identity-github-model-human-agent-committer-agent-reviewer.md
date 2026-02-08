@@ -95,4 +95,4 @@ We consider this decision successful if:
 
 ## Links
 
-- Related Spec: FS-0011 Git + gh CLI conventions for agent-dev-kit
+- Related Spec: FS-0011 Git + gh CLI conventions for agentic-dev-kit

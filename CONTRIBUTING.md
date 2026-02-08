@@ -1,4 +1,4 @@
-# Contributing to agent-dev-kit
+# Contributing to agentic-dev-kit
 
 Thank you for contributing! This framework is built on evidence-based practices, and we welcome contributions that strengthen that foundation.
 
