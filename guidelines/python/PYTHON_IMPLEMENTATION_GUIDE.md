@@ -142,6 +142,14 @@ If introducing a new exception:
 
 ---
 
+## Versioning
+
+* Do not change version numbers in project manifests (`pyproject.toml`, `setup.cfg`, `setup.py`, etc.) as part of feature work.
+* Version bumps are a separate, explicit step that requires human direction.
+* See `workflows/versioning-and-releases.md` for full guidance.
+
+---
+
 ## Python-Specific Implementation Checklist
 
 Before coding:
