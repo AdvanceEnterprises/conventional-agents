@@ -1,10 +1,14 @@
 {
-  "name": "agent-dev-kit",
+  "name": "agentic-dev-kit",
   "private": true,
   "devDependencies": {
     "markdownlint-cli2": "0.13.0"
   },
   "scripts": {
-    "lint:adrs": "markdownlint-cli2 \"docs/decisions/ADR-*.md\""
+    "lint:adrs": "npx markdownlint-cli2 \"docs/decisions/ADR-*.md\"",
+    "lint:specs": "npx markdownlint-cli2 \"docs/specifications/FS-*.md\"",
+    "lint:plans": "npx markdownlint-cli2 \"docs/change-plans/PLAN-*.md\"",
+    "lint:workflows": "npx markdownlint-cli2 \"docs/workflows/*.md\"",
+    "lint:docs": "npm run -s lint:adrs && npm run -s lint:specs && npm run -s lint:plans && npm run -s lint:workflows"
   }
 }
