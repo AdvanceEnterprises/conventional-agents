@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0015
-status: draft
+status: approved
 title: Versioning, releases, and packaging guidance for agentic development
 owner: Tai
 test_required: false
@@ -39,11 +39,11 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Approved
 
 ## Summary
 
-Add cross-cutting guidance to the agentic-dev-kit framework for how projects should handle versioning, releases, and packaging when agents are involved in the development workflow.
+Add cross-cutting guidance to the agentic-dev-kit framework (repo: `Tais-Den/agentic-dev-kit`, vendored at `vendor/agent-dev-kit/`) for how projects should handle versioning, releases, and packaging when agents are involved in the development workflow.
 This includes a new workflow document with prescriptive versioning and release guidance, updates to the Role Contract with version-related agent constraints, and updates to all language-specific implementation guides to establish boundaries around version manipulation during feature work.
 
 ## Goals
@@ -60,10 +60,10 @@ This includes a new workflow document with prescriptive versioning and release g
   - Agents MUST NOT bump major versions without human approval.
   - Agents MAY update changelogs, bump minor/patch versions, and draft release notes when explicitly instructed.
   - Agents MUST NOT publish packages to registries without explicit human approval.
-  - Version bumps must be separate commits, not mixed into feature work.
+  - Version bumps are only allowed in explicit release-prep commits/PRs, never mixed into feature commits.
 
 - Update **all three language-specific implementation guides** (`BASH_IMPLEMENTATION_GUIDE.md`, `PYTHON_IMPLEMENTATION_GUIDE.md`, `JS_IMPLEMENTATION_GUIDE.md`) to add:
-  - "Do not change version numbers in project manifests (`package.json`, `pyproject.toml`, `Cargo.toml`, etc.) as part of feature work."
+  - "Do not change version numbers in project manifests (`package.json`, `pyproject.toml`, `setup.cfg`, etc.) as part of feature work."
   - "Version bumps are a separate, explicit step that requires human direction."
 
 ## Non-Goals
@@ -138,9 +138,9 @@ From practitioner experience, the correct boundary is:
 
 - Draft changelog entries.
 - Bump minor/patch version numbers in manifests.
-- Create git tags (locally).
+- Prepare tag commands or propose tags in a release-prep PR (but not push tags to remote).
 - Draft release notes.
-- Open "release prep" PRs.
+- Open release-prep PRs.
 - Update lockfiles after dependency bumps.
 
 **Human-gated (must not do without explicit approval):**
@@ -156,9 +156,9 @@ From practitioner experience, the correct boundary is:
 Each bullet MUST be objectively testable.
 
 - Given a checkout of the agentic-dev-kit repo, when listing `workflows/`, then `versioning-and-releases.md` exists.
-- Given `workflows/versioning-and-releases.md`, when reading it, then it contains sections covering: semver semantics (with guidance for at least 3 project types), changelog conventions, release process, agent-safe vs human-gated actions, dependency versioning, and submodule versioning.
+- Given `workflows/versioning-and-releases.md`, when reading it, then it contains sections covering: semver semantics (with guidance for all 4 project types: libraries, services/APIs, documentation/standards kits, and CLIs), changelog conventions, release process, agent-safe vs human-gated actions, dependency versioning, and submodule versioning.
 - Given `workflows/versioning-and-releases.md`, when reading it, then it does NOT prescribe a specific changelog tool, CI/CD pipeline, or release cadence.
-- Given `guidelines/ROLE_CONTRACT.md`, when reading it, then it contains version-related constraints in the Shared Rules section that explicitly state: agents must not bump major versions without human approval, agents must not publish to registries without human approval, and version bumps must be separate commits.
+- Given `guidelines/ROLE_CONTRACT.md`, when reading it, then it contains version-related constraints in the Shared Rules section that explicitly state: agents must not bump major versions without human approval, agents must not publish to registries without human approval, and version bumps are only allowed in explicit release-prep commits/PRs (never mixed into feature commits).
 - Given `guidelines/ROLE_CONTRACT.md`, when reading the Role 2 (Implementer) section, then it lists "changing version numbers in project manifests" as a prohibited action.
 - Given `guidelines/bash/BASH_IMPLEMENTATION_GUIDE.md`, when reading it, then it contains guidance that agents must not change version numbers in project manifests as part of feature work.
 - Given `guidelines/python/PYTHON_IMPLEMENTATION_GUIDE.md`, when reading it, then it contains guidance that agents must not change version numbers in project manifests as part of feature work.
