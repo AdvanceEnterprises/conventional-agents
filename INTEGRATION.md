@@ -3,7 +3,7 @@ Integration Guide
 Version: 1.0.0
 Last Updated: 2026-01-27
 
-This document is the canonical source for how agent-dev-kit integrates with host repositories and resolves conflicts between instruction sources.
+This document is the canonical source for how agentic-dev-kit integrates with host repositories and resolves conflicts between instruction sources.
 
 ⸻
 
@@ -53,7 +53,7 @@ EOF
 
 # 3) Commit
 git add .gitmodules vendor/agent-dev-kit AGENTS.md
-git commit -m "Add agent-dev-kit foundation layer"
+git commit -m "Add agentic-dev-kit foundation layer"
 
 Alternative: copy-in pattern
 
@@ -128,7 +128,7 @@ Pattern 1: submodule with minimal stubs
 
 When to use:
 -	Teams or orgs that want consistent standards across multiple repos
--	Repos that will update agent-dev-kit over time
+-	Repos that will update agentic-dev-kit over time
 
 Structure:
 
@@ -136,7 +136,7 @@ your-repo/
 ├── AGENTS.md
 ├── CLAUDE.md (optional)
 └── vendor/
-    └── agent-dev-kit/
+    └── agentic-dev-kit/
 
 Pros:
 -	Single source of truth
@@ -158,7 +158,7 @@ Cons:
 -	Drift risk
 
 If you copy, record the snapshot in root AGENTS.md:
--	“Copied from agent-dev-kit version ”
+-	“Copied from agentic-dev-kit version ”
 
 Pattern 3: hybrid (recommended default)
 
@@ -244,7 +244,7 @@ Precedence:
 
 Spec Kit
 
-Spec Kit owns workflow. agent-dev-kit supplies quality gates.
+Spec Kit owns workflow. agentic-dev-kit supplies quality gates.
 
 Recommended hook: .specify/memory/constitution.md
 
@@ -367,7 +367,7 @@ Do not
 
 Migration Guides
 
-No standards to agent-dev-kit
+No standards to agentic-dev-kit
 1.	Add submodule
 2.	Add root AGENTS.md stub
 3.	Test with your tools
@@ -380,6 +380,6 @@ Copy-in to submodule
 4.	Record what changed
 
 Submodule to fork (heavy customization)
-1.	Fork agent-dev-kit
+1.	Fork agentic-dev-kit
 2.	Point submodule URL to your fork
 3.	Sync upstream intentionally

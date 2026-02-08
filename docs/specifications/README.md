@@ -1,6 +1,6 @@
 # Feature Specifications
 
-Feature Specs (FS-XXXX) document the requirements and acceptance criteria for implementing features, tools, and processes in agent-dev-kit.
+Feature Specs (FS-XXXX) document the requirements and acceptance criteria for implementing features, tools, and processes in agentic-dev-kit.
 
 ## Purpose
 

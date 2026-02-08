@@ -16,7 +16,7 @@ There is no application source code or runtime assets in this repo.
 ## Build, Test, and Development Commands
 
 No build or test commands are required for day‑to‑day work.
-- Optional ADR linting (planned in specs): `npm install` then `npx markdownlint docs/decisions/ADR-*.md`
+- Optional doc linting: `npm install` then `npm run lint:docs` (or `npm run lint:adrs` etc.)
 - Git submodules: `git submodule update --init` to populate `vendor/`
 
 ## Coding Style & Naming Conventions
