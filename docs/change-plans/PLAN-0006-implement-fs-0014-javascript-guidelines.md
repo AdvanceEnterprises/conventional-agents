@@ -2,7 +2,7 @@
 type: change-plan
 role: implementer
 language: markdown
-status: draft
+status: approved
 related_specs:
   - FS-0014
 related_adrs: []
