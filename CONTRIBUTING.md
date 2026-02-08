@@ -104,6 +104,10 @@ guidelines/
 │   ├── BASH_STYLE_GUIDE.md
 │   ├── BASH_TESTING_GUIDE.md
 │   └── BASH_IMPLEMENTATION_GUIDE.md
+├── javascript/
+│   ├── JS_STYLE_GUIDE.md
+│   ├── JS_TESTING_GUIDE.md
+│   └── JS_IMPLEMENTATION_GUIDE.md
 └── python/
     ├── PYTHON_STYLE_GUIDE.md
     ├── PYTHON_TESTING_GUIDE.md
