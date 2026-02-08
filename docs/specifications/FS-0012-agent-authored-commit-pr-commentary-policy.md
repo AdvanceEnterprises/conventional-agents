@@ -63,7 +63,7 @@ Define a documentation-only policy for coding agents to produce consistently use
 
 - Type: Docs
 - Details:
-  - Add/update documentation in `docs/workflows/` describing:
+  - Add/update documentation in `workflows/` describing:
     - minimum commit message/body expectations for agents
     - minimum PR description template for agents
     - PR update comment expectations after addressing feedback
@@ -120,7 +120,7 @@ After pushing commits that address review feedback, the agent MUST add a PR comm
 
 ## Rollout / Migration (if applicable)
 
-- Update `docs/workflows/git-and-gh-conventions.md` to include:
+- Update `workflows/git-and-gh-conventions.md` to include:
   - commit message/body expectations
   - PR body template
   - required “PR update” comment pattern

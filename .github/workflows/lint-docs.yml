@@ -11,8 +11,8 @@ on:
       - "docs/specifications/.markdownlint.yml"
       - "docs/change-plans/PLAN-*.md"
       - "docs/change-plans/.markdownlint.yml"
-      - "docs/workflows/*.md"
-      - "docs/workflows/.markdownlint.yml"
+      - "workflows/*.md"
+      - "workflows/.markdownlint.yml"
   pull_request:
     branches: [trunk]
     paths:
@@ -23,8 +23,8 @@ on:
       - "docs/specifications/.markdownlint.yml"
       - "docs/change-plans/PLAN-*.md"
       - "docs/change-plans/.markdownlint.yml"
-      - "docs/workflows/*.md"
-      - "docs/workflows/.markdownlint.yml"
+      - "workflows/*.md"
+      - "workflows/.markdownlint.yml"
 
 jobs:
   lint-adrs:
@@ -57,6 +57,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: davidanson/markdownlint-cli2-action@v17
         with:
-          globs: "docs/workflows/*.md"
+          globs: "workflows/*.md"
 
 # noop: retrigger CI
