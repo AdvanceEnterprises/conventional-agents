@@ -43,6 +43,7 @@ Language-specific best practices for code quality, testing, and implementation:
 
 - **Bash**: Style, testing patterns, and implementation guidance
 - **Python**: Style, testing patterns, and implementation guidance
+- **JavaScript/TypeScript**: Style, testing patterns, and implementation guidance
 - **Role Contract**: LLM agent role definition and responsibilities
 
 See `guidelines/` directory.
@@ -121,6 +122,8 @@ The development process follows evidence-based practices defined in agentic-dev-
 
 - [Bash Style Guide](./.agents/guidelines/bash/BASH_STYLE_GUIDE.md)
 - [Bash Testing Guide](./.agents/guidelines/bash/BASH_TESTING_GUIDE.md)
+- [JS/TS Style Guide](./.agents/guidelines/javascript/JS_STYLE_GUIDE.md)
+- [JS/TS Testing Guide](./.agents/guidelines/javascript/JS_TESTING_GUIDE.md)
 - [Role Contract](./.agents/guidelines/ROLE_CONTRACT.md)
 ```
 

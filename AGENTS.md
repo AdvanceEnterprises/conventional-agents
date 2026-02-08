@@ -15,7 +15,7 @@ There is no application source code or runtime assets in this repo.
 
 ## Build, Test, and Development Commands
 
-No build or test commands are required for day‑to‑day work.
+No build or test commands are required for day-to-day work.
 - Optional doc linting: `npm install` then `npm run lint:docs` (or `npm run lint:adrs` etc.)
 - Git submodules: `git submodule update --init` to populate `vendor/`
 
@@ -29,16 +29,27 @@ Naming patterns:
 
 ## Testing Guidelines
 
-There are no code tests. Quality gates are documentation-centric.
+There are no code tests in this repository. Quality gates are documentation-centric.
 If you add ADRs, ensure they remain lint-clean once markdownlint is enabled (see `docs/decisions/README.md`).
+
+**For projects consuming this kit:** the framework follows a BDD/TDD workflow (Docs → Tests → Code).
+Agents MUST run the project's test suite and verify tests pass before committing changes.
+See `guidelines/ROLE_CONTRACT.md` for role definitions and the testing-first workflow.
+
+Language-specific testing guidance:
+
+- Bash: `guidelines/bash/BASH_TESTING_GUIDE.md`
+- Python: `guidelines/python/PYTHON_TESTING_GUIDE.md`
+- JavaScript/TypeScript: `guidelines/javascript/JS_TESTING_GUIDE.md`
 
 ## Commit & Pull Request Guidelines
 
-No formal commit message convention is established. Use clear, descriptive messages (e.g., “Add ADR-000X for <decision>”).
+No formal commit message convention is established. Use clear, descriptive messages (e.g., "Add ADR-000X for <decision>").
 Pull requests should:
 - State the document(s) changed and intent.
 - Link related ADRs or specs when applicable.
 - Avoid editing submodule contents directly.
+- Confirm all tests pass before submitting (agents MUST NOT commit code with failing tests).
 
 ## Architecture Overview
 
