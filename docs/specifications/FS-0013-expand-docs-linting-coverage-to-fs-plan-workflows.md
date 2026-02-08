@@ -9,7 +9,7 @@ interfaces:
   - .github/workflows/ (CI changes)
   - docs/specifications/FS-*.md
   - docs/change-plans/PLAN-*.md
-  - docs/workflows/*.md
+  - workflows/*.md
 related_adrs: []
 supersedes: []
 requires: []
@@ -46,7 +46,7 @@ Extend existing markdown linting checks so CI validates the documentation classe
 - Add markdownlint coverage for:
   - `docs/specifications/FS-*.md`
   - `docs/change-plans/PLAN-*.md`
-  - `docs/workflows/*.md`
+  - `workflows/*.md`
 - Keep lint scope limited to the doc classes we own (avoid linting all markdown under `docs/`).
 
 ## Non-Goals
@@ -71,7 +71,7 @@ Extend existing markdown linting checks so CI validates the documentation classe
 
 - Given a PR that modifies `docs/specifications/FS-*.md`, when CI runs, then markdownlint is executed against those FS files and fails on formatting errors.
 - Given a PR that modifies `docs/change-plans/PLAN-*.md`, when CI runs, then markdownlint is executed against those plan files and fails on formatting errors.
-- Given a PR that modifies `docs/workflows/*.md`, when CI runs, then markdownlint is executed against those workflow docs and fails on formatting errors.
+- Given a PR that modifies `workflows/*.md`, when CI runs, then markdownlint is executed against those workflow docs and fails on formatting errors.
 - Given a PR that only modifies unrelated markdown under `docs/` (outside the owned classes), when CI runs, then the “docs lint” checks do not expand scope to lint all docs.
 
 ## Edge Cases
@@ -93,7 +93,7 @@ Extend existing markdown linting checks so CI validates the documentation classe
 - Update CI workflows to add additional markdownlint jobs or expand existing globs to include:
   - `docs/specifications/FS-*.md`
   - `docs/change-plans/PLAN-*.md`
-  - `docs/workflows/*.md`
+  - `workflows/*.md`
 
 ## Observability (if applicable)
 
