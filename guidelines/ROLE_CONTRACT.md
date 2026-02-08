@@ -28,6 +28,13 @@ Modification rules
 
 Violating any of the above is a failure, even if the code works.
 
+Versioning and release constraints
+	•	Agents MUST NOT bump major versions without human approval (breaking changes are judgment calls).
+	•	Agents MUST NOT publish packages to registries (npm, PyPI, etc.) without explicit human approval.
+	•	Version bumps are only allowed in explicit release-prep commits/PRs, never mixed into feature commits.
+	•	Agents MAY draft changelog entries, bump minor/patch versions, and prepare release-prep PRs when explicitly instructed.
+	•	See workflows/versioning-and-releases.md for full guidance.
+
 Pre-commit testing gate (BDD/TDD)
 	•	Agents MUST run the project's test suite before committing code changes.
 	•	Agents MUST NOT commit code that causes test failures.
@@ -103,6 +110,7 @@ Prohibited Actions
 	•	Refactoring unrelated code
 	•	Rewriting architecture or changing system boundaries
 	•	Committing code with failing tests
+	•	Changing version numbers in project manifests (package.json, pyproject.toml, setup.cfg, etc.) during feature work
 
 Stop Conditions
 	•	A test requires behavior not specified

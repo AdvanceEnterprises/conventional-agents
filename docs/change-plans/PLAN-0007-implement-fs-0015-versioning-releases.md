@@ -53,7 +53,7 @@ PARSING_HINTS:
 
 **This change will NOT:**
 
-- Modify any files under `docs/` (ADRs, specs, change plans, ARC42).
+- Implementation will not modify any files under `docs/` (ADRs, specs, change plans, ARC42).
 - Prescribe a specific changelog tool, CI/CD pipeline, or release cadence.
 - Prescribe package registry publish mechanics.
 - Prescribe monorepo tooling.
@@ -67,7 +67,7 @@ This is a documentation-only change; there are no code tests.
 Quality gates:
 
 - `npx markdownlint-cli2 "workflows/versioning-and-releases.md"` must pass (zero errors).
-- `npm run lint:docs` must pass across all doc categories.
+- `npm run lint:docs` must pass across all doc categories (this runs `lint:adrs`, `lint:specs`, `lint:plans`, `lint:workflows` — see `package.json` scripts).
 - Manual review: workflow doc must satisfy all FS-0015 success criteria.
 
 ## 4. Files to Be Modified
