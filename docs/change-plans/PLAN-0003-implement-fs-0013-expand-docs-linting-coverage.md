@@ -26,7 +26,7 @@ This change WILL:
   - `docs/decisions/ADR-*.md`
   - `docs/specifications/FS-*.md`
   - `docs/change-plans/PLAN-*.md`
-  - `docs/workflows/*.md`
+  - `workflows/*.md`
 - Keep scope limited (do not lint all markdown under `docs/`).
 
 This change will NOT:
