@@ -293,6 +293,14 @@ If the script must work on minimal systems (e.g., Alpine Linux), document it and
 
 ---
 
+## Versioning
+
+* Do not change version numbers in project manifests as part of feature work.
+* Version bumps are a separate, explicit step that requires human direction.
+* See `workflows/versioning-and-releases.md` for full guidance.
+
+---
+
 ## Security Considerations
 
 * **Command injection**: Always quote variables used in commands
