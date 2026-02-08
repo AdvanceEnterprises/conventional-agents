@@ -268,7 +268,7 @@ const readFile = promisify(readFileCb);
 
 ## Versioning
 
-- Do not change version numbers in project manifests (`package.json`, `package-lock.json`, etc.) as part of feature work.
+- Do not change version numbers in project manifests (`package.json`) or lockfiles (`package-lock.json`, `pnpm-lock.yaml`, etc.) as part of feature work.
 - Version bumps are a separate, explicit step that requires human direction.
 - See `workflows/versioning-and-releases.md` for full guidance.
 
