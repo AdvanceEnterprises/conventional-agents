@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0014
-status: draft
+status: approved
 title: JavaScript/TypeScript guidelines for agentic development
 owner: Tai
 test_required: false
@@ -35,7 +35,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Approved
 
 ## Summary
 
@@ -165,9 +165,11 @@ Each bullet MUST be objectively testable.
 - Existing guideline structure in `guidelines/bash/` and `guidelines/python/` (pattern to follow).
 - Existing template and PARSING_HINTS conventions from the agentic-dev-kit framework.
 
+## Resolved Questions
+
+- **Filename prefix**: `JS_` (brevity; community convention; TypeScript is covered within the same guides).
+- **TypeScript integration**: Integrated into the JS guides with clearly labeled `### TypeScript-specific` subsections. No separate TS guide set. Rationale: ~90% of guidance overlaps; splitting into 6 files would duplicate heavily and create drift.
+
 ## Open Questions
 
-Only include questions that block implementation.
-
-- Should we use `JS_` or `JAVASCRIPT_` as the filename prefix? (Recommendation: `JS_` for brevity, consistent with how the community refers to the language; TypeScript is covered within the same guides, not separately.)
-- Should TypeScript get its own separate set of guides, or should TS-specific guidance be integrated into the JS guides with clearly marked sections? (Recommendation: integrated, with TS sections clearly labeled, since most modern JS projects use TypeScript and the guidance is largely overlapping.)
+None. All blocking questions resolved.
