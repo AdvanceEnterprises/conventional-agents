@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com),
+The format is based on [Keep a Changelog](https://keepachangelog.com) (vendored at `vendor/keep-a-changelog/`),
 and this project adheres to [Semantic Versioning](https://semver.org).
 
 For this project (a documentation/standards kit), semver follows the
