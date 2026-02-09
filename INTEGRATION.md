@@ -137,6 +137,10 @@ your-repo/
 ├── CLAUDE.md (optional)
 └── vendor/
     └── agent-dev-kit/
+        ├── ...
+        └── vendor/
+            ├── conventional-commits/   # Conventional Commits spec
+            └── keep-a-changelog/       # Keep a Changelog spec
 
 Pros:
 -	Single source of truth
