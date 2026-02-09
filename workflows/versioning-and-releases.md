@@ -49,7 +49,7 @@ The cost of an unnecessary major bump is low; the cost of a missed breaking chan
 
 ### Format
 
-Follow the Keep a Changelog format (<https://keepachangelog.com>).
+Follow the Keep a Changelog format (<https://keepachangelog.com>; vendored at `vendor/keep-a-changelog/`).
 
 Sections (use only those that apply per release):
 

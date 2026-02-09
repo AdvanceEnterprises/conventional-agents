@@ -163,6 +163,17 @@ cat .agents/templates/reviewer/test-review-template.md
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
+## Upstream References
+
+This framework builds on established community specifications, vendored as git submodules:
+
+- **Conventional Commits** — `vendor/conventional-commits/` · [conventionalcommits.org](https://www.conventionalcommits.org/) · Commit message conventions used throughout our guidelines.
+- **Keep a Changelog** — `vendor/keep-a-changelog/` · [keepachangelog.com](https://keepachangelog.com/) · Changelog format used in our versioning workflow.
+
+Recommended reading:
+
+- **Architecture Decision Records** — [joelparkerhenderson/architecture-decision-record](https://github.com/joelparkerhenderson/architecture-decision-record) · Comprehensive ADR resource with examples, templates, and rationale.
+
 ## License
 
 MIT License. See [LICENSE](./LICENSE) for details.
