@@ -3,5 +3,6 @@ default: true
 # Allow arbitrary line length (one-sentence-per-line style)
 MD013: false
 
-# Allow duplicate headings (needed for CHANGELOG sections: Added, Changed, Fixed repeat per release)
-MD024: false
+# Allow duplicate sibling headings (needed for CHANGELOG: Added, Changed, Fixed repeat per release)
+MD024:
+  siblings_only: true
