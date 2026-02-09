@@ -25,7 +25,7 @@ Recommended: submodule + stub pattern
 
 # 1) Add submodule
 # Note: replace with the actual repository URL when known
-git submodule add <REPO_URL> vendor/agent-dev-kit
+git submodule add <REPO_URL> vendor/agentic-dev-kit
 
 git submodule update --init
 
@@ -34,33 +34,33 @@ cat > AGENTS.md << 'EOF'
 # Agent Instructions
 
 ## Read First
-- vendor/agent-dev-kit/guidelines/index.md
-- vendor/agent-dev-kit/roles/index.md
+- vendor/agentic-dev-kit/guidelines/index.md
+- vendor/agentic-dev-kit/roles/index.md
 
 ## Universal Gates
-- vendor/agent-dev-kit/roles/ROLE_CONTRACT.md
+- vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md
 
 ## Minimum Quality Gates
-- vendor/agent-dev-kit/guidelines/tests.md
-- vendor/agent-dev-kit/guidelines/commit-and-pr.md
+- vendor/agentic-dev-kit/guidelines/tests.md
+- vendor/agentic-dev-kit/guidelines/commit-and-pr.md
 
 ## Precedence Rules
-See vendor/agent-dev-kit/INTEGRATION.md
+See vendor/agentic-dev-kit/INTEGRATION.md
 
 ## Project-Specific Rules
 (Add your project-specific context here)
 EOF
 
 # 3) Commit
-git add .gitmodules vendor/agent-dev-kit AGENTS.md
+git add .gitmodules vendor/agentic-dev-kit AGENTS.md
 git commit -m "Add agentic-dev-kit foundation layer"
 
 Alternative: copy-in pattern
 
 Use this when a tool only reads root files.
 
-cp vendor/agent-dev-kit/packs/agents-md/AGENTS.full.example.md ./AGENTS.md
-cp vendor/agent-dev-kit/packs/claude/CLAUDE.full.example.md ./CLAUDE.md
+cp vendor/agentic-dev-kit/packs/agents-md/AGENTS.full.example.md ./AGENTS.md
+cp vendor/agentic-dev-kit/packs/claude/CLAUDE.full.example.md ./CLAUDE.md
 
 # Customize
 vim AGENTS.md
@@ -74,9 +74,9 @@ Canonical hierarchy
 
 When multiple instruction sources exist, apply this binding order:
 1.	Host repo project-specific rules in root AGENTS.md (highest authority)
-2.	Universal gates and guardrails: vendor/agent-dev-kit/roles/ROLE_CONTRACT.md (cannot be weakened)
-3.	Role-specific contracts: vendor/agent-dev-kit/roles/<role>.md
-4.	Guidelines: vendor/agent-dev-kit/guidelines/
+2.	Universal gates and guardrails: vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md (cannot be weakened)
+3.	Role-specific contracts: vendor/agentic-dev-kit/roles/<role>.md
+4.	Guidelines: vendor/agentic-dev-kit/guidelines/
 5.	Tool-specific configs: CLAUDE.md, .cursorrules, editor settings, etc.
 
 If instructions conflict, lower number wins.
@@ -85,9 +85,9 @@ Detailed precedence
 
 Priority	Source	Scope	Can override?
 1	Root AGENTS.md project-specific sections	Project decisions and constraints	Can override 3 to 5 and can strengthen 2
-2	vendor/agent-dev-kit/roles/ROLE_CONTRACT.md	Universal gates and guardrails	Cannot be weakened
-3	vendor/agent-dev-kit/roles/<role>.md	Role-specific behavior and gates	Can strengthen 4 to 5
-4	vendor/agent-dev-kit/guidelines/	General practices and checklists	Can be tailored by 1 and 3
+2	vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md	Universal gates and guardrails	Cannot be weakened
+3	vendor/agentic-dev-kit/roles/<role>.md	Role-specific behavior and gates	Can strengthen 4 to 5
+4	vendor/agentic-dev-kit/guidelines/	General practices and checklists	Can be tailored by 1 and 3
 5	Tool configs (CLAUDE.md, .cursorrules, etc.)	Tool-specific hints	Must defer to 1 to 4
 
 Strengthening vs weakening
@@ -136,7 +136,11 @@ your-repo/
 ├── AGENTS.md
 ├── CLAUDE.md (optional)
 └── vendor/
-    └── agent-dev-kit/
+    └── agentic-dev-kit/
+        ├── ...
+        └── vendor/
+            ├── conventional-commits/   # Conventional Commits spec
+            └── keep-a-changelog/       # Keep a Changelog spec
 
 Pros:
 -	Single source of truth
@@ -177,14 +181,14 @@ Minimal stub:
 # Agent Instructions
 
 ## Foundation Standards
-- vendor/agent-dev-kit/guidelines/index.md
-- vendor/agent-dev-kit/roles/ROLE_CONTRACT.md
+- vendor/agentic-dev-kit/guidelines/index.md
+- vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md
 
 ## Project Context
 (Add project-specific information)
 
 ## Precedence
-See vendor/agent-dev-kit/INTEGRATION.md
+See vendor/agentic-dev-kit/INTEGRATION.md
 
 CLAUDE.md (Claude tooling)
 
@@ -195,24 +199,24 @@ Purpose: Claude-specific additions. Must defer to AGENTS.md.
 Defer to AGENTS.md.
 
 Foundation:
-- vendor/agent-dev-kit/guidelines/index.md
-- vendor/agent-dev-kit/roles/ROLE_CONTRACT.md
+- vendor/agentic-dev-kit/guidelines/index.md
+- vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md
 
-Precedence: vendor/agent-dev-kit/INTEGRATION.md
+Precedence: vendor/agentic-dev-kit/INTEGRATION.md
 
 Aider
 
 Reference via config:
 
 read:
-  - vendor/agent-dev-kit/packs/aider/CONVENTIONS.md
-  - vendor/agent-dev-kit/roles/ROLE_CONTRACT.md
-  - vendor/agent-dev-kit/guidelines/tests.md
-  - vendor/agent-dev-kit/guidelines/commit-and-pr.md
+  - vendor/agentic-dev-kit/packs/aider/CONVENTIONS.md
+  - vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md
+  - vendor/agentic-dev-kit/guidelines/tests.md
+  - vendor/agentic-dev-kit/guidelines/commit-and-pr.md
 
 Or copy:
 
-cp vendor/agent-dev-kit/packs/aider/CONVENTIONS.md ./CONVENTIONS.md
+cp vendor/agentic-dev-kit/packs/aider/CONVENTIONS.md ./CONVENTIONS.md
 
 Cursor and other editors
 
@@ -221,8 +225,8 @@ Treat editor rule files as lower precedence (Priority 5). Keep them short and po
 Example .cursorrules stub:
 
 Defer to AGENTS.md.
-Universal gates: vendor/agent-dev-kit/roles/ROLE_CONTRACT.md
-Precedence: vendor/agent-dev-kit/INTEGRATION.md
+Universal gates: vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md
+Precedence: vendor/agentic-dev-kit/INTEGRATION.md
 
 Codex
 
@@ -233,14 +237,14 @@ Example CODEX_CONTEXT.md:
 # Codex Context
 
 Foundation:
-- vendor/agent-dev-kit/guidelines/index.md
-- vendor/agent-dev-kit/roles/ROLE_CONTRACT.md
+- vendor/agentic-dev-kit/guidelines/index.md
+- vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md
 
 Role:
-- vendor/agent-dev-kit/roles/test-writer.md
+- vendor/agentic-dev-kit/roles/test-writer.md
 
 Precedence:
-- vendor/agent-dev-kit/INTEGRATION.md
+- vendor/agentic-dev-kit/INTEGRATION.md
 
 Spec Kit
 
@@ -250,12 +254,12 @@ Recommended hook: .specify/memory/constitution.md
 
 ## Article IX: Code Quality Standards
 
-Reference: vendor/agent-dev-kit/integrations/spec-kit.md
+Reference: vendor/agentic-dev-kit/integrations/spec-kit.md
 
 Mandatory:
-- Universal gates: vendor/agent-dev-kit/roles/ROLE_CONTRACT.md
-- Testing: vendor/agent-dev-kit/guidelines/tests.md
-- PR hygiene: vendor/agent-dev-kit/guidelines/commit-and-pr.md
+- Universal gates: vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md
+- Testing: vendor/agentic-dev-kit/guidelines/tests.md
+- PR hygiene: vendor/agentic-dev-kit/guidelines/commit-and-pr.md
 
 
 ⸻
@@ -264,7 +268,7 @@ Multi-Agent Coordination
 
 Baseline
 1.	All agents read root AGENTS.md
-2.	Universal gates apply to all roles: vendor/agent-dev-kit/roles/ROLE_CONTRACT.md
+2.	Universal gates apply to all roles: vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md
 3.	Tool-specific files are additive, not authoritative
 
 Handoff protocol
@@ -295,7 +299,7 @@ cat AGENTS.md
 
 git submodule status
 
-ls -la vendor/agent-dev-kit/guidelines/
+ls -la vendor/agentic-dev-kit/guidelines/
 
 Solutions:
 1.	Ensure AGENTS.md references the correct paths
@@ -324,7 +328,7 @@ Symptoms:
 
 Diagnosis:
 
-cd vendor/agent-dev-kit
+cd vendor/agentic-dev-kit
 
 git log --oneline HEAD@{1}..HEAD
 

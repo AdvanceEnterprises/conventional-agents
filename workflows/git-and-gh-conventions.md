@@ -52,7 +52,7 @@ Use these prefixes:
 
 ## Commits
 
-Use Conventional Commits (lite):
+Use Conventional Commits (lite) — based on the [Conventional Commits](https://www.conventionalcommits.org/) spec (vendored at `vendor/conventional-commits/`):
 
 - `feat: ...`
 - `fix: ...`
