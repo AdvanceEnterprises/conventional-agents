@@ -73,8 +73,8 @@ Additionally, the joelparkerhenderson/architecture-decision-record resource shou
 
 ## Success Criteria
 
-- Given a fresh clone with `--recurse-submodules`, when checking `vendor/conventional-commits/`, then it contains the Conventional Commits spec at `content/v1.0.0/index.md`
-- Given a fresh clone with `--recurse-submodules`, when checking `vendor/keep-a-changelog/`, then it contains the Keep a Changelog source files
+- Given a fresh clone with `--recurse-submodules`, when checking `vendor/conventional-commits/`, then it contains the Conventional Commits specification content (pinned to a known commit; spec text is accessible under `content/`)
+- Given a fresh clone with `--recurse-submodules`, when checking `vendor/keep-a-changelog/`, then it contains the Keep a Changelog specification source (pinned to a known commit)
 - Given the README.md, when reading it, then an "Upstream References" section lists both vendored specs and the joelparkerhenderson ADR resource
 - Given `workflows/versioning-and-releases.md`, when reading changelog or commit convention sections, then vendor paths are referenced alongside external URLs
 - Given `CHANGELOG.md`, when reading the format header, then it references the vendored spec
