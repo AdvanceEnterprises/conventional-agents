@@ -11,6 +11,35 @@ For this project (a documentation/standards kit), semver follows the
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-02-16
+
+### Added
+
+- Non-overridable safety gates ("super-gates") — a new precedence level (level 0) above project AGENTS.md (ADR-0012, FS-0018).
+- PR merge prohibition: agents must not merge pull requests (non-overridable safety gate).
+- GitHub identity verification gate: agents must run `gh auth status` before every `gh`/`git push` operation (non-overridable safety gate).
+- Spec-first rule in ROLE_CONTRACT: approved FS + PLAN required before implementation; exceptions for trivial fixes and hotfixes.
+- Document hygiene gate in ROLE_CONTRACT: 6-item pre-commit/PR checklist (statuses, dates, READMEs, CHANGELOG, cross-refs, interface alignment).
+- `workflows/document-lifecycle.md` — status values, transition rules, front matter hygiene, README index maintenance for FS/PLAN/ADR documents.
+- Document index tables in `docs/specifications/README.md`, `docs/change-plans/README.md`, and `docs/decisions/README.md` with agent-update requirements.
+- Vendored upstream specs: Conventional Commits (`vendor/conventional-commits/`) and Keep a Changelog (`vendor/keep-a-changelog/`) as git submodules (FS-0017, PLAN-0009).
+- "Upstream References" section in README with vendored specs and joelparkerhenderson ADR resource.
+- ADR-0012: Introduce non-overridable gates (super-gates).
+- FS-0017, FS-0018, PLAN-0009, PLAN-0010.
+
+### Changed
+
+- INTEGRATION.md precedence model: added level 0 for non-overridable safety gates; renumbered existing levels.
+- `workflows/git-and-gh-conventions.md`: added identity verification step 0 and merge prohibition in step 8.
+- `workflows/README.md`: added missing `versioning-and-releases.md` entry and new `document-lifecycle.md` entry.
+- ROLE_CONTRACT: "Non-Overridable Safety Gates" section clearly labeled and scoped per ADR-0012.
+- Vendor path references in INTEGRATION.md normalized from `agent-dev-kit` to `agentic-dev-kit`.
+
+### Fixed
+
+- INTEGRATION.md tool configs precedence row was self-referencing ("Must defer to 1 to 5" → "Must defer to 0 to 4").
+- PLAN-0005 status normalized from non-standard `ready` to `approved` per lifecycle vocabulary.
+
 ## [1.1.0] - 2026-02-08
 
 ### Added

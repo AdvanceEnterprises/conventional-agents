@@ -83,7 +83,7 @@ Before marking a PR as ready for review, verify all of the following:
 	1.	Status fields are current: All FS and PLAN documents referenced by this PR have accurate `status:` values. See `workflows/document-lifecycle.md` for valid transitions.
 	2.	`updated:` dates are current: Any modified FS, PLAN, or ADR has its `updated:` front matter field set to today's date.
 	3.	README index files are current: If you added or changed the status of a document in `docs/specifications/`, `docs/change-plans/`, or `docs/decisions/`, the corresponding `README.md` in that directory reflects the change.
-	4.	CHANGELOG entry exists: If this PR introduces a user-visible change (feature, fix, breaking change), there is a corresponding entry in `CHANGELOG.md` under `[Unreleased]` or the appropriate version section.
+	4.	CHANGELOG entry exists: If this PR introduces a user-visible change (feature, fix, breaking change), there is a corresponding entry in `CHANGELOG.md` under `[Unreleased]` or the appropriate version section. For release-prep PRs, also update the framework version in `README.md` and `package.json` (or equivalent manifest).
 	5.	Cross-references are complete: FS `related_adrs` and PLAN `related_specs` front matter fields reference all relevant companion documents.
 	6.	Interfaces match reality: The files touched by this PR align with the `interfaces:` declared in the governing FS. If they diverge, update the FS or explain in the PR description.
 
