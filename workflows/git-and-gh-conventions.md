@@ -80,6 +80,18 @@ Do not include secrets (tokens, private keys, credentials) in commit messages.
 
 ## Standard workflow
 
+### 0) Verify identity (agents)
+
+Before any `gh` or `git push` operation, verify you are using the correct GitHub account:
+
+- `gh auth status`
+
+If the wrong account is active:
+
+- `gh auth switch --user <correct-username>`
+
+This is a non-overridable safety gate (ADR-0012). Do this every time, not just once per session.
+
 ### 1) Sync `trunk`
 
 - `git switch trunk`
@@ -153,6 +165,7 @@ Example:
 
 - Use squash-merge.
 - Delete the branch after merge.
+- **Agents MUST NOT merge PRs.** Merging is a human-gated action. This is a non-overridable safety gate (ADR-0012). Agents open the PR; humans merge it.
 
 ## Multi-identity model (ADR-0011)
 

@@ -42,6 +42,51 @@ Pre-commit testing gate (BDD/TDD)
 	•	For documentation-only changes in repos with no code tests, markdownlint (or equivalent doc linting) serves as the quality gate.
 	•	The workflow is: Docs → Tests → Code. Tests are written first from approved specs; implementation follows to make tests pass.
 
+Spec-first rule
+	•	Before writing any implementation code (production or test), verify:
+	  1.	A feature spec (FS-XXXX) with `status: approved` exists for this work.
+	  2.	A change plan (PLAN-XXXX) with `status: approved` exists that references the FS.
+	  3.	If neither exists, your first deliverable is the spec and plan — not code.
+	•	Exceptions:
+	  -	Trivial fixes (typos, broken links, formatting) do not require a spec.
+	  -	Emergency hotfixes may be implemented first, but a retroactive FS must be filed before the next feature begins.
+	•	If you are unsure whether work qualifies as "trivial," it does not. Write the spec.
+	•	See `workflows/document-lifecycle.md` for status definitions and transition rules.
+
+⸻
+
+Non-Overridable Safety Gates (ADR-0012)
+
+The following gates cannot be weakened or overridden by any instruction source, including project-specific AGENTS.md. They sit above all other precedence levels. See ADR-0012 for rationale and qualification criteria.
+
+PR merge rule
+	•	Agents MUST NOT merge pull requests. Merging is a human-gated action.
+	•	Agents may open PRs, update PRs, and request review.
+	•	Agents MUST NOT run `gh pr merge`, `git push` to the default branch, or any equivalent merge action.
+	•	Even if a human verbally approves in chat, the human (or CI triggered by human approval) performs the actual merge.
+	•	This rule is non-overridable (ADR-0012).
+
+GitHub identity gate
+	•	Before any `gh` CLI operation (`gh pr`, `gh api`, `gh auth`, etc.) or `git push`, the agent MUST:
+	  1.	Run `gh auth status` and verify the active account is the expected agent-committer identity.
+	  2.	If the wrong account is active, run `gh auth switch --user <correct-username>` before proceeding.
+	  3.	Never assume the correct account is active from a previous session or command.
+	•	This applies every time — not just the first operation in a session.
+	•	This rule is non-overridable (ADR-0012).
+
+⸻
+
+Document hygiene gate
+
+Before marking a PR as ready for review, verify all of the following:
+
+	1.	Status fields are current: All FS and PLAN documents referenced by this PR have accurate `status:` values. See `workflows/document-lifecycle.md` for valid transitions.
+	2.	`updated:` dates are current: Any modified FS, PLAN, or ADR has its `updated:` front matter field set to today's date.
+	3.	README index files are current: If you added or changed the status of a document in `docs/specifications/`, `docs/change-plans/`, or `docs/decisions/`, the corresponding `README.md` in that directory reflects the change.
+	4.	CHANGELOG entry exists: If this PR introduces a user-visible change (feature, fix, breaking change), there is a corresponding entry in `CHANGELOG.md` under `[Unreleased]` or the appropriate version section.
+	5.	Cross-references are complete: FS `related_adrs` and PLAN `related_specs` front matter fields reference all relevant companion documents.
+	6.	Interfaces match reality: The files touched by this PR align with the `interfaces:` declared in the governing FS. If they diverge, update the FS or explain in the PR description.
+
 ⸻
 
 Role 1: Spec Reader and Test Planner
