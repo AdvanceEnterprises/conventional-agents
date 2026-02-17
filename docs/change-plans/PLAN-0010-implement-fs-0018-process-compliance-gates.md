@@ -2,7 +2,7 @@
 type: change-plan
 role: implementer
 language: markdown
-status: in-progress
+status: implemented
 related_specs: [FS-0018]
 related_adrs: [ADR-0012]
 created: 2026-02-16

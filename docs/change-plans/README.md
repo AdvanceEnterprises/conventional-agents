@@ -41,4 +41,4 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | PLAN-0007 | Implement FS-0015 Versioning/Releases | FS-0015 | approved |
 | PLAN-0008 | Implement FS-0016 Self-Versioning | FS-0016 | approved |
 | PLAN-0009 | Vendor Upstream Specs | FS-0017 | approved |
-| PLAN-0010 | Implement FS-0018 Process Compliance Gates | FS-0018 | in-progress |
+| PLAN-0010 | Implement FS-0018 Process Compliance Gates | FS-0018 | implemented |
