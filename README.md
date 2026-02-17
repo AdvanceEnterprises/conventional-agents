@@ -180,5 +180,5 @@ MIT License. See [LICENSE](./LICENSE) for details.
 
 ---
 
-**Framework Version:** 1.1.0
-**Last Updated:** 2026-02-08
+**Framework Version:** 1.2.0
+**Last Updated:** 2026-02-16
