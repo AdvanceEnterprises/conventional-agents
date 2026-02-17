@@ -56,6 +56,8 @@ Observed failure modes (in order of frequency):
 6. **Cross-reference gaps**: New FS/PLAN/ADR documents don't reference related documents in their front matter (`related_adrs`, `related_specs`), making the document graph disconnected.
 7. **Interface drift**: FS declares interfaces but the implementation touches files not listed (or misses files that were listed).
 8. **Premature implementation**: Agent creates a spec with `status: draft` and immediately starts implementing without waiting for approval.
+9. **Unauthorized merges**: Agent merges PRs without waiting for human review and approval. PRs should only be merged by humans or after explicit human approval.
+10. **Identity confusion**: When multiple GitHub accounts are logged in via `gh auth`, agents fail to verify the correct identity is active before running `gh` commands (push, PR creation, reviews), resulting in actions attributed to the wrong account.
 
 ## Goals
 
@@ -64,6 +66,8 @@ Observed failure modes (in order of frequency):
 - Add a **pre-commit/PR checklist** that catches status drift, README neglect, and CHANGELOG omission
 - Make **README update requirements** explicit for each docs subdirectory
 - Add **front matter hygiene rules** (updated dates, cross-references)
+- Add a **merge prohibition** to ROLE_CONTRACT: agents must not merge PRs without human approval
+- Add a **GitHub identity verification gate**: agents must confirm the active `gh` account before any GitHub CLI operation
 - Codify all of the above in a new `workflows/document-lifecycle.md` and updates to ROLE_CONTRACT
 
 ## Non-Goals
@@ -87,7 +91,8 @@ Observed failure modes (in order of frequency):
 
 ### Modified files
 
-- **`guidelines/ROLE_CONTRACT.md`** — add spec-first gate, pre-commit document checklist, and reference to document-lifecycle workflow
+- **`guidelines/ROLE_CONTRACT.md`** — add spec-first gate, merge prohibition, identity verification gate, pre-commit document checklist, and reference to document-lifecycle workflow
+- **`workflows/git-and-gh-conventions.md`** — reinforce identity verification and merge prohibition in the standard workflow
 - **`workflows/README.md`** — add entry for new document-lifecycle workflow
 - **`docs/specifications/README.md`** — add explicit requirement that this file must be updated when specs are added/change status
 - **`docs/change-plans/README.md`** — same requirement for change plans
@@ -160,7 +165,35 @@ Add to ROLE_CONTRACT under a new "Document hygiene gate" section:
 > 5. **Cross-references are complete**: FS `related_adrs` and PLAN `related_specs` front matter fields reference all relevant companion documents.
 > 6. **Interfaces match reality**: The files touched by this PR align with the `interfaces:` declared in the governing FS. If they diverge, update the FS or explain in the PR description.
 
-### 4. README Index Requirements
+### 4. Merge Prohibition (ROLE_CONTRACT addition)
+
+Add to "Shared Rules" in ROLE_CONTRACT:
+
+> **PR merge rule**
+>
+> Agents MUST NOT merge pull requests. Merging is a human-gated action.
+>
+> - Agents may open PRs, update PRs, and request review.
+> - Agents MUST NOT run `gh pr merge`, `git push` to the default branch, or any equivalent merge action.
+> - Even if a human verbally approves in chat, the human (or CI triggered by human approval) performs the actual merge.
+>
+> This is non-negotiable and cannot be overridden by project-specific rules.
+
+### 5. GitHub Identity Verification Gate (ROLE_CONTRACT addition)
+
+Add to "Shared Rules" in ROLE_CONTRACT:
+
+> **GitHub identity gate**
+>
+> Before any `gh` CLI operation (push, PR creation, review, comment) or `git push`, the agent MUST:
+>
+> 1. Run `gh auth status` and verify the active account is the expected agent-committer identity.
+> 2. If the wrong account is active, run `gh auth switch --user <correct-username>` before proceeding.
+> 3. Never assume the correct account is active from a previous session or command.
+>
+> This applies every time — not just the first operation in a session. Identity can change between operations if other tools or agents share the environment.
+
+### 6. README Index Requirements
 
 Each docs subdirectory README should include:
 
@@ -178,6 +211,8 @@ Each docs subdirectory README should include:
 - Given `docs/specifications/README.md`, when reading it, then it includes a note requiring agents to update the file when adding specs or changing statuses
 - Given `docs/change-plans/README.md`, when reading it, then it includes a note requiring agents to update the file when adding plans or changing statuses
 - Given `docs/decisions/README.md`, when reading it, then it includes a note requiring agents to update the file when adding ADRs or changing statuses
+- Given ROLE_CONTRACT, when reading it, then a "PR merge rule" subsection exists that prohibits agents from merging PRs and states this cannot be overridden
+- Given ROLE_CONTRACT, when reading it, then a "GitHub identity gate" subsection exists that requires `gh auth status` verification before every `gh` or `git push` operation
 
 ## Edge Cases
 
