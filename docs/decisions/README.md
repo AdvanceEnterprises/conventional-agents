@@ -2,6 +2,8 @@
 
 This README defines how we write, review, and maintain Architecture Decision Records (ADRs) in this repo.
 
+**Agents MUST update this file when adding new ADRs or changing ADR statuses.**
+
 - ADRs capture a single significant decision, plus the context and consequences.
 - ADRs are intended to be durable, searchable, and safe to treat as constraints once accepted.
 
@@ -179,3 +181,21 @@ If validation fails:
   - [ ] New ADR created
   - [ ] Old ADR status updated to `deprecated` or `superseded`
   - [ ] Cross-links added
+
+## Current ADRs
+
+| ID | Title | Status |
+|---|---|---|
+| ADR-0000 | Use MADR for architecture decisions | accepted |
+| ADR-0001 | Adopt prescriptive templates for LLM-driven development | accepted |
+| ADR-0002 | Use explicit role contracts for coding agents | accepted |
+| ADR-0003 | Adopt evidence-graded guidelines as a first-class document type | accepted |
+| ADR-0004 | Define instruction precedence for multi-source agent environments | accepted |
+| ADR-0005 | Adopt skill-pack pattern for portable agent capabilities | accepted |
+| ADR-0006 | Adopt BDD-style feature specifications as the primary requirements format | accepted |
+| ADR-0007 | Adopt structured change plans as a required pre-implementation artifact | accepted |
+| ADR-0008 | Adopt markdownlint as the baseline markdown quality gate | accepted |
+| ADR-0009 | Separate exported surface from internal governance docs | accepted |
+| ADR-0010 | Adopt arc42 as the architecture documentation framework | accepted |
+| ADR-0011 | Adopt multi-identity GitHub model | accepted |
+| ADR-0012 | Introduce non-overridable gates (super-gates) | accepted |
