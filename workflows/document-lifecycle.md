@@ -67,6 +67,10 @@ When a PR completes the final step of a PLAN:
 - Set the governing FS to `status: implemented`
 - Both status changes MUST be included in that PR — not deferred to a follow-up
 
+### Single-PR implementations
+
+When a PLAN is fully implemented in a single PR, the status may go directly from `approved` to `implemented` in that PR. Setting `in-progress` as an intermediate step is not required when the entire implementation ships in one PR.
+
 ### Multi-PR implementations
 
 Some PLANs span multiple PRs. In this case:

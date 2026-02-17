@@ -90,7 +90,7 @@ Priority	Source	Scope	Can override?
 2	vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md	Universal gates and guardrails	Cannot be weakened
 3	vendor/agentic-dev-kit/roles/<role>.md	Role-specific behavior and gates	Can strengthen 4 to 5
 4	vendor/agentic-dev-kit/guidelines/	General practices and checklists	Can be tailored by 1 and 3
-5	Tool configs (CLAUDE.md, .cursorrules, etc.)	Tool-specific hints	Must defer to 1 to 5
+5	Tool configs (CLAUDE.md, .cursorrules, etc.)	Tool-specific hints	Must defer to 0 to 4
 
 Strengthening vs weakening
 

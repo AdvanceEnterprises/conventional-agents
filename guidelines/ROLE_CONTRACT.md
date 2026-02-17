@@ -67,7 +67,7 @@ PR merge rule
 	•	This rule is non-overridable (ADR-0012).
 
 GitHub identity gate
-	•	Before any `gh` CLI operation (push, PR creation, review, comment) or `git push`, the agent MUST:
+	•	Before any `gh` CLI operation (`gh pr`, `gh api`, `gh auth`, etc.) or `git push`, the agent MUST:
 	  1.	Run `gh auth status` and verify the active account is the expected agent-committer identity.
 	  2.	If the wrong account is active, run `gh auth switch --user <correct-username>` before proceeding.
 	  3.	Never assume the correct account is active from a previous session or command.
