@@ -2,7 +2,7 @@
 type: change-plan
 role: implementer
 language: python
-status: ready
+status: approved
 related_specs: [FS-0002]
 related_adrs: [ADR-0001, ADR-0002]
 created: 2026-02-05

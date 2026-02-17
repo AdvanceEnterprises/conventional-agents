@@ -73,7 +73,8 @@ Precedence Rules
 Canonical hierarchy
 
 When multiple instruction sources exist, apply this binding order:
-1.	Host repo project-specific rules in root AGENTS.md (highest authority)
+0.	Non-overridable safety gates: ROLE_CONTRACT § Non-Overridable Safety Gates (cannot be weakened by any source; see ADR-0012)
+1.	Host repo project-specific rules in root AGENTS.md (highest project-level authority)
 2.	Universal gates and guardrails: vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md (cannot be weakened)
 3.	Role-specific contracts: vendor/agentic-dev-kit/roles/<role>.md
 4.	Guidelines: vendor/agentic-dev-kit/guidelines/
@@ -84,11 +85,12 @@ If instructions conflict, lower number wins.
 Detailed precedence
 
 Priority	Source	Scope	Can override?
+0	ROLE_CONTRACT § Non-Overridable Safety Gates	Safety-critical rules (ADR-0012)	Cannot be overridden by any source
 1	Root AGENTS.md project-specific sections	Project decisions and constraints	Can override 3 to 5 and can strengthen 2
 2	vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md	Universal gates and guardrails	Cannot be weakened
 3	vendor/agentic-dev-kit/roles/<role>.md	Role-specific behavior and gates	Can strengthen 4 to 5
 4	vendor/agentic-dev-kit/guidelines/	General practices and checklists	Can be tailored by 1 and 3
-5	Tool configs (CLAUDE.md, .cursorrules, etc.)	Tool-specific hints	Must defer to 1 to 4
+5	Tool configs (CLAUDE.md, .cursorrules, etc.)	Tool-specific hints	Must defer to 0 to 4
 
 Strengthening vs weakening
 
