@@ -1,0 +1,27 @@
+# GitHub Project board metadata for agentic-dev-kit
+# Used by agents for programmatic board access via `gh project` CLI.
+
+project:
+  number: 2
+  id: "PVT_kwDOD3aO3M4BQcYf"
+  url: "https://github.com/orgs/Tais-Den/projects/2"
+  title: "agentic-dev-kit Development"
+  owner: "Tais-Den"
+
+fields:
+  status:
+    id: "PVTSSF_lADOD3aO3M4BQcYfzg-j7U8"
+    options:
+      backlog: "be1c8d8c"
+      approved: "f0b3a6b2"
+      in_progress: "5f70f190"
+      in_review: "34f45195"
+      done: "55f6e1a3"
+
+  doc_type:
+    id: "PVTSSF_lADOD3aO3M4BQcYfzg-j7Xc"
+    options:
+      fs: "360abf74"
+      plan: "2c7b8a7d"
+      task: "e5ad34b1"
+      bug: "ab9eda03"

@@ -52,4 +52,4 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0016 | Self-Versioning and Changelog | approved |
 | FS-0017 | Vendor Upstream Specs | approved |
 | FS-0018 | Process Compliance Gates and Document Lifecycle | implemented |
-| FS-0019 | Adopt GitHub Projects for Work Tracking | draft |
+| FS-0019 | Adopt GitHub Projects for Work Tracking | implemented |

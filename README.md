@@ -12,6 +12,12 @@ This framework is based on evidence-based practices, not opinions. Every guideli
 
 **Core principle:** Evidence over preference.
 
+## Project Board
+
+Work tracking for this repo: [agentic-dev-kit Development](https://github.com/orgs/Tais-Den/projects/2)
+
+Board configuration (field IDs, column mappings): [`config/project.yml`](./config/project.yml)
+
 ## What's Included
 
 ### Exported Surface vs Internal Governance (the “recursive” property)

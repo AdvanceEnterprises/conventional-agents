@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0019
-status: draft
+status: implemented
 title: Adopt GitHub Projects for work tracking
 owner: Tai
 test_required: false
@@ -33,7 +33,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Implemented
 
 ## Summary
 
@@ -83,8 +83,8 @@ Each bullet MUST be objectively testable.
 
 **Backfill:**
 
-- Given all FS documents (FS-0001 through FS-0019, including this spec), when listing project items, then each has a corresponding GitHub Issue on the board with the correct Status column and Doc Type = FS.
-- Given all PLAN documents (PLAN-0001 through PLAN-0011, including this plan's companion), when listing project items, then each has a corresponding GitHub Issue on the board with the correct Status column and Doc Type = PLAN.
+- Given all 11 FS documents (FS-0001, FS-0002, FS-0011 through FS-0019), when listing project items, then each has a corresponding GitHub Issue on the board with the correct Status column and Doc Type = FS.
+- Given all 11 PLAN documents (PLAN-0001 through PLAN-0011), when listing project items, then each has a corresponding GitHub Issue on the board with the correct Status column and Doc Type = PLAN.
 - Given a completed FS or PLAN (status: implemented), when viewing the board, then its issue appears in the Done column.
 
 **Auto-add:**
