@@ -18,6 +18,7 @@ tags:
 created: 2026-02-28
 updated: 2026-02-28
 ---
+
 <!--
 PARSING_HINTS:
 - This document defines desired behavior.
@@ -82,8 +83,8 @@ Each bullet MUST be objectively testable.
 
 **Backfill:**
 
-- Given all existing FS documents (FS-0001 through FS-0018), when listing project items, then each has a corresponding GitHub Issue on the board with the correct Status column and Doc Type = FS.
-- Given all existing PLAN documents (PLAN-0001 through PLAN-0010), when listing project items, then each has a corresponding GitHub Issue on the board with the correct Status column and Doc Type = PLAN.
+- Given all FS documents (FS-0001 through FS-0019, including this spec), when listing project items, then each has a corresponding GitHub Issue on the board with the correct Status column and Doc Type = FS.
+- Given all PLAN documents (PLAN-0001 through PLAN-0011, including this plan's companion), when listing project items, then each has a corresponding GitHub Issue on the board with the correct Status column and Doc Type = PLAN.
 - Given a completed FS or PLAN (status: implemented), when viewing the board, then its issue appears in the Done column.
 
 **Auto-add:**
