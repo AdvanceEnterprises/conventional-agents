@@ -43,3 +43,4 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | PLAN-0009 | Vendor Upstream Specs | FS-0017 | approved |
 | PLAN-0010 | Implement FS-0018 Process Compliance Gates | FS-0018 | implemented |
 | PLAN-0011 | Adopt GitHub Projects for Work Tracking | FS-0019 | implemented |
+| PLAN-0012 | Renumber Feature Specs to Sequential IDs | FS-0020 | draft |

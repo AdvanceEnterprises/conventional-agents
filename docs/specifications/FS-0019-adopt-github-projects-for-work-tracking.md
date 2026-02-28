@@ -134,3 +134,7 @@ Each bullet MUST be objectively testable.
 ## Open Questions
 
 None — the pattern is established by pack-protocol's reference implementation.
+
+## Note: Pending Renumber
+
+This spec is currently FS-0019 but will be renumbered to **FS-0011** as part of FS-0020 (sequential ID renumbering). See FS-0020 for the full mapping.
