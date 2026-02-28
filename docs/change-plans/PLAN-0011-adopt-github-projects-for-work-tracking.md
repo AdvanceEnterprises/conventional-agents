@@ -108,13 +108,13 @@ GitHub-side (not file changes):
 4. Update `docs/change-plans/README.md`: add PLAN-0011 row.
 5. Add CHANGELOG entry under `[Unreleased]`.
 
-### Phase 4: Manual UI steps (human-gated)
+### Phase 4: Manual UI steps (human-gated) ✅ Complete
 
-These require GitHub UI and cannot be done via CLI:
+These require GitHub UI and cannot be done via CLI. Completed by Tai on 2026-02-28.
 
-1. Enable "Auto-add to project" workflow for the agentic-dev-kit repo.
-2. Enable built-in "Item closed → Done" workflow.
-3. Enable built-in "PR merged → Done" workflow.
+1. ✅ Enable "Auto-add to project" workflow for the agentic-dev-kit repo.
+2. ✅ Enable built-in "Item closed → Done" workflow.
+3. ✅ Enable built-in "PR merged → Done" workflow.
 
 ### Phase 5: Validate
 
@@ -135,7 +135,7 @@ These require GitHub UI and cannot be done via CLI:
 - **Auto-add is UI-only:** Cannot be configured via CLI. Phase 4 is human-gated.
 - **Draft specs (FS-0012, FS-0013):** Their issues go to Backlog, not Approved.
 - **Issue #26 already exists:** Add it to the board as-is; link it to FS-0019.
-- **Rate limits:** Creating 28+ issues in rapid succession may hit GitHub rate limits. Add brief pauses if needed.
+- **Rate limits:** Creating 22+ issues in rapid succession may hit GitHub rate limits. Add brief pauses if needed.
 
 ## 8. Validation
 
