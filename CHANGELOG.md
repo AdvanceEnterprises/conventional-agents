@@ -11,6 +11,11 @@ For this project (a documentation/standards kit), semver follows the
 
 ## [Unreleased]
 
+### Added
+
+- FS-0019: Adopt GitHub Projects for work tracking (propagation from pack-protocol ADR-0001/ADR-0002).
+- PLAN-0011: Change plan for FS-0019 implementation.
+
 ## [1.2.0] - 2026-02-16
 
 ### Added
