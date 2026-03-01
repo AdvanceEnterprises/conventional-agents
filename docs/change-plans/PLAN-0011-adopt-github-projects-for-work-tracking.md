@@ -1,7 +1,7 @@
 ---
 type: change-plan
 role: implementer
-status: draft
+status: implemented
 related_specs:
   - FS-0019
 related_adrs: []
@@ -34,7 +34,7 @@ PARSING_HINTS:
 - Create labels `spec` and `plan` in the repo (if they don't already exist).
 - Enable the "Auto-add to project" workflow via GitHub UI (manual step).
 - Enable built-in workflows: "Item closed → Done", "PR merged → Done" (manual step).
-- Create GitHub Issues for all 19 FS documents (FS-0001 through FS-0019) and all 11 PLAN documents (PLAN-0001 through PLAN-0011), totaling 30 issues.
+- Create GitHub Issues for all 11 FS documents (FS-0001, FS-0002, FS-0011 through FS-0019) and all 11 PLAN documents (PLAN-0001 through PLAN-0011), totaling 22 issues.
 - Add all issues to the project board with correct Status and Doc Type fields.
 - Create `config/project.yml` documenting board metadata, field IDs, and column option IDs.
 - Update `README.md` with a project board reference.
@@ -68,7 +68,7 @@ GitHub-side (not file changes):
 
 - GitHub Project board created
 - Labels `spec` and `plan` created
-- 30 issues created (19 FS + 11 PLAN)
+- 22 issues created (11 FS + 11 PLAN)
 - All issues added to board with correct fields
 - Auto-add workflow enabled (manual UI step)
 - Built-in close/merge workflows enabled (manual UI step)
@@ -86,7 +86,7 @@ GitHub-side (not file changes):
 
 ### Phase 2: Backfill issues
 
-1. Create GitHub Issues for each FS document (FS-0001 through FS-0019, 19 total), labeled `spec`. Issue title format: `[FS-XXXX] <title>`. Issue body references the spec file path and current status.
+1. Create GitHub Issues for each FS document (FS-0001, FS-0002, FS-0011 through FS-0019; 11 total), labeled `spec`. Issue title format: `[FS-XXXX] <title>`. Issue body references the spec file path and current status.
 2. Create GitHub Issues for each PLAN document (PLAN-0001 through PLAN-0011, 11 total), labeled `plan`. Issue title format: `[PLAN-XXXX] <title>`. Issue body references the plan file path and current status.
 3. Add each issue to the project board.
 4. Set each issue's Status field based on the document's current status:
@@ -108,17 +108,17 @@ GitHub-side (not file changes):
 4. Update `docs/change-plans/README.md`: add PLAN-0011 row.
 5. Add CHANGELOG entry under `[Unreleased]`.
 
-### Phase 4: Manual UI steps (human-gated)
+### Phase 4: Manual UI steps (human-gated) ✅ Complete
 
-These require GitHub UI and cannot be done via CLI:
+These require GitHub UI and cannot be done via CLI. Completed by Tai on 2026-02-28.
 
-1. Enable "Auto-add to project" workflow for the agentic-dev-kit repo.
-2. Enable built-in "Item closed → Done" workflow.
-3. Enable built-in "PR merged → Done" workflow.
+1. ✅ Enable "Auto-add to project" workflow for the agentic-dev-kit repo.
+2. ✅ Enable built-in "Item closed → Done" workflow.
+3. ✅ Enable built-in "PR merged → Done" workflow.
 
 ### Phase 5: Validate
 
-1. `gh project item-list <number> --owner Tais-Den` — confirm all 30 items present (19 FS + 11 PLAN).
+1. `gh project item-list <number> --owner Tais-Den` — confirm all 22 items present (11 FS + 11 PLAN), plus issue #26 (23 total).
 2. Spot-check: implemented items are in Done, draft items are in Backlog, approved items are in Approved.
 3. Create a test issue → confirm it auto-appears on the board (after Phase 4 manual step).
 4. Close the test issue → confirm it moves to Done.
@@ -135,12 +135,12 @@ These require GitHub UI and cannot be done via CLI:
 - **Auto-add is UI-only:** Cannot be configured via CLI. Phase 4 is human-gated.
 - **Draft specs (FS-0012, FS-0013):** Their issues go to Backlog, not Approved.
 - **Issue #26 already exists:** Add it to the board as-is; link it to FS-0019.
-- **Rate limits:** Creating 28+ issues in rapid succession may hit GitHub rate limits. Add brief pauses if needed.
+- **Rate limits:** Creating 22+ issues in rapid succession may hit GitHub rate limits. Add brief pauses if needed.
 
 ## 8. Validation
 
 - CLI: `gh project list --owner Tais-Den` returns the agentic-dev-kit project.
-- CLI: `gh project item-list <number> --owner Tais-Den` returns 30 items.
+- CLI: `gh project item-list <number> --owner Tais-Den` returns 23 items (22 backfilled + #26).
 - CLI: `gh project field-list <number> --owner Tais-Den` shows Status and Doc Type fields.
 - Visual: board view shows items distributed across correct columns.
 - Config: `config/project.yml` is parseable and contains all required IDs.

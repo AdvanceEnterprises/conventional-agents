@@ -13,8 +13,13 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
+- GitHub Project board "agentic-dev-kit Development" ([#2](https://github.com/orgs/Tais-Den/projects/2)) with Status columns (Backlog/Approved/In Progress/In Review/Done) and Doc Type field (FS/PLAN/Task/Bug).
+- `config/project.yml` documenting board metadata and field IDs for programmatic access.
+- Backfilled 22 GitHub Issues (11 FS + 11 PLAN) covering all existing governance documents.
 - FS-0019: Adopt GitHub Projects for work tracking (propagation from pack-protocol ADR-0001/ADR-0002).
 - PLAN-0011: Change plan for FS-0019 implementation.
+- FS-0020: Renumber feature specs to sequential IDs (eliminate FS-0003–FS-0010 gap).
+- PLAN-0012: Change plan for FS-0020 implementation.
 
 ## [1.2.0] - 2026-02-16
 
