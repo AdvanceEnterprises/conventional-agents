@@ -1,6 +1,6 @@
 ---
 type: feature-spec
-id: FS-0014
+id: FS-0006
 status: approved
 title: JavaScript/TypeScript guidelines for agentic development
 owner: Tai

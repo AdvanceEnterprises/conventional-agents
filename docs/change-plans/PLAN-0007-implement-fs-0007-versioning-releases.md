@@ -4,7 +4,7 @@ role: implementer
 language: markdown
 status: approved
 related_specs:
-  - FS-0015
+  - FS-0007
 related_adrs: []
 created: 2026-02-08
 updated: 2026-02-08
@@ -20,11 +20,11 @@ PARSING_HINTS:
 - If implementation would exceed this plan, the plan must be revised first.
 -->
 
-# Change Plan: Implement FS-0015 — Versioning, Releases, and Packaging Guidance
+# Change Plan: Implement FS-0007 — Versioning, Releases, and Packaging Guidance
 
 ## 1. Feature / Issue Reference
 
-- Feature Spec ID(s): FS-0015
+- Feature Spec ID(s): FS-0007
 - Related ADR ID(s): None
 - Issue / PR Reference: PR #16 (<https://github.com/Tais-Den/agentic-dev-kit/pull/16>)
 
@@ -68,7 +68,7 @@ Quality gates:
 
 - `npx markdownlint-cli2 "workflows/versioning-and-releases.md"` must pass (zero errors).
 - `npm run lint:docs` must pass across all doc categories (this runs `lint:adrs`, `lint:specs`, `lint:plans`, `lint:workflows` — see `package.json` scripts).
-- Manual review: workflow doc must satisfy all FS-0015 success criteria.
+- Manual review: workflow doc must satisfy all FS-0007 success criteria.
 
 ## 4. Files to Be Modified
 
@@ -118,9 +118,9 @@ Quality gates:
 ## 6. Constraints and Guardrails
 
 - Spec constraints:
-  - FS-0015 Non-Goals: no specific changelog tool, CI/CD pipeline, release cadence, or registry mechanics.
-  - FS-0015 Out of Scope: no monorepo tooling, no agentic-dev-kit self-versioning.
-  - FS-0015 Edge Cases: must acknowledge CalVer, monorepos, and no-versioning projects.
+  - FS-0007 Non-Goals: no specific changelog tool, CI/CD pipeline, release cadence, or registry mechanics.
+  - FS-0007 Out of Scope: no monorepo tooling, no agentic-dev-kit self-versioning.
+  - FS-0007 Edge Cases: must acknowledge CalVer, monorepos, and no-versioning projects.
 
 - Architecture constraints:
   - Workflow docs live in `workflows/` (exported surface).
@@ -138,7 +138,7 @@ Quality gates:
 - Markdownlint passes:
   - `npx markdownlint-cli2 "workflows/versioning-and-releases.md"` returns 0 errors.
   - `npm run lint:docs` returns 0 errors across all categories.
-- FS-0015 success criteria spot-check:
+- FS-0007 success criteria spot-check:
   - `workflows/versioning-and-releases.md` exists and covers all 4 project types.
   - Does NOT prescribe changelog tool, CI pipeline, or release cadence.
   - `ROLE_CONTRACT.md` Shared Rules contain version constraints (major bump, publishing, release-prep only).
@@ -159,7 +159,7 @@ Quality gates:
 
 ## 10. Readiness Check
 
-- [x] Spec is approved (FS-0015, status: approved)
+- [x] Spec is approved (FS-0007, status: approved)
 - [x] Tests exist or are clearly defined (documentation-only; markdownlint is the quality gate)
 - [x] Scope is minimal and explicit
 - [x] No architectural changes implied

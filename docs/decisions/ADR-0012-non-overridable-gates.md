@@ -5,7 +5,7 @@ status: accepted
 decision_scope: architecture
 reversible: yes
 related_specs:
-  - FS-0018
+  - FS-0010
 superseded_by: null
 ---
 
@@ -19,7 +19,7 @@ superseded_by: null
 
 The agentic-dev-kit precedence model (defined in INTEGRATION.md) establishes that a consuming project's root `AGENTS.md` is the highest-priority instruction source. This means project-specific rules can override anything in the vendored kit — including ROLE_CONTRACT.
 
-FS-0018 introduces rules that should **not** be overridable by project-specific instructions:
+FS-0010 introduces rules that should **not** be overridable by project-specific instructions:
 
 - **Merge prohibition**: Agents must not merge PRs. This is a safety boundary — an agent merging unreviewed code bypasses the human oversight that the entire framework depends on.
 - **GitHub identity verification**: Agents must verify the active `gh` account before every CLI operation. Getting this wrong means actions are attributed to the wrong identity, undermining audit trails.
@@ -32,7 +32,7 @@ The question: should the kit formalize a mechanism for rules that sit above the 
 
 - **Human oversight is the foundation**: The entire framework assumes humans review and approve agent work. If an agent can merge its own PRs because a project's AGENTS.md says so, the framework's safety model collapses.
 - **Identity integrity is non-negotiable**: Actions attributed to the wrong account are an audit and security failure. No project context justifies skipping identity checks.
-- **Precedence clarity**: Without a formal mechanism, FS-0018's "cannot be overridden" language conflicts with INTEGRATION.md's precedence rules. This ambiguity will confuse agents.
+- **Precedence clarity**: Without a formal mechanism, FS-0010's "cannot be overridden" language conflicts with INTEGRATION.md's precedence rules. This ambiguity will confuse agents.
 - **Framework trust**: Downstream consumers need to know that certain safety properties hold regardless of how a project configures its AGENTS.md.
 - **Minimal scope**: The super-gate category should be narrow. If everything is non-overridable, the precedence system is meaningless.
 
@@ -63,7 +63,7 @@ Elevate the entire ROLE_CONTRACT above project AGENTS.md in the precedence chain
 
 ### Rationale
 
-- Option B doesn't solve the problem. "Strongly recommended" is exactly the kind of soft language agents ignore. The whole point of FS-0018 is that agents need hard gates, not suggestions.
+- Option B doesn't solve the problem. "Strongly recommended" is exactly the kind of soft language agents ignore. The whole point of FS-0010 is that agents need hard gates, not suggestions.
 - Option C is too broad. ROLE_CONTRACT contains many rules that projects legitimately need to customize (e.g., test framework conventions, commit message formats). Making all of it non-overridable would break the kit's framework-agnostic design.
 - Option A is the minimal intervention: a small, clearly scoped set of safety-critical rules with an explicit override mechanism (project ADR) for genuine exceptions.
 
@@ -109,6 +109,6 @@ A rule should only be designated as a super-gate if ALL of the following apply:
 
 ## Links
 
-- FS-0018: Process Compliance Gates and Document Lifecycle
+- FS-0010: Process Compliance Gates and Document Lifecycle
 - ADR-0011: Multi-identity GitHub model
 - INTEGRATION.md: Precedence rules

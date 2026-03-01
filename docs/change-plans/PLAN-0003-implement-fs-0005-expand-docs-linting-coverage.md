@@ -4,17 +4,17 @@ role: implementer
 language: markdown
 status: draft
 related_specs:
-  - FS-0013
+  - FS-0005
 related_adrs: []
 created: 2026-02-07
 updated: 2026-02-07
 ---
 
-# PLAN-0003: Implement FS-0013 expand docs linting coverage
+# PLAN-0003: Implement FS-0005 expand docs linting coverage
 
 ## 1. Feature / Issue Reference
 
-- Feature Spec ID(s): FS-0013
+- Feature Spec ID(s): FS-0005
 - Related ADR ID(s): (none)
 - Issue / PR Reference: (to be created)
 
@@ -56,7 +56,7 @@ This change will NOT:
 ## 6. Constraints and Guardrails
 
 - Spec constraints:
-  - FS-0013 Non-Goals: do not lint all docs; do not add semantic validation.
+  - FS-0005 Non-Goals: do not lint all docs; do not add semantic validation.
 - Guardrails:
   - Keep CI runtime small (do not lint unnecessary paths).
 
@@ -78,7 +78,7 @@ This change will NOT:
 
 ## 10. Readiness Check
 
-- [ ] FS-0013 is approved
+- [ ] FS-0005 is approved
 - [ ] Scope is minimal and explicit
 - [ ] No architectural changes implied
 

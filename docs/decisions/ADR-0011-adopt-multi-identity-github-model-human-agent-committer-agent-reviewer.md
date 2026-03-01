@@ -5,7 +5,7 @@ status: accepted
 decision_scope: workflow
 reversible: yes
 related_specs:
-  - FS-0011
+  - FS-0003
 superseded_by: null
 ---
 
@@ -95,4 +95,4 @@ We consider this decision successful if:
 
 ## Links
 
-- Related Spec: FS-0011 Git + gh CLI conventions for agentic-dev-kit
+- Related Spec: FS-0003 Git + gh CLI conventions for agentic-dev-kit

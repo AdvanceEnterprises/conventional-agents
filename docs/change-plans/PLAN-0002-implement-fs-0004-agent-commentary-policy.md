@@ -4,19 +4,19 @@ role: implementer
 language: markdown
 status: draft
 related_specs:
-  - FS-0012
-  - FS-0011
+  - FS-0004
+  - FS-0003
 related_adrs:
   - ADR-0011
 created: 2026-02-07
 updated: 2026-02-07
 ---
 
-# PLAN-0002: Implement FS-0012 agent commentary policy
+# PLAN-0002: Implement FS-0004 agent commentary policy
 
 ## 1. Feature / Issue Reference
 
-- Feature Spec ID(s): FS-0012
+- Feature Spec ID(s): FS-0004
 - Related ADR ID(s): ADR-0011
 - Issue / PR Reference: (to be created)
 
@@ -24,7 +24,7 @@ updated: 2026-02-07
 
 This change WILL:
 
-- Implement the FS-0012 policy by updating existing workflow documentation with:
+- Implement the FS-0004 policy by updating existing workflow documentation with:
   - a minimum PR description template for agent-authored PRs
   - minimum expectations for agent-authored commit messages/bodies
   - a required “PR update comment” pattern after addressing review feedback
@@ -37,7 +37,7 @@ This change will NOT:
 
 - Add CI enforcement that blocks merges based on PR body/commit message content.
 - Require commit signing.
-- Change merge strategy (still squash-merge as per FS-0011).
+- Change merge strategy (still squash-merge as per FS-0003).
 
 ## 3. Tests Driving This Change
 
@@ -63,12 +63,12 @@ This change will NOT:
    - Rename `docs/change-plans/CP-0002.md` → `docs/change-plans/PLAN-0005-move-workflow-skills-into-agentic-dev-kit.md`
    - Ensure numbering does not collide with existing PLAN files.
 4. Search for references to `CP-0001`/`CP-0002` and update links (including implementation plans).
-5. Run markdownlint locally (or rely on CI once FS-0013 is implemented).
+5. Run markdownlint locally (or rely on CI once FS-0005 is implemented).
 
 ## 6. Constraints and Guardrails
 
 - Spec constraints:
-  - FS-0012 is policy-only; do not introduce enforcement hooks/CI gates for commentary.
+  - FS-0004 is policy-only; do not introduce enforcement hooks/CI gates for commentary.
 - ADR constraints:
   - ADR-0011: agent PRs are authored by agent identity; keep reviewer identity separate.
 - Guardrails:
@@ -93,7 +93,7 @@ This change will NOT:
 
 ## 10. Readiness Check
 
-- [ ] FS-0012 is approved
+- [ ] FS-0004 is approved
 - [ ] Scope is minimal and explicit
 - [ ] No architectural changes implied
 

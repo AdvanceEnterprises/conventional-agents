@@ -3,17 +3,17 @@ type: change-plan
 role: implementer
 language: markdown
 status: implemented
-related_specs: [FS-0018]
+related_specs: [FS-0010]
 related_adrs: [ADR-0012]
 created: 2026-02-16
 updated: 2026-02-16
 ---
 
-# Change Plan: Implement FS-0018 — Process Compliance Gates and Document Lifecycle
+# Change Plan: Implement FS-0010 — Process Compliance Gates and Document Lifecycle
 
 ## 1. Feature / Issue Reference
 
-- Feature Spec ID(s): FS-0018
+- Feature Spec ID(s): FS-0010
 - Related ADR ID(s): ADR-0012
 - Issue / PR Reference: TBD
 
@@ -40,7 +40,7 @@ updated: 2026-02-16
 Validation is via:
 
 - `npm run lint:docs` passing on all modified markdown
-- Manual verification against each FS-0018 Success Criterion (11 items)
+- Manual verification against each FS-0010 Success Criterion (11 items)
 
 ## 4. Files to Be Modified
 
@@ -98,7 +98,7 @@ Validation is via:
 
 ## 6. Constraints and Guardrails
 
-- FS-0018 Non-Goals: no CI tooling, no retroactive fixes, no template structure changes
+- FS-0010 Non-Goals: no CI tooling, no retroactive fixes, no template structure changes
 - ADR-0012: super-gates must be clearly marked and narrowly scoped (only merge prohibition and identity verification)
 - Precedence renumbering must not break existing references in other docs
 
@@ -110,7 +110,7 @@ Validation is via:
 
 ## 8. Validation
 
-- Each of the 11 FS-0018 Success Criteria verified manually
+- Each of the 11 FS-0010 Success Criteria verified manually
 - All markdown lint passes
 - Precedence references consistent across INTEGRATION.md, ROLE_CONTRACT, and any other files that mention the precedence chain
 
@@ -123,7 +123,7 @@ Validation is via:
 
 ## 10. Readiness Check
 
-- [x] Spec is approved (FS-0018)
+- [x] Spec is approved (FS-0010)
 - [x] ADR is accepted (ADR-0012)
 - [x] Tests exist or are clearly defined (lint + manual SC verification)
 - [x] Scope is minimal and explicit

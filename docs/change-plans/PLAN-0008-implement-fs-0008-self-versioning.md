@@ -4,7 +4,7 @@ role: implementer
 language: markdown
 status: approved
 related_specs:
-  - FS-0016
+  - FS-0008
 related_adrs: []
 created: 2026-02-08
 updated: 2026-02-08
@@ -18,13 +18,13 @@ PARSING_HINTS:
 - Treat the completed plan as a binding contract for implementation.
 -->
 
-# Change Plan: Implement FS-0016 — Self-versioning and Changelog
+# Change Plan: Implement FS-0008 — Self-versioning and Changelog
 
 ## 1. Feature / Issue Reference
 
-- Feature Spec ID(s): FS-0016
+- Feature Spec ID(s): FS-0008
 - Related ADR ID(s): None
-- Issue / PR Reference: N/A (follows from PR #18 / FS-0015)
+- Issue / PR Reference: N/A (follows from PR #18 / FS-0007)
 
 ## 2. Scope of Change
 
@@ -36,7 +36,7 @@ PARSING_HINTS:
 
 **Implementation will NOT:**
 
-- Create git tags or GitHub Releases (human-gated per FS-0015).
+- Create git tags or GitHub Releases (human-gated per FS-0007).
 - Modify any other files.
 - Set up CI/CD release automation.
 - Bump the submodule pointer in `agentic-bootstrap-constitution`.
@@ -83,7 +83,7 @@ Documentation-only + manifest change. Quality gates:
 
 ## 6. Constraints and Guardrails
 
-- Per FS-0015 / workflows/versioning-and-releases.md: this is a release-prep change, so version bumps are appropriate here.
+- Per FS-0007 / workflows/versioning-and-releases.md: this is a release-prep change, so version bumps are appropriate here.
 - CHANGELOG must be human-curated, not auto-generated.
 - Do not create tags or publish (human-gated).
 
@@ -108,7 +108,7 @@ Documentation-only + manifest change. Quality gates:
 
 ## 10. Readiness Check
 
-- [x] Spec is approved (FS-0016)
+- [x] Spec is approved (FS-0008)
 - [x] Tests defined (markdownlint quality gate)
 - [x] Scope is minimal and explicit
 - [x] No architectural changes implied

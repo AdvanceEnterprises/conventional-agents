@@ -4,7 +4,7 @@ role: implementer
 language: markdown
 status: approved
 related_specs:
-  - FS-0014
+  - FS-0006
 related_adrs: []
 created: 2026-02-08
 updated: 2026-02-08
@@ -20,11 +20,11 @@ PARSING_HINTS:
 - If implementation would exceed this plan, the plan must be revised first.
 -->
 
-# Change Plan: Implement FS-0014 — JavaScript/TypeScript Guidelines
+# Change Plan: Implement FS-0006 — JavaScript/TypeScript Guidelines
 
 ## 1. Feature / Issue Reference
 
-- Feature Spec ID(s): FS-0014
+- Feature Spec ID(s): FS-0006
 - Related ADR ID(s): None
 - Issue / PR Reference: PR #12 (<https://github.com/Tais-Den/agentic-dev-kit/pull/12>)
 
@@ -35,19 +35,19 @@ PARSING_HINTS:
 - Create `guidelines/javascript/JS_STYLE_GUIDE.md` covering formatting, naming, module system (ESM/CJS), TypeScript typing discipline, documentation/comments, formatting tool expectations, and import organization.
 - Create `guidelines/javascript/JS_TESTING_GUIDE.md` covering test framework expectations (framework-agnostic with Vitest as recommended default), spec-to-test mapping, agent parsing guidance (authoritative signals, test file metadata), approved test patterns (at least 2 runnable examples), and common pitfalls.
 - Create `guidelines/javascript/JS_IMPLEMENTATION_GUIDE.md` covering role definition, authoritative inputs (priority order), parsing hints, tooling/environment assumptions, code shape guidelines (pure functions, determinism, error handling, module boundaries), and at least one JS-specific pitfall not present in Python/Bash guides.
-- Include clearly labeled `### TypeScript-specific` subsections within each guide (integrated approach per resolved FS-0014 question).
+- Include clearly labeled `### TypeScript-specific` subsections within each guide (integrated approach per resolved FS-0006 question).
 - Update `README.md` to list JavaScript alongside Bash and Python in the "Guidelines" section and add example references.
 - Update `CONTRIBUTING.md` to include `guidelines/javascript/` in the directory tree and list the three JS guide files.
 - Update `AGENTS.md` if it references guidelines (to include the new JS directory).
 - Ensure all three new guides pass markdownlint with zero errors.
-- Ensure each guide is between 150 and 600 lines (per FS-0014 success criteria).
+- Ensure each guide is between 150 and 600 lines (per FS-0006 success criteria).
 
 **This change will NOT:**
 
 - Modify any files under `docs/` (ADRs, specs, change plans, ARC42).
 - Prescribe a specific frontend or backend framework.
 - Prescribe a specific linter, formatter, test runner, or package manager (guides say "follow existing repo conventions" with recommended defaults for new projects).
-- Add JavaScript-specific test templates under `templates/` (out of scope for FS-0014; can be a follow-up).
+- Add JavaScript-specific test templates under `templates/` (out of scope for FS-0006; can be a follow-up).
 - Change `INTEGRATION.md` or `roles/ROLE_CONTRACT.md` (no structural changes needed; the guidelines are discoverable via the existing `guidelines/` contract).
 
 ## 3. Tests Driving This Change
@@ -58,7 +58,7 @@ Quality gates:
 
 - `npm run lint:docs` must pass (markdownlint).
 - Manual review: each guide must follow the three-document pattern established by Bash and Python.
-- Manual review: each guide must satisfy the FS-0014 success criteria.
+- Manual review: each guide must satisfy the FS-0006 success criteria.
 
 ## 4. Files to Be Modified
 
@@ -108,9 +108,9 @@ Quality gates:
 ## 6. Constraints and Guardrails
 
 - Spec constraints:
-  - FS-0014 Non-Goals: no framework-specific prescriptions, no build system config, no frontend component testing.
-  - FS-0014 Out of Scope: no ESLint/Biome/Prettier rule recommendations, no package publishing guidance.
-  - FS-0014 Edge Cases: guides must be useful for pure JS (no TS), CJS codebases, and should not break on Deno/Bun where avoidable.
+  - FS-0006 Non-Goals: no framework-specific prescriptions, no build system config, no frontend component testing.
+  - FS-0006 Out of Scope: no ESLint/Biome/Prettier rule recommendations, no package publishing guidance.
+  - FS-0006 Edge Cases: guides must be useful for pure JS (no TS), CJS codebases, and should not break on Deno/Bun where avoidable.
 
 - Architecture constraints:
   - Three-document pattern must match Bash and Python (`*_STYLE_GUIDE.md`, `*_TESTING_GUIDE.md`, `*_IMPLEMENTATION_GUIDE.md`).
@@ -129,7 +129,7 @@ Quality gates:
   - `npx markdownlint-cli2 "guidelines/javascript/*.md"` returns 0 errors.
 - Line count check:
   - Each guide is between 150 and 600 lines (`wc -l guidelines/javascript/*.md`).
-- FS-0014 success criteria spot-check:
+- FS-0006 success criteria spot-check:
   - `guidelines/javascript/` contains exactly 3 files.
   - `JS_STYLE_GUIDE.md` has sections for: decision precedence, voice/tone, module system, naming, TS typing, documentation, formatting tools, import organization.
   - `JS_TESTING_GUIDE.md` has test file metadata convention, at least 2 runnable examples.
@@ -150,7 +150,7 @@ Quality gates:
 
 ## 10. Readiness Check
 
-- [x] Spec is approved (FS-0014, status: approved)
+- [x] Spec is approved (FS-0006, status: approved)
 - [x] Tests exist or are clearly defined (documentation-only; markdownlint is the quality gate)
 - [x] Scope is minimal and explicit
 - [x] No architectural changes implied
