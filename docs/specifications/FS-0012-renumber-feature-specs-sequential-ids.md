@@ -1,6 +1,6 @@
 ---
 type: feature-spec
-id: FS-0004
+id: FS-0012
 status: implemented
 title: Renumber feature specs to sequential IDs
 owner: Tai

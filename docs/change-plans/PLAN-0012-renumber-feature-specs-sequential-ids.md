@@ -28,8 +28,8 @@ PARSING_HINTS:
 
 **This change WILL:**
 
-- Rename 9 FS files (FS-0003 through FS-0011 → FS-0003 through FS-0003).
-- Rename this spec (FS-0012 → FS-0004) and this plan accordingly.
+- Rename 9 FS files (old FS-0011 through FS-0019 → new FS-0003 through FS-0011).
+- Rename this spec (old FS-0020 → new FS-0012) and this plan accordingly.
 - Update `id:` front matter in all renamed FS documents.
 - Rename PLAN files whose filenames contain old FS IDs (7 files).
 - Update `related_specs:` front matter in all PLANs that reference renamed FS IDs.
@@ -107,7 +107,7 @@ Plus this spec and plan rename themselves (~~FS-0020~~ → FS-0012, plan filenam
    a. `git mv` old filename to new filename.
    b. Update `id:` in front matter.
    c. Update `## Status` section if it mentions the ID.
-4. Rename this spec (FS-0012 → FS-0004) and update its own front matter.
+4. Rename this spec (old FS-0020 → new FS-0012) and update its own front matter.
 5. For each PLAN whose filename contains an old FS ID:
    a. `git mv` old filename to new filename.
 6. Update `related_specs:` in every PLAN's front matter.
@@ -139,7 +139,7 @@ Plus this spec and plan rename themselves (~~FS-0020~~ → FS-0012, plan filenam
 ### Phase 5: Update this plan
 
 1. Rename this plan's filename if it references FS-0012 (update to reference FS-0004).
-2. Update `related_specs:` in this plan to FS-0004.
+2. Update `related_specs:` in this plan to FS-0012.
 3. Set both FS-0004 and this plan to `implemented`.
 
 ## 6. Constraints and Guardrails
