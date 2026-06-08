@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0014
-status: draft
+status: implemented
 title: Role definitions overhaul — expand from 3 to 6 roles (Head Architect, Comms Lead)
 owner: Tai
 test_required: false
@@ -23,7 +23,7 @@ tags:
   - governance
   - process
 created: 2026-06-08
-updated: 2026-06-09
+updated: 2026-06-08
 ---
 
 <!--
@@ -42,7 +42,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Implemented
 
 ## Summary
 
