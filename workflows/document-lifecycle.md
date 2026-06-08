@@ -1,8 +1,8 @@
 # Document Lifecycle
 
-This document defines the status values, transition rules, and maintenance responsibilities for all governed documents in projects using agentic-dev-kit.
+This document defines the status values, transition rules, and maintenance responsibilities for all governed documents in projects using conventional-agents.
 
-It is part of the agentic-dev-kit exported surface and applies to any project that vendors the kit.
+It is part of the conventional-agents exported surface and applies to any project that vendors the kit.
 
 ---
 

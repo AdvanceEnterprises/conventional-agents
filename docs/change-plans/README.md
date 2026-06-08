@@ -36,7 +36,7 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | PLAN-0002 | Implement FS-0004 Agent Commentary Policy | FS-0004 | draft |
 | PLAN-0003 | Implement FS-0005 Expand Docs Linting | FS-0005 | implemented |
 | PLAN-0004 | Markdownlint Integration for ADRs | FS-0001 | implemented |
-| PLAN-0005 | Move Workflow Skills into agent-dev-kit | FS-0002 | approved |
+| PLAN-0005 | Move Workflow Skills into conventional-agents | FS-0002 | approved |
 | PLAN-0006 | Implement FS-0006 JavaScript Guidelines | FS-0006 | implemented |
 | PLAN-0007 | Implement FS-0007 Versioning/Releases | FS-0007 | implemented |
 | PLAN-0008 | Implement FS-0008 Self-Versioning | FS-0008 | implemented |

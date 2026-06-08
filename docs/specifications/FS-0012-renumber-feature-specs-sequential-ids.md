@@ -45,13 +45,13 @@ Feature spec IDs currently skip from FS-0002 to FS-0003 (IDs 0003–0010 were ne
 | Old ID | New ID | Title |
 |---|---|---|
 | FS-0001 | FS-0001 | Markdownlint Integration for ADR Quality Gates |
-| FS-0002 | FS-0002 | Move Workflow Skills into agentic-dev-kit |
+| FS-0002 | FS-0002 | Move Workflow Skills into conventional-agents |
 | ~~FS-0011~~ | **FS-0003** | Git + gh CLI Conventions |
 | ~~FS-0012~~ | **FS-0004** | Agent-Authored Commit/PR Commentary Policy |
 | ~~FS-0013~~ | **FS-0005** | Expand Docs Linting Coverage |
 | ~~FS-0014~~ | **FS-0006** | JavaScript/TypeScript Guidelines |
 | ~~FS-0015~~ | **FS-0007** | Versioning, Releases, and Packaging Guidance |
-| ~~FS-0016~~ | **FS-0008** | Apply Versioning and Changelog to agentic-dev-kit Itself |
+| ~~FS-0016~~ | **FS-0008** | Apply Versioning and Changelog to conventional-agents Itself |
 | ~~FS-0017~~ | **FS-0009** | Vendor Upstream Specs |
 | ~~FS-0018~~ | **FS-0010** | Process Compliance Gates and Document Lifecycle |
 | ~~FS-0019~~ | **FS-0011** | Adopt GitHub Projects for Work Tracking |

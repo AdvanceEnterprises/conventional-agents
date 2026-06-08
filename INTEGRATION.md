@@ -1,9 +1,9 @@
 Integration Guide
 
-Version: 1.0.0
-Last Updated: 2026-01-27
+Version: 2.0.0
+Last Updated: 2026-06-08
 
-This document is the canonical source for how agentic-dev-kit integrates with host repositories and resolves conflicts between instruction sources.
+This document is the canonical source for how conventional-agents integrates with host repositories and resolves conflicts between instruction sources.
 
 ⸻
 
@@ -25,7 +25,7 @@ Recommended: submodule + stub pattern
 
 # 1) Add submodule
 # Note: replace with the actual repository URL when known
-git submodule add <REPO_URL> vendor/agentic-dev-kit
+git submodule add <REPO_URL> vendor/conventional-agents
 
 git submodule update --init
 
@@ -34,33 +34,33 @@ cat > AGENTS.md << 'EOF'
 # Agent Instructions
 
 ## Read First
-- vendor/agentic-dev-kit/guidelines/index.md
-- vendor/agentic-dev-kit/roles/index.md
+- vendor/conventional-agents/guidelines/ROLE_CONTRACT.md
+- vendor/conventional-agents/workflows/session-modes.md
 
 ## Universal Gates
-- vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md
+- vendor/conventional-agents/roles/ROLE_CONTRACT.md
 
 ## Minimum Quality Gates
-- vendor/agentic-dev-kit/guidelines/tests.md
-- vendor/agentic-dev-kit/guidelines/commit-and-pr.md
+- vendor/conventional-agents/guidelines/tests.md
+- vendor/conventional-agents/guidelines/commit-and-pr.md
 
 ## Precedence Rules
-See vendor/agentic-dev-kit/INTEGRATION.md
+See vendor/conventional-agents/INTEGRATION.md
 
 ## Project-Specific Rules
 (Add your project-specific context here)
 EOF
 
 # 3) Commit
-git add .gitmodules vendor/agentic-dev-kit AGENTS.md
-git commit -m "Add agentic-dev-kit foundation layer"
+git add .gitmodules vendor/conventional-agents AGENTS.md
+git commit -m "Add conventional-agents foundation layer"
 
 Alternative: copy-in pattern
 
 Use this when a tool only reads root files.
 
-cp vendor/agentic-dev-kit/packs/agents-md/AGENTS.full.example.md ./AGENTS.md
-cp vendor/agentic-dev-kit/packs/claude/CLAUDE.full.example.md ./CLAUDE.md
+cp vendor/conventional-agents/packs/agents-md/AGENTS.full.example.md ./AGENTS.md
+cp vendor/conventional-agents/packs/claude/CLAUDE.full.example.md ./CLAUDE.md
 
 # Customize
 vim AGENTS.md
@@ -75,9 +75,9 @@ Canonical hierarchy
 When multiple instruction sources exist, apply this binding order:
 0.	Non-overridable safety gates: ROLE_CONTRACT § Non-Overridable Safety Gates (cannot be weakened by any source; see ADR-0012)
 1.	Host repo project-specific rules in root AGENTS.md (highest project-level authority)
-2.	Universal gates and guardrails: vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md (cannot be weakened)
-3.	Role-specific contracts: vendor/agentic-dev-kit/roles/<role>.md
-4.	Guidelines: vendor/agentic-dev-kit/guidelines/
+2.	Universal gates and guardrails: vendor/conventional-agents/roles/ROLE_CONTRACT.md (cannot be weakened)
+3.	Role-specific contracts: vendor/conventional-agents/roles/<role>.md
+4.	Guidelines: vendor/conventional-agents/guidelines/
 5.	Tool-specific configs: CLAUDE.md, .cursorrules, editor settings, etc.
 
 If instructions conflict, lower number wins.
@@ -87,9 +87,9 @@ Detailed precedence
 Priority	Source	Scope	Can override?
 0	ROLE_CONTRACT § Non-Overridable Safety Gates	Safety-critical rules (ADR-0012)	Cannot be overridden by any source
 1	Root AGENTS.md project-specific sections	Project decisions and constraints	Can override 3 to 5 and can strengthen 2
-2	vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md	Universal gates and guardrails	Cannot be weakened
-3	vendor/agentic-dev-kit/roles/<role>.md	Role-specific behavior and gates	Can strengthen 4 to 5
-4	vendor/agentic-dev-kit/guidelines/	General practices and checklists	Can be tailored by 1 and 3
+2	vendor/conventional-agents/roles/ROLE_CONTRACT.md	Universal gates and guardrails	Cannot be weakened
+3	vendor/conventional-agents/roles/<role>.md	Role-specific behavior and gates	Can strengthen 4 to 5
+4	vendor/conventional-agents/guidelines/	General practices and checklists	Can be tailored by 1 and 3
 5	Tool configs (CLAUDE.md, .cursorrules, etc.)	Tool-specific hints	Must defer to 0 to 4
 
 Strengthening vs weakening
@@ -130,7 +130,7 @@ Pattern 1: submodule with minimal stubs
 
 When to use:
 -	Teams or orgs that want consistent standards across multiple repos
--	Repos that will update agentic-dev-kit over time
+-	Repos that will update conventional-agents over time
 
 Structure:
 
@@ -138,7 +138,7 @@ your-repo/
 ├── AGENTS.md
 ├── CLAUDE.md (optional)
 └── vendor/
-    └── agentic-dev-kit/
+    └── conventional-agents/
         ├── ...
         └── vendor/
             ├── conventional-commits/   # Conventional Commits spec
@@ -164,7 +164,7 @@ Cons:
 -	Drift risk
 
 If you copy, record the snapshot in root AGENTS.md:
--	“Copied from agentic-dev-kit version ”
+-	“Copied from conventional-agents version ”
 
 Pattern 3: hybrid (recommended default)
 
@@ -183,14 +183,14 @@ Minimal stub:
 # Agent Instructions
 
 ## Foundation Standards
-- vendor/agentic-dev-kit/guidelines/index.md
-- vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md
+- vendor/conventional-agents/guidelines/index.md
+- vendor/conventional-agents/roles/ROLE_CONTRACT.md
 
 ## Project Context
 (Add project-specific information)
 
 ## Precedence
-See vendor/agentic-dev-kit/INTEGRATION.md
+See vendor/conventional-agents/INTEGRATION.md
 
 CLAUDE.md (Claude tooling)
 
@@ -201,24 +201,24 @@ Purpose: Claude-specific additions. Must defer to AGENTS.md.
 Defer to AGENTS.md.
 
 Foundation:
-- vendor/agentic-dev-kit/guidelines/index.md
-- vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md
+- vendor/conventional-agents/guidelines/index.md
+- vendor/conventional-agents/roles/ROLE_CONTRACT.md
 
-Precedence: vendor/agentic-dev-kit/INTEGRATION.md
+Precedence: vendor/conventional-agents/INTEGRATION.md
 
 Aider
 
 Reference via config:
 
 read:
-  - vendor/agentic-dev-kit/packs/aider/CONVENTIONS.md
-  - vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md
-  - vendor/agentic-dev-kit/guidelines/tests.md
-  - vendor/agentic-dev-kit/guidelines/commit-and-pr.md
+  - vendor/conventional-agents/packs/aider/CONVENTIONS.md
+  - vendor/conventional-agents/roles/ROLE_CONTRACT.md
+  - vendor/conventional-agents/guidelines/tests.md
+  - vendor/conventional-agents/guidelines/commit-and-pr.md
 
 Or copy:
 
-cp vendor/agentic-dev-kit/packs/aider/CONVENTIONS.md ./CONVENTIONS.md
+cp vendor/conventional-agents/packs/aider/CONVENTIONS.md ./CONVENTIONS.md
 
 Cursor and other editors
 
@@ -227,8 +227,8 @@ Treat editor rule files as lower precedence (Priority 5). Keep them short and po
 Example .cursorrules stub:
 
 Defer to AGENTS.md.
-Universal gates: vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md
-Precedence: vendor/agentic-dev-kit/INTEGRATION.md
+Universal gates: vendor/conventional-agents/roles/ROLE_CONTRACT.md
+Precedence: vendor/conventional-agents/INTEGRATION.md
 
 Codex
 
@@ -239,29 +239,29 @@ Example CODEX_CONTEXT.md:
 # Codex Context
 
 Foundation:
-- vendor/agentic-dev-kit/guidelines/index.md
-- vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md
+- vendor/conventional-agents/guidelines/index.md
+- vendor/conventional-agents/roles/ROLE_CONTRACT.md
 
 Role:
-- vendor/agentic-dev-kit/roles/test-writer.md
+- vendor/conventional-agents/roles/test-writer.md
 
 Precedence:
-- vendor/agentic-dev-kit/INTEGRATION.md
+- vendor/conventional-agents/INTEGRATION.md
 
 Spec Kit
 
-Spec Kit owns workflow. agentic-dev-kit supplies quality gates.
+Spec Kit owns workflow. conventional-agents supplies quality gates.
 
 Recommended hook: .specify/memory/constitution.md
 
 ## Article IX: Code Quality Standards
 
-Reference: vendor/agentic-dev-kit/integrations/spec-kit.md
+Reference: vendor/conventional-agents/integrations/spec-kit.md
 
 Mandatory:
-- Universal gates: vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md
-- Testing: vendor/agentic-dev-kit/guidelines/tests.md
-- PR hygiene: vendor/agentic-dev-kit/guidelines/commit-and-pr.md
+- Universal gates: vendor/conventional-agents/roles/ROLE_CONTRACT.md
+- Testing: vendor/conventional-agents/guidelines/tests.md
+- PR hygiene: vendor/conventional-agents/guidelines/commit-and-pr.md
 
 
 ⸻
@@ -270,7 +270,7 @@ Multi-Agent Coordination
 
 Baseline
 1.	All agents read root AGENTS.md
-2.	Universal gates apply to all roles: vendor/agentic-dev-kit/roles/ROLE_CONTRACT.md
+2.	Universal gates apply to all roles: vendor/conventional-agents/roles/ROLE_CONTRACT.md
 3.	Tool-specific files are additive, not authoritative
 
 Handoff protocol
@@ -301,7 +301,7 @@ cat AGENTS.md
 
 git submodule status
 
-ls -la vendor/agentic-dev-kit/guidelines/
+ls -la vendor/conventional-agents/guidelines/
 
 Solutions:
 1.	Ensure AGENTS.md references the correct paths
@@ -330,7 +330,7 @@ Symptoms:
 
 Diagnosis:
 
-cd vendor/agentic-dev-kit
+cd vendor/conventional-agents
 
 git log --oneline HEAD@{1}..HEAD
 
@@ -373,7 +373,7 @@ Do not
 
 Migration Guides
 
-No standards to agentic-dev-kit
+No standards to conventional-agents
 1.	Add submodule
 2.	Add root AGENTS.md stub
 3.	Test with your tools
@@ -386,6 +386,6 @@ Copy-in to submodule
 4.	Record what changed
 
 Submodule to fork (heavy customization)
-1.	Fork agentic-dev-kit
+1.	Fork conventional-agents
 2.	Point submodule URL to your fork
 3.	Sync upstream intentionally

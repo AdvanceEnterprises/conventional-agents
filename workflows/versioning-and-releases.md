@@ -2,7 +2,7 @@
 
 This document provides prescriptive guidance for how projects should handle versioning, releases, and packaging when LLM-backed agents are involved in the development workflow.
 
-It is part of the agentic-dev-kit exported surface and applies to any project that vendors the kit.
+It is part of the conventional-agents exported surface and applies to any project that vendors the kit.
 
 If there is a conflict between this document and project-specific rules in root `AGENTS.md`, the project rules win (see `INTEGRATION.md` for precedence).
 
@@ -163,7 +163,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com).
 
 ## Submodule Versioning
 
-For projects that vendor agentic-dev-kit (or other kits) as git submodules:
+For projects that vendor conventional-agents (or other kits) as git submodules:
 
 - Submodule bumps should be their own commit or PR.
 - When bumping a submodule, reference the target version/tag in the commit message.

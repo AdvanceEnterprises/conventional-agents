@@ -11,37 +11,40 @@ For this project (a documentation/standards kit), semver follows the
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-06-08
+
+### Breaking Changes
+
+- **Project renamed** from `agentic-dev-kit` to `conventional-agents`. Host repos vendoring this framework must update their submodule path from `vendor/agentic-dev-kit/` to `vendor/conventional-agents/` and update all references accordingly.
+- **ROLE_CONTRACT restructured**: roles renumbered from 3 roles (1–3) to 6 roles (0–5). Role 1 (Spec Reader) is now Role 2; Role 2 (Implementer) is now Role 3; Role 3 (Reviewer) is now Role 4. Projects that reference roles by number must update.
+
 ### Added
 
-- GitHub Project board "agentic-dev-kit Development" ([#2](https://github.com/orgs/Tais-Den/projects/2)) with Status columns (Backlog/Approved/In Progress/In Review/Done) and Doc Type field (FS/PLAN/Task/Bug).
-- `config/project.yml` documenting board metadata and field IDs for programmatic access.
-- Backfilled 22 GitHub Issues (11 FS + 11 PLAN) covering all existing governance documents.
-- FS-0011: Adopt GitHub Projects for work tracking (propagation from pack-protocol ADR-0001/ADR-0002).
-- PLAN-0011: Change plan for FS-0011 implementation.
-- FS-0012: Renumber feature specs to sequential IDs (eliminate FS-0003–FS-0010 gap).
-- PLAN-0012: Change plan for FS-0012 implementation.
 - FS-0013: Status consistency check — validates FS↔PLAN status pairing and README index table sync.
 - PLAN-0013: Change plan for FS-0013 implementation.
 - `scripts/check-status.sh`: machine-readable consistency check; exits non-zero on violations.
 - `npm run check:status`: local entrypoint for the consistency check.
 - `check-status` CI job in `lint-docs.yml`: blocks merges when status is out of sync.
-- Item 7 added to document hygiene gate in `guidelines/ROLE_CONTRACT.md`: run `check:status` before marking PR ready.
-- FS-0014: Role definitions overhaul — expand from 3 to 6 roles (Head Architect, Document Author, Spec Reader and Test Planner, Implementer, Reviewer, Communications Lead).
+- FS-0014: Role definitions overhaul — six roles: Head Architect (0), Document Author (1), Spec Reader and Test Planner (2), Implementer (3), Reviewer (4), Communications Lead (5).
 - PLAN-0014: Change plan for FS-0014 implementation.
-
-### Changed
-
-- FS-0015: Role selection and session modes — `best_used_when`/`avoid_when` guidance per role, five named session modes, and an explainability convention requiring agents to declare active mode and role on transitions.
+- FS-0015: Role selection and session modes — `best_used_when`/`avoid_when` guidance per role, five named session modes, explainability convention.
 - PLAN-0015: Change plan for FS-0015 implementation.
-- `workflows/session-modes.md`: new document defining five session modes (Architecture Planning, Document Authoring, Implementation, Review, Communications), each with primary role, supporting roles, escalation triggers, and role-transition phrase templates.
+- `workflows/session-modes.md`: five session modes (Architecture Planning, Document Authoring, Implementation, Review, Communications), each with primary role, supporting roles, escalation triggers, and role-transition phrase templates.
+- GitHub Project board "conventional-agents Development" ([#2](https://github.com/orgs/Tais-Den/projects/2)) with Status columns and Doc Type field.
+- `config/project.yml` documenting board metadata and field IDs for programmatic access.
+- FS-0011: Adopt GitHub Projects for work tracking.
+- PLAN-0011: Change plan for FS-0011 implementation.
+- FS-0012: Renumber feature specs to sequential IDs (eliminate FS-0003–FS-0010 gap).
+- PLAN-0012: Change plan for FS-0012 implementation.
 
 ### Changed
 
-- `guidelines/ROLE_CONTRACT.md` and `roles/ROLE_CONTRACT.md`: full rewrite adding three new roles (Head Architect, Document Author, Communications Lead); corrected conflict-resolution precedence to six levels (Level 0 = ADR-0012 non-overridable gates); fixed stale `docs/specs/` path to `docs/specifications/FS-*.md`; assigned `npm run check:status` to Document Author and Implementer responsibilities; `roles/ROLE_CONTRACT.md` populated (was empty); added `best_used_when`/`avoid_when` and role and session transparency rule (FS-0015).
-
-- All feature spec IDs renumbered to sequential (FS-0012). Mapping: FS-0011→0003, FS-0012→0004, FS-0013→0005, FS-0014→0006, FS-0015→0007, FS-0016→0008, FS-0017→0009, FS-0018→0010, FS-0019→0011, FS-0020→0012. PLAN filenames updated to match. All cross-references updated.
-- Reconciled stale `approved` statuses on 7 FS docs (FS-0001, FS-0003, FS-0005, FS-0006, FS-0007, FS-0008, FS-0009) and 7 PLAN docs (PLAN-0001, PLAN-0003, PLAN-0004, PLAN-0006, PLAN-0007, PLAN-0008, PLAN-0009) to `implemented`, reflecting work already delivered in v1.0.0–v1.2.0. Front matter `updated:` dates and body Status sections updated accordingly.
-- Note: FS-0005 and PLAN-0003 were marked `implemented` directly from `draft`/`approved` — the CI expansion they described was shipped in v1.1.0 ahead of formal spec approval, a process irregularity documented here for traceability.
+- `guidelines/ROLE_CONTRACT.md` and `roles/ROLE_CONTRACT.md`: full rewrite — three new roles (Head Architect, Document Author, Communications Lead); conflict-resolution precedence corrected to six levels (Level 0 = ADR-0012 non-overridable gates); stale `docs/specs/` path fixed to `docs/specifications/FS-*.md`; `npm run check:status` assigned to Document Author and Implementer; `roles/ROLE_CONTRACT.md` populated (was empty); `best_used_when`/`avoid_when` and role and session transparency rule added.
+- All feature spec IDs renumbered to sequential. Mapping: FS-0011→0003, FS-0012→0004, FS-0013→0005, FS-0014→0006, FS-0015→0007, FS-0016→0008, FS-0017→0009, FS-0018→0010, FS-0019→0011, FS-0020→0012. PLAN filenames updated to match.
+- Reconciled stale `approved` statuses on 7 FS and 7 PLAN docs to `implemented`, reflecting work delivered in v1.0.0–v1.2.0.
+- Document hygiene gate checklist updated: item 7 added (run `check:status` before marking PR ready).
+- All references to `agentic-dev-kit` and `agent-dev-kit` updated to `conventional-agents` throughout.
+- Note: FS-0005 and PLAN-0003 were marked `implemented` directly from `draft`/`approved` — a process irregularity documented for traceability.
 
 ## [1.2.0] - 2026-02-16
 
@@ -65,7 +68,7 @@ For this project (a documentation/standards kit), semver follows the
 - `workflows/git-and-gh-conventions.md`: added identity verification step 0 and merge prohibition in step 8.
 - `workflows/README.md`: added missing `versioning-and-releases.md` entry and new `document-lifecycle.md` entry.
 - ROLE_CONTRACT: "Non-Overridable Safety Gates" section clearly labeled and scoped per ADR-0012.
-- Vendor path references in INTEGRATION.md normalized from `agent-dev-kit` to `agentic-dev-kit`.
+- Vendor path references in INTEGRATION.md normalized from `conventional-agents` to `conventional-agents`.
 
 ### Fixed
 
@@ -87,16 +90,16 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Changed
 
-- Project renamed from `agent-dev-kit` to `agentic-dev-kit` (repo: `Tais-Den/agentic-dev-kit`). Vendored mount path remains `vendor/agent-dev-kit/` for backward compatibility.
+- Project renamed from `conventional-agents` to `conventional-agents` (repo: `Tais-Den/conventional-agents`). Vendored mount path remains `vendor/conventional-agents/` for backward compatibility.
 - `docs/workflows/` moved to `workflows/` (exported surface, not internal docs).
 - CI workflow file renamed from `lint-adrs.yml` to `lint-docs.yml`; now lints ADRs, specs, change plans, and workflows.
 - `package.json` lint scripts updated: added `lint:specs`, `lint:plans`, `lint:workflows`, `lint:docs`; scripts use `npx` for local execution.
-- README submodule/clone URLs updated to `Tais-Den/agentic-dev-kit`; default branch reference changed to `trunk`.
+- README submodule/clone URLs updated to `Tais-Den/conventional-agents`; default branch reference changed to `trunk`.
 
 ### Fixed
 
 - ADR-0004 precedence wording corrected (was "highest-numbered wins", now "lowest-numbered/highest-priority wins").
-- `INTEGRATION.md` directory tree corrected (showed `agentic-dev-kit/` instead of `agent-dev-kit/` for vendored path).
+- `INTEGRATION.md` directory tree corrected (showed `conventional-agents/` instead of `conventional-agents/` for vendored path).
 
 ## [1.0.0] - 2026-01-27
 

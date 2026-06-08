@@ -28,11 +28,11 @@ PARSING_HINTS:
 
 This change WILL:
 
-- Add the workflow skill modules (currently in this OpenClaw workspace under `skill-src/`) into the `agentic-dev-kit` repository under `skills/{name}/`.
-- Add/maintain a canonical `skills/index.md` in `agentic-dev-kit` listing and describing these skills.
+- Add the workflow skill modules (currently in this OpenClaw workspace under `skill-src/`) into the `conventional-agents` repository under `skills/{name}/`.
+- Add/maintain a canonical `skills/index.md` in `conventional-agents` listing and describing these skills.
 - Refactor generator/helper scripts so template/path discovery is dual-mode:
-  - Works inside the `agentic-dev-kit` repo (templates resolved from `./templates/...`).
-  - Works in a host repo that vendors agentic-dev-kit (templates resolved from `./vendor/agent-dev-kit/templates/...`).
+  - Works inside the `conventional-agents` repo (templates resolved from `./templates/...`).
+  - Works in a host repo that vendors conventional-agents (templates resolved from `./vendor/conventional-agents/templates/...`).
 - Update documentation (likely `INTEGRATION.md` and/or `skills/index.md`) to describe the canonical paths and invocation model.
 
 This change will NOT:
@@ -66,7 +66,7 @@ Primary checks are self-tests built into each helper script.
 
 ## 5. Implementation Steps (High-Level)
 
-1. Inventory the current set of workflow skills in `skill-src/` and map them 1:1 to `agentic-dev-kit/skills/{name}/` directories.
+1. Inventory the current set of workflow skills in `skill-src/` and map them 1:1 to `conventional-agents/skills/{name}/` directories.
 2. Create `skills/index.md` (or expand it) to include each skill with:
    - purpose
    - paths
@@ -75,33 +75,33 @@ Primary checks are self-tests built into each helper script.
 3. For each skill that has a Python helper:
    - Move or copy the script into `skills/{name}/`.
    - Implement a shared repo-root discovery function that:
-     - detects when running inside agentic-dev-kit (find `.git` + `templates/`), OR
-     - detects when running from host repo (find `vendor/agent-dev-kit/templates/`).
+     - detects when running inside conventional-agents (find `.git` + `templates/`), OR
+     - detects when running from host repo (find `vendor/conventional-agents/templates/`).
    - Ensure `--self-test` succeeds in both contexts.
 4. Update each moved `SKILL.md` to reference the new canonical paths (no workspace-relative `skill-src/...` paths).
 5. Update `INTEGRATION.md` (and any other relevant docs) with:
    - the dual-mode invocation model
    - examples for both contexts
 6. Validation pass:
-   - Run all `--self-test` commands from inside agentic-dev-kit.
+   - Run all `--self-test` commands from inside conventional-agents.
    - Run at least one representative `--self-test` from a simulated host repo directory structure.
 
 ## 6. Constraints and Guardrails
 
 - FS-0002 Non-Goals / Out of Scope are hard constraints.
-- ADR-0001/ADR-0002 filesystem contract must remain valid for consumers vendoring agentic-dev-kit.
+- ADR-0001/ADR-0002 filesystem contract must remain valid for consumers vendoring conventional-agents.
 - Scripts must remain low-risk: local filesystem only, explicit overwrite behavior.
 
 ## 7. Risks and Edge Cases
 
-- Ambiguous repo root detection when both `templates/` and `vendor/agent-dev-kit/templates/` exist in the same tree.
+- Ambiguous repo root detection when both `templates/` and `vendor/conventional-agents/templates/` exist in the same tree.
 - Consumers relying on the OpenClaw workspace `skill-src/` layout (we need docs guidance; no breaking changes promised there).
 
 ## 8. Validation
 
 - Expected to pass:
-  - All generator scripts `--self-test` pass when executed from inside agentic-dev-kit.
-  - All generator scripts `--self-test` pass when executed from a host repo that vendors agentic-dev-kit.
+  - All generator scripts `--self-test` pass when executed from inside conventional-agents.
+  - All generator scripts `--self-test` pass when executed from a host repo that vendors conventional-agents.
   - `skills/index.md` includes all moved skills.
 
 - Manual checks:
