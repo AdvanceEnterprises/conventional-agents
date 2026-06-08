@@ -55,3 +55,4 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0011 | Adopt GitHub Projects for Work Tracking | implemented |
 | FS-0012 | Renumber Feature Specs to Sequential IDs | implemented |
 | FS-0013 | Status Consistency Check | implemented |
+| FS-0014 | Role Definitions Overhaul | draft |
