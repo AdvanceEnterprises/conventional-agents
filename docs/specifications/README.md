@@ -56,4 +56,4 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0012 | Renumber Feature Specs to Sequential IDs | implemented |
 | FS-0013 | Status Consistency Check | implemented |
 | FS-0014 | Role Definitions Overhaul | implemented |
-| FS-0015 | Role Selection and Session Modes | draft |
+| FS-0015 | Role Selection and Session Modes | implemented |

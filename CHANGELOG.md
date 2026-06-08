@@ -31,7 +31,13 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Changed
 
-- `guidelines/ROLE_CONTRACT.md` and `roles/ROLE_CONTRACT.md`: full rewrite adding three new roles (Head Architect, Document Author, Communications Lead); corrected conflict-resolution precedence to six levels (Level 0 = ADR-0012 non-overridable gates); fixed stale `docs/specs/` path to `docs/specifications/FS-*.md`; assigned `npm run check:status` to Document Author and Implementer responsibilities; `roles/ROLE_CONTRACT.md` populated (was empty).
+- FS-0015: Role selection and session modes — `best_used_when`/`avoid_when` guidance per role, five named session modes, and an explainability convention requiring agents to declare active mode and role on transitions.
+- PLAN-0015: Change plan for FS-0015 implementation.
+- `workflows/session-modes.md`: new document defining five session modes (Architecture Planning, Document Authoring, Implementation, Review, Communications), each with primary role, supporting roles, escalation triggers, and role-transition phrase templates.
+
+### Changed
+
+- `guidelines/ROLE_CONTRACT.md` and `roles/ROLE_CONTRACT.md`: full rewrite adding three new roles (Head Architect, Document Author, Communications Lead); corrected conflict-resolution precedence to six levels (Level 0 = ADR-0012 non-overridable gates); fixed stale `docs/specs/` path to `docs/specifications/FS-*.md`; assigned `npm run check:status` to Document Author and Implementer responsibilities; `roles/ROLE_CONTRACT.md` populated (was empty); added `best_used_when`/`avoid_when` and role and session transparency rule (FS-0015).
 
 - All feature spec IDs renumbered to sequential (FS-0012). Mapping: FS-0011→0003, FS-0012→0004, FS-0013→0005, FS-0014→0006, FS-0015→0007, FS-0016→0008, FS-0017→0009, FS-0018→0010, FS-0019→0011, FS-0020→0012. PLAN filenames updated to match. All cross-references updated.
 - Reconciled stale `approved` statuses on 7 FS docs (FS-0001, FS-0003, FS-0005, FS-0006, FS-0007, FS-0008, FS-0009) and 7 PLAN docs (PLAN-0001, PLAN-0003, PLAN-0004, PLAN-0006, PLAN-0007, PLAN-0008, PLAN-0009) to `implemented`, reflecting work already delivered in v1.0.0–v1.2.0. Front matter `updated:` dates and body Status sections updated accordingly.

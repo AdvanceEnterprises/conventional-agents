@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0015
-status: draft
+status: implemented
 title: Role selection and session modes
 owner: Tai
 test_required: false
@@ -42,7 +42,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Implemented
 
 ## Summary
 
