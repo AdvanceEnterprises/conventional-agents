@@ -397,6 +397,9 @@ The following rule is added to ROLE_CONTRACT under Shared Rules:
 > One sentence is sufficient. The human may override the interpretation at any time.
 > If overridden, the agent adopts the stated role without argument.
 >
+> See `workflows/session-modes.md` for mode definitions, primary/supporting role
+> assignments, and role-transition phrase templates.
+>
 > This is not optional ceremony — it is the mechanism by which humans stay in control
 > of agentic sessions without needing to read every tool call.
 
@@ -477,12 +480,10 @@ Each bullet MUST be objectively testable.
 
 ## Open Questions
 
-1. **`workflows/session-modes.md` discoverability:** Should the document be referenced
-   from `guidelines/ROLE_CONTRACT.md` shared rules, or is the explainability rule
-   sufficient to make agents find it? Recommend a direct reference from the
-   explainability rule: "See `workflows/session-modes.md` for mode definitions."
-2. **Maintenance mode:** Five modes cover dominant patterns. If a project phase
-   (e.g., a sustained maintenance period) does not fit any mode well, should the team
-   add a sixth mode to `roles/session-modes.md`, or use Implementation mode with
-   narrowed scope? Recommend: customize in `roles/` if a project consistently needs it;
-   don't add to `guidelines/` until multiple projects encounter the same gap.
+None. All open questions resolved via PR review:
+
+- The explainability rule in ROLE_CONTRACT shared rules must include a direct reference
+  to `workflows/session-modes.md`.
+- Additional session modes (e.g., maintenance) belong in project-level `roles/`
+  customization; the five modes in `guidelines/` are not expanded until multiple
+  projects demonstrate the same gap.
