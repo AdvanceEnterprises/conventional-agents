@@ -4,7 +4,9 @@ id: ADR-0014
 status: proposed
 decision_scope: architecture
 reversible: yes
-related_specs: []
+related_specs:
+  - FS-0014
+  - FS-0015
 superseded_by: null
 ---
 
@@ -80,8 +82,9 @@ When a session spawns a background task, it MUST declare:
 
 1. **The role the background task operates under** (one of the six roles from FS-0014).
 2. **The artifact scope** — which files or directories the task may modify.
-3. **The communication channel** — how the task delivers output back (commit on a named
-   branch, PR comment, stdout log, a draft file).
+3. **The communication channel** — how the task delivers output back (see below).
+4. **Commit permission** — explicitly state `Commit: allowed` if the task may commit;
+   omit or write `Commit: no` to require non-committing output.
 
 The background task operates exactly as a full session would if assigned that role —
 meaning all role-specific prohibited actions and stop conditions apply — with the
@@ -91,21 +94,36 @@ ADR-0012 gates apply regardless of declared role or scope. No background task ma
 a pull request. No background task may push to a protected branch without explicit human
 authorization.
 
+### Default channel: non-committing output
+
+The default communication channel for a background task is **non-committing**: the task
+writes to a designated draft file or delivers output via stdout captured by the
+spawning session. Committing to a branch requires `Commit: allowed` in the spawn
+declaration and the spawning session reviews those commits before pushing.
+
+This default prevents background task commits from accumulating unreviewed in the
+parent branch.
+
 ### Background task authority by role
 
-The role declaration at spawn time determines what a background task may do:
+The role declaration at spawn time determines what a background task may do. The "May
+commit" column applies only when the spawn declaration includes `Commit: allowed`.
 
-| Declared role | May commit | May push | May open PR | May post PR comment |
-| --- | --- | --- | --- | --- |
-| Role 0 — Head Architect | Yes (branch) | No | No | Yes |
-| Role 1 — Document Author | Yes (branch) | No | No | Yes |
-| Role 2 — Spec Reader / Test Planner | Yes (branch) | No | No | Yes |
-| Role 3 — Implementer | Yes (branch) | No | No | Yes |
-| Role 4 — Reviewer | No | No | No | Yes |
-| Role 5 — Communications Lead | Yes (branch) | No | No | Yes |
+| Declared role | May write files | May commit | May push | May open PR | May post PR comment |
+| --- | --- | --- | --- | --- | --- |
+| Role 0 — Head Architect | Yes | If declared | No | No | Yes |
+| Role 1 — Document Author | Yes | If declared | No | No | Yes |
+| Role 2 — Spec Reader / Test Planner | Yes | If declared | No | No | Yes |
+| Role 3 — Implementer | Yes | If declared | No | No | Yes |
+| Role 4 — Reviewer | No | No | No | No | Yes |
+| Role 5 — Communications Lead | Yes | If declared | No | No | Yes |
 
-"May commit (branch)" means: may commit to the branch the spawning session owns and
-designated at spawn time — not to any other branch, and never to trunk directly.
+"May commit" means: may create commits on the branch the spawning session owns and
+designated at spawn time, but **only for artifacts that are** (a) inside the declared
+artifact scope, (b) permitted outputs for the declared role under FS-0014, and (c)
+covered by the foreground session's approved PLAN or explicit human instruction. It does
+not mean unrestricted commit access within the branch.
+
 "May push" is blocked for background tasks by default; the spawning session pushes after
 reviewing what the background task produced.
 
@@ -129,7 +147,18 @@ A background task MUST communicate its completion state through the declared cha
   delivered to the foreground session, which surfaces it to the human.
 
 A background task MUST NOT silently fail. If it cannot complete its scope, it writes a
-summary of what it did, what it encountered, and why it stopped.
+summary of what it did, what it encountered, and why it stopped. If no other channel is
+available, the foreground session MUST capture the failure summary in its PR update
+comment or session summary.
+
+### CI jobs vs. agent background tasks
+
+Automated CI jobs — lint runs, test runners, status checks — are background executions
+but are **not** agent background tasks under this ADR unless they have write authority
+and can modify artifacts or publish comments. Read-only, pass/fail CI executions are
+governed by ADR-0015 Category 1 (governance gates), not by the role authority table
+above. The role authority table applies only to agent background tasks that can produce
+or modify artifacts.
 
 ### Why not the other options?
 
@@ -185,15 +214,25 @@ lifecycle.
    Background task spawned:
    - Role: [role name]
    - Scope: [file or directory paths]
-   - Channel: [how output is returned]
+   - Channel: [draft file path | stdout | PR comment on PR#N]
+   - Commit: [allowed | no]
    - Task: [one sentence description]
    ```
 
-2. **Naming spawned branches**: If the background task commits to a branch, the branch
+2. **Commit attribution**: If the background task produces commits, each commit message
+   MUST include trailers identifying it as a background task product:
+
+   ```text
+   Background-Task: true
+   Spawned-By: [foreground session identifier]
+   Task-Scope: [short scope description]
+   ```
+
+3. **Naming spawned branches**: If the background task commits to a branch, the branch
    name SHOULD include a token indicating it is a background task product:
    `bg/{parent-branch-name}/{short-description}`
 
-3. **Stop on scope ambiguity**: If the background task encounters a case not covered by
+4. **Stop on scope ambiguity**: If the background task encounters a case not covered by
    its scope declaration, it stops and writes an escalation note rather than expanding
    its own scope.
 

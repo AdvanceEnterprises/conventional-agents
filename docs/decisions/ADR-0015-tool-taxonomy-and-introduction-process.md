@@ -4,7 +4,11 @@ id: ADR-0015
 status: proposed
 decision_scope: architecture
 reversible: yes
-related_specs: []
+related_specs:
+  - FS-0002
+  - FS-0010
+  - FS-0013
+  - FS-0014
 superseded_by: null
 ---
 
@@ -90,6 +94,12 @@ authoritative — a non-zero exit blocks a merge or a status transition.
 - Produce machine-readable exit codes (0 = pass, non-zero = fail) and human-readable
   output explaining any failure.
 
+**Location invariant**: Any executable invoked by CI as a blocking check is a governance
+gate regardless of its physical location. Governance gates MUST live in `scripts/`. If a
+productivity skill helper (see Category 2) is promoted into CI as a blocking check, it
+MUST either move to `scripts/` or be wrapped by a script in `scripts/` that delegates to
+it. "It lives under `skills/`" is not an exemption from governance gate requirements.
+
 **Introduction requirements**:
 
 - MUST have an approved FS before implementation begins.
@@ -126,7 +136,9 @@ CI-enforced.
 - Described by a `SKILL.md` at `skills/{skill-name}/SKILL.md`.
 - Optional: agents choose when to invoke them; their absence does not block work.
 - Invocable by agents during a session without human approval per invocation.
-- Any helper scripts included in a skill MUST support `--self-test`.
+- Any executable helper script included in a skill MUST support `--self-test`, or the
+  skill MUST provide a wrapper command documented in `SKILL.md` that exercises the helper
+  and validates its core behavior.
 
 **Introduction requirements**:
 
@@ -135,7 +147,7 @@ CI-enforced.
   invocation syntax, expected output, known limitations, and `--self-test` instructions.
 - MUST be listed in `skills/index.md` (purpose + location + primary invocation).
 - MAY be introduced in the same PR as a PLAN that uses the skill, or in a standalone PR.
-- MUST pass `--self-test` before merging.
+- MUST pass `--self-test` (or the wrapper equivalent) before merging.
 
 **Modification requirements**:
 
@@ -163,8 +175,9 @@ invocation, web fetch).
 
 - Not distributed with the framework.
 - Not versioned or governed by the framework directly.
-- Assumed available; their absence is an environment configuration issue, not a framework
-  issue.
+- Not assumed universally available: a consuming environment declares which platform
+  tools are present. If a workflow requires a platform tool that is absent, the workflow
+  MUST fail clearly with a descriptive error, not silently skip steps.
 - Framework-wide conventions about *how* agents use platform tools are governed by ADRs
   and workflow documents, even though the tools themselves are not.
 
@@ -177,6 +190,9 @@ invocation, web fetch).
 - New model capabilities that create new governance implications (e.g., background task
   spawning, multi-session coordination) MUST be addressed by an ADR before agents rely
   on them. ADR-0013 and ADR-0014 are examples of this.
+- Workflow documents that rely on a platform tool SHOULD document the minimum expected
+  command surface or version family when behavior is version-sensitive (e.g., a specific
+  `gh` subcommand introduced in a particular release).
 
 **Responsible role**: Head Architect (Role 0) for proposing new platform conventions via
 ADR. Implementer (Role 3) for integrating platform tools into workflow documents.

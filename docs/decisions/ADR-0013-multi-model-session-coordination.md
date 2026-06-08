@@ -4,7 +4,9 @@ id: ADR-0013
 status: proposed
 decision_scope: architecture
 reversible: yes
-related_specs: []
+related_specs:
+  - FS-0014
+  - FS-0015
 superseded_by: null
 ---
 
@@ -75,6 +77,14 @@ makes final decisions. Workers cannot publish artifacts independently.
 All sessions are equal peers. They coordinate through a shared task queue and a
 locking mechanism. Conflicts are resolved by timestamp or explicit yield signals.
 
+## Definitions
+
+**Governed artifact**: Any file whose changes are constrained by an FS, PLAN, ADR, role
+contract, lifecycle workflow, CI gate, or README index requirement. This includes
+governance documents, workflow documents, source files, tests, scripts, package metadata,
+CI configuration, and generated indexes when those files are inside the declared task
+scope.
+
 ## Decision Outcome
 
 **Chosen option: Option B for same-task coordination; Option A for different-task
@@ -84,19 +94,27 @@ coordination. These are the two modes of multi-session operation.**
 
 When sessions are working on distinct tasks (different PLANs, different scopes), each
 session is a fully independent primary. They coordinate only through the shared
-artifact layer (git, PR comments, governance documents). No special designation is
-required. Each session operates within its declared role and session mode.
+artifact layer (git, PR comments, governance documents). Each session operates within
+its declared role and session mode.
 
-Rule: Parallel primaries MUST NOT modify the same governed artifacts concurrently.
-Each primary's task scope (the PLAN it is executing) defines its artifact boundary.
-If two primaries need to touch the same file, they must be sequenced, not parallelized.
+Every parallel primary MUST declare at session start:
+
+- **PLAN ID** (or governing task identifier, e.g., a GitHub issue number)
+- **Branch name** being used for this task
+- **Artifact scope** — which files or directories this session may modify
+- **Known excluded artifacts** — any files in the branch that are explicitly out of
+  scope for this session
+
+Rule: Parallel primaries MUST NOT modify the same governed artifacts concurrently. If
+two primaries need to touch the same file, they must be sequenced, not parallelized.
+On discovering an overlap, both sessions stop and escalate to the human.
 
 ### Mode 2 — Primary + contributor (same task)
 
 When sessions are working on the same task, one session is designated the **primary**
 and holds final authority. Other sessions are **contributors**. A contributor:
 
-- May read all shared artifacts.
+- May read all artifacts authorized for the primary task scope.
 - May produce outputs (draft content, analysis, review observations, suggested edits).
 - Delivers outputs to the primary through a defined channel: PR comments, a designated
   draft document, or inline suggestions on a branch the primary owns.
@@ -156,11 +174,21 @@ requirement that a single identity be responsible for any given git action.
    PLAN scope in its opening transparency statement. A session MUST NOT modify
    artifacts outside its declared scope without explicit human instruction.
 
-3. **Attribution**: When the primary incorporates contributor output, the commit
-   message or PR description notes the contribution.
-   Example: "Co-Authored-By: [model/session identifier]"
+3. **Pre-commit conflict check**: Before committing, a primary session MUST verify that
+   no files in its declared artifact scope have changed upstream since session start. If
+   overlap is detected, the session stops and escalates rather than resolving the
+   conflict unilaterally.
 
-4. **Conflict escalation**: If two sessions discover they need to modify the same
+4. **Attribution**: When the primary incorporates contributor output, the commit message
+   or PR description notes the contribution using trailers that do not conflict with
+   GitHub's `Co-Authored-By` convention (which requires a real name + email identity):
+
+   ```text
+   Assisted-By: [model name or session identifier]
+   Contributor-Session: [session identifier or PR comment URL]
+   ```
+
+5. **Conflict escalation**: If two sessions discover they need to modify the same
    artifact, they stop and escalate to human. Neither session proceeds unilaterally.
 
 ## Links
