@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0001
-status: approved
+status: implemented
 title: Markdownlint Integration for ADR Quality Gates
 owner: ajoeofalltrades
 test_required: true
@@ -11,7 +11,7 @@ supersedes: []
 requires: [ADR-0008]
 tags: [tooling, quality-gates, ci, linting, adr]
 created: 2026-01-27
-updated: 2026-01-27
+updated: 2026-06-08
 ---
 
 <!--
@@ -28,7 +28,7 @@ PARSING_HINTS:
 
 ## Status
 
-Approved
+Implemented
 
 ## Summary
 

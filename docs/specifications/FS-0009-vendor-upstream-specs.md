@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0009
-status: approved
+status: implemented
 title: Vendor Upstream Specs (Conventional Commits, Keep a Changelog)
 owner: martenoftheden
 test_required: false
@@ -17,7 +17,7 @@ supersedes: []
 requires: []
 tags: [vendoring, upstream, standards]
 created: 2026-02-08
-updated: 2026-02-08
+updated: 2026-06-08
 ---
 
 <!--
@@ -34,7 +34,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Approved
+- Implemented
 
 ## Summary
 

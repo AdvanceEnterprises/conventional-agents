@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0005
-status: draft
+status: implemented
 title: Expand docs linting coverage to FS/PLAN/workflows
 owner: Tai
 test_required: false
@@ -18,7 +18,7 @@ tags:
   - docs
   - markdownlint
 created: 2026-02-07
-updated: 2026-02-07
+updated: 2026-06-08
 ---
 
 <!--
@@ -35,7 +35,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Implemented
 
 ## Summary
 

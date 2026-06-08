@@ -2,13 +2,13 @@
 type: change-plan
 role: implementer
 language: markdown
-status: approved
+status: implemented
 related_specs:
   - FS-0003
 related_adrs:
   - ADR-0011
 created: 2026-02-07
-updated: 2026-02-07
+updated: 2026-06-08
 ---
 
 # PLAN-0001: Implement FS-0003 Git + gh CLI conventions

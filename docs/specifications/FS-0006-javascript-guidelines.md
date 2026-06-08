@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0006
-status: approved
+status: implemented
 title: JavaScript/TypeScript guidelines for agentic development
 owner: Tai
 test_required: false
@@ -18,7 +18,7 @@ tags:
   - testing
   - implementation
 created: 2026-02-08
-updated: 2026-02-08
+updated: 2026-06-08
 ---
 
 <!--
@@ -35,7 +35,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Approved
+- Implemented
 
 ## Summary
 
