@@ -45,3 +45,4 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | PLAN-0011 | Adopt GitHub Projects for Work Tracking | FS-0011 | implemented |
 | PLAN-0012 | Renumber Feature Specs to Sequential IDs | FS-0012 | implemented |
 | PLAN-0013 | Implement FS-0013 Status Consistency Check | FS-0013 | implemented |
+| PLAN-0014 | Implement FS-0014 Role Definitions Overhaul | FS-0014 | implemented |
