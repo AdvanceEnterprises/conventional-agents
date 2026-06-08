@@ -1,6 +1,6 @@
 ---
 type: feature-spec
-id: FS-0016
+id: FS-0008
 status: approved
 title: Apply versioning and changelog to agentic-dev-kit itself
 owner: Tai
@@ -12,7 +12,7 @@ interfaces:
 related_adrs: []
 supersedes: []
 requires:
-  - FS-0015
+  - FS-0007
 tags:
   - versioning
   - changelog
@@ -39,7 +39,7 @@ PARSING_HINTS:
 
 ## Summary
 
-Apply the versioning and release guidance established in FS-0015 and `workflows/versioning-and-releases.md` to the agentic-dev-kit repository itself.
+Apply the versioning and release guidance established in FS-0007 and `workflows/versioning-and-releases.md` to the agentic-dev-kit repository itself.
 This means creating a `CHANGELOG.md` with retroactive entries for work completed to date, aligning the version in `README.md` and `package.json`, and establishing the repo's first formal release-ready state.
 
 As a documentation/standards kit, agentic-dev-kit follows the "Documentation and Standards Kits" semver semantics defined in `workflows/versioning-and-releases.md`:
@@ -58,7 +58,7 @@ As a documentation/standards kit, agentic-dev-kit follows the "Documentation and
 
 ## Non-Goals
 
-- Creating git tags or GitHub Releases (that is a human-gated action per FS-0015).
+- Creating git tags or GitHub Releases (that is a human-gated action per FS-0007).
 - Setting up CI/CD release automation.
 - Bumping the submodule pointer in `agentic-bootstrap-constitution` (separate follow-up).
 
@@ -93,11 +93,11 @@ None for this spec (it is a one-time bootstrapping action).
 - Git tags and GitHub Releases.
 - CI/CD release automation.
 - Template repo submodule bump.
-- Future changelog maintenance (covered by FS-0015 workflow guidance).
+- Future changelog maintenance (covered by FS-0007 workflow guidance).
 
 ## Dependencies
 
-- FS-0015 (versioning guidance) must be implemented first (it is).
+- FS-0007 (versioning guidance) must be implemented first (it is).
 - `workflows/versioning-and-releases.md` must exist (it does).
 
 ## Open Questions

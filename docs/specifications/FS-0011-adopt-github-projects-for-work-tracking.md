@@ -1,6 +1,6 @@
 ---
 type: feature-spec
-id: FS-0019
+id: FS-0011
 status: implemented
 title: Adopt GitHub Projects for work tracking
 owner: Tai
@@ -83,7 +83,7 @@ Each bullet MUST be objectively testable.
 
 **Backfill:**
 
-- Given all 11 FS documents (FS-0001, FS-0002, FS-0011 through FS-0019), when listing project items, then each has a corresponding GitHub Issue on the board with the correct Status column and Doc Type = FS.
+- Given all 11 FS documents (FS-0001, FS-0002, FS-0003 through FS-0011), when listing project items, then each has a corresponding GitHub Issue on the board with the correct Status column and Doc Type = FS.
 - Given all 11 PLAN documents (PLAN-0001 through PLAN-0011), when listing project items, then each has a corresponding GitHub Issue on the board with the correct Status column and Doc Type = PLAN.
 - Given a completed FS or PLAN (status: implemented), when viewing the board, then its issue appears in the Done column.
 
@@ -101,7 +101,7 @@ Each bullet MUST be objectively testable.
 
 ## Edge Cases
 
-- FS-0012 and FS-0013 are still in `draft` status — their issues should land in the Backlog column, not Approved.
+- FS-0004 and FS-0005 are still in `draft` status — their issues should land in the Backlog column, not Approved.
 - Some FS documents (FS-0001, FS-0002) are `approved` but have no corresponding PLAN that reached `implemented` — place them in Approved.
 - Issue #26 (this propagation issue) already exists — it should be added to the board and linked to this FS.
 
@@ -134,7 +134,3 @@ Each bullet MUST be objectively testable.
 ## Open Questions
 
 None — the pattern is established by pack-protocol's reference implementation.
-
-## Note: Pending Renumber
-
-This spec is currently FS-0019 but will be renumbered to **FS-0011** as part of FS-0020 (sequential ID renumbering). See FS-0020 for the full mapping.

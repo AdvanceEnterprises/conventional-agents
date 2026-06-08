@@ -1,6 +1,6 @@
 ---
 type: feature-spec
-id: FS-0012
+id: FS-0004
 status: draft
 title: Agent-authored commit + PR commentary policy
 owner: Tai
@@ -11,7 +11,7 @@ related_adrs:
   - ADR-0011
 supersedes: []
 requires:
-  - FS-0011
+  - FS-0003
 tags:
   - git
   - github
@@ -51,7 +51,7 @@ Define a documentation-only policy for coding agents to produce consistently use
 
 - Adding CI enforcement for commit messages or PR body structure.
 - Requiring commit signing.
-- Changing merge strategy or branching conventions (see FS-0011).
+- Changing merge strategy or branching conventions (see FS-0003).
 
 ## Users / Stakeholders
 
@@ -72,7 +72,7 @@ Define a documentation-only policy for coding agents to produce consistently use
 
 ### Commit messages (agent commits)
 
-- Subject MUST follow Conventional Commits (lite) used by FS-0011.
+- Subject MUST follow Conventional Commits (lite) used by FS-0003.
 - Commit body SHOULD include, when applicable:
   - Why (intent)
   - What (high-level change)
@@ -115,7 +115,7 @@ After pushing commits that address review feedback, the agent MUST add a PR comm
 
 ## Dependencies
 
-- FS-0011 (Git + gh conventions)
+- FS-0003 (Git + gh conventions)
 - ADR-0011 (multi-identity model)
 
 ## Rollout / Migration (if applicable)

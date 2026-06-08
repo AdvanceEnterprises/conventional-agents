@@ -1,6 +1,6 @@
 ---
 type: feature-spec
-id: FS-0018
+id: FS-0010
 status: implemented
 title: Process Compliance Gates — Spec-First Enforcement and Document Lifecycle
 owner: martenoftheden

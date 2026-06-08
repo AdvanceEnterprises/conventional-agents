@@ -3,7 +3,7 @@ type: change-plan
 role: implementer
 language: markdown
 status: approved
-related_specs: [FS-0017]
+related_specs: [FS-0009]
 related_adrs: [ADR-0010]
 created: 2026-02-08
 updated: 2026-02-08
@@ -13,7 +13,7 @@ updated: 2026-02-08
 
 ## 1. Feature / Issue Reference
 
-- Feature Spec ID(s): FS-0017
+- Feature Spec ID(s): FS-0009
 - Related ADR ID(s): ADR-0010
 - Issue / PR Reference: TBD
 
@@ -40,7 +40,7 @@ Validation is via:
 
 - `markdownlint-cli2` CI passing on all modified .md files
 - Manual verification of submodule init + spec file accessibility
-- Manual review against FS-0017 Success Criteria
+- Manual review against FS-0009 Success Criteria
 
 ## 4. Files to Be Modified
 
@@ -73,7 +73,7 @@ Validation is via:
 
 ## 6. Constraints and Guardrails
 
-- FS-0017 Non-Goals: no forking upstream, no build tooling, no substance changes
+- FS-0009 Non-Goals: no forking upstream, no build tooling, no substance changes
 - Submodules should be pinned to the latest tagged release where available
 
 ## 7. Risks and Edge Cases
@@ -86,7 +86,7 @@ Validation is via:
 - Submodules init cleanly: `git submodule update --init --recursive`
 - Spec files accessible at expected paths
 - All markdown lint passes
-- Each FS-0017 Success Criterion verified
+- Each FS-0009 Success Criterion verified
 
 ## 9. Explicit Non-Changes
 

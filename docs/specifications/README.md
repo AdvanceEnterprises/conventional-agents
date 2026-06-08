@@ -44,13 +44,13 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 |---|---|---|
 | FS-0001 | Markdownlint Integration | approved |
 | FS-0002 | Move Workflow Skills into agent-dev-kit | approved |
-| FS-0011 | Git + GitHub CLI Conventions | approved |
-| FS-0012 | Agent-Authored Commit/PR Commentary Policy | draft |
-| FS-0013 | Expand Docs Linting Coverage | draft |
-| FS-0014 | JavaScript/TypeScript Guidelines | approved |
-| FS-0015 | Versioning, Releases, and Packaging Guidance | approved |
-| FS-0016 | Self-Versioning and Changelog | approved |
-| FS-0017 | Vendor Upstream Specs | approved |
-| FS-0018 | Process Compliance Gates and Document Lifecycle | implemented |
-| FS-0019 | Adopt GitHub Projects for Work Tracking | implemented |
-| FS-0020 | Renumber Feature Specs to Sequential IDs | draft |
+| FS-0003 | Git + GitHub CLI Conventions | approved |
+| FS-0004 | Agent-Authored Commit/PR Commentary Policy | draft |
+| FS-0005 | Expand Docs Linting Coverage | draft |
+| FS-0006 | JavaScript/TypeScript Guidelines | approved |
+| FS-0007 | Versioning, Releases, and Packaging Guidance | approved |
+| FS-0008 | Self-Versioning and Changelog | approved |
+| FS-0009 | Vendor Upstream Specs | approved |
+| FS-0010 | Process Compliance Gates and Document Lifecycle | implemented |
+| FS-0011 | Adopt GitHub Projects for Work Tracking | implemented |
+| FS-0012 | Renumber Feature Specs to Sequential IDs | implemented |

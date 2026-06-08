@@ -1,6 +1,6 @@
 ---
 type: feature-spec
-id: FS-0015
+id: FS-0007
 status: approved
 title: Versioning, releases, and packaging guidance for agentic development
 owner: Tai

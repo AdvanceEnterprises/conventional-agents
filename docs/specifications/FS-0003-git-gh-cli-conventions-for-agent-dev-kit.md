@@ -1,6 +1,6 @@
 ---
 type: feature-spec
-id: FS-0011
+id: FS-0003
 status: approved
 title: Git + gh CLI conventions for the kit
 owner: Tai

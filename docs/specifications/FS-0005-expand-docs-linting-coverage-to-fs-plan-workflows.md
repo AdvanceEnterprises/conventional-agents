@@ -1,6 +1,6 @@
 ---
 type: feature-spec
-id: FS-0013
+id: FS-0005
 status: draft
 title: Expand docs linting coverage to FS/PLAN/workflows
 owner: Tai
