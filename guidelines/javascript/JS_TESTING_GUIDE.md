@@ -120,7 +120,7 @@ import { parseInput } from "./parser.js";
  * type: test-module
  * language: typescript
  * framework: vitest
- * spec_id: FS-0020
+ * spec_id: FS-0012
  * scope: unit
  * ---
  */

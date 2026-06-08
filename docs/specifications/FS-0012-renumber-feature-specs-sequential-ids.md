@@ -1,7 +1,7 @@
 ---
 type: feature-spec
-id: FS-0020
-status: draft
+id: FS-0012
+status: implemented
 title: Renumber feature specs to sequential IDs
 owner: Tai
 test_required: false
@@ -34,28 +34,28 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Implemented
 
 ## Summary
 
-Feature spec IDs currently skip from FS-0002 to FS-0011 (IDs 0003–0010 were never used). This creates confusion about how many specs exist and breaks the expectation that IDs are sequential. This spec covers renumbering all FS documents to use contiguous sequential IDs and updating every reference across the repository and GitHub Project board.
+Feature spec IDs currently skip from FS-0002 to FS-0003 (IDs 0003–0010 were never used). This creates confusion about how many specs exist and breaks the expectation that IDs are sequential. This spec covers renumbering all FS documents to use contiguous sequential IDs and updating every reference across the repository and GitHub Project board.
 
 ## ID Mapping
 
-| Current ID | New ID | Title |
+| Old ID | New ID | Title |
 |---|---|---|
 | FS-0001 | FS-0001 | Markdownlint Integration for ADR Quality Gates |
 | FS-0002 | FS-0002 | Move Workflow Skills into agentic-dev-kit |
-| FS-0011 | **FS-0003** | Git + gh CLI Conventions |
-| FS-0012 | **FS-0004** | Agent-Authored Commit/PR Commentary Policy |
-| FS-0013 | **FS-0005** | Expand Docs Linting Coverage |
-| FS-0014 | **FS-0006** | JavaScript/TypeScript Guidelines |
-| FS-0015 | **FS-0007** | Versioning, Releases, and Packaging Guidance |
-| FS-0016 | **FS-0008** | Apply Versioning and Changelog to agentic-dev-kit Itself |
-| FS-0017 | **FS-0009** | Vendor Upstream Specs |
-| FS-0018 | **FS-0010** | Process Compliance Gates and Document Lifecycle |
-| FS-0019 | **FS-0011** | Adopt GitHub Projects for Work Tracking |
-| FS-0020 | **FS-0012** | Renumber Feature Specs to Sequential IDs (this spec) |
+| ~~FS-0011~~ | **FS-0003** | Git + gh CLI Conventions |
+| ~~FS-0012~~ | **FS-0004** | Agent-Authored Commit/PR Commentary Policy |
+| ~~FS-0013~~ | **FS-0005** | Expand Docs Linting Coverage |
+| ~~FS-0014~~ | **FS-0006** | JavaScript/TypeScript Guidelines |
+| ~~FS-0015~~ | **FS-0007** | Versioning, Releases, and Packaging Guidance |
+| ~~FS-0016~~ | **FS-0008** | Apply Versioning and Changelog to agentic-dev-kit Itself |
+| ~~FS-0017~~ | **FS-0009** | Vendor Upstream Specs |
+| ~~FS-0018~~ | **FS-0010** | Process Compliance Gates and Document Lifecycle |
+| ~~FS-0019~~ | **FS-0011** | Adopt GitHub Projects for Work Tracking |
+| ~~FS-0020~~ | **FS-0012** | Renumber Feature Specs to Sequential IDs (this spec) |
 
 After renumbering, the next new spec will be **FS-0013**.
 
@@ -92,7 +92,7 @@ After renumbering, the next new spec will be **FS-0013**.
 Each bullet MUST be objectively testable.
 
 - Given the renumbering is complete, when listing files in `docs/specifications/`, then filenames use sequential IDs from FS-0001 through FS-0012 with no gaps.
-- Given the renumbering is complete, when searching the repo for any old ID (FS-0011 through FS-0020), then zero matches are found outside of the mapping table in this spec and the CHANGELOG migration note.
+- Given the renumbering is complete, when searching the repo for any old ID (old FS-0011 through old FS-0020), then zero matches are found outside of the mapping table in this spec and the CHANGELOG migration notes.
 - Given the renumbering is complete, when reading any PLAN's `related_specs:` front matter, then it references the new FS ID.
 - Given the renumbering is complete, when reading any ADR's `related_specs:` front matter, then it references the new FS ID.
 - Given the renumbering is complete, when viewing the GitHub Project board, then all FS issue titles use the new IDs.
@@ -113,7 +113,7 @@ Each bullet MUST be objectively testable.
 
 ## Dependencies
 
-- FS-0019/PLAN-0011 (GitHub Projects setup) should be merged first so the board exists to update.
+- FS-0011/PLAN-0011 (GitHub Projects setup) should be merged first so the board exists to update.
 - `gh` CLI with project scope for updating issue titles.
 
 ## Rollout / Migration

@@ -3,7 +3,7 @@ type: change-plan
 role: implementer
 status: implemented
 related_specs:
-  - FS-0019
+  - FS-0011
 related_adrs: []
 created: 2026-02-28
 updated: 2026-02-28
@@ -20,7 +20,7 @@ PARSING_HINTS:
 
 ## 1. Feature / Issue Reference
 
-- Feature Spec ID(s): FS-0019
+- Feature Spec ID(s): FS-0011
 - Related ADR ID(s): pack-protocol ADR-0001, pack-protocol ADR-0002
 - Issue / PR Reference: [#26](https://github.com/Tais-Den/agentic-dev-kit/issues/26)
 
@@ -34,11 +34,11 @@ PARSING_HINTS:
 - Create labels `spec` and `plan` in the repo (if they don't already exist).
 - Enable the "Auto-add to project" workflow via GitHub UI (manual step).
 - Enable built-in workflows: "Item closed → Done", "PR merged → Done" (manual step).
-- Create GitHub Issues for all 11 FS documents (FS-0001, FS-0002, FS-0011 through FS-0019) and all 11 PLAN documents (PLAN-0001 through PLAN-0011), totaling 22 issues.
+- Create GitHub Issues for all 11 FS documents (FS-0001, FS-0002, FS-0003 through FS-0011) and all 11 PLAN documents (PLAN-0001 through PLAN-0011), totaling 22 issues.
 - Add all issues to the project board with correct Status and Doc Type fields.
 - Create `config/project.yml` documenting board metadata, field IDs, and column option IDs.
 - Update `README.md` with a project board reference.
-- Update `docs/specifications/README.md` with FS-0019.
+- Update `docs/specifications/README.md` with FS-0011.
 - Update `docs/change-plans/README.md` with PLAN-0011.
 - Add a CHANGELOG entry under `[Unreleased]`.
 
@@ -56,9 +56,9 @@ No automated tests — this is infrastructure/configuration work. Validation is 
 
 ## 4. Files to Be Modified
 
-- `docs/specifications/FS-0019-adopt-github-projects-for-work-tracking.md` (new — already drafted)
+- `docs/specifications/FS-0011-adopt-github-projects-for-work-tracking.md` (new — already drafted)
 - `docs/change-plans/PLAN-0011-adopt-github-projects-for-work-tracking.md` (new — this file)
-- `docs/specifications/README.md` (add FS-0019 row)
+- `docs/specifications/README.md` (add FS-0011 row)
 - `docs/change-plans/README.md` (add PLAN-0011 row)
 - `config/project.yml` (new)
 - `README.md` (add board reference)
@@ -86,7 +86,7 @@ GitHub-side (not file changes):
 
 ### Phase 2: Backfill issues
 
-1. Create GitHub Issues for each FS document (FS-0001, FS-0002, FS-0011 through FS-0019; 11 total), labeled `spec`. Issue title format: `[FS-XXXX] <title>`. Issue body references the spec file path and current status.
+1. Create GitHub Issues for each FS document (FS-0001, FS-0002, FS-0003 through FS-0011; 11 total), labeled `spec`. Issue title format: `[FS-XXXX] <title>`. Issue body references the spec file path and current status.
 2. Create GitHub Issues for each PLAN document (PLAN-0001 through PLAN-0011, 11 total), labeled `plan`. Issue title format: `[PLAN-XXXX] <title>`. Issue body references the plan file path and current status.
 3. Add each issue to the project board.
 4. Set each issue's Status field based on the document's current status:
@@ -104,7 +104,7 @@ GitHub-side (not file changes):
    - Field IDs (Status, Doc Type)
    - Option IDs for each Status column and Doc Type value
 2. Add a "Project Board" section to `README.md` with the board URL.
-3. Update `docs/specifications/README.md`: add FS-0019 row.
+3. Update `docs/specifications/README.md`: add FS-0011 row.
 4. Update `docs/change-plans/README.md`: add PLAN-0011 row.
 5. Add CHANGELOG entry under `[Unreleased]`.
 
@@ -125,7 +125,7 @@ These require GitHub UI and cannot be done via CLI. Completed by Tai on 2026-02-
 
 ## 6. Constraints and Guardrails
 
-- FS-0019 Non-Goals: no org rollup, no webhooks, no automated status sync.
+- FS-0011 Non-Goals: no org rollup, no webhooks, no automated status sync.
 - Board is a dashboard layer; markdown FS/PLAN/ADR files remain authoritative.
 - Auto-add workflow configuration is a manual UI step — document it but don't block on it.
 
@@ -133,8 +133,8 @@ These require GitHub UI and cannot be done via CLI. Completed by Tai on 2026-02-
 
 - **`gh project` scope:** PAT must have `project` scope. Verify before starting.
 - **Auto-add is UI-only:** Cannot be configured via CLI. Phase 4 is human-gated.
-- **Draft specs (FS-0012, FS-0013):** Their issues go to Backlog, not Approved.
-- **Issue #26 already exists:** Add it to the board as-is; link it to FS-0019.
+- **Draft specs (FS-0004, FS-0005):** Their issues go to Backlog, not Approved.
+- **Issue #26 already exists:** Add it to the board as-is; link it to FS-0011.
 - **Rate limits:** Creating 22+ issues in rapid succession may hit GitHub rate limits. Add brief pauses if needed.
 
 ## 8. Validation
@@ -154,7 +154,7 @@ These require GitHub UI and cannot be done via CLI. Completed by Tai on 2026-02-
 
 ## 10. Readiness Check
 
-- [x] Spec is approved (FS-0019 — approved upon merge of this PR)
+- [x] Spec is approved (FS-0011 — approved upon merge of this PR)
 - [x] Pack-protocol ADR-0001 and ADR-0002 provide the governing decisions
 - [x] `gh` CLI available with project scope
 - [x] Scope is minimal and explicit

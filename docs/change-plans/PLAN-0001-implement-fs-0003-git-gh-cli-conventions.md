@@ -4,18 +4,18 @@ role: implementer
 language: markdown
 status: approved
 related_specs:
-  - FS-0011
+  - FS-0003
 related_adrs:
   - ADR-0011
 created: 2026-02-07
 updated: 2026-02-07
 ---
 
-# PLAN-0001: Implement FS-0011 Git + gh CLI conventions
+# PLAN-0001: Implement FS-0003 Git + gh CLI conventions
 
 ## 1. Feature / Issue Reference
 
-- Feature Spec ID(s): FS-0011
+- Feature Spec ID(s): FS-0003
 - Related ADR ID(s): ADR-0011
 - Issue / PR Reference: PR #3 (<https://github.com/Tais-Den/agentic-dev-kit/pull/3>)
 
@@ -23,7 +23,7 @@ updated: 2026-02-07
 
 This change WILL:
 
-- Add clear, copy/pasteable documentation for Git + GitHub (`gh`) conventions defined in FS-0011.
+- Add clear, copy/pasteable documentation for Git + GitHub (`gh`) conventions defined in FS-0003.
 - Document the three-identity GitHub model (human, agent-committer, agent-reviewer) and the separation between:
   - git commit authorship (`user.name`/`user.email`)
   - GitHub action identity (`gh` auth context)
@@ -38,11 +38,11 @@ This change will NOT:
 
 ## 3. Tests Driving This Change
 
-- None (docs-only change; FS-0011 sets test_required=false)
+- None (docs-only change; FS-0003 sets test_required=false)
 
 ## 4. Files to Be Modified
 
-- docs/specifications/FS-0011-git-gh-cli-conventions-for-agentic-dev-kit.md
+- docs/specifications/FS-0003-git-gh-cli-conventions-for-agentic-dev-kit.md
 - docs/decisions/ADR-0011-adopt-multi-identity-github-model-human-agent-committer-agent-reviewer.md
 - Add: workflows/git-and-gh-conventions.md
 
@@ -62,7 +62,7 @@ This change will NOT:
      - keep branch updated (rebase + `--force-with-lease` guidance)
      - merge policy (squash-merge) and branch deletion.
    - Multi-identity guidance.
-3. Update FS-0011 to reference ADR-0011.
+3. Update FS-0003 to reference ADR-0011.
 4. (Optional) Add a short pointer index in `workflows/README.md`.
 5. Run a quick docs sanity check:
    - links resolve
@@ -72,7 +72,7 @@ This change will NOT:
 ## 6. Constraints and Guardrails
 
 - Spec constraints:
-  - FS-0011 Non-Goals / Out of Scope must be respected (docs-only; GitHub required; no enforcement).
+  - FS-0003 Non-Goals / Out of Scope must be respected (docs-only; GitHub required; no enforcement).
 - ADR constraints:
   - ADR-0011: agent PRs are authored by agent identity; keep review identity separate.
 - Workspace constraints:
@@ -88,7 +88,7 @@ This change will NOT:
 
 - Manual checks:
   - Ensure the workflow doc uses `trunk` and `origin` consistently.
-  - Verify FS-0011 references ADR-0011.
+  - Verify FS-0003 references ADR-0011.
   - Confirm no credential-like strings are included.
 
 ## 9. Explicit Non-Changes
@@ -99,7 +99,7 @@ This change will NOT:
 
 ## 10. Readiness Check
 
-- [x] FS-0011 is approved (required before treating as binding)
+- [x] FS-0003 is approved (required before treating as binding)
 - [x] Scope is minimal and explicit
 - [x] No architectural/code changes implied
 

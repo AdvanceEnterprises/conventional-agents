@@ -4,7 +4,7 @@ This document is the canonical, copy/pasteable guide for how we use Git + GitHub
 
 Normative requirements are derived from:
 
-- Spec: FS-0011
+- Spec: FS-0003
 - ADR: ADR-0011
 
 ## Defaults
