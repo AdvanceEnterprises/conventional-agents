@@ -114,7 +114,7 @@ For each FS and PLAN document, the script checks that the status value in the re
 README index table row matches the `status:` field in the document's YAML front matter.
 The README table format is:
 
-```
+```markdown
 | FS-XXXX | Title | status-value |
 ```
 
