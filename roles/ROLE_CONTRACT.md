@@ -53,6 +53,15 @@ Spec-first rule
 	•	If you are unsure whether work qualifies as "trivial," it does not. Write the spec.
 	•	See `workflows/document-lifecycle.md` for status definitions and transition rules.
 
+Role and session transparency
+	•	When beginning a session where role choice is non-obvious, or when the active role stance shifts in a way that affects the work, the agent must state:
+	  1.	Which session mode is active (declared or inferred).
+	  2.	Which role is primary.
+	  3.	Which roles are supporting, if any.
+	•	One sentence is sufficient. The human may override the interpretation at any time. If overridden, the agent adopts the stated role without argument.
+	•	See `workflows/session-modes.md` for mode definitions, primary/supporting role assignments, and role-transition phrase templates.
+	•	This is not optional ceremony — it is the mechanism by which humans stay in control of agentic sessions without needing to read every tool call.
+
 ⸻
 
 Non-Overridable Safety Gates (ADR-0012)
@@ -125,6 +134,17 @@ Stop Conditions
 	•	Strategic direction is unclear or contradictory — stop and escalate to human
 	•	A proposed framework change would require modifying ADR-0012-level gates — stop; this requires explicit human decision and a new ADR
 
+Best Used When
+	•	The session involves strategic direction, framework evolution, or a question of "what should we do or build?"
+	•	Cross-role ambiguity exists and needs resolution via an ADR proposal.
+	•	A framework health audit is needed (stale statuses, process gaps, drift).
+	•	A new FS or ADR needs to be proposed, even if Document Author will do the drafting.
+
+Avoid When
+	•	A decision is already made and approved — shift to Document Author or Implementer.
+	•	The work is purely editorial with no governance implications.
+	•	The session is executing a clearly scoped, approved PLAN.
+
 ⸻
 
 Role 1: Document Author
@@ -167,6 +187,16 @@ Stop Conditions
 	•	A cross-reference points to a non-existent document — stop and flag before committing
 	•	The document lifecycle transition rules are unclear for the current situation
 
+Best Used When
+	•	Creating or updating governed documents: FS, PLAN, ADR, README index tables.
+	•	Reconciling stale statuses or running `npm run check:status` to resolve violations.
+	•	The Head Architect has identified what needs to be documented and the task is execution, not strategy.
+
+Avoid When
+	•	Strategic direction is still undecided — wait for Head Architect guidance before drafting.
+	•	The session is in review mode and no documents need updating.
+	•	Implementation is underway and no document changes are in scope.
+
 ⸻
 
 Role 2: Spec Reader and Test Planner
@@ -203,6 +233,15 @@ Stop Conditions
 	•	Spec status is not approved
 	•	Success criteria are not testable
 	•	Interfaces are unclear
+
+Best Used When
+	•	An FS with `status: approved` exists and needs tests written before implementation begins.
+	•	The goal is translating acceptance criteria into executable tests, not writing production code.
+
+Avoid When
+	•	The governing FS does not yet have `status: approved`.
+	•	`test_required: false` is set in the FS front matter.
+	•	Implementation is already complete and tests are being written retroactively — flag this as a process exception.
 
 ⸻
 
@@ -241,6 +280,16 @@ Stop Conditions
 	•	Architecture boundaries would be violated
 	•	Tests fail for unclear reasons
 
+Best Used When
+	•	Failing tests exist and an approved FS + PLAN define exactly what to build.
+	•	The work is executing a known, bounded change — not exploring what to do.
+	•	All pre-implementation gates are satisfied: approved FS, approved PLAN, tests exist (or test_required: false).
+
+Avoid When
+	•	Design decisions are still open — stop and escalate to Head Architect.
+	•	No approved spec or plan exists for the work.
+	•	The session is primarily creating or updating governance documents.
+
 ⸻
 
 Role 4: Reviewer
@@ -273,6 +322,14 @@ Prohibited Actions
 Stop Conditions
 	•	Conflicting documentation prevents a coherent review
 	•	Undocumented behavior is widespread enough that a framework-level issue exists (escalate to Head Architect, not Reviewer)
+
+Best Used When
+	•	A concrete artifact exists to review: a PR diff, a completed document draft, a proposed spec or ADR.
+	•	The goal is identifying mismatches, gaps, or conflicts — not fixing them.
+
+Avoid When
+	•	There is nothing concrete to review yet (the session is still in planning or authoring mode).
+	•	An issue has already been flagged and the fix is underway — hand off to the appropriate role rather than re-reviewing in-progress work.
 
 ⸻
 
@@ -314,6 +371,16 @@ Prohibited Actions
 Stop Conditions
 	•	A communication would require interpreting intent beyond what the CHANGELOG and specs document — stop and ask
 	•	The exported surface has changed in ways not reflected in any FS — flag to the Head Architect before drafting
+
+Best Used When
+	•	A release or milestone is ready to communicate and needs human-facing framing.
+	•	INTEGRATION.md, consumer-facing README sections, or GitHub Release descriptions need updating.
+	•	A stakeholder or team status summary is requested.
+
+Avoid When
+	•	Internal governance documents are being actively modified — let Document Author finish first.
+	•	Implementation is not complete — do not communicate outcomes prematurely.
+	•	Strategic decisions are still being made — Communications Lead translates completed work; it does not interpret intent.
 
 ⸻
 
