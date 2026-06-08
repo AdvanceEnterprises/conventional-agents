@@ -26,7 +26,7 @@ PARSING_HINTS:
 
 - Feature Spec ID(s): FS-0006
 - Related ADR ID(s): None
-- Issue / PR Reference: PR #12 (<https://github.com/Tais-Den/agentic-dev-kit/pull/12>)
+- Issue / PR Reference: PR #12 (<https://github.com/Tais-Den/conventional-agents/pull/12>)
 
 ## 2. Scope of Change
 
@@ -141,7 +141,7 @@ Quality gates:
 ## 9. Explicit Non-Changes
 
 - `docs/` directory (ADRs, specs, change plans, ARC42) — not modified.
-- `INTEGRATION.md` — not modified (guidelines are already discoverable via `vendor/agent-dev-kit/guidelines/`).
+- `INTEGRATION.md` — not modified (guidelines are already discoverable via `vendor/conventional-agents/guidelines/`).
 - `roles/ROLE_CONTRACT.md` — not modified.
 - `templates/` — no new JS test templates (potential follow-up).
 - `skills/` — not modified.

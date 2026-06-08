@@ -17,7 +17,7 @@ superseded_by: null
 
 ## Context and Problem Statement
 
-The agentic-dev-kit precedence model (defined in INTEGRATION.md) establishes that a consuming project's root `AGENTS.md` is the highest-priority instruction source. This means project-specific rules can override anything in the vendored kit — including ROLE_CONTRACT.
+The conventional-agents precedence model (defined in INTEGRATION.md) establishes that a consuming project's root `AGENTS.md` is the highest-priority instruction source. This means project-specific rules can override anything in the vendored kit — including ROLE_CONTRACT.
 
 FS-0010 introduces rules that should **not** be overridable by project-specific instructions:
 

@@ -43,7 +43,7 @@ PARSING_HINTS:
 
 ## Summary
 
-Add cross-cutting guidance to the agentic-dev-kit framework (repo: `Tais-Den/agentic-dev-kit`, vendored at `vendor/agent-dev-kit/`) for how projects should handle versioning, releases, and packaging when agents are involved in the development workflow.
+Add cross-cutting guidance to the conventional-agents framework (repo: `Tais-Den/conventional-agents`, vendored at `vendor/conventional-agents/`) for how projects should handle versioning, releases, and packaging when agents are involved in the development workflow.
 This includes a new workflow document with prescriptive versioning and release guidance, updates to the Role Contract with version-related agent constraints, and updates to all language-specific implementation guides to establish boundaries around version manipulation during feature work.
 
 ## Goals
@@ -71,12 +71,12 @@ This includes a new workflow document with prescriptive versioning and release g
 - Prescribing a specific changelog tool (e.g., `conventional-changelog`, `git-cliff`, `release-please`).
 - Prescribing a specific CI/CD release pipeline or GitHub Actions workflow.
 - Defining a release cadence (weekly, monthly, etc.) — that is project-specific.
-- Defining how agentic-dev-kit itself is versioned (that is a separate operational concern, not framework guidance).
+- Defining how conventional-agents itself is versioned (that is a separate operational concern, not framework guidance).
 - Defining package registry specifics (npm, PyPI, crates.io publish mechanics).
 
 ## Users / Stakeholders
 
-- LLM-backed coding agents acting as implementers, test writers, or reviewers on projects that consume agentic-dev-kit.
+- LLM-backed coding agents acting as implementers, test writers, or reviewers on projects that consume conventional-agents.
 - Human developers who review agent-produced code and approve releases.
 - Project maintainers who define release processes for their repositories.
 
@@ -110,7 +110,7 @@ What counts as "breaking" depends on context:
 
 - **Libraries**: breaking = public API change (function signatures, exports, types).
 - **Services/APIs**: breaking = endpoint removal, response shape change, auth change.
-- **Documentation/standards kits** (like agentic-dev-kit): breaking = removing/renaming files in the exported surface, changing the vendored mount path, restructuring directories that consumers reference.
+- **Documentation/standards kits** (like conventional-agents): breaking = removing/renaming files in the exported surface, changing the vendored mount path, restructuring directories that consumers reference.
 - **CLIs**: breaking = removing/renaming commands or flags, changing default behavior.
 
 The workflow document must acknowledge these differences rather than assuming "library semver" is universal.
@@ -155,7 +155,7 @@ From practitioner experience, the correct boundary is:
 
 Each bullet MUST be objectively testable.
 
-- Given a checkout of the agentic-dev-kit repo, when listing `workflows/`, then `versioning-and-releases.md` exists.
+- Given a checkout of the conventional-agents repo, when listing `workflows/`, then `versioning-and-releases.md` exists.
 - Given `workflows/versioning-and-releases.md`, when reading it, then it contains sections covering: semver semantics (with guidance for all 4 project types: libraries, services/APIs, documentation/standards kits, and CLIs), changelog conventions, release process, agent-safe vs human-gated actions, dependency versioning, and submodule versioning.
 - Given `workflows/versioning-and-releases.md`, when reading it, then it does NOT prescribe a specific changelog tool, CI/CD pipeline, or release cadence.
 - Given `guidelines/ROLE_CONTRACT.md`, when reading it, then it contains version-related constraints in the Shared Rules section that explicitly state: agents must not bump major versions without human approval, agents must not publish to registries without human approval, and version bumps are only allowed in explicit release-prep commits/PRs (never mixed into feature commits).
@@ -178,7 +178,7 @@ Each bullet MUST be objectively testable.
 - CI/CD pipeline definitions or GitHub Actions workflows for releases.
 - Package registry publish mechanics (npm, PyPI, crates.io specifics).
 - Release cadence recommendations.
-- Versioning of agentic-dev-kit itself (separate operational concern).
+- Versioning of conventional-agents itself (separate operational concern).
 - Monorepo tooling guidance.
 
 ## Dependencies

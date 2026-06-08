@@ -2,7 +2,7 @@
 type: feature-spec
 id: FS-0008
 status: implemented
-title: Apply versioning and changelog to agentic-dev-kit itself
+title: Apply versioning and changelog to conventional-agents itself
 owner: Tai
 test_required: false
 interfaces:
@@ -31,7 +31,7 @@ PARSING_HINTS:
 - Interfaces listed here define allowed surface area for code changes.
 -->
 
-# Feature Spec: Apply versioning and changelog to agentic-dev-kit itself
+# Feature Spec: Apply versioning and changelog to conventional-agents itself
 
 ## Status
 
@@ -39,10 +39,10 @@ PARSING_HINTS:
 
 ## Summary
 
-Apply the versioning and release guidance established in FS-0007 and `workflows/versioning-and-releases.md` to the agentic-dev-kit repository itself.
+Apply the versioning and release guidance established in FS-0007 and `workflows/versioning-and-releases.md` to the conventional-agents repository itself.
 This means creating a `CHANGELOG.md` with retroactive entries for work completed to date, aligning the version in `README.md` and `package.json`, and establishing the repo's first formal release-ready state.
 
-As a documentation/standards kit, agentic-dev-kit follows the "Documentation and Standards Kits" semver semantics defined in `workflows/versioning-and-releases.md`:
+As a documentation/standards kit, conventional-agents follows the "Documentation and Standards Kits" semver semantics defined in `workflows/versioning-and-releases.md`:
 
 - **Major (breaking):** removing/renaming exported surface files, changing vendored mount path, restructuring directories consumers reference.
 - **Minor (feature):** adding guideline sets, workflows, templates, skills, roles.
@@ -64,7 +64,7 @@ As a documentation/standards kit, agentic-dev-kit follows the "Documentation and
 
 ## Users / Stakeholders
 
-- Maintainers of agentic-dev-kit.
+- Maintainers of conventional-agents.
 - Consumers who vendor the kit and want to know what changed between versions.
 
 ## Interfaces

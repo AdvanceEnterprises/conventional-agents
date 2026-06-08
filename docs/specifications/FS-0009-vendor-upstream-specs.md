@@ -38,7 +38,7 @@ PARSING_HINTS:
 
 ## Summary
 
-agentic-dev-kit builds on two well-established community specifications — Conventional Commits and Keep a Changelog — but currently references them only via external URLs.
+conventional-agents builds on two well-established community specifications — Conventional Commits and Keep a Changelog — but currently references them only via external URLs.
 By vendoring both as git submodules under `vendor/`, we make them available offline, pin to known versions, and allow our guidelines/templates to reference the canonical spec text directly rather than relying on external links.
 
 Additionally, the joelparkerhenderson/architecture-decision-record resource should be mentioned in the README as a recommended reference for ADR practitioners.
@@ -59,8 +59,8 @@ Additionally, the joelparkerhenderson/architecture-decision-record resource shou
 
 ## Users / Stakeholders
 
-- Agent developers using agentic-dev-kit (offline access, pinned specs)
-- agentic-dev-kit maintainers (explicit upstream tracking)
+- Agent developers using conventional-agents (offline access, pinned specs)
+- conventional-agents maintainers (explicit upstream tracking)
 
 ## Interfaces
 

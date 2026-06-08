@@ -17,7 +17,7 @@ updated: 2026-06-08
 
 - Feature Spec ID(s): FS-0003
 - Related ADR ID(s): ADR-0011
-- Issue / PR Reference: PR #3 (<https://github.com/Tais-Den/agentic-dev-kit/pull/3>)
+- Issue / PR Reference: PR #3 (<https://github.com/Tais-Den/conventional-agents/pull/3>)
 
 ## 2. Scope of Change
 
@@ -42,7 +42,7 @@ This change will NOT:
 
 ## 4. Files to Be Modified
 
-- docs/specifications/FS-0003-git-gh-cli-conventions-for-agentic-dev-kit.md
+- docs/specifications/FS-0003-git-gh-cli-conventions-for-conventional-agents.md
 - docs/decisions/ADR-0011-adopt-multi-identity-github-model-human-agent-committer-agent-reviewer.md
 - Add: workflows/git-and-gh-conventions.md
 

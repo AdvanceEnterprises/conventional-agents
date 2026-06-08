@@ -1,6 +1,6 @@
 # Feature Specifications
 
-Feature Specs (FS-XXXX) document the requirements and acceptance criteria for implementing features, tools, and processes in agentic-dev-kit.
+Feature Specs (FS-XXXX) document the requirements and acceptance criteria for implementing features, tools, and processes in conventional-agents.
 
 **Agents MUST update this file when adding new specs or changing spec statuses.**
 
@@ -43,7 +43,7 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | ID | Title | Status |
 |---|---|---|
 | FS-0001 | Markdownlint Integration | implemented |
-| FS-0002 | Move Workflow Skills into agent-dev-kit | approved |
+| FS-0002 | Move Workflow Skills into conventional-agents | approved |
 | FS-0003 | Git + GitHub CLI Conventions | implemented |
 | FS-0004 | Agent-Authored Commit/PR Commentary Policy | draft |
 | FS-0005 | Expand Docs Linting Coverage | implemented |

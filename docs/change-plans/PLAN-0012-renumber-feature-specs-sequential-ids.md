@@ -58,7 +58,7 @@ No automated tests. Validation via grep (see Section 8).
 
 | Old filename | New filename |
 |---|---|
-| ~~`FS-0011-git-gh-cli-conventions-for-agent-dev-kit.md`~~ | `FS-0003-git-gh-cli-conventions-for-agent-dev-kit.md` |
+| ~~`FS-0011-git-gh-cli-conventions-for-conventional-agents.md`~~ | `FS-0003-git-gh-cli-conventions-for-conventional-agents.md` |
 | ~~`FS-0012-agent-authored-commit-pr-commentary-policy.md`~~ | `FS-0004-agent-authored-commit-pr-commentary-policy.md` |
 | ~~`FS-0013-expand-docs-linting-coverage-to-fs-plan-workflows.md`~~ | `FS-0005-expand-docs-linting-coverage-to-fs-plan-workflows.md` |
 | ~~`FS-0014-javascript-guidelines.md`~~ | `FS-0006-javascript-guidelines.md` |
@@ -152,7 +152,7 @@ Plus this spec and plan rename themselves (~~FS-0020~~ → FS-0012, plan filenam
 
 - **Git history:** `git mv` preserves rename detection. Verify with `git log --follow` on a renamed file.
 - **Merge conflicts:** If other PRs are in flight that reference old FS IDs, they'll conflict. Coordinate timing.
-- **External references:** Other repos (pack-protocol, deploy-ducky) may reference agentic-dev-kit FS IDs. Those are out of scope but should be noted for follow-up.
+- **External references:** Other repos (pack-protocol, deploy-ducky) may reference conventional-agents FS IDs. Those are out of scope but should be noted for follow-up.
 - **PLAN-0009 and PLAN-0010 reference FS-0009 and FS-0010 via `related_specs:`** — these must be updated to FS-0009 and FS-0010 respectively.
 
 ## 8. Validation
