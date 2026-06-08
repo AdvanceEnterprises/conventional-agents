@@ -199,3 +199,6 @@ If validation fails:
 | ADR-0010 | Adopt arc42 as the architecture documentation framework | accepted |
 | ADR-0011 | Adopt multi-identity GitHub model | accepted |
 | ADR-0012 | Introduce non-overridable gates (super-gates) | accepted |
+| ADR-0013 | Multi-model session coordination model | proposed |
+| ADR-0014 | Background task governance | proposed |
+| ADR-0015 | Tool taxonomy and introduction process | proposed |
