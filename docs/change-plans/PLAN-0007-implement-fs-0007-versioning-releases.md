@@ -26,7 +26,7 @@ PARSING_HINTS:
 
 - Feature Spec ID(s): FS-0007
 - Related ADR ID(s): None
-- Issue / PR Reference: PR #16 (<https://github.com/Tais-Den/agentic-dev-kit/pull/16>)
+- Issue / PR Reference: PR #16 (<https://github.com/Tais-Den/conventional-agents/pull/16>)
 
 ## 2. Scope of Change
 
@@ -57,7 +57,7 @@ PARSING_HINTS:
 - Prescribe a specific changelog tool, CI/CD pipeline, or release cadence.
 - Prescribe package registry publish mechanics.
 - Prescribe monorepo tooling.
-- Define how agentic-dev-kit itself is versioned.
+- Define how conventional-agents itself is versioned.
 - Modify `README.md`, `CONTRIBUTING.md`, `INTEGRATION.md`, `AGENTS.md`, `templates/`, `skills/`, or `roles/ROLE_CONTRACT.md`.
 
 ## 3. Tests Driving This Change
@@ -119,7 +119,7 @@ Quality gates:
 
 - Spec constraints:
   - FS-0007 Non-Goals: no specific changelog tool, CI/CD pipeline, release cadence, or registry mechanics.
-  - FS-0007 Out of Scope: no monorepo tooling, no agentic-dev-kit self-versioning.
+  - FS-0007 Out of Scope: no monorepo tooling, no conventional-agents self-versioning.
   - FS-0007 Edge Cases: must acknowledge CalVer, monorepos, and no-versioning projects.
 
 - Architecture constraints:

@@ -65,7 +65,7 @@ Documentation-only + manifest change. Quality gates:
    - Keep a Changelog format.
    - `[Unreleased]` section at top (empty).
    - `[1.1.0] - 2026-02-08` section with retroactive entries covering:
-     - Project rename to agentic-dev-kit.
+     - Project rename to conventional-agents.
      - Exported surface / internal governance split (workflows/ move).
      - JavaScript/TypeScript guidelines (3 files).
      - BDD/TDD pre-commit testing gates in ROLE_CONTRACT.

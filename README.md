@@ -1,169 +1,185 @@
-# agentic-dev-kit
+# conventional-agents
 
-Prescriptive framework for LLM-driven development workflows. Guidelines, templates, and patterns for building and maintaining software with AI assistance.
+A prescriptive governance framework for agentic development — for any project where LLMs, GPTs, or other generative models do structured work. Provides role contracts, process gates, document templates, and workflow patterns that make agent behavior auditable, correctable, and coherent across sessions.
 
 ## Philosophy
 
-This framework is based on evidence-based practices, not opinions. Every guideline has a rationale rooted in:
-- Real-world testing and iteration
-- Framework-agnostic principles (applies to Python, Bash, Node, etc.)
-- Practical constraints of LLM-assisted development
-- Operational clarity and auditability
+Agent sessions are ephemeral; the artifacts they produce are not. This framework treats documents as the primary interface between humans and agents:
 
-**Core principle:** Evidence over preference.
+- Every significant decision lives in a governed document (FS, PLAN, ADR) — not in a chat history.
+- Roles define what an agent is permitted to do and when to stop, not just what it can do.
+- Process gates (spec-first, status consistency, hygiene checklist) make drift visible before it becomes technical debt.
+- Humans approve; agents execute. The merge gate, the spec approval gate, and the major version bump gate are all human-held.
+
+**Core principle:** Traceability over cleverness. An auditable wrong answer is more valuable than an untraceable right one.
 
 ## Project Board
 
-Work tracking for this repo: [agentic-dev-kit Development](https://github.com/orgs/Tais-Den/projects/2)
+Work tracking: [conventional-agents Development](https://github.com/orgs/Tais-Den/projects/2)
 
-Board configuration (field IDs, column mappings): [`config/project.yml`](./config/project.yml)
+Board configuration: [`config/project.yml`](./config/project.yml)
 
 ## What's Included
 
-### Exported Surface vs Internal Governance (the “recursive” property)
+### Exported Surface vs Internal Governance
 
-This repository is designed to be **vendored into other projects** (typically as a git submodule at `vendor/agent-dev-kit/`) to provide baseline guidance and templates.
+This repository is designed to be **vendored into other projects** (typically as a git submodule at `vendor/conventional-agents/`) to provide baseline guidance and templates.
 
-At the same time, **this repo uses its own exported guidance to develop itself**.
-To support that recursion, we keep a clear split:
+At the same time, **this repo uses its own exported guidance to govern itself** — the framework is recursive.
 
-- **Exported surface (meant to be consumed by host repos / agents):**
-  - `INTEGRATION.md` (how to integrate + precedence)
-  - `guidelines/` (normative standards)
-  - `roles/` (role contracts + universal gates)
-  - `skills/` (portable SKILL.md modules)
-  - `templates/` (FS/ADR/PLAN/review scaffolds)
-  - `workflows/` (process docs you can follow in *any* repo)
+**Exported surface** (consumed by host repos and agents):
 
-- **Internal governance (how this kit evolves):**
-  - `docs/decisions/` (ADRs)
-  - `docs/specifications/` (Feature Specs)
-  - `docs/change-plans/` (Change Plans)
-  - `docs/ARC42.md` (architecture)
+| Directory | Contents |
+| --- | --- |
+| `guidelines/` | Normative standards and role contracts |
+| `roles/` | Role contracts — start here and customize per project |
+| `skills/` | Portable SKILL.md modules |
+| `templates/` | FS / ADR / PLAN / review scaffolds |
+| `workflows/` | Process docs usable in any repo |
+| `INTEGRATION.md` | How to integrate and precedence rules |
 
-Rule of thumb: if a document is intended to be a reusable instruction/process for downstream work, it belongs in the exported surface (usually `workflows/`, `guidelines/`, `roles/`, `skills/`, `templates/`).
+**Internal governance** (how this framework evolves):
+
+| Directory | Contents |
+| --- | --- |
+| `docs/decisions/` | Architecture Decision Records (ADRs) |
+| `docs/specifications/` | Feature Specs (FS) |
+| `docs/change-plans/` | Change Plans (PLAN) |
+| `docs/ARC42.md` | Architecture overview |
+
+Rule of thumb: if a document is a reusable instruction or process for downstream work, it belongs in the exported surface. If it records how *this framework* decided to evolve, it belongs in `docs/`.
+
+### Role Contract
+
+The framework defines six roles in `guidelines/ROLE_CONTRACT.md` and `roles/ROLE_CONTRACT.md`:
+
+| Role | Purpose |
+| --- | --- |
+| **0 — Head Architect** | Strategic oversight, framework health, governance proposals |
+| **1 — Document Author** | Drafts and maintains FS, PLAN, ADR documents |
+| **2 — Spec Reader and Test Planner** | Translates approved specs into executable tests |
+| **3 — Implementer** | Makes failing tests pass with minimum viable changes |
+| **4 — Reviewer** | Identifies mismatches between docs, tests, and implementation |
+| **5 — Communications Lead** | Human-facing communication — release notes, status summaries, INTEGRATION.md |
+
+Each role has defined inputs, outputs, prohibited actions, stop conditions, and `best_used_when` / `avoid_when` guidance. See `guidelines/ROLE_CONTRACT.md` for the full contract.
+
+### Session Modes
+
+`workflows/session-modes.md` defines five named session modes that tell agents which role to lead with and how to handle transitions:
+
+- **Architecture Planning** — Head Architect primary
+- **Document Authoring** — Document Author primary
+- **Implementation** — Implementer primary
+- **Review** — Reviewer primary
+- **Communications** — Communications Lead primary
+
+### Process Gates
+
+The framework enforces correctness through layered gates:
+
+- **Spec-first rule**: no implementation without an approved FS + PLAN
+- **Status consistency check**: `npm run check:status` — validates FS↔PLAN pairing and README index sync; runs in CI
+- **Document hygiene gate**: 7-item checklist before any PR is marked ready
+- **Non-overridable safety gates (ADR-0012)**: agents must not merge PRs; must verify GitHub identity before every push
 
 ### Guidelines
 
-Language-specific best practices for code quality, testing, and implementation:
+Language-specific best practices vendored into host repos:
 
-- **Bash**: Style, testing patterns, and implementation guidance
-- **Python**: Style, testing patterns, and implementation guidance
-- **JavaScript/TypeScript**: Style, testing patterns, and implementation guidance
-- **Role Contract**: LLM agent role definition and responsibilities
+- **Bash**: style, testing patterns, implementation guidance
+- **Python**: style, testing patterns, implementation guidance
+- **JavaScript/TypeScript**: style, testing patterns, implementation guidance
 
 See `guidelines/` directory.
 
 ### Templates
 
-Reusable document and code templates for common development activities:
+Reusable scaffolds for common activities:
 
-- **Core**: Feature specifications, ADRs, architecture, change plans
-- **Reviewer**: PR review, spec review, and test review templates
-- **Python Tests**: Unit test, integration test, and test configuration templates
+- **Core**: feature specs, ADRs, architecture docs, change plans
+- **Reviewer**: PR review, spec review, test review templates
+- **Python Tests**: unit test, integration test, test configuration templates
 
 See `templates/` directory.
-
-ADR canonical sources:
-- ADR templates live in `vendor/madr/template`.
-- Additional ADR documentation lives in `vendor/madr/docs`.
-
-### Architecture
-
-This project's architecture follows ARC42, documented in
-`vendor/arc42-template/dist/arc42-template-EN-withhelp-markdown/`. 
-You may need to first unzip the archive in 'vendor/arc42-template/dist/' to view the markdown content.
 
 ## Installation
 
 ### As a Git Submodule (Recommended)
 
-For projects that want to stay in sync with upstream changes:
-
 ```bash
 cd /path/to/your-project
-git submodule add https://github.com/Tais-Den/agentic-dev-kit.git .agents
+git submodule add https://github.com/Tais-Den/conventional-agents.git vendor/conventional-agents
 git submodule update --init
 ```
 
-Then reference guidelines and templates from `.agents/`:
+Reference in your project's `AGENTS.md`:
 
-```bash
-cat .agents/guidelines/bash/BASH_STYLE_GUIDE.md
-cat .agents/templates/core/feature-spec.md
+```markdown
+## Foundation Standards
+- vendor/conventional-agents/guidelines/ROLE_CONTRACT.md
+- vendor/conventional-agents/INTEGRATION.md
+
+## Session Modes
+- vendor/conventional-agents/workflows/session-modes.md
 ```
 
-Update to latest version:
+Update to latest:
 
 ```bash
-cd .agents
+cd vendor/conventional-agents
 git pull origin trunk
-cd ..
-git add .agents
-git commit -m "Update agentic-dev-kit to latest"
+cd ../..
+git add vendor/conventional-agents
+git commit -m "chore: update conventional-agents to latest"
 ```
-
-Note: Full upstream projects are included as git submodules, as documented in
-`docs/decisions/ADR-0003.md`.
 
 ### Manual Copy
 
-For one-time use or custom modifications:
+For one-time use or when tools only read root files:
 
 ```bash
-git clone https://github.com/Tais-Den/agentic-dev-kit.git
-cp -r agentic-dev-kit/.agents /path/to/your-project/
+git clone https://github.com/Tais-Den/conventional-agents.git
+cp -r conventional-agents/guidelines /path/to/your-project/
+cp -r conventional-agents/roles /path/to/your-project/
+cp -r conventional-agents/workflows /path/to/your-project/
 ```
+
+See `INTEGRATION.md` for full integration patterns including the hybrid (recommended) approach.
 
 ## Usage
 
-### As Project Documentation
+### Customizing Roles for Your Project
 
-Reference in your project's `CLAUDE.md` (Claude Code guidance file):
+`roles/ROLE_CONTRACT.md` is the project-customizable copy. Start from the template in `guidelines/ROLE_CONTRACT.md` and adapt it:
+
+- Add domain-specific constraints to existing roles
+- Add `best_used_when` conditions specific to your project type
+- Add session modes in a project-level `roles/session-modes.md` if your workflow needs them beyond the five defined in `workflows/`
+
+### Referencing in AGENTS.md / CLAUDE.md
 
 ```markdown
 ## Agent Guidelines
 
-The development process follows evidence-based practices defined in agentic-dev-kit:
+This project uses conventional-agents for governance:
 
-- [Bash Style Guide](./.agents/guidelines/bash/BASH_STYLE_GUIDE.md)
-- [Bash Testing Guide](./.agents/guidelines/bash/BASH_TESTING_GUIDE.md)
-- [JS/TS Style Guide](./.agents/guidelines/javascript/JS_STYLE_GUIDE.md)
-- [JS/TS Testing Guide](./.agents/guidelines/javascript/JS_TESTING_GUIDE.md)
-- [Role Contract](./.agents/guidelines/ROLE_CONTRACT.md)
+- [Role Contract](./vendor/conventional-agents/roles/ROLE_CONTRACT.md)
+- [Session Modes](./vendor/conventional-agents/workflows/session-modes.md)
+- [Integration Guide](./vendor/conventional-agents/INTEGRATION.md)
+
+Active session mode: [state which mode applies to this project/session]
 ```
 
-### As Development Templates
-
-Use templates to bootstrap common development activities:
+### Running Process Gates Locally
 
 ```bash
-# Start a new feature with a spec
-cp .agents/templates/core/feature-spec.md SPEC-MY-FEATURE.md
-# Edit and iterate
+# Check FS↔PLAN status consistency and README index sync
+npm run check:status
 
-# Record architectural decisions
-cp .agents/templates/core/adr-full-madr.md docs/adr/ADR-0001.md
-
-# Plan a change
-cp .agents/templates/core/change-plan.md PLAN-REFACTOR-AUTH.md
+# Lint all governed documents
+npm run lint:docs
 ```
-
-### For Code Review
-
-Use reviewer templates to standardize feedback:
-
-```bash
-# Review a pull request
-cat .agents/templates/reviewer/pr-review-template.md
-
-# Review test coverage
-cat .agents/templates/reviewer/test-review-template.md
-```
-
-## Projects Using This
-
-- [Deploy Ducky](https://github.com/anthropics/deploy-ducky) – Deployment platform kit with embedded guidelines
 
 ## Contributing
 
@@ -171,14 +187,14 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## Upstream References
 
-This framework builds on established community specifications, vendored as git submodules:
+Vendored as git submodules:
 
-- **Conventional Commits** — `vendor/conventional-commits/` · [conventionalcommits.org](https://www.conventionalcommits.org/) · Commit message conventions used throughout our guidelines.
-- **Keep a Changelog** — `vendor/keep-a-changelog/` · [keepachangelog.com](https://keepachangelog.com/) · Changelog format used in our versioning workflow.
+- **Conventional Commits** — `vendor/conventional-commits/` · [conventionalcommits.org](https://www.conventionalcommits.org/)
+- **Keep a Changelog** — `vendor/keep-a-changelog/` · [keepachangelog.com](https://keepachangelog.com/)
 
 Recommended reading:
 
-- **Architecture Decision Records** — [joelparkerhenderson/architecture-decision-record](https://github.com/joelparkerhenderson/architecture-decision-record) · Comprehensive ADR resource with examples, templates, and rationale.
+- **Architecture Decision Records** — [joelparkerhenderson/architecture-decision-record](https://github.com/joelparkerhenderson/architecture-decision-record)
 
 ## License
 
@@ -186,5 +202,4 @@ MIT License. See [LICENSE](./LICENSE) for details.
 
 ---
 
-**Framework Version:** 1.2.0
-**Last Updated:** 2026-02-16
+**Framework Version:** 2.0.0 | **Last Updated:** 2026-06-08

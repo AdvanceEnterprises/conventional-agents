@@ -40,7 +40,7 @@ PARSING_HINTS:
 
 ## Summary
 
-Agents consistently drift from the agentic-dev-kit process in predictable ways: skipping specs before coding, not updating document statuses after implementation, forgetting to update README index files, and letting front matter metadata go stale.
+Agents consistently drift from the conventional-agents process in predictable ways: skipping specs before coding, not updating document statuses after implementation, forgetting to update README index files, and letting front matter metadata go stale.
 
 This spec introduces hard gates and explicit lifecycle rules that make the expected process mechanically clear to agents, reducing the need for human re-direction on each iteration.
 
@@ -79,9 +79,9 @@ Observed failure modes (in order of frequency):
 
 ## Users / Stakeholders
 
-- AI agents operating under agentic-dev-kit governance
+- AI agents operating under conventional-agents governance
 - Humans directing agent work who want less per-iteration correction
-- agentic-dev-kit maintainers
+- conventional-agents maintainers
 
 ## Interfaces
 

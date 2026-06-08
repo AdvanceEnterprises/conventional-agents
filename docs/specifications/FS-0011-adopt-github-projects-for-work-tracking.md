@@ -37,11 +37,11 @@ PARSING_HINTS:
 
 ## Summary
 
-Adopt GitHub Projects (v2) for tracking work in the agentic-dev-kit repository. This creates a per-repo GitHub Project board with standardized columns and custom fields, backfills all existing Feature Specs and Change Plans as GitHub Issues, and documents the board configuration. This is a propagation adoption from pack-protocol's ADR-0001 and ADR-0002, which established per-repo boards with an org-level rollup as the Tais-Den tracking standard.
+Adopt GitHub Projects (v2) for tracking work in the conventional-agents repository. This creates a per-repo GitHub Project board with standardized columns and custom fields, backfills all existing Feature Specs and Change Plans as GitHub Issues, and documents the board configuration. This is a propagation adoption from pack-protocol's ADR-0001 and ADR-0002, which established per-repo boards with an org-level rollup as the Tais-Den tracking standard.
 
 ## Goals
 
-- Create a GitHub Project board for agentic-dev-kit with standardized columns (Backlog, Approved, In Progress, In Review, Done).
+- Create a GitHub Project board for conventional-agents with standardized columns (Backlog, Approved, In Progress, In Review, Done).
 - Backfill GitHub Issues for all existing FS and PLAN documents (including completed ones) for historical traceability.
 - Add a "Doc Type" custom field (FS, PLAN, Task, Bug) for filtering.
 - Enable auto-add so new issues automatically appear on the board.
@@ -52,21 +52,21 @@ Adopt GitHub Projects (v2) for tracking work in the agentic-dev-kit repository. 
 ## Non-Goals
 
 - Creating the org-level rollup board (that's pack-protocol's responsibility).
-- Modifying the agentic-dev-kit document lifecycle or governance model.
+- Modifying the conventional-agents document lifecycle or governance model.
 - Building custom GitHub Actions or webhooks for board automation.
 - Migrating any non-code tracking (Trello, etc.).
 - Automating status sync between markdown front matter and board columns.
 
 ## Users / Stakeholders
 
-- Tai — needs at-a-glance status of agentic-dev-kit work items.
+- Tai — needs at-a-glance status of conventional-agents work items.
 - Marten — needs programmatic read/write access to the board via `gh` CLI.
 - Future agents working in this repo — will create/update issues as part of governed work.
 
 ## Interfaces
 
 - Type: UI
-  - Details: GitHub Project board for agentic-dev-kit with board view. Columns: Backlog, Approved, In Progress, In Review, Done.
+  - Details: GitHub Project board for conventional-agents with board view. Columns: Backlog, Approved, In Progress, In Review, Done.
 - Type: CLI
   - Details: `gh project list`, `gh project item-list`, `gh project item-create`, `gh project item-edit`, `gh project field-list`.
 - Type: Config
@@ -78,7 +78,7 @@ Each bullet MUST be objectively testable.
 
 **Board structure:**
 
-- Given the agentic-dev-kit GitHub Project exists, when viewing it in the UI, then it shows a board view with columns: Backlog, Approved, In Progress, In Review, Done.
+- Given the conventional-agents GitHub Project exists, when viewing it in the UI, then it shows a board view with columns: Backlog, Approved, In Progress, In Review, Done.
 - Given the project board exists, when running `gh project field-list` for the board, then a "Doc Type" single-select field exists with options: FS, PLAN, Task, Bug.
 
 **Backfill:**
@@ -89,7 +89,7 @@ Each bullet MUST be objectively testable.
 
 **Auto-add:**
 
-- Given auto-add is enabled for the project, when a new issue is created in the agentic-dev-kit repo, then it automatically appears on the board in the Backlog column.
+- Given auto-add is enabled for the project, when a new issue is created in the conventional-agents repo, then it automatically appears on the board in the Backlog column.
 
 **Configuration:**
 
@@ -121,7 +121,7 @@ Each bullet MUST be objectively testable.
 
 ## Rollout / Migration
 
-1. Create the GitHub Project board for agentic-dev-kit.
+1. Create the GitHub Project board for conventional-agents.
 2. Configure columns and custom fields.
 3. Enable auto-add workflow via GitHub UI.
 4. Create labels (`spec`, `plan`) in the repo if they don't exist.

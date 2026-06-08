@@ -1,6 +1,6 @@
 ---
 title: "arc42 Architecture Documentation"
-system: "agentic-dev-kit"
+system: "conventional-agents"
 version: "1.0.0"
 status: "Draft"
 last_updated: "2026-01-28"
@@ -10,7 +10,7 @@ last_updated: "2026-01-28"
 
 ## 1.1 Requirements Overview
 
-The agentic-dev-kit repository provides a standalone, submodule-friendly
+The conventional-agents repository provides a standalone, submodule-friendly
 foundation layer for AI-assisted software development. Its primary
 responsibilities are to define evidence-based guidelines, role contracts,
 and reusable templates that host repositories can reference from stable
@@ -71,12 +71,12 @@ Conventions and stability requirements:
 
 ## 3.1 Business Context
 
-System boundary: agentic-dev-kit is a documentation and template repository
+System boundary: conventional-agents is a documentation and template repository
 consumed by humans and tools via filesystem paths and git submodules.
 
 Communication partners and domain I/O:
 
-| Communication Partner       | Inputs to agentic-dev-kit                     | Outputs from agentic-dev-kit                               |
+| Communication Partner       | Inputs to conventional-agents                     | Outputs from conventional-agents                               |
 |----------------------------|----------------------------------------------|----------------------------------------------------------|
 | Repo Maintainers           | Updates, governance decisions, reviews       | Published guidelines, role contracts, templates          |
 | Contributors               | PRs, issue context                            | Structured standards and reusable artifacts              |
@@ -130,7 +130,7 @@ Decision 4: Role Contract Format
 
 Overview (textual diagram):
 
-agentic-dev-kit
+conventional-agents
 ├── guidelines/
 ├── roles/
 ├── templates/
@@ -259,13 +259,13 @@ Role-as-skill-card format (applies to every role file):
 
 ## 6.1 Scenario: Submodule Sidecar (Recommended)
 
-1) Host repo adds submodule at vendor/agent-dev-kit/.
+1) Host repo adds submodule at vendor/conventional-agents/.
 2) Host repo creates a minimal AGENTS.md stub pointing to canonical paths.
 3) Tools read guidelines and role contracts directly from the submodule.
 
-## 6.2 Scenario: Spec Kit + agentic-dev-kit Integration
+## 6.2 Scenario: Spec Kit + conventional-agents Integration
 
-1) Spec Kit memory references agentic-dev-kit standards via stable paths.
+1) Spec Kit memory references conventional-agents standards via stable paths.
 2) Implementation work follows the referenced guidelines and gates.
 3) ADRs and plans remain in the host repo, with standards referenced.
 
@@ -420,7 +420,7 @@ Notes:
 
 Short-form scenarios (context, stimulus, response, metric):
 
-- Context: Host repo adds submodule. Stimulus: new release of agentic-dev-kit.
+- Context: Host repo adds submodule. Stimulus: new release of conventional-agents.
   Response: update submodule pointer with minimal diffs. Metric: update time
   under 10 minutes and no path breakages.
 

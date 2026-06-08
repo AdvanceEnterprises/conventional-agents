@@ -39,7 +39,7 @@ PARSING_HINTS:
 
 ## Summary
 
-Add a complete set of JavaScript/TypeScript guidelines to the agentic-dev-kit framework, following the same three-document pattern used by Bash and Python:
+Add a complete set of JavaScript/TypeScript guidelines to the conventional-agents framework, following the same three-document pattern used by Bash and Python:
 a style guide, a testing guide, and an implementation guide.
 These guidelines provide evidence-based, prescriptive standards specifically tuned for LLM-backed agentic developers writing JavaScript and TypeScript code.
 
@@ -63,7 +63,7 @@ These guidelines provide evidence-based, prescriptive standards specifically tun
 
 - LLM-backed coding agents (Claude Code, Codex, Aider, Cursor, local models) acting as implementers, test writers, or reviewers on JavaScript/TypeScript projects.
 - Human developers who review agent-produced JavaScript/TypeScript code.
-- Maintainers of agentic-dev-kit who need to keep guidelines consistent and evidence-based.
+- Maintainers of conventional-agents who need to keep guidelines consistent and evidence-based.
 
 ## Interfaces
 
@@ -127,14 +127,14 @@ From practitioner experience and community reports:
 3. **Deterministic by default**: Avoid direct use of `Date.now()`, `Math.random()`, `crypto.randomUUID()` in business logic; inject or wrap for testability.
 4. **Narrow types over broad types**: Prefer union types and discriminated unions over `any`/`unknown` escape hatches.
 5. **Error handling discipline**: Prefer explicit error returns or Result types over uncaught exceptions; agents struggle with implicit exception flows.
-6. **One-sentence-per-line documentation**: Same as other agentic-dev-kit guides; easier for agents to parse and modify.
+6. **One-sentence-per-line documentation**: Same as other conventional-agents guides; easier for agents to parse and modify.
 7. **Fast, cacheable test execution**: Vitest and Jest both support watch mode and selective re-runs; agents benefit from tools that re-run only affected tests.
 
 ## Success Criteria
 
 Each bullet MUST be objectively testable.
 
-- Given a checkout of the agentic-dev-kit repo, when listing `guidelines/javascript/`, then the directory contains exactly three files: `JS_STYLE_GUIDE.md`, `JS_TESTING_GUIDE.md`, `JS_IMPLEMENTATION_GUIDE.md`.
+- Given a checkout of the conventional-agents repo, when listing `guidelines/javascript/`, then the directory contains exactly three files: `JS_STYLE_GUIDE.md`, `JS_TESTING_GUIDE.md`, `JS_IMPLEMENTATION_GUIDE.md`.
 - Given `JS_STYLE_GUIDE.md`, when reading it, then it contains sections covering: decision precedence, voice/tone, module system (ESM vs CJS), naming conventions, TypeScript typing discipline, documentation/comments, formatting tool expectations, and import organization.
 - Given `JS_STYLE_GUIDE.md`, when reading it, then it does NOT prescribe a specific frontend or backend framework.
 - Given `JS_TESTING_GUIDE.md`, when reading it, then it contains sections covering: scope, parsing guidance for agents (authoritative signals, test file metadata), test framework expectations (framework-agnostic with recommended defaults), success criteria mapping rules, approved test patterns (with at least 2 runnable examples), and common pitfalls.
@@ -163,7 +163,7 @@ Each bullet MUST be objectively testable.
 ## Dependencies
 
 - Existing guideline structure in `guidelines/bash/` and `guidelines/python/` (pattern to follow).
-- Existing template and PARSING_HINTS conventions from the agentic-dev-kit framework.
+- Existing template and PARSING_HINTS conventions from the conventional-agents framework.
 
 ## Resolved Questions
 

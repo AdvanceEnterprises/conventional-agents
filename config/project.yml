@@ -1,11 +1,11 @@
-# GitHub Project board metadata for agentic-dev-kit
+# GitHub Project board metadata for conventional-agents
 # Used by agents for programmatic board access via `gh project` CLI.
 
 project:
   number: 2
   id: "PVT_kwDOD3aO3M4BQcYf"
   url: "https://github.com/orgs/Tais-Den/projects/2"
-  title: "agentic-dev-kit Development"
+  title: "conventional-agents Development"
   owner: "Tais-Den"
 
 fields:

@@ -22,13 +22,13 @@ PARSING_HINTS:
 
 - Feature Spec ID(s): FS-0011
 - Related ADR ID(s): pack-protocol ADR-0001, pack-protocol ADR-0002
-- Issue / PR Reference: [#26](https://github.com/Tais-Den/agentic-dev-kit/issues/26)
+- Issue / PR Reference: [#26](https://github.com/Tais-Den/conventional-agents/issues/26)
 
 ## 2. Scope of Change
 
 **This change WILL:**
 
-- Create a GitHub Project board for agentic-dev-kit at the Tais-Den org level.
+- Create a GitHub Project board for conventional-agents at the Tais-Den org level.
 - Configure board columns: Backlog, Approved, In Progress, In Review, Done.
 - Add custom field: Doc Type (single-select: FS, PLAN, Task, Bug).
 - Create labels `spec` and `plan` in the repo (if they don't already exist).
@@ -78,7 +78,7 @@ GitHub-side (not file changes):
 ### Phase 1: Create the project board
 
 1. Verify identity: `gh auth status`.
-2. Create the GitHub Project: `gh project create --owner Tais-Den --title "agentic-dev-kit Development"`.
+2. Create the GitHub Project: `gh project create --owner Tais-Den --title "conventional-agents Development"`.
 3. Configure Status field columns: Backlog, Approved, In Progress, In Review, Done.
 4. Add custom single-select field: Doc Type with options FS, PLAN, Task, Bug.
 5. Create labels `spec` and `plan` in the repo via `gh label create`.
@@ -112,7 +112,7 @@ GitHub-side (not file changes):
 
 These require GitHub UI and cannot be done via CLI. Completed by Tai on 2026-02-28.
 
-1. ✅ Enable "Auto-add to project" workflow for the agentic-dev-kit repo.
+1. ✅ Enable "Auto-add to project" workflow for the conventional-agents repo.
 2. ✅ Enable built-in "Item closed → Done" workflow.
 3. ✅ Enable built-in "PR merged → Done" workflow.
 
@@ -139,7 +139,7 @@ These require GitHub UI and cannot be done via CLI. Completed by Tai on 2026-02-
 
 ## 8. Validation
 
-- CLI: `gh project list --owner Tais-Den` returns the agentic-dev-kit project.
+- CLI: `gh project list --owner Tais-Den` returns the conventional-agents project.
 - CLI: `gh project item-list <number> --owner Tais-Den` returns 23 items (22 backfilled + #26).
 - CLI: `gh project field-list <number> --owner Tais-Den` shows Status and Doc Type fields.
 - Visual: board view shows items distributed across correct columns.
