@@ -2,12 +2,12 @@
 type: change-plan
 role: implementer
 language: markdown
-status: draft
+status: implemented
 related_specs:
   - FS-0005
 related_adrs: []
 created: 2026-02-07
-updated: 2026-02-07
+updated: 2026-06-08
 ---
 
 # PLAN-0003: Implement FS-0005 expand docs linting coverage

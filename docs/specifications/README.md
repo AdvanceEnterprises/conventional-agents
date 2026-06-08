@@ -42,15 +42,16 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 
 | ID | Title | Status |
 |---|---|---|
-| FS-0001 | Markdownlint Integration | approved |
+| FS-0001 | Markdownlint Integration | implemented |
 | FS-0002 | Move Workflow Skills into agent-dev-kit | approved |
-| FS-0003 | Git + GitHub CLI Conventions | approved |
+| FS-0003 | Git + GitHub CLI Conventions | implemented |
 | FS-0004 | Agent-Authored Commit/PR Commentary Policy | draft |
-| FS-0005 | Expand Docs Linting Coverage | draft |
-| FS-0006 | JavaScript/TypeScript Guidelines | approved |
-| FS-0007 | Versioning, Releases, and Packaging Guidance | approved |
-| FS-0008 | Self-Versioning and Changelog | approved |
-| FS-0009 | Vendor Upstream Specs | approved |
+| FS-0005 | Expand Docs Linting Coverage | implemented |
+| FS-0006 | JavaScript/TypeScript Guidelines | implemented |
+| FS-0007 | Versioning, Releases, and Packaging Guidance | implemented |
+| FS-0008 | Self-Versioning and Changelog | implemented |
+| FS-0009 | Vendor Upstream Specs | implemented |
 | FS-0010 | Process Compliance Gates and Document Lifecycle | implemented |
 | FS-0011 | Adopt GitHub Projects for Work Tracking | implemented |
 | FS-0012 | Renumber Feature Specs to Sequential IDs | implemented |
+| FS-0013 | Status Consistency Check | implemented |

@@ -2,11 +2,11 @@
 type: change-plan
 role: implementer
 language: yaml
-status: approved
+status: implemented
 related_specs: [FS-0001]
 related_adrs: [ADR-0008, ADR-0010]
 created: 2026-01-27
-updated: 2026-01-27
+updated: 2026-06-08
 ---
 
 <!--

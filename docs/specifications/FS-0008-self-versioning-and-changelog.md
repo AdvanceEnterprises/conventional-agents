@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0008
-status: approved
+status: implemented
 title: Apply versioning and changelog to agentic-dev-kit itself
 owner: Tai
 test_required: false
@@ -18,7 +18,7 @@ tags:
   - changelog
   - self-hosting
 created: 2026-02-08
-updated: 2026-02-08
+updated: 2026-06-08
 ---
 
 <!--
@@ -35,7 +35,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Approved
+- Implemented
 
 ## Summary
 

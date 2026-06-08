@@ -59,4 +59,11 @@ jobs:
         with:
           globs: "workflows/*.md"
 
+  check-status:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check FS/PLAN status consistency
+        run: bash scripts/check-status.sh
+
 # noop: retrigger CI
