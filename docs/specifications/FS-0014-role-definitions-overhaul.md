@@ -2,7 +2,7 @@
 type: feature-spec
 id: FS-0014
 status: draft
-title: Role definitions overhaul — expand from 3 to 6 roles
+title: Role definitions overhaul — expand from 3 to 6 roles (Head Architect, Comms Lead)
 owner: Tai
 test_required: false
 interfaces:
@@ -23,7 +23,7 @@ tags:
   - governance
   - process
 created: 2026-06-08
-updated: 2026-06-08
+updated: 2026-06-09
 ---
 
 <!--
@@ -38,7 +38,7 @@ PARSING_HINTS:
 
 -->
 
-# Feature Spec: Role Definitions Overhaul — Expand from 3 to 6 Roles
+# Feature Spec: Role Definitions Overhaul — Expand from 3 to 6 Roles (Head Architect, Comms Lead)
 
 ## Status
 
@@ -62,7 +62,7 @@ fixes, and a consolidated authoritative location.
 
 ## Goals
 
-- Define three new roles: Chief Process Architect, Document Author, and
+- Define three new roles: Head Architect, Document Author, and
 
   Communications Lead.
 
@@ -100,11 +100,11 @@ fixes, and a consolidated authoritative location.
 
 ## Role Inventory
 
-### Role 0 — Chief Process Architect
+### Role 0 — Head Architect
 
 **Purpose:** Strategic oversight of the framework's evolution and health. Operates at the
 meta-level: designs processes, identifies systemic drift, proposes governance decisions,
-and ensures all other roles remain coherent and well-bounded. The Chief Process Architect
+and ensures all other roles remain coherent and well-bounded. The Head Architect
 is the only role permitted to propose changes to ROLE_CONTRACT itself.
 
 **Mandate:**
@@ -124,7 +124,7 @@ is the only role permitted to propose changes to ROLE_CONTRACT itself.
 - Design and document new roles, gates, and workflows as the framework evolves.
 - Serve as the first responder to cross-role ambiguity: if two roles have conflicting
 
-  authority over a decision, the Chief Process Architect resolves it by proposing a
+  authority over a decision, the Head Architect resolves it by proposing a
   clarifying ADR — not by making an ad hoc ruling.
 
 **Inputs (Authoritative):**
@@ -168,7 +168,7 @@ first-class responsibility.
 
 **Inputs (Authoritative):**
 
-- Human direction or Chief Process Architect output identifying what needs to be
+- Human direction or Head Architect output identifying what needs to be
 
   documented
 
@@ -332,20 +332,22 @@ observations only — fixes are the responsibility of other roles.
 - Conflicting documentation prevents a coherent review
 - Undocumented behavior is widespread enough that a framework-level issue exists
 
-  (escalate to Chief Process Architect, not Reviewer)
+  (escalate to Head Architect, not Reviewer)
 
 ---
 
 ### Role 5 — Communications Lead
 
-**Purpose:** Translate internal governance artifacts into external-facing communication
-for downstream consumers of the framework. Owns the consumer-facing surface: release
-announcements, the exported README sections, and the INTEGRATION.md guide.
+**Purpose:** Translate internal governance artifacts into human-facing communication for
+any audience — downstream consumers, team stakeholders, or the broader community. Owns
+all communication that originates from governance artifacts: release announcements,
+consumer-facing README sections, INTEGRATION.md, and internal status summaries.
 
-**Mandate:** Where other roles speak to contributors and agents working inside the
-framework, the Communications Lead speaks to teams that _vendor_ or _consume_ the
-framework. The audience is an engineering team evaluating or integrating
-`agentic-dev-kit`, not a contributor writing specs.
+**Mandate:** The Communications Lead owns all human-facing communication — both
+external (downstream consumers of the framework) and internal (stakeholders, team
+members, anyone not working inside the governance process day-to-day). Where other
+roles produce governance artifacts, the Communications Lead translates them into
+plain language for the appropriate audience.
 
 **Inputs (Authoritative):**
 
@@ -366,9 +368,8 @@ framework. The audience is an engineering team evaluating or integrating
   included) when a release changes the exported surface
 
 - Updates to `INTEGRATION.md` when the integration contract changes
-- Periodic "framework status" summaries for stakeholders (what's implemented, what's
-
-  planned, what's blocked)
+- Periodic "framework status" summaries for any audience (team, stakeholders,
+  external consumers) covering what's implemented, what's planned, and what's blocked
 
 **Responsibilities:**
 
@@ -378,7 +379,7 @@ framework. The audience is an engineering team evaluating or integrating
   drift" is better than "FS-0013 added a check-status gate.")
 
 - Keep `INTEGRATION.md` current with the actual exported surface after each release.
-- Flag to the Chief Process Architect when the external-facing docs contradict internal
+- Flag to the Head Architect when the external-facing docs contradict internal
 
   governance docs — do not resolve the contradiction unilaterally.
 
@@ -402,23 +403,32 @@ framework. The audience is an engineering team evaluating or integrating
 
   document — stop and ask
 
-- The exported surface has changed in ways not reflected in any FS — flag to Chief
+- The exported surface has changed in ways not reflected in any FS — flag to the Head
 
-  Process Architect before drafting
+  Architect before drafting
 
 ---
 
-## Structural Fix: `roles/` vs `guidelines/`
+## Structural Clarification: `roles/` vs `guidelines/`
 
-Currently, `roles/ROLE_CONTRACT.md` is empty and `guidelines/ROLE_CONTRACT.md` is the
-live document. Per README.md, `roles/` is part of the exported surface (consumed by host
-repos). This creates a silent gap: downstream consumers who follow the integration guide
-and load `vendor/agent-dev-kit/roles/ROLE_CONTRACT.md` get nothing.
+These two directories serve different purposes:
 
-**Resolution:** After the ROLE_CONTRACT rewrite, `roles/ROLE_CONTRACT.md` should contain
-the same content as `guidelines/ROLE_CONTRACT.md`. The implementation plan must include
-syncing both files. Going forward, `guidelines/ROLE_CONTRACT.md` is the edit target;
-`roles/ROLE_CONTRACT.md` is the exported copy that must be kept identical.
+- **`guidelines/ROLE_CONTRACT.md`** — a canonical template and reference example
+  maintained inside the kit. It demonstrates the intended role structure and serves as
+  the starting point for new host projects. It is not the live contract for any specific
+  project.
+- **`roles/ROLE_CONTRACT.md`** — the project-customizable copy that host repos actually
+  use. Host projects are expected to modify this file to match their team's specific
+  role assignments and constraints. It diverges from `guidelines/` intentionally over time.
+
+Currently `roles/ROLE_CONTRACT.md` is empty, which means host projects have no starting
+point. This is the gap to fix.
+
+**Resolution:** After the `guidelines/ROLE_CONTRACT.md` rewrite (which defines all six
+roles as the canonical template), copy its content into `roles/ROLE_CONTRACT.md` as the
+initial populated starting point. Going forward, `guidelines/` is maintained as the
+kit-level template; `roles/` is the project-level customizable copy and the two are
+expected to diverge as projects adapt them.
 
 ---
 
@@ -434,14 +444,14 @@ The current precedence list omits ADR-0012's level-0 gates. The corrected model:
 5. **Level 4 — Tests.** Define correctness boundary.
 6. **Level 5 — Implementation code.** Lowest authority; must conform to all above.
 
-If two sources at the same level conflict, escalate to the Chief Process Architect (not
+If two sources at the same level conflict, escalate to the Head Architect (not
 the Implementer or Reviewer).
 
 ---
 
 ## Users / Stakeholders
 
-- **Tai** — framework owner; needs the Chief Process Architect and Communications Lead
+- **Tai** — framework owner; needs the Head Architect and Communications Lead
 
   roles to match how the project actually operates.
 
@@ -463,7 +473,8 @@ the Implementer or Reviewer).
   `check:status` responsibility assigned to Role 1 (Document Author) and Role 3
   (Implementer).
 
-- **`roles/ROLE_CONTRACT.md`** — synced to match `guidelines/ROLE_CONTRACT.md` exactly.
+- **`roles/ROLE_CONTRACT.md`** — populated from `guidelines/` as the initial starting
+  point; expected to be customized by host projects going forward.
 - **`docs/specifications/README.md`** — add FS-0014 row.
 
 ## Success Criteria
@@ -481,22 +492,21 @@ Each bullet MUST be objectively testable.
 
 - Given the rewritten ROLE_CONTRACT, when listing all role headings, then exactly six
 
-  roles are present: Chief Process Architect, Document Author, Spec Reader and Test
+  roles are present: Head Architect, Document Author, Spec Reader and Test
   Planner, Implementer, Reviewer, Communications Lead.
 
 - Given the rewritten ROLE_CONTRACT, when reading each role's Responsibilities section,
 
   then `npm run check:status` is mentioned in Document Author and Implementer.
 
-- Given the rewrite is complete, when comparing `roles/ROLE_CONTRACT.md` and
-
-  `guidelines/ROLE_CONTRACT.md` byte-for-byte (e.g., `diff`), then they are identical.
+- Given the rewrite is complete, when reading `roles/ROLE_CONTRACT.md`, then it is
+  non-empty and contains all six role headings as a starting-point template.
 
 - Given the rewrite is complete, when running `npm run check:status`, then it exits zero.
 
 ## Edge Cases
 
-- The Chief Process Architect role is unusual in that it can operate across all other
+- The Head Architect role is unusual in that it can operate across all other
 
   roles. The implementation must make clear it does NOT bypass safety gates.
 
@@ -506,9 +516,8 @@ Each bullet MUST be objectively testable.
   touched by Communications Lead); release notes are the external derivative (owned by
   Communications Lead).
 
-- `roles/ROLE_CONTRACT.md` being empty means any sync mechanism must handle an
-
-  overwrite, not a merge.
+- `roles/ROLE_CONTRACT.md` being empty means the initial population is an overwrite.
+  Subsequent changes by host projects are deliberate customizations, not drift.
 
 ## Out of Scope
 
@@ -527,8 +536,9 @@ Each bullet MUST be objectively testable.
 
 ## Rollout / Migration
 
-1. Rewrite `guidelines/ROLE_CONTRACT.md` with all six roles and corrected content.
-2. Copy the result verbatim to `roles/ROLE_CONTRACT.md` (overwrite the empty file).
+1. Rewrite `guidelines/ROLE_CONTRACT.md` as the canonical six-role template.
+2. Copy the result to `roles/ROLE_CONTRACT.md` as the initial populated starting point
+   (overwrite the currently empty file). Host projects customize from here.
 3. Update `docs/specifications/README.md` to add FS-0014.
 4. Run `npm run check:status` to confirm zero violations.
 5. Run `npm run lint:specs` to confirm the spec itself passes markdownlint.
@@ -536,14 +546,9 @@ Each bullet MUST be objectively testable.
 
 ## Open Questions
 
-1. **Role 0 naming:** "Chief Process Architect" is descriptive for this project's context.
-   Is it too title-like for a generic exported framework? An alternative is
-   "Framework Architect" or "Process Steward." Recommend keeping "Chief Process
-   Architect" unless downstream consumers find it confusing.
-2. **Communications Lead scope:** Should this role also cover internal status updates
-   (e.g., weekly framework health summaries for the team), or is it strictly
-   external-facing? Current spec assumes external-only; internal reporting stays with
-   Chief Process Architect.
-3. **`roles/` sync mechanism:** Simple overwrite (copy the file) is proposed. If the two
-   files diverge intentionally in the future (e.g., a slimmer exported version), the
-   mechanism would need to change. Flag for future ADR if this arises.
+None. All open questions from the initial draft have been resolved via PR review:
+
+- Role 0 is named "Head Architect."
+- Communications Lead scope is all human-facing communication — both external and internal.
+- `roles/` vs `guidelines/` architecture: `guidelines/` is the canonical template;
+  `roles/` is the project-customizable copy seeded from it.
