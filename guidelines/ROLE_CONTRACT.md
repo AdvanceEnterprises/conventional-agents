@@ -86,6 +86,7 @@ Before marking a PR as ready for review, verify all of the following:
 	4.	CHANGELOG entry exists: If this PR introduces a user-visible change (feature, fix, breaking change), there is a corresponding entry in `CHANGELOG.md` under `[Unreleased]` or the appropriate version section. For release-prep PRs, also update the framework version in `README.md` and `package.json` (or equivalent manifest).
 	5.	Cross-references are complete: FS `related_adrs` and PLAN `related_specs` front matter fields reference all relevant companion documents.
 	6.	Interfaces match reality: The files touched by this PR align with the `interfaces:` declared in the governing FS. If they diverge, update the FS or explain in the PR description.
+	7.	Status consistency check passes: Run `npm run check:status` and resolve all reported violations before marking the PR ready. This ensures FS↔PLAN status pairing and README index tables remain in sync (FS-0013).
 
 ⸻
 

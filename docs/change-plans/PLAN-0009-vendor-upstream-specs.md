@@ -2,11 +2,11 @@
 type: change-plan
 role: implementer
 language: markdown
-status: approved
+status: implemented
 related_specs: [FS-0009]
 related_adrs: [ADR-0010]
 created: 2026-02-08
-updated: 2026-02-08
+updated: 2026-06-08
 ---
 
 # Change Plan: Vendor Upstream Specs (Conventional Commits, Keep a Changelog)

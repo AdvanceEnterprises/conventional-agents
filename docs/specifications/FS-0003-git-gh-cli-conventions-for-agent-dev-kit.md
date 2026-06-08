@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0003
-status: approved
+status: implemented
 title: Git + gh CLI conventions for the kit
 owner: Tai
 test_required: false
@@ -16,7 +16,7 @@ tags:
   - github
   - gh
 created: 2026-02-07
-updated: 2026-02-07
+updated: 2026-06-08
 ---
 
 <!--
@@ -33,7 +33,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Approved
+- Implemented
 
 ## Summary
 

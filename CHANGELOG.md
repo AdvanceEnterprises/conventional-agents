@@ -20,10 +20,18 @@ For this project (a documentation/standards kit), semver follows the
 - PLAN-0011: Change plan for FS-0011 implementation.
 - FS-0012: Renumber feature specs to sequential IDs (eliminate FS-0003–FS-0010 gap).
 - PLAN-0012: Change plan for FS-0012 implementation.
+- FS-0013: Status consistency check — validates FS↔PLAN status pairing and README index table sync.
+- PLAN-0013: Change plan for FS-0013 implementation.
+- `scripts/check-status.sh`: machine-readable consistency check; exits non-zero on violations.
+- `npm run check:status`: local entrypoint for the consistency check.
+- `check-status` CI job in `lint-docs.yml`: blocks merges when status is out of sync.
+- Item 7 added to document hygiene gate in `guidelines/ROLE_CONTRACT.md`: run `check:status` before marking PR ready.
 
 ### Changed
 
 - All feature spec IDs renumbered to sequential (FS-0012). Mapping: FS-0011→0003, FS-0012→0004, FS-0013→0005, FS-0014→0006, FS-0015→0007, FS-0016→0008, FS-0017→0009, FS-0018→0010, FS-0019→0011, FS-0020→0012. PLAN filenames updated to match. All cross-references updated.
+- Reconciled stale `approved` statuses on 7 FS docs (FS-0001, FS-0003, FS-0005, FS-0006, FS-0007, FS-0008, FS-0009) and 7 PLAN docs (PLAN-0001, PLAN-0003, PLAN-0004, PLAN-0006, PLAN-0007, PLAN-0008, PLAN-0009) to `implemented`, reflecting work already delivered in v1.0.0–v1.2.0. Front matter `updated:` dates and body Status sections updated accordingly.
+- Note: FS-0005 and PLAN-0003 were marked `implemented` directly from `draft`/`approved` — the CI expansion they described was shipped in v1.1.0 ahead of formal spec approval, a process irregularity documented here for traceability.
 
 ## [1.2.0] - 2026-02-16
 

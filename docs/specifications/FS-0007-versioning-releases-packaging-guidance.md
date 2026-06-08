@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0007
-status: approved
+status: implemented
 title: Versioning, releases, and packaging guidance for agentic development
 owner: Tai
 test_required: false
@@ -22,7 +22,7 @@ tags:
   - changelog
   - workflow
 created: 2026-02-08
-updated: 2026-02-08
+updated: 2026-06-08
 ---
 
 <!--
@@ -39,7 +39,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Approved
+- Implemented
 
 ## Summary
 

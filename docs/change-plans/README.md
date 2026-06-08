@@ -32,15 +32,16 @@ All change plans must use the template defined in `templates/core/change-plan.md
 
 | ID | Title | Related Spec | Status |
 |---|---|---|---|
-| PLAN-0001 | Implement FS-0003 Git/GH CLI Conventions | FS-0003 | approved |
+| PLAN-0001 | Implement FS-0003 Git/GH CLI Conventions | FS-0003 | implemented |
 | PLAN-0002 | Implement FS-0004 Agent Commentary Policy | FS-0004 | draft |
-| PLAN-0003 | Implement FS-0005 Expand Docs Linting | FS-0005 | draft |
-| PLAN-0004 | Markdownlint Integration for ADRs | FS-0001 | approved |
+| PLAN-0003 | Implement FS-0005 Expand Docs Linting | FS-0005 | implemented |
+| PLAN-0004 | Markdownlint Integration for ADRs | FS-0001 | implemented |
 | PLAN-0005 | Move Workflow Skills into agent-dev-kit | FS-0002 | approved |
-| PLAN-0006 | Implement FS-0006 JavaScript Guidelines | FS-0006 | approved |
-| PLAN-0007 | Implement FS-0007 Versioning/Releases | FS-0007 | approved |
-| PLAN-0008 | Implement FS-0008 Self-Versioning | FS-0008 | approved |
-| PLAN-0009 | Vendor Upstream Specs | FS-0009 | approved |
+| PLAN-0006 | Implement FS-0006 JavaScript Guidelines | FS-0006 | implemented |
+| PLAN-0007 | Implement FS-0007 Versioning/Releases | FS-0007 | implemented |
+| PLAN-0008 | Implement FS-0008 Self-Versioning | FS-0008 | implemented |
+| PLAN-0009 | Vendor Upstream Specs | FS-0009 | implemented |
 | PLAN-0010 | Implement FS-0010 Process Compliance Gates | FS-0010 | implemented |
 | PLAN-0011 | Adopt GitHub Projects for Work Tracking | FS-0011 | implemented |
 | PLAN-0012 | Renumber Feature Specs to Sequential IDs | FS-0012 | implemented |
+| PLAN-0013 | Implement FS-0013 Status Consistency Check | FS-0013 | implemented |
