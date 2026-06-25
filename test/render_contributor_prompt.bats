@@ -301,3 +301,201 @@ YAML
     [ "$status" -eq 1 ]
     [[ "$output" == *"not valid JSON"* ]]
 }
+
+@test "render_contributor_prompt rejects active_contributor_role not in supporting_roles" {
+    BAD="$FIXTURE_DIR/bad-role-rel.yaml"
+    cat > "$BAD" <<'YAML'
+task:
+  id: "rr"
+  framing: "x"
+  artifact_scope: []
+    - "x"
+  branch: "main"
+  excluded_artifacts: []
+
+session:
+  mode: "Architecture Planning"
+  primary_role: "Head Architect"
+  supporting_roles: []
+    - "Reviewer"
+
+contributors: []
+  - target: "test"
+    model: "x"
+    render_mode: "external-cli"
+    active_contributor_role: "Implementer"
+    attribution_label: "x-1"
+    structured_output:
+      contract: "research_brief"
+YAML
+    run python3 "$SCRIPT" --params "$BAD"
+    [ "$status" -eq 1 ]
+    [[ "$output" == *"is not in session.supporting_roles"* ]]
+}
+
+@test "render_contributor_prompt rejects empty supporting_roles with accountable mode" {
+    BAD="$FIXTURE_DIR/bad-empty-roles.yaml"
+    cat > "$BAD" <<'YAML'
+task:
+  id: "er"
+  framing: "x"
+  artifact_scope: []
+    - "x"
+  branch: "main"
+  excluded_artifacts: []
+
+session:
+  mode: "Architecture Planning"
+  primary_role: "Head Architect"
+  supporting_roles: []
+
+contributors: []
+  - target: "test"
+    model: "x"
+    render_mode: "external-cli"
+    active_contributor_role: "Reviewer"
+    attribution_label: "x-1"
+    structured_output:
+      contract: "research_brief"
+YAML
+    run python3 "$SCRIPT" --params "$BAD"
+    [ "$status" -eq 1 ]
+    [[ "$output" == *"supporting_roles is empty"* ]]
+}
+
+@test "render_contributor_prompt rejects missing active_contributor_role with accountable mode" {
+    BAD="$FIXTURE_DIR/bad-no-active.yaml"
+    cat > "$BAD" <<'YAML'
+task:
+  id: "na"
+  framing: "x"
+  artifact_scope: []
+    - "x"
+  branch: "main"
+  excluded_artifacts: []
+
+session:
+  mode: "Architecture Planning"
+  primary_role: "Head Architect"
+  supporting_roles: []
+    - "Reviewer"
+
+contributors: []
+  - target: "test"
+    model: "x"
+    render_mode: "external-cli"
+    attribution_label: "x-1"
+    structured_output:
+      contract: "research_brief"
+YAML
+    run python3 "$SCRIPT" --params "$BAD"
+    [ "$status" -eq 1 ]
+    [[ "$output" == *"no active_contributor_role"* ]]
+}
+
+@test "render_contributor_prompt rejects invalid primary_role" {
+    BAD="$FIXTURE_DIR/bad-primary.yaml"
+    cat > "$BAD" <<'YAML'
+task:
+  id: "bp"
+  framing: "x"
+  artifact_scope: []
+    - "x"
+  branch: "main"
+  excluded_artifacts: []
+
+session:
+  mode: "Architecture Planning"
+  primary_role: "Supreme Leader"
+  supporting_roles: []
+    - "Reviewer"
+
+contributors: []
+  - target: "test"
+    model: "x"
+    render_mode: "external-cli"
+    active_contributor_role: "Reviewer"
+    attribution_label: "x-1"
+    structured_output:
+      contract: "research_brief"
+YAML
+    run python3 "$SCRIPT" --params "$BAD"
+    [ "$status" -eq 1 ]
+    [[ "$output" == *"not a valid FS-0014 role"* ]]
+}
+
+@test "render_contributor_prompt renders attribution_label in transparency statement" {
+    python3 "$SCRIPT" --params "$FIXTURE" --target claude-code --output "$OUT"
+    run grep -q 'My attribution label: claude-contrib-1' "$OUT"
+    [ "$status" -eq 0 ]
+}
+
+@test "render_contributor_prompt uses attribution_label as claim-ID namespace" {
+    python3 "$SCRIPT" --params "$FIXTURE" --target claude-code --output "$OUT"
+    run grep -q 'C-claude-contrib-1-001' "$OUT"
+    [ "$status" -eq 0 ]
+}
+
+@test "render_contributor_prompt rejects hermes-chat without toolsets" {
+    BAD="$FIXTURE_DIR/no-toolsets.yaml"
+    cat > "$BAD" <<'YAML'
+task:
+  id: "nt"
+  framing: "x"
+  artifact_scope: []
+    - "x"
+  branch: "main"
+  excluded_artifacts: []
+
+session:
+  mode: "Architecture Planning"
+  primary_role: "Head Architect"
+  supporting_roles: []
+    - "Reviewer"
+
+contributors: []
+  - target: "test"
+    model: "x"
+    render_mode: "hermes-chat"
+    provider: "ollama-cloud"
+    active_contributor_role: "Reviewer"
+    attribution_label: "x-1"
+    structured_output:
+      contract: "research_brief"
+YAML
+    run python3 "$SCRIPT" --params "$BAD"
+    [ "$status" -eq 1 ]
+    [[ "$output" == *"but no toolsets"* ]]
+}
+
+@test "render_contributor_prompt research-pass exempt from role relationship checks" {
+    # research-pass contributors are advisory and should not trigger
+    # the supporting_roles / active_contributor_role checks.
+    RP="$FIXTURE_DIR/rp-exempt.yaml"
+    cat > "$RP" <<'YAML'
+task:
+  id: "rp"
+  framing: "x"
+  artifact_scope: []
+    - "x"
+  branch: "main"
+  excluded_artifacts: []
+
+session:
+  mode: "Architecture Planning"
+  primary_role: "Head Architect"
+  supporting_roles: []
+
+contributors: []
+  - target: "test"
+    model: "x"
+    render_mode: "research-pass"
+    provider: "ollama-cloud"
+    toolsets: "file,web"
+    attribution_label: "x-1"
+    structured_output:
+      contract: "research_brief"
+YAML
+    run python3 "$SCRIPT" --params "$RP"
+    [ "$status" -eq 0 ]
+}
