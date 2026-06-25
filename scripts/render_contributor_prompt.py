@@ -692,6 +692,18 @@ def main(argv: list[str] | None = None) -> int:
             "document the reason in the synthesis's Recommended Action."
         ),
     )
+    parser.add_argument(
+        "--mixed-contract-warning",
+        action="store_true",
+        help=(
+            "Warn (to stderr) when the parameter file's contributors use "
+            "more than one structured_output.contract type (e.g. one "
+            "contributor uses 'research_brief' and another uses 'json_schema'). "
+            "Mixed contracts are valid but require extra reconciliation in the "
+            "synthesis; this flag surfaces the condition for the operator to "
+            "confirm intentionally. Default: off."
+        ),
+    )
     args = parser.parse_args(argv)
 
     if not args.params.exists():
@@ -701,7 +713,10 @@ def main(argv: list[str] | None = None) -> int:
     params = load_params(args.params)
     _validate(params, allow_gate_overlap=args.allow_gate_overlap)
 
-    task = params["task"]
+    if args.mixed_contract_warning:
+        _warn_mixed_contracts(params)
+
+    task = params["task"]  # noqa: F841 (used downstream)
     session = params["session"]
     contributors = params["contributors"]
     input_sources = params.get("input_sources", [])
@@ -861,6 +876,38 @@ def _validate(params: dict[str, Any], *, allow_gate_overlap: bool = False) -> No
                     f"Pass --allow-gate-overlap to override (document the reason in the "
                     f"synthesis's Recommended Action)."
                 )
+
+
+def _warn_mixed_contracts(params: dict[str, Any]) -> None:
+    """Warn to stderr if contributors use more than one contract type.
+
+    Mixed contracts are valid (ADR-0016 §"Structured Output Contract" says
+    mixing is the expected case for tasks that benefit from both prose
+    synthesis and machine-parseable extraction) but they require extra
+    reconciliation work in the synthesis. This warning is opt-in
+    (--mixed-contract-warning) and surfaces the condition for the operator
+    to confirm intentionally.
+    """
+    contributors = params.get("contributors", [])
+    contracts = {
+        c.get("structured_output", {}).get("contract")
+        for c in contributors
+        if c.get("structured_output", {}).get("contract")
+    }
+    if len(contracts) > 1:
+        contract_list = ", ".join(sorted(contracts))
+        contributor_breakdown = ", ".join(
+            f"{c.get('target', '?')}={c.get('structured_output', {}).get('contract', '?')}"
+            for c in contributors
+        )
+        print(
+            f"warning: contributors use multiple contract types: {contract_list}. "
+            f"Per-contributor contracts: {contributor_breakdown}. "
+            f"Mixed contracts are valid (see ADR-0016 §'Structured Output Contract') "
+            f"but require extra reconciliation in the synthesis. "
+            f"Confirm this is intentional.",
+            file=sys.stderr,
+        )
 
 
 if __name__ == "__main__":
