@@ -202,3 +202,4 @@ If validation fails:
 | ADR-0013 | Multi-model session coordination model | proposed |
 | ADR-0014 | Background task governance | proposed |
 | ADR-0015 | Tool taxonomy and introduction process | proposed |
+| ADR-0016 | Multi-model session orchestration with structured output and gate evaluation | proposed |
