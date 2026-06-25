@@ -90,7 +90,7 @@ contributors: []
         - "docs/decisions/ADR-0013.md"
         - "docs/decisions/README.md"
   - target: "devstral2"
-    model: "devstral2"
+    model: "devstral-2:123b"
     render_mode: "hermes-chat"
     provider: "ollama-cloud"
     toolsets: "file,web"
