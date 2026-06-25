@@ -816,6 +816,14 @@ def _validate(params: dict[str, Any], *, allow_gate_overlap: bool = False) -> No
                 f"but no provider. Add a 'provider:' field to the contributor entry."
             )
 
+        # hermes-chat requires toolsets (the rendered invocation block uses them)
+        if render_mode == "hermes-chat" and not c.get("toolsets"):
+            raise SystemExit(
+                f"error: contributors[{i}] has render_mode 'hermes-chat' "
+                f"but no toolsets. Add a 'toolsets:' field (comma-separated, "
+                f"e.g. 'file,web') to the contributor entry."
+            )
+
         # Validate active_contributor_role against FS-0014 enumeration
         active_role = c.get("active_contributor_role")
         if active_role and active_role not in VALID_ROLES:
