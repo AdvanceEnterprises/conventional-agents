@@ -79,6 +79,7 @@ All four framing questions were addressed by all four contributors.
 | C-CODEX-101 | Helper doesn't enforce relationships between supporting_roles, active_contributor_role, primary_role | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate | Require non-empty supporting_roles; require active_contributor_role for accountable modes; require it to be in supporting_roles; validate primary_role |
 | C-CODEX-102 | Per-contributor model + render-mode dispatch solves mixed-role/mixed-transport plumbing defect | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate (resolved) | Per `e829ebe` |
 | C-CODEX-103 | PLAN-0016 is materially stale relative to ADR-0016, contributor template, and the implemented renderer | codex-contrib-1 | disagree | high | contrib-codex.md | incorporate | Revise PLAN-0016 to current four-contributor, per-contributor, render-mode-aware pilot |
+| C-CODEX-104 | Gate's two-layer status/verdict is sufficient; no additional verdict needed; missing inputs should be `INVALID` | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate | See D1 (operator's read) |
 | C-CODEX-105 | Coverage/Disposition Record prevents silence-collapse but drops envelope fields and is scoped to surviving claims only | codex-contrib-1 | disagree | high | contrib-codex.md | incorporate | See D2 (operator's read) |
 | C-CODEX-106 | Per-contributor parameters are the correct unit | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate (resolved) | Per `e829ebe` |
 | C-CODEX-107 | Supporting-role declaration is different from active-role assignment | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate (resolved) | Per `10ce4af` |
@@ -206,6 +207,7 @@ All four framing questions were addressed by all four contributors.
    - **C-CLAUDE-012:** Reconcile "four sections plus record" vs "five sections" wording between ADR-0016 and synthesis-template. ~3 lines.
    - **C-CODEX-103 / C-CODEX-117 / C-CODEX-126 (U3):** Revise PLAN-0016 to current four-contributor, per-contributor, render-mode-aware pilot. ~30 minutes of editing.
    - **C-DEVSTRAL-002:** Add `--mixed-contract-warning` flag to helper. ~15 lines.
+   - **C-CODEX-110:** Replace basic JSON-schema inspection (existence/JSON syntax/keys) with full validation via the `jsonschema` library in `_render_contract_block`. ~10 lines of Python plus dependency declaration. Add `jsonschema` to `pyproject.toml` (or `setup.py` if pyproject isn't authoritative in this repo).
 
 3. **Schedule the medium-priority follow-ups for pilot-002:**
    - **C-CODEX-127 / C-CODEX-124 (U7):** Add a real JSON-schema contributor in pilot-002 to validate the JSON branch end-to-end.
