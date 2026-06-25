@@ -89,6 +89,19 @@ teardown() {
     [ "$status" -eq 0 ]
 }
 
+@test "render_contributor_prompt lists are on separate lines below their labels" {
+    python3 "$SCRIPT" --params "$FIXTURE" --output "$OUT"
+    # The artifact_scope list should produce one "- path" line per item,
+    # each on its own line. None should be glued to the preceding label.
+    # Specifically: the colon after 'Artifact scope (read-only):' must be
+    # followed by a newline, not by '- path'.
+    run grep -E 'Artifact scope.*: - ' "$OUT"
+    [ "$status" -eq 1 ]
+    # And there must be at least one properly-formatted list item.
+    run grep -E '^- templates/contributor/contributor-prompt.md$' "$OUT"
+    [ "$status" -eq 0 ]
+}
+
 @test "render_contributor_prompt includes must_not_modify guardrail" {
     python3 "$SCRIPT" --params "$FIXTURE" --output "$OUT"
     run grep -q 'docs/decisions/ADR-0013.md' "$OUT"

@@ -265,6 +265,7 @@ Read these sources before producing output:
 
 You MAY:
 {may_modify}
+(if empty: nothing — there are no files you may modify)
 
 You MUST NOT:
 {must_not_modify}
@@ -337,7 +338,7 @@ def render(params: dict[str, Any], target: str) -> str:
         "contract": so["contract"],
         "framing": task["framing"].rstrip(),
         "input_sources": _fmt_list(params.get("input_sources", [])),
-        "may_modify": _fmt_list(guardrails.get("may_modify", [])) or "nothing",
+        "may_modify": _fmt_list(guardrails.get("may_modify", [])),
         "must_not_modify": _fmt_list(guardrails.get("must_not_modify", [])),
         "attribution_trailers": _fmt_list(guardrails.get("attribution_trailers", [])),
         "contract_block": _render_contract_block(so),
@@ -381,11 +382,23 @@ def _render_contract_block(so: dict[str, Any]) -> str:
 
 
 def _fmt_list(items: list[str]) -> str:
+    """Format a list of strings for substitution into the prompt template.
+
+    Returns "" for empty lists (so substitutions disappear cleanly).
+    Returns "\n- item" for single-item lists (leading newline so the
+    item starts on its own line below the preceding label).
+    Returns "\n- item1\n- item2\n..." for multi-item lists.
+
+    The leading newline is load-bearing: the prompt template uses
+    inline substitutions like `Artifact scope (read-only): {artifact_scope}`,
+    so without the leading newline the first list item butts against
+    the colon.
+    """
     if not items:
         return ""
     if len(items) == 1:
-        return f"- {items[0]}"
-    return "\n".join(f"- {x}" for x in items)
+        return f"\n- {items[0]}"
+    return "\n" + "\n".join(f"- {x}" for x in items)
 
 
 # ---------- CLI ---------------------------------------------------------------
