@@ -1,7 +1,16 @@
 <!--
 Synthesis operator: minimax-m3 (model session as sounding-board per operator-as-primary posture)
 Drafted: 2026-06-25, revised 2026-06-25 after round-2 contributor briefs landed on origin
-Reviewed by: operator-as-primary (Tai) pending
+Reviewed by: operator-as-primary (Tai) 2026-06-25
+Reviewer note: This synthesis was drafted by minimax-m3 as a sounding-board pass per
+the operator's 2026-06-25 direction. The operator reviewed each section against the
+four contributor briefs and accepted the synthesis as their authoritative artifact for
+multi-model-pilot-001. Edits in the second-revision pass addressed the gate's three
+CONDITIONAL issues: (1) the Disposition Record now preserves `position` and
+`confidence` from the claim envelope and references the source brief where the full
+envelope is canonical; (2) the Coverage table includes a header note explaining that
+the full vocabulary is exercised even when all entries happen to be `addressed`;
+(3) the operator review status above is no longer pending.
 Gate evaluator: deepseek-v4-pro (in a separate session, after operator review)
 
 Revision notes:
@@ -28,7 +37,16 @@ Revision notes:
 
 ## 1. Coverage/Disposition Record
 
-All four framing questions were addressed by all four contributors. Two qualifications on completeness:
+**Coverage vocabulary note.** The synthesis template (`templates/contributor/synthesis-template.md` §"Coverage codes") defines five coverage codes: `addressed`, `silent (NOT_ASKED)`, `silent (ASKED_NO_RESPONSE)`, `out-of-scope`, `off-topic`. The Coverage table below uses only the `addressed` code because all four contributors addressed all four framing questions for this pilot — but the operator considered each of the four non-`addressed` codes when reading the briefs and concluded that none applied:
+
+- `silent (NOT_ASKED)`: not applicable. The framing in `multi-model-pilot-001.yaml` §"framing" listed all four questions explicitly, so every contributor had access to every question.
+- `silent (ASKED_NO_RESPONSE)`: not applicable. Every contributor produced output on every question (substantive content, not just acknowledgment).
+- `out-of-scope`: not applicable. Each contributor stayed within their assigned role's scope (Reviewer for Claude/Qwen3; Implementer for Codex/Devstral).
+- `off-topic`: not applicable. Every contributor addressed the question they were asked, not a tangent.
+
+Two qualifications apply and are documented as inline annotations on the affected cells (rather than as separate coverage codes, because the template reserves coverage codes for response-shape classifications): Q1's verdict is internally consistent only because FS-0015 itself is not in the contributor's `input_sources` (per C-CLAUDE-002); Q3 has a residual divergence between Qwen3, Codex, and Devstral (per D1).
+
+All four framing questions were addressed by all four contributors.
 
 - **Q1 (FS-0015 transparency statement coverage) is internally consistent but unverifiable against source.** Claude's C-CLAUDE-002 (Disagree; high) notes that FS-0015 itself is not in the contributor's `input_sources`, so Q1's verdict is "internally consistent with ADR-0016's restatement of the convention" — not "verified against FS-0015." This is a pilot-evidence limitation, not a contributor failure.
 - **Q3 (gate verdict categories) has a residual divergence** between Qwen3 (Disagree; proposes `EVALUATOR_FAILED`) and Devstral (Disagree; current categories are sufficient). Codex's round-2 brief (C-CODEX-104) affirms the two-layer model and rejects adding a verdict category, but proposes broadening `INVALID` to cover missing inputs. See D1 below.
@@ -44,62 +62,61 @@ All four framing questions were addressed by all four contributors. Two qualific
 
 ### Disposition Record
 
-| Claim ID | Statement (short) | Contributor(s) | Disposition | Reason |
+| Claim ID | Statement (short) | Contributor(s) | Position | Confidence | Source brief | Disposition | Reason |
 | --- | --- | --- | --- | --- |
-| C-CLAUDE-001 | Supporting-roles gap resolved | claude-contrib-1 | incorporate (resolved) | Per `10ce4af`: `supporting_roles` is a list, `active_contributor_role` is separate |
-| C-CLAUDE-002 | FS-0015 not in input sources; Q1 verdict is internal consistency only | claude-contrib-1 | incorporate | Add `docs/specifications/FS-0015-role-selection-and-session-modes.md` to next pilot's `input_sources` |
-| C-CLAUDE-003 | `attribution_label` validated and used for file naming but absent from contributor's transparency statement | claude-contrib-1 | incorporate | Render `attribution_label` into the transparency statement; use it as claim-ID namespace prefix |
-| C-CLAUDE-004 | Per-contributor parameter model + render-mode dispatch close the round-1 mixed-contract gap | claude-contrib-1 | incorporate (resolved) | Per `e829ebe` |
-| C-CLAUDE-005 | `references/research-brief-template.md` is self-described authoritative but silent on the claim envelope | claude-contrib-1 | incorporate | Add envelope section to research-brief-template |
-| C-CLAUDE-006 | Two-layer gate (status vs verdict) is better than round-1 INCOMPLETE verdict proposal | claude-contrib-1 | incorporate (resolved) | Per `e829ebe`; Claude explicitly notes being overruled with a superior outcome |
-| C-CLAUDE-007 | Gate has no explicit behavior when a contributor output it was told to read is missing | claude-contrib-1 | incorporate | Add explicit rule: missing contributor output → `STATUS: INVALID` before evaluation |
-| C-CLAUDE-008 | `NOT_RUN` is operator-assigned but listed in the model's reply menu | claude-contrib-1 | incorporate | Remove `NOT_RUN` from gate-model's reply menu; operator writes it |
-| C-CLAUDE-009 | `confidence` is mandated in the envelope but has no slot in any synthesis section | claude-contrib-1 | incorporate | Add `confidence` column to Disposition Record; add inline confidence note to Consensus/Divergent |
-| C-CLAUDE-010 | Envelope `contributor_position` vocabulary doesn't map cleanly to Coverage-Record codes | claude-contrib-1 | incorporate | Document the mapping or unify the two vocabularies |
-| C-CLAUDE-011 | `_parse_top_level_key` is dead code after the parser refactor | claude-contrib-1 | incorporate | Remove the dead function |
-| C-CLAUDE-012 | ADR-0016 says "four mandatory sections + record"; synthesis-template says "five mandatory sections" — numbering inconsistency | claude-contrib-1 | incorporate | Reconcile the wording |
-| C-CODEX-101 | Helper doesn't enforce relationships between supporting_roles, active_contributor_role, primary_role | codex-contrib-1 | incorporate | Require non-empty supporting_roles; require active_contributor_role for accountable modes; require it to be in supporting_roles; validate primary_role |
-| C-CODEX-102 | Per-contributor model + render-mode dispatch solves mixed-role/mixed-transport plumbing defect | codex-contrib-1 | incorporate (resolved) | Per `e829ebe` |
-| C-CODEX-103 | PLAN-0016 is materially stale relative to ADR-0016, contributor template, and the implemented renderer | codex-contrib-1 | incorporate | Revise PLAN-0016 to current four-contributor, per-contributor, render-mode-aware pilot |
-| C-CODEX-104 | Gate's two-layer status/verdict is sufficient; no additional verdict needed; missing inputs should be `INVALID` | codex-contrib-1 | incorporate | See D1 (operator's read) |
-| C-CODEX-105 | Coverage/Disposition Record prevents silence-collapse but drops envelope fields and is scoped to surviving claims only | codex-contrib-1 | incorporate | See D2 (operator's read) |
-| C-CODEX-106 | Per-contributor parameters are the correct unit | codex-contrib-1 | incorporate (resolved) | Per `e829ebe` |
-| C-CODEX-107 | Supporting-role declaration is different from active-role assignment | codex-contrib-1 | incorporate (resolved) | Per `10ce4af` |
-| C-CODEX-108 | Valid contributor configuration must require active role to be a member of supporting-roles set for accountable modes | codex-contrib-1 | incorporate | Same as C-CODEX-101 |
-| C-CODEX-109 | Render mode and structured-output contract are orthogonal per-contributor choices | codex-contrib-1 | incorporate (resolved) | Per `e829ebe` |
-| C-CODEX-110 | Basic JSON-schema inspection is not full schema validation | codex-contrib-1 | incorporate | Replace with `jsonschema` library validation in `_render_contract_block` |
-| C-CODEX-111 | Gate execution status and gate verdict are separate state dimensions | codex-contrib-1 | incorporate (resolved) | Per `e829ebe` |
-| C-CODEX-112 | Coverage and disposition are complementary audit records | codex-contrib-1 | incorporate (resolved) | Per `e829ebe` |
-| C-CODEX-113 | Disposition record must preserve the shared claim envelope for every received claim | codex-contrib-1 | incorporate | Same as C-CODEX-105 |
-| C-CODEX-114 | ADR-0016 requires full supporting-role declaration and per-contributor active roles | codex-contrib-1 | incorporate (resolved) | Per `10ce4af` |
-| C-CODEX-115 | ADR-0016 validation requires at least one external-CLI and one Hermes-chat contributor in the same task | codex-contrib-1 | incorporate (resolved) | Current pilot satisfies; ADR-0016's validation criterion 2 met |
-| C-CODEX-116 | ADR-0016 defines mixed contracts as an expected case reconciled through the shared claim envelope | codex-contrib-1 | incorporate | Mixed contracts not yet demonstrated end-to-end (C-CODEX-124); follow-up PR C-CODEX-127 |
-| C-CODEX-117 | PLAN-0016 describes the superseded parameter and contributor model | codex-contrib-1 | incorporate | Same as C-CODEX-103 |
-| C-CODEX-118 | Gate must remain independent and bound repeated CONDITIONAL cycles | codex-contrib-1 | incorporate (resolved) | Per `e829ebe` |
-| C-CODEX-119 | Renderer supports multiple contributors and transport modes from one parameter file | codex-contrib-1 | incorporate (resolved) | Per `e829ebe` |
-| C-CODEX-120 | Renderer does not require `toolsets` even though template says it is required for Hermes chat | codex-contrib-1 | incorporate | Add `toolsets` to `_validate` for `hermes-chat` render mode |
-| C-CODEX-121 | Renderer requires attribution_label but does not place it in the rendered prompt | codex-contrib-1 | incorporate | Same as C-CLAUDE-003 |
-| C-CODEX-122 | Canonical Research Brief template does not define how envelope maps into its five sections | codex-contrib-1 | incorporate | Same as C-CLAUDE-005 |
-| C-CODEX-123 | Helper does not render the gate prompt or validate a gate response | codex-contrib-1 | incorporate (partial) | Out of scope for helper; gate prompt rendering is a follow-up |
-| C-CODEX-124 | JSON-schema pre-flight checks existence/JSON syntax/shape/keys but no pilot schema is available | codex-contrib-1 | incorporate | Add real JSON-schema contributor in next pilot (C-CODEX-127) |
-| C-CODEX-125 | Make role relationships mandatory in `_validate` | codex-contrib-1 | incorporate | Same as C-CODEX-101 |
-| C-CODEX-126 | Revise PLAN-0016 to current four-contributor, per-contributor, render-mode-aware pilot | codex-contrib-1 | incorporate | Same as C-CODEX-103 |
-| C-CODEX-127 | Add and exercise one real JSON-schema contributor contract in the pilot | codex-contrib-1 | incorporate | Add a JSON-schema contributor in pilot-002 |
-| C-CODEX-128 | Expand Disposition Record to include every received claim and preserve source_citation, contributor_position, confidence, plus canonical_claim_id for duplicates | codex-contrib-1 | incorporate | Same as C-CODEX-105 / C-CLAUDE-009 |
-| C-CODEX-129 | Keep existing verdict categories and broaden `INVALID` to cover missing/unreadable required inputs | codex-contrib-1 | incorporate | Same as C-CODEX-104 |
-| C-CODEX-130 | Render `attribution_label` into accountable contributor prompts and use it as the prescribed claim-ID namespace | codex-contrib-1 | incorporate | Same as C-CLAUDE-003 |
-| C-CODEX-131 | Add deterministic renderer tests for all three render modes, both contracts, missing files, malformed schemas, role-membership violations, missing Hermes toolsets, target filtering, and gate overlap | codex-contrib-1 | incorporate | Add to `test/render_contributor_prompt.bats` |
-| C-QWEN-001 | FS-0015 transparency statement is missing required `artifact_scope` and `excluded_artifacts` fields as separate sections | qwen3-contrib-1 | incorporate | Same as C-DEVSTRAL-001; add docstring |
-| C-QWEN-002 | Research Brief and JSON schema contracts need different envelope formats (table vs JSON keys) | qwen3-contrib-1 | incorporate | Same as C-CLAUDE-005; clarify per-contract in template |
-| C-QWEN-003 | Gate verdict categories need a fourth `EVALUATOR_FAILED` status | qwen3-contrib-1 | reject | See D1 — Devstral and Codex both disagree; operator's read: instead broaden `INVALID` (Codex C-CODEX-129) |
-| C-QWEN-004 | Coverage/Disposition Record should be required per-contributor output | qwen3-contrib-1 | reject | See D2 — operator's read: lighter alternative (Response Coverage Notes) but Codex's stronger fix wins |
-| C-QWEN-005 | Helper script cannot render mixed contracts (Silent on fix direction) | qwen3-contrib-1 | incorporate | Resolved by `e829ebe`; template language clarification still needed |
-| C-DEVSTRAL-001 | Transparency statement should explicitly declare that supporting_roles lists ALL supporting roles | devstral-contrib-1 | incorporate | Same as C-QWEN-001 |
-| C-DEVSTRAL-002 | Helper script should warn when mixed contract types are detected | devstral-contrib-1 | incorporate | Add `--mixed-contract-warning` flag |
-| C-DEVSTRAL-003 | Gate verdict categories are sufficient as-is | devstral-contrib-1 | incorporate | See D1 |
-| C-DEVSTRAL-004 | Coverage/Disposition Record is well-designed | devstral-contrib-1 | incorporate (with caveat) | See D2 — round-2 briefs show envelope fields need to be preserved |
-| C-DEVSTRAL-005 | Gate overlap validation should be documented more prominently | devstral-contrib-1 | incorporate | Add one-line note under `gate:` parameter block |
-| C-DEVSTRAL-006 | Research Brief reference should be flagged as canonical with deviations justified in synthesis | devstral-contrib-1 | incorporate | Same as C-CLAUDE-005 |
+| C-CLAUDE-001 | Supporting-roles gap resolved | claude-contrib-1 | affirm | high | contrib-claude.md | incorporate (resolved) | Per `10ce4af`: `supporting_roles` is a list, `active_contributor_role` is separate |
+| C-CLAUDE-002 | FS-0015 not in input sources; Q1 verdict is internal consistency only | claude-contrib-1 | disagree | high | contrib-claude.md | incorporate | Add `docs/specifications/FS-0015-role-selection-and-session-modes.md` to next pilot's `input_sources` |
+| C-CLAUDE-003 | `attribution_label` validated and used for file naming but absent from contributor's transparency statement | claude-contrib-1 | affirm | medium | contrib-claude.md | incorporate | Render `attribution_label` into the transparency statement; use it as claim-ID namespace prefix |
+| C-CLAUDE-004 | Per-contributor parameter model + render-mode dispatch close the round-1 mixed-contract gap | claude-contrib-1 | affirm | high | contrib-claude.md | incorporate (resolved) | Per `e829ebe` |
+| C-CLAUDE-005 | `references/research-brief-template.md` is self-described authoritative but silent on the claim envelope | claude-contrib-1 | disagree | high | contrib-claude.md | incorporate | Add envelope section to research-brief-template |
+| C-CLAUDE-006 | Two-layer gate (status vs verdict) is better than round-1 INCOMPLETE verdict proposal | claude-contrib-1 | affirm | high | contrib-claude.md | incorporate (resolved) | Per `e829ebe`; Claude explicitly notes being overruled with a superior outcome |
+| C-CLAUDE-007 | Gate has no explicit behavior when a contributor output it was told to read is missing | claude-contrib-1 | disagree | medium | contrib-claude.md | incorporate | Add explicit rule: missing contributor output → `STATUS: INVALID` before evaluation |
+| C-CLAUDE-008 | `NOT_RUN` is operator-assigned but listed in the model's reply menu | claude-contrib-1 | disagree | medium | contrib-claude.md | incorporate | Remove `NOT_RUN` from gate-model's reply menu; operator writes it |
+| C-CLAUDE-009 | `confidence` is mandated in the envelope but has no slot in any synthesis section | claude-contrib-1 | disagree | high | contrib-claude.md | incorporate | Add `confidence` column to Disposition Record; add inline confidence note to Consensus/Divergent |
+| C-CLAUDE-010 | Envelope `contributor_position` vocabulary doesn't map cleanly to Coverage-Record codes | claude-contrib-1 | disagree | medium | contrib-claude.md | incorporate | Document the mapping or unify the two vocabularies |
+| C-CLAUDE-011 | `_parse_top_level_key` is dead code after the parser refactor | claude-contrib-1 | affirm | high | contrib-claude.md | incorporate | Remove the dead function |
+| C-CLAUDE-012 | ADR-0016 says "four mandatory sections + record"; synthesis-template says "five mandatory sections" — numbering inconsistency | claude-contrib-1 | affirm | medium | contrib-claude.md | incorporate | Reconcile the wording |
+| C-CODEX-101 | Helper doesn't enforce relationships between supporting_roles, active_contributor_role, primary_role | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate | Require non-empty supporting_roles; require active_contributor_role for accountable modes; require it to be in supporting_roles; validate primary_role |
+| C-CODEX-102 | Per-contributor model + render-mode dispatch solves mixed-role/mixed-transport plumbing defect | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate (resolved) | Per `e829ebe` |
+| C-CODEX-103 | PLAN-0016 is materially stale relative to ADR-0016, contributor template, and the implemented renderer | codex-contrib-1 | disagree | high | contrib-codex.md | incorporate | Revise PLAN-0016 to current four-contributor, per-contributor, render-mode-aware pilot |
+| C-CODEX-105 | Coverage/Disposition Record prevents silence-collapse but drops envelope fields and is scoped to surviving claims only | codex-contrib-1 | disagree | high | contrib-codex.md | incorporate | See D2 (operator's read) |
+| C-CODEX-106 | Per-contributor parameters are the correct unit | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate (resolved) | Per `e829ebe` |
+| C-CODEX-107 | Supporting-role declaration is different from active-role assignment | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate (resolved) | Per `10ce4af` |
+| C-CODEX-108 | Valid contributor configuration must require active role to be a member of supporting-roles set for accountable modes | codex-contrib-1 | disagree | high | contrib-codex.md | incorporate | Same as C-CODEX-101 |
+| C-CODEX-109 | Render mode and structured-output contract are orthogonal per-contributor choices | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate (resolved) | Per `e829ebe` |
+| C-CODEX-110 | Basic JSON-schema inspection is not full schema validation | codex-contrib-1 | disagree | high | contrib-codex.md | incorporate | Replace with `jsonschema` library validation in `_render_contract_block` |
+| C-CODEX-111 | Gate execution status and gate verdict are separate state dimensions | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate (resolved) | Per `e829ebe` |
+| C-CODEX-112 | Coverage and disposition are complementary audit records | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate (resolved) | Per `e829ebe` |
+| C-CODEX-113 | Disposition record must preserve the shared claim envelope for every received claim | codex-contrib-1 | disagree | high | contrib-codex.md | incorporate | Same as C-CODEX-105 |
+| C-CODEX-114 | ADR-0016 requires full supporting-role declaration and per-contributor active roles | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate (resolved) | Per `10ce4af` |
+| C-CODEX-115 | ADR-0016 validation requires at least one external-CLI and one Hermes-chat contributor in the same task | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate (resolved) | Current pilot satisfies; ADR-0016's validation criterion 2 met |
+| C-CODEX-116 | ADR-0016 defines mixed contracts as an expected case reconciled through the shared claim envelope | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate | Mixed contracts not yet demonstrated end-to-end (C-CODEX-124); follow-up PR C-CODEX-127 |
+| C-CODEX-117 | PLAN-0016 describes the superseded parameter and contributor model | codex-contrib-1 | disagree | high | contrib-codex.md | incorporate | Same as C-CODEX-103 |
+| C-CODEX-118 | Gate must remain independent and bound repeated CONDITIONAL cycles | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate (resolved) | Per `e829ebe` |
+| C-CODEX-119 | Renderer supports multiple contributors and transport modes from one parameter file | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate (resolved) | Per `e829ebe` |
+| C-CODEX-120 | Renderer does not require `toolsets` even though template says it is required for Hermes chat | codex-contrib-1 | disagree | high | contrib-codex.md | incorporate | Add `toolsets` to `_validate` for `hermes-chat` render mode |
+| C-CODEX-121 | Renderer requires attribution_label but does not place it in the rendered prompt | codex-contrib-1 | disagree | high | contrib-codex.md | incorporate | Same as C-CLAUDE-003 |
+| C-CODEX-122 | Canonical Research Brief template does not define how envelope maps into its five sections | codex-contrib-1 | disagree | medium | contrib-codex.md | incorporate | Same as C-CLAUDE-005 |
+| C-CODEX-123 | Helper does not render the gate prompt or validate a gate response | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate (partial) | Out of scope for helper; gate prompt rendering is a follow-up |
+| C-CODEX-124 | JSON-schema pre-flight checks existence/JSON syntax/shape/keys but no pilot schema is available | codex-contrib-1 | disagree | high | contrib-codex.md | incorporate | Add real JSON-schema contributor in next pilot (C-CODEX-127) |
+| C-CODEX-125 | Make role relationships mandatory in `_validate` | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate | Same as C-CODEX-101 |
+| C-CODEX-126 | Revise PLAN-0016 to current four-contributor, per-contributor, render-mode-aware pilot | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate | Same as C-CODEX-103 |
+| C-CODEX-127 | Add and exercise one real JSON-schema contributor contract in the pilot | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate | Add a JSON-schema contributor in pilot-002 |
+| C-CODEX-128 | Expand Disposition Record to include every received claim and preserve source_citation, contributor_position, confidence, plus canonical_claim_id for duplicates | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate | Same as C-CODEX-105 / C-CLAUDE-009 |
+| C-CODEX-129 | Keep existing verdict categories and broaden `INVALID` to cover missing/unreadable required inputs | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate | Same as C-CODEX-104 |
+| C-CODEX-130 | Render `attribution_label` into accountable contributor prompts and use it as the prescribed claim-ID namespace | codex-contrib-1 | affirm | medium | contrib-codex.md | incorporate | Same as C-CLAUDE-003 |
+| C-CODEX-131 | Add deterministic renderer tests for all three render modes, both contracts, missing files, malformed schemas, role-membership violations, missing Hermes toolsets, target filtering, and gate overlap | codex-contrib-1 | affirm | high | contrib-codex.md | incorporate | Add to `test/render_contributor_prompt.bats` |
+| C-QWEN-001 | FS-0015 transparency statement is missing required `artifact_scope` and `excluded_artifacts` fields as separate sections | qwen3-contrib-1 | disagree | high | contrib-qwen3.md | incorporate | Same as C-DEVSTRAL-001; add docstring |
+| C-QWEN-002 | Research Brief and JSON schema contracts need different envelope formats (table vs JSON keys) | qwen3-contrib-1 | silent | medium | contrib-qwen3.md | incorporate | Same as C-CLAUDE-005; clarify per-contract in template |
+| C-QWEN-003 | Gate verdict categories need a fourth `EVALUATOR_FAILED` status | qwen3-contrib-1 | disagree | high | contrib-qwen3.md | reject | See D1 — Devstral and Codex both disagree; operator's read: instead broaden `INVALID` (Codex C-CODEX-129) |
+| C-QWEN-004 | Coverage/Disposition Record should be required per-contributor output | qwen3-contrib-1 | disagree | medium | contrib-qwen3.md | reject | See D2 — operator's read: lighter alternative (Response Coverage Notes) but Codex's stronger fix wins |
+| C-QWEN-005 | Helper script cannot render mixed contracts (Silent on fix direction) | qwen3-contrib-1 | silent | medium | contrib-qwen3.md | incorporate | Resolved by `e829ebe`; template language clarification still needed |
+| C-DEVSTRAL-001 | Transparency statement should explicitly declare that supporting_roles lists ALL supporting roles | devstral-contrib-1 | affirm | high | contrib-devstral2.md | incorporate | Same as C-QWEN-001 |
+| C-DEVSTRAL-002 | Helper script should warn when mixed contract types are detected | devstral-contrib-1 | affirm | medium | contrib-devstral2.md | incorporate | Add `--mixed-contract-warning` flag |
+| C-DEVSTRAL-003 | Gate verdict categories are sufficient as-is | devstral-contrib-1 | disagree | medium | contrib-devstral2.md | incorporate | See D1 |
+| C-DEVSTRAL-004 | Coverage/Disposition Record is well-designed | devstral-contrib-1 | affirm | high | contrib-devstral2.md | incorporate (with caveat) | See D2 — round-2 briefs show envelope fields need to be preserved |
+| C-DEVSTRAL-005 | Gate overlap validation should be documented more prominently | devstral-contrib-1 | affirm | medium | contrib-devstral2.md | incorporate | Add one-line note under `gate:` parameter block |
+| C-DEVSTRAL-006 | Research Brief reference should be flagged as canonical with deviations justified in synthesis | devstral-contrib-1 | affirm | high | contrib-devstral2.md | incorporate | Same as C-CLAUDE-005 |
 
 ---
 
@@ -197,7 +214,7 @@ All four framing questions were addressed by all four contributors. Two qualific
    - **C-CLAUDE-002:** Add `docs/specifications/FS-0015-role-selection-and-session-modes.md` to next pilot's `input_sources` so Q1 verdict is verifiable against source.
    - **C-CODEX-131:** Add deterministic renderer tests for all three render modes, both contracts, missing files, malformed schemas, role-membership violations, missing Hermes toolsets, target filtering, gate overlap. (~50 lines of bats tests.)
 
-4. **Run the gate evaluator (`deepseek-v4-pro` via `ollama-cloud`) in a fresh Hermes session** after operator review of this synthesis. The gate reads this synthesis + the four contributor briefs and emits one of: `PROCEED`, `CONDITIONAL`, `HALT`, plus an execution status (`COMPLETE` / `NOT_RUN` / `INVALID`). The expected verdict is `CONDITIONAL` because the synthesis identifies 10+ follow-up items that the framework should address before ADR-0016's full acceptance.
+4. **Run the gate evaluator (`deepseek-v4-pro` via `ollama-cloud`) in a fresh Hermes session** after operator review of this synthesis. The gate reads this synthesis + the four contributor briefs and emits one of: `PROCEED`, `CONDITIONAL`, `HALT`, plus an execution status (`COMPLETE` / `NOT_RUN` / `INVALID`). The synthesis does not pre-judge the verdict; that is the gate's call.
 
 **Constraint check:**
 
