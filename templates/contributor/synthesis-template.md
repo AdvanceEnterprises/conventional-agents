@@ -57,24 +57,38 @@ Coverage codes (per contributor per question):
 - `out-of-scope` — the contributor addressed the question and indicated it was outside their assigned role.
 - `off-topic` — the contributor's response does not engage with the question at all.
 
-A separate Disposition Record captures, for every unique claim that survives into the synthesis, what was done with it:
+A separate Disposition Record captures, for **every received claim** (not just the claims that survive into the synthesis), what was done with it. This is required per the pilot's round-2 finding (C-CLAUDE-009, C-CODEX-105, C-CODEX-128) — the original Disposition Record dropped rejected claims and lost envelope fields, making it impossible for the gate to verify that the synthesis considered every contributor output.
 
-| Claim ID | Statement (short) | Contributor(s) | Disposition | Reason |
-| --- | --- | --- | --- | --- |
-| C-CLAUDE-001 | <claim statement> | claude-contrib-1 | incorporate | supported by ADR-0013 |
-| C-CODEX-002 | <claim statement> | codex-contrib-1 | reject | contradicts FS-0014 |
-| C-QWEN-003 | <claim statement> | qwen3-contrib-1 | defer | follow-up needed |
-| C-DEVSTRAL-004 | <claim statement> | devstral-contrib-1 | duplicate | same as C-CLAUDE-001 |
+The Disposition Record preserves the shared claim envelope fields (per ADR-0016 §"Structured Output Contract") so the gate can validate attribution fidelity without re-reading the contributor briefs:
+
+| Claim ID | Statement (short) | Contributor(s) | Source citation | Position | Confidence | Disposition | Reason | Canonical claim ID |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| C-CLAUDE-001 | <claim statement> | claude-contrib-1 | `docs/decisions/ADR-0016.md §"Decision Outcome"` | disagree | high | incorporate | supported by ADR-0013 | — |
+| C-CODEX-002 | <claim statement> | codex-contrib-1 | `templates/contributor/contributor-prompt.md §"Parameters"` | affirm | high | reject | contradicts FS-0014 | — |
+| C-QWEN-003 | <claim statement> | qwen3-contrib-1 | `scripts/render_contributor_prompt.py` line 317 | disagree | medium | defer | follow-up needed | — |
+| C-DEVSTRAL-004 | <claim statement> | devstral-contrib-1 | `docs/decisions/ADR-0016.md §"Status"` | affirm | high | duplicate | same as C-CLAUDE-001 | C-CLAUDE-001 |
+
+Column descriptions:
+
+- **Claim ID**: the contributor's claim identifier (from the shared claim envelope).
+- **Statement (short)**: one-line summary of the claim.
+- **Contributor(s)**: the `attribution_label` of the contributor(s) who raised the claim.
+- **Source citation**: repo-relative path with section anchor (from the claim envelope's `source_citation` field). Ties every claim to a verifiable input source.
+- **Position**: the contributor's stance from the claim envelope (`affirm` / `disagree` / `silent` / `out-of-scope`). Preserved so the gate can verify divergence preservation without re-reading the contributor brief.
+- **Confidence**: the contributor's self-rated confidence from the claim envelope (`high` / `medium` / `low`). Preserved so the gate can weight dispositions.
+- **Disposition**: what the operator did with the claim (see codes below).
+- **Reason**: one-sentence justification for the disposition.
+- **Canonical claim ID**: when disposition is `duplicate`, the claim ID of the surviving claim. Empty (`—`) for non-duplicate claims.
 
 Disposition codes (per claim):
 
 - `incorporate` — claim enters the synthesis's body and (if applicable) the commit.
 - `reject` — claim is excluded from the synthesis with a reason (e.g., contradicts an accepted ADR).
 - `defer` — claim is recorded as an open question for follow-up.
-- `duplicate` — claim is the same as another claim already in the synthesis; one survives, the rest are merged.
+- `duplicate` — claim is the same as another claim already in the synthesis; one survives, the rest are merged. The `canonical_claim_id` column records which claim survives.
 - `out-of-scope` — claim is recorded but excluded from this synthesis because it falls outside the task framing.
 
-The Coverage Record is the gate's primary check on attribution fidelity. The Disposition Record is the gate's primary check on whether the synthesis preserves all unique insights rather than silently dropping them.
+The Coverage Record is the gate's primary check on attribution fidelity. The Disposition Record is the gate's primary check on whether the synthesis preserves all unique insights rather than silently dropping them, and whether every received claim's envelope fields are carried forward.
 
 ## 2. Consensus
 
@@ -153,11 +167,11 @@ Because the operator is the synthesis author (not a model session), some things 
 | Q1: FS-0015 supporting roles | addressed | addressed | out-of-scope |
 | Q2: gate verdict taxonomy | addressed | silent (NOT_ASKED) | addressed |
 
-| Claim ID | Statement (short) | Contributor(s) | Disposition | Reason |
-| --- | --- | --- | --- | --- |
-| C-CLAUDE-001 | FS-0015 requires declaring all supporting roles | claude-contrib-1 | incorporate | supported by FS-0015 |
-| C-CODEX-002 | gate should have INCOMPLETE verdict | codex-contrib-1 | incorporate | matches action-framework-research pattern |
-| C-QWEN-003 | (skipped; out-of-scope) | qwen3-contrib-1 | out-of-scope | role assignment |
+| Claim ID | Statement (short) | Contributor(s) | Source citation | Position | Confidence | Disposition | Reason | Canonical claim ID |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| C-CLAUDE-001 | FS-0015 requires declaring all supporting roles | claude-contrib-1 | `docs/specifications/FS-0015.md §"Explainability Convention"` | affirm | high | incorporate | supported by FS-0015 | — |
+| C-CODEX-002 | gate should have INCOMPLETE verdict | codex-contrib-1 | `templates/contributor/gate-template.md §"Failure modes"` | disagree | high | reject | superseded by two-layer status/verdict model | — |
+| C-QWEN-003 | (skipped; out-of-scope) | qwen3-contrib-1 | — | out-of-scope | — | out-of-scope | role assignment | — |
 
 ## 2. Consensus
 
