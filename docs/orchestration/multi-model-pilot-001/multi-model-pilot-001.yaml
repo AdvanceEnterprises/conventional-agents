@@ -17,8 +17,9 @@ task:
        HALT) cover the failure modes a real pilot run would surface,
        or whether additional categories are needed.
     4. Whether the synthesis structure (Consensus / Divergent /
-       Unique Insights / Recommended Action) loses any information
-       that the pilot needs to recover later.
+       Unique Insights / Recommended Action) plus the new
+       Coverage/Disposition Record loses any information that the
+       pilot needs to recover later.
 
     Read every file listed in artifact_scope and input_sources before
     producing output. Cite specific section anchors (e.g.,
@@ -39,12 +40,71 @@ task:
 session:
   mode: "Architecture Planning"
   primary_role: "Head Architect"
-  contributor_role: "Reviewer"
-  attribution_label: "claude-contrib-1"
+  supporting_roles: []
+    - "Head Architect"
+    - "Reviewer"
 
-structured_output:
-  contract: "research_brief"
-  brief_format_path: "references/research-brief-template.md"
+contributors: []
+  - target: "claude-code"
+    model: "claude-sonnet-4"
+    render_mode: "external-cli"
+    active_contributor_role: "Reviewer"
+    attribution_label: "claude-contrib-1"
+    structured_output:
+      contract: "research_brief"
+      brief_format_path: "references/research-brief-template.md"
+    guardrails:
+      may_modify: []
+      must_not_modify: []
+        - "docs/decisions/ADR-0016.md"
+        - "docs/decisions/ADR-0013.md"
+        - "docs/decisions/README.md"
+  - target: "codex"
+    model: "codex"
+    render_mode: "external-cli"
+    active_contributor_role: "Implementer"
+    attribution_label: "codex-contrib-1"
+    structured_output:
+      contract: "research_brief"
+      brief_format_path: "references/research-brief-template.md"
+    guardrails:
+      may_modify: []
+      must_not_modify: []
+        - "docs/decisions/ADR-0016.md"
+        - "docs/decisions/ADR-0013.md"
+        - "docs/decisions/README.md"
+  - target: "qwen3-coder-next"
+    model: "qwen3-coder-next"
+    render_mode: "hermes-chat"
+    provider: "ollama-cloud"
+    toolsets: "file,web"
+    active_contributor_role: "Reviewer"
+    attribution_label: "qwen3-contrib-1"
+    structured_output:
+      contract: "research_brief"
+      brief_format_path: "references/research-brief-template.md"
+    guardrails:
+      may_modify: []
+      must_not_modify: []
+        - "docs/decisions/ADR-0016.md"
+        - "docs/decisions/ADR-0013.md"
+        - "docs/decisions/README.md"
+  - target: "devstral2"
+    model: "devstral2"
+    render_mode: "hermes-chat"
+    provider: "ollama-cloud"
+    toolsets: "file,web"
+    active_contributor_role: "Implementer"
+    attribution_label: "devstral-contrib-1"
+    structured_output:
+      contract: "research_brief"
+      brief_format_path: "references/research-brief-template.md"
+    guardrails:
+      may_modify: []
+      must_not_modify: []
+        - "docs/decisions/ADR-0016.md"
+        - "docs/decisions/ADR-0013.md"
+        - "docs/decisions/README.md"
 
 input_sources: []
   - "docs/decisions/ADR-0016.md"
@@ -53,13 +113,9 @@ input_sources: []
   - "templates/contributor/synthesis-template.md"
   - "templates/contributor/gate-template.md"
   - "scripts/render_contributor_prompt.py"
+  - "references/research-brief-template.md"
 
-guardrails:
-  may_modify: []
-  must_not_modify: []
-    - "docs/decisions/ADR-0016.md"
-    - "docs/decisions/ADR-0013.md"
-    - "docs/decisions/README.md"
-  attribution_trailers: []
-    - "Assisted-By: claude-sonnet-4"
-    - "Contributor-Session: claude-contrib-1"
+gate:
+  enabled: false
+  model: "deepseek-v4-pro"
+  provider: "ollama-cloud"
