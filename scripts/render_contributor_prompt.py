@@ -596,7 +596,17 @@ def _render_contract_block(so: dict[str, Any], envelope_note: str) -> str:
                 f"the schema file at {schema_path!r} does not exist. "
                 f"Create the schema or change the contract."
             )
-        # Verify the file parses as JSON and contains JSON-Schema-like keys.
+        # Validate the schema file using the jsonschema library.
+        # This replaces the previous basic key-inspection check with
+        # full JSON Schema meta-validation (per C-CODEX-110).
+        try:
+            import jsonschema
+        except ImportError:
+            raise ValueError(
+                f"structured_output.contract is 'json_schema' but the "
+                f"'jsonschema' library is not installed. Install it with: "
+                f"pip install jsonschema"
+            ) from None
         try:
             with open(schema_path) as f:
                 schema_doc = json.load(f)
@@ -610,12 +620,20 @@ def _render_contract_block(so: dict[str, Any], envelope_note: str) -> str:
                 f"structured_output.contract is 'json_schema' but "
                 f"{schema_path!r} is not a JSON object"
             )
-        if "type" not in schema_doc and "$schema" not in schema_doc and "properties" not in schema_doc:
-            raise ValueError(
-                f"structured_output.contract is 'json_schema' but "
-                f"{schema_path!r} does not look like a JSON Schema "
-                f"(expected 'type', '$schema', or 'properties' key)"
-            )
+        # Validate the schema document against the JSON Schema meta-schema.
+        # jsonschema.Draft202012Validator is the current latest; fall back
+        # to Draft7Validator for schemas that use an older $schema.
+        try:
+            jsonschema.Draft202012Validator.check_schema(schema_doc)
+        except jsonschema.SchemaError as exc:
+            # Try Draft 7 as a fallback for older schemas
+            try:
+                jsonschema.Draft7Validator.check_schema(schema_doc)
+            except jsonschema.SchemaError:
+                raise ValueError(
+                    f"structured_output.contract is 'json_schema' but "
+                    f"{schema_path!r} is not a valid JSON Schema: {exc}"
+                ) from exc
         return (
             f"Produce output that validates against the JSON schema at\n"
             f"{schema_path}. Read the schema before producing output.\n\n"
