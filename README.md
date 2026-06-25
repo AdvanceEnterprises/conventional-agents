@@ -83,6 +83,21 @@ The framework enforces correctness through layered gates:
 - **Document hygiene gate**: 7-item checklist before any PR is marked ready
 - **Non-overridable safety gates (ADR-0012)**: agents must not merge PRs; must verify GitHub identity before every push
 
+### Multi-Model Session Coordination
+
+Concurrent sessions of different models coordinate via two modes defined in
+[ADR-0013](docs/decisions/ADR-0013-multi-model-session-coordination.md):
+parallel independent primaries (different tasks, coordinate through shared
+artifacts) and primary + contributor (same task, contributor delivers outputs
+via PR comments or named draft documents but does not commit). The operational
+pattern for invoking contributors with structured output contracts and
+gate-evaluating the synthesis is defined in
+[ADR-0016](docs/decisions/ADR-0016.md): three render modes (`external-cli`,
+`hermes-chat`, `research-pass`), two structured-output contracts (Research
+Brief, JSON schema) with a shared claim envelope, and an independent gate
+evaluator. The pilot that validated these ADRs is at
+`docs/orchestration/multi-model-pilot-001/`.
+
 ### Guidelines
 
 Language-specific best practices vendored into host repos:
@@ -202,4 +217,4 @@ MIT License. See [LICENSE](./LICENSE) for details.
 
 ---
 
-**Framework Version:** 2.0.0 | **Last Updated:** 2026-06-08
+**Framework Version:** 2.0.0 | **Last Updated:** 2026-06-25

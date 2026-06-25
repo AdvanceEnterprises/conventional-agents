@@ -53,4 +53,4 @@ Pull requests should:
 
 ## Architecture Overview
 
-Architecture is documented in `docs/ARC42.md`. Decisions live in `docs/decisions/` and are treated as constraints once accepted.
+Architecture is documented in `docs/ARC42.md`. Decisions live in `docs/decisions/` and are treated as constraints once accepted. Multi-model session coordination follows ADR-0013 (two modes: parallel independent primaries; primary + contributor) and ADR-0016 (contributor prompt template with three render modes, structured-output contracts with a shared claim envelope, and an independent gate evaluator). The pilot that validated both ADRs is at `docs/orchestration/multi-model-pilot-001/`.

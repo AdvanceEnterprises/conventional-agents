@@ -3,7 +3,7 @@ title: "arc42 Architecture Documentation"
 system: "conventional-agents"
 version: "1.0.0"
 status: "Draft"
-last_updated: "2026-01-28"
+last_updated: "2026-06-25"
 ---
 
 # 1. Introduction and Goals
@@ -345,8 +345,17 @@ See guidelines/context-engineering.md for patterns on:
 
 ## 8.4 Multi-Agent Coordination
 
-See guidelines/multi-agent-coordination.md for handoff protocol and
-decision logging.
+See `guidelines/multi-agent-coordination.md` for handoff protocol and
+decision logging. The coordination model for concurrent sessions of
+different models is defined by **ADR-0013** (`docs/decisions/ADR-0013-multi-model-session-coordination.md`), which establishes two coordination modes:
+
+- **Mode 1 — Parallel independent primaries** (different tasks): Sessions coordinate only through shared artifacts (git, PR comments, governance documents). Each session declares its PLAN ID, branch name, artifact scope, and known excluded artifacts at session start.
+- **Mode 2 — Primary + contributor** (same task): One session is the primary and holds final authority over commit, PR creation, and status transitions. Other sessions are contributors that produce outputs delivered as PR comments or named draft documents but do not commit, open PRs, or transition document statuses.
+
+The operational pattern for invoking contributors with structured output contracts and gate-evaluating the synthesis is defined by **ADR-0016** (`docs/decisions/ADR-0016.md`), which sits on top of ADR-0013 and uses the FS-0014/0015 role + session-mode taxonomy. ADR-0016 introduces three render modes (`external-cli`, `hermes-chat`, `research-pass`), two structured-output contract types (Research Brief, JSON schema) with a shared claim envelope, and a gate evaluator pattern with execution status (`COMPLETE` / `NOT_RUN` / `INVALID`) distinct from verdict (`PROCEED` / `CONDITIONAL` / `HALT`).
+
+The pilot that validated these ADRs is documented under
+`docs/orchestration/multi-model-pilot-001/` (contributor briefs, synthesis, three gate cycles ending in PROCEED).
 
 ## 8.5 Evidence-Based Practices
 
@@ -400,8 +409,19 @@ Accepted ADRs:
   - Source: docs/decisions/ADR-0009.md
   - Summary: Keep current feature-spec.md template as v1.0 with versioned evolution strategy; position GitHub Spec Kit as complementary (orchestration) not competing (standards).
 
+- ADR-0013: Multi-model session coordination model
+  - Status: accepted
+  - Source: docs/decisions/ADR-0013-multi-model-session-coordination.md
+  - Summary: Defines two coordination modes for concurrent sessions of different models — Mode 1 (parallel independent primaries on different tasks, coordinate via shared artifacts) and Mode 2 (primary + contributor on the same task, contributor delivers outputs via PR comments or named draft documents but does not commit, open PRs, or transition statuses). Establishes `Assisted-By:` and `Contributor-Session:` attribution trailers as the framework's standard (not `Co-Authored-By:`).
+
+- ADR-0016: Multi-model session orchestration with structured output and gate evaluation
+  - Status: accepted
+  - Source: docs/decisions/ADR-0016.md
+  - Summary: Operationalizes ADR-0013's coordination primitives with a reusable contributor prompt template supporting three render modes (`external-cli`, `hermes-chat`, `research-pass`), two structured-output contract types (Research Brief, JSON schema) with a shared claim envelope (`claim_id`, `statement`, `source_citation`, `contributor_position`, `confidence`), and an independent gate evaluator (`deepseek-v4-pro` via `ollama-cloud`) that issues a verdict distinct from execution status. Validated by pilot `multi-model-pilot-001` (gate-cleared 2026-06-25).
+
 Notes:
 - ADR-0000, ADR-0001, and ADR-0002 are not empty (they define skills and role/skill referencing conventions).
+- ADR-0014 (Background task governance) and ADR-0015 (Tool taxonomy and introduction process) remain `proposed` as of 2026-06-25.
 - ADR lifecycle rules and status conventions are documented in docs/decisions/README.md.
 
 # 10. Quality Requirements

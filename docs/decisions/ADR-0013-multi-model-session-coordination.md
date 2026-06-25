@@ -1,7 +1,7 @@
 ---
 type: adr
 id: ADR-0013
-status: proposed
+status: accepted
 decision_scope: architecture
 reversible: yes
 related_specs:
@@ -14,7 +14,7 @@ superseded_by: null
 
 ## Status
 
-- Proposed
+- Accepted (2026-06-25). Pilot `multi-model-pilot-001` (see `docs/change-plans/PLAN-0016-multi-model-pilot.md` and the pilot artifacts under `docs/orchestration/multi-model-pilot-001/`) ran end-to-end against the framework itself: four contributors (Claude Sonnet 4 via Claude Code, Codex, Qwen3-Coder-Next and Devstral-2:123b via Hermes chat) produced claim-envelope output, the operator synthesized, and an independent gate evaluator (DeepSeek-V4-Pro via ollama-cloud) cleared the synthesis after three cycles (two CONDITIONAL revisions, then PROCEED). The pilot's coverage, attribution fidelity, divergence preservation, constraint compliance, and synthesis coherence all passed the gate's five-axis evaluation. ADR-0016's acceptance is conditional on this ADR's coordination primitives holding; the pilot is the evidence that they do.
 
 ## Context and Problem Statement
 
