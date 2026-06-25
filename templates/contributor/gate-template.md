@@ -36,6 +36,18 @@ The gate evaluator is invoked per ADR-0016 §"Decision Outcome" §5. It is **ind
 
 **Operational note:** The operator invokes the gate evaluator manually by pasting the rendered gate prompt into a `hermes chat -m <gate_model> --provider <gate_provider>` invocation (or any equivalent one-shot session on the gate model). The verdict is captured to `docs/orchestration/<task-id>-gate.md` by the operator. The helper script at `scripts/render_contributor_prompt.py` does not currently render gate prompts — a separate render step is fine for the gate, since it is invoked once per task rather than per contributor.
 
+## Execution status assignments
+
+The gate has three execution statuses. They are NOT verdicts; they describe whether the gate ran and produced a usable response. **Two of the three statuses are operator-assigned; one is gate-assigned.**
+
+- **`NOT_RUN` (operator-assigned).** The operator writes this status when the gate was skipped or the pre-run probe failed. The gate model does NOT emit `NOT_RUN`; it is reserved for operator use to document degraded-but-acceptable states.
+- **`INVALID` (gate-assigned).** The gate emits this status when it ran but produced a malformed response (e.g., missing verdict, unrecognized verdict value, response does not follow the gate prompt's structure). The operator can also assign `INVALID` when the gate's response contains content that violates the gate's contract (e.g., proposes a new recommendation, smooths over a constraint conflict, or includes synthesis content). See "What the gate MUST NOT do" below.
+- **`COMPLETE` (gate-assigned).** The gate emits this status when it ran successfully and produced a structured response. On `COMPLETE`, the gate also emits a verdict: `PROCEED` / `CONDITIONAL` / `HALT`.
+
+**Missing or unreadable required inputs (added 2026-06-25 per C-CLAUDE-007 / C-CODEX-104 / C-CODEX-129):** If any input the gate was told to read is missing or unreadable — a contributor output, the synthesis, or a constraint source — the gate MUST emit `STATUS: INVALID` *before* evaluating. Do NOT convert a missing input into a `HALT` verdict (the gate has not yet evaluated). The operator should re-run the gate after the missing input is provided; if the input cannot be provided, the operator writes `NOT_RUN` to document the degraded state and proceeds per the synthesis-only fallback below.
+
+**Synthesis-only fallback:** When execution status is `NOT_RUN` (operator-assigned because of a probe failure or unrecoverable missing input), the synthesis proceeds without gate validation. The operator's judgment is the only check. The operator MUST explicitly note the degraded state in the PR description and the synthesis's Recommended Action.
+
 ## Pre-run probe (mandatory)
 
 Before invoking the gate evaluator, the operator (or primary session) must run the probe pattern from `action-framework-research`:
@@ -45,7 +57,7 @@ hermes chat -m deepseek-v4-pro --provider ollama-cloud \
   -q "Reply with: ok" -Q
 ```
 
-If the probe fails (auth error, model not found, timeout), the gate cannot run. Set gate execution status to `NOT_RUN` and document the degraded state in the synthesis's Recommended Action.
+If the probe fails (auth error, model not found, timeout), the gate cannot run. The operator writes `NOT_RUN` to the gate output document and documents the degraded state in the synthesis's Recommended Action.
 
 ## Gate independence (enforced)
 
@@ -106,8 +118,8 @@ what the operator produced.
 Reply with EXACTLY ONE execution status. If status is COMPLETE, also
 include a verdict.
 
-STATUS: NOT_RUN
-REASON: <one sentence explaining why the gate did not run, e.g. probe failure>
+Note: NOT_RUN is operator-assigned (see "Execution status assignments"
+above) and is NOT in this menu. The gate emits only INVALID or COMPLETE.
 
 STATUS: INVALID
 REASON: <one sentence explaining why the gate output is malformed, e.g. missing verdict>
