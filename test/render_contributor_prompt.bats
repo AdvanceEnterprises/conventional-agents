@@ -1,12 +1,14 @@
 #!/usr/bin/env bats
 # Smoke tests for scripts/render_contributor_prompt.py.
 #
-# These tests run the script against a small fixture YAML and assert that
+# These tests run the script against fixture YAML files and assert that
 # the rendered output contains the expected structural elements:
-#   - three paste-ready sections (Claude, Codex, Gemini)
-#   - the FS-0015 transparency block in Claude and Codex only
-#   - the research-pass framing in Gemini only
-#   - the substituted task framing and guardrails
+#   - one rendered section per contributor
+#   - the FS-0015 transparency block in external-cli and hermes-chat, not in research-pass
+#   - the shared claim envelope note in all contracts
+#   - the substituted task framing, supporting_roles, and guardrails
+#   - gate overlap is rejected without --allow-gate-overlap
+#   - JSON schema validation rejects non-schema files
 #
 # Run with:
 #     npm install    # if not already installed
@@ -15,7 +17,10 @@
 setup() {
     REPO_ROOT="$(cd "$(dirname "$BATS_TEST_FILENAME")/.." && pwd)"
     SCRIPT="$REPO_ROOT/scripts/render_contributor_prompt.py"
-    FIXTURE="$(mktemp -d)/smoke.yaml"
+
+    # Fixture: a parameter file with three contributors, one per render_mode.
+    FIXTURE_DIR="$(mktemp -d)"
+    FIXTURE="$FIXTURE_DIR/smoke.yaml"
     cat > "$FIXTURE" <<'YAML'
 task:
   id: "smoke-test-001"
@@ -32,53 +37,87 @@ task:
 session:
   mode: "Architecture Planning"
   primary_role: "Head Architect"
-  contributor_role: "Head Architect"
-  attribution_label: "claude-contrib-1"
+  supporting_roles: []
+    - "Reviewer"
 
-structured_output:
-  contract: "research_brief"
-  brief_format_path: "references/research-brief-template.md"
+contributors: []
+  - target: "claude-code"
+    model: "claude-sonnet-4"
+    render_mode: "external-cli"
+    active_contributor_role: "Reviewer"
+    attribution_label: "claude-contrib-1"
+    structured_output:
+      contract: "research_brief"
+      brief_format_path: "references/research-brief-template.md"
+    guardrails:
+      may_modify: []
+      must_not_modify: []
+        - "docs/decisions/ADR-0013.md"
+  - target: "qwen3-coder-next"
+    model: "qwen3-coder-next"
+    render_mode: "hermes-chat"
+    provider: "ollama-cloud"
+    toolsets: "file,web"
+    active_contributor_role: "Reviewer"
+    attribution_label: "qwen3-contrib-1"
+    structured_output:
+      contract: "research_brief"
+      brief_format_path: "references/research-brief-template.md"
+    guardrails:
+      may_modify: []
+      must_not_modify: []
+        - "docs/decisions/ADR-0013.md"
+  - target: "gemini"
+    model: "gemini-2.5-pro"
+    render_mode: "research-pass"
+    provider: "ollama-cloud"
+    toolsets: "file,web"
+    active_contributor_role: "Reviewer"
+    attribution_label: "gemini-contrib-1"
+    structured_output:
+      contract: "research_brief"
+      brief_format_path: "references/research-brief-template.md"
 
 input_sources: []
   - "templates/contributor/contributor-prompt.md"
   - "docs/specifications/FS-0015-role-selection-and-session-modes.md"
-
-guardrails:
-  may_modify: []
-  must_not_modify: []
-    - "docs/decisions/ADR-0013.md"
-    - "docs/decisions/ADR-0016.md"
-  attribution_trailers: []
-    - "Assisted-By: claude-sonnet-4"
-    - "Contributor-Session: <session-id>"
 YAML
+
     OUT="$(mktemp)/out.md"
 }
 
 teardown() {
-    rm -rf "$(dirname "$FIXTURE")"
+    rm -rf "$FIXTURE_DIR"
     rm -rf "$(dirname "$OUT")"
 }
 
-@test "render_contributor_prompt renders three sections" {
+@test "render_contributor_prompt renders one section per contributor" {
     python3 "$SCRIPT" --params "$FIXTURE" --output "$OUT"
     run grep -c '^## ' "$OUT"
     [ "$status" -eq 0 ]
     [ "$output" -eq 3 ]
-    run grep -q '^## Claude Code$' "$OUT"
+    run grep -q '^## claude-code$' "$OUT"
     [ "$status" -eq 0 ]
-    run grep -q '^## Codex CLI$' "$OUT"
+    run grep -q '^## qwen3-coder-next$' "$OUT"
     [ "$status" -eq 0 ]
-    run grep -q '^## Gemini$' "$OUT"
+    run grep -q '^## gemini$' "$OUT"
     [ "$status" -eq 0 ]
 }
 
-@test "render_contributor_prompt includes FS-0015 transparency in Claude and Codex only" {
+@test "render_contributor_prompt includes FS-0015 transparency in external-cli and hermes-chat only" {
     python3 "$SCRIPT" --params "$FIXTURE" --output "$OUT"
-    # transparency count should be exactly 2 (Claude + Codex)
+    # transparency count should be exactly 2 (claude-code + qwen3-coder-next)
     run grep -c 'TRANSPARENCY STATEMENT' "$OUT"
     [ "$status" -eq 0 ]
     [ "$output" -eq 2 ]
+}
+
+@test "render_contributor_prompt research-pass produces no transparency block" {
+    python3 "$SCRIPT" --params "$FIXTURE" --target gemini --output "$OUT"
+    run grep -q 'TRANSPARENCY STATEMENT' "$OUT"
+    [ "$status" -eq 1 ]
+    run grep -q 'This is a research pass' "$OUT"
+    [ "$status" -eq 0 ]
 }
 
 @test "render_contributor_prompt substitutes task framing and branch" {
@@ -91,13 +130,8 @@ teardown() {
 
 @test "render_contributor_prompt lists are on separate lines below their labels" {
     python3 "$SCRIPT" --params "$FIXTURE" --output "$OUT"
-    # The artifact_scope list should produce one "- path" line per item,
-    # each on its own line. None should be glued to the preceding label.
-    # Specifically: the colon after 'Artifact scope (read-only):' must be
-    # followed by a newline, not by '- path'.
     run grep -E 'Artifact scope.*: - ' "$OUT"
     [ "$status" -eq 1 ]
-    # And there must be at least one properly-formatted list item.
     run grep -E '^- templates/contributor/contributor-prompt.md$' "$OUT"
     [ "$status" -eq 0 ]
 }
@@ -106,26 +140,93 @@ teardown() {
     python3 "$SCRIPT" --params "$FIXTURE" --output "$OUT"
     run grep -q 'docs/decisions/ADR-0013.md' "$OUT"
     [ "$status" -eq 0 ]
-    run grep -q 'docs/decisions/ADR-0016.md' "$OUT"
+}
+
+@test "render_contributor_prompt --target produces only that contributor's section" {
+    python3 "$SCRIPT" --params "$FIXTURE" --target claude-code --output "$OUT"
+    run grep -q '^## claude-code$' "$OUT"
+    [ "$status" -eq 0 ]
+    run grep -q '^## qwen3-coder-next$' "$OUT"
+    [ "$status" -eq 1 ]
+    run grep -q '^## gemini$' "$OUT"
+    [ "$status" -eq 1 ]
+}
+
+@test "render_contributor_prompt renders attribution trailer per render mode" {
+    python3 "$SCRIPT" --params "$FIXTURE" --output "$OUT"
+    # external-cli: 'Assisted-By: claude-sonnet-4'
+    run grep -q 'Assisted-By: claude-sonnet-4$' "$OUT"
+    [ "$status" -eq 0 ]
+    # hermes-chat: 'Assisted-By: hermes (qwen3-coder-next)'
+    run grep -q 'Assisted-By: hermes (qwen3-coder-next)' "$OUT"
+    [ "$status" -eq 0 ]
+    # research-pass: 'Assisted-By: hermes (gemini-2.5-pro)'
+    run grep -q 'Assisted-By: hermes (gemini-2.5-pro)' "$OUT"
     [ "$status" -eq 0 ]
 }
 
-@test "render_contributor_prompt --target gemini produces only the Gemini section" {
-    python3 "$SCRIPT" --params "$FIXTURE" --target gemini --output "$OUT"
-    run grep -q '^## Gemini$' "$OUT"
+@test "render_contributor_prompt includes shared claim envelope fields" {
+    python3 "$SCRIPT" --params "$FIXTURE" --output "$OUT"
+    run grep -q 'claim_id' "$OUT"
     [ "$status" -eq 0 ]
-    run grep -q '^## Claude Code$' "$OUT"
+    run grep -q 'source_citation' "$OUT"
+    [ "$status" -eq 0 ]
+    run grep -q 'contributor_position' "$OUT"
+    [ "$status" -eq 0 ]
+    run grep -q 'confidence' "$OUT"
+    [ "$status" -eq 0 ]
+}
+
+@test "render_contributor_prompt validates session.mode against FS-0015 enumeration" {
+    BAD="$FIXTURE_DIR/bad-mode.yaml"
+    sed 's/Architecture Planning/Make Things Up/' "$FIXTURE" > "$BAD"
+    run python3 "$SCRIPT" --params "$BAD"
     [ "$status" -eq 1 ]
-    run grep -q '^## Codex CLI$' "$OUT"
+    [[ "$output" == *"not a valid FS-0015 mode"* ]]
+}
+
+@test "render_contributor_prompt rejects gate.model == contributors[].model without --allow-gate-overlap" {
+    OVERLAP="$FIXTURE_DIR/overlap.yaml"
+    cat > "$OVERLAP" <<'YAML'
+task:
+  id: "overlap-test"
+  framing: "test"
+  artifact_scope: []
+    - "x"
+  branch: "main"
+  excluded_artifacts: []
+
+session:
+  mode: "Architecture Planning"
+  primary_role: "Head Architect"
+  supporting_roles: []
+
+contributors: []
+  - target: "deepseek-test"
+    model: "deepseek-v4-pro"
+    render_mode: "hermes-chat"
+    provider: "ollama-cloud"
+    active_contributor_role: "Reviewer"
+    attribution_label: "deepseek-contrib-1"
+    structured_output:
+      contract: "research_brief"
+
+gate:
+  enabled: true
+  model: "deepseek-v4-pro"
+  provider: "ollama-cloud"
+YAML
+    run python3 "$SCRIPT" --params "$OVERLAP"
     [ "$status" -eq 1 ]
-    run grep -q 'TRANSPARENCY STATEMENT' "$OUT"
-    [ "$status" -eq 1 ]
-    run grep -q 'This is a research pass' "$OUT"
+    [[ "$output" == *"also appears in contributors[].model"* ]]
+
+    # With --allow-gate-overlap, it succeeds
+    run python3 "$SCRIPT" --params "$OVERLAP" --allow-gate-overlap
     [ "$status" -eq 0 ]
 }
 
 @test "render_contributor_prompt errors clearly on missing required key" {
-    BAD="$(mktemp -d)/bad.yaml"
+    BAD="$FIXTURE_DIR/bad.yaml"
     cat > "$BAD" <<'YAML'
 task:
   id: "bad"
@@ -133,6 +234,66 @@ task:
 YAML
     run python3 "$SCRIPT" --params "$BAD"
     [ "$status" -eq 1 ]
-    [[ "$output" == *"missing required key"* ]]
-    rm -rf "$(dirname "$BAD")"
+    [[ "$output" == *"missing required section"* ]]
+}
+
+@test "render_contributor_prompt rejects hermes-chat without provider" {
+    BAD="$FIXTURE_DIR/no-provider.yaml"
+    cat > "$BAD" <<'YAML'
+task:
+  id: "np"
+  framing: "x"
+  artifact_scope: []
+  branch: "main"
+  excluded_artifacts: []
+
+session:
+  mode: "Architecture Planning"
+  primary_role: "Head Architect"
+  supporting_roles: []
+
+contributors: []
+  - target: "test"
+    model: "x"
+    render_mode: "hermes-chat"
+    active_contributor_role: "Reviewer"
+    attribution_label: "x-1"
+    structured_output:
+      contract: "research_brief"
+YAML
+    run python3 "$SCRIPT" --params "$BAD"
+    [ "$status" -eq 1 ]
+    [[ "$output" == *"but no provider"* ]]
+}
+
+@test "render_contributor_prompt rejects non-JSON-schema file for json_schema contract" {
+    BAD="$FIXTURE_DIR/bad-schema.yaml"
+    SCHEMA_FILE="$FIXTURE_DIR/not-a-schema.json"
+    echo "this is not JSON" > "$SCHEMA_FILE"
+    cat > "$BAD" <<YAML
+task:
+  id: "ns"
+  framing: "x"
+  artifact_scope: []
+  branch: "main"
+  excluded_artifacts: []
+
+session:
+  mode: "Architecture Planning"
+  primary_role: "Head Architect"
+  supporting_roles: []
+
+contributors: []
+  - target: "test"
+    model: "x"
+    render_mode: "external-cli"
+    active_contributor_role: "Reviewer"
+    attribution_label: "x-1"
+    structured_output:
+      contract: "json_schema"
+      schema_path: "$SCHEMA_FILE"
+YAML
+    run python3 "$SCRIPT" --params "$BAD"
+    [ "$status" -eq 1 ]
+    [[ "$output" == *"not valid JSON"* ]]
 }

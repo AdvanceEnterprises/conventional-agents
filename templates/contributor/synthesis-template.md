@@ -16,6 +16,10 @@ PARSING_HINTS:
   by averaging contributors.
 - The synthesis MUST cite the input ADRs/FSs that constrain the recommended
   action; if the action conflicts with a constraint, STOP and escalate.
+- The Coverage/Disposition Record is mandatory. Per PR #62 reviewer finding,
+  the synthesis must distinguish "contributor not asked" from "asked and
+  silent" from "off-topic response" so the gate can validate attribution
+  fidelity.
 -->
 
 # Synthesis Template (Operator-Driven)
@@ -23,13 +27,58 @@ PARSING_HINTS:
 The operator produces one synthesis document per task at:
 `docs/orchestration/<task-id>-synthesis.md`
 
-**Operational note:** Until Hermes Agent gains direct integration with vendor CLIs, the synthesis author is the *operator*, not a model session. The operator may use any of the three models (or all three) as sounding-boards while drafting — but the synthesis itself is the operator's artifact and carries the operator's authority. When Hermes gains direct integration, the synthesis author may shift to a primary model session; the template structure below is invariant under that shift.
+**Operational note:** The synthesis author is the *operator* in the current operational mode (operator-driven orchestration). The operator may use any of the contributor models as a sounding-board while drafting — but the synthesis itself is the operator's artifact and carries the operator's authority. When Hermes gains direct integration, the synthesis author may shift to a primary model session; the template structure below is invariant under that shift.
 
-The synthesis has four mandatory sections, in this order:
+The synthesis has five mandatory sections, in this order:
 
-## 1. Consensus
+1. Coverage/Disposition Record (NEW 2026-06-25)
+2. Consensus
+3. Divergent Points
+4. Unique Insights
+5. Recommended Action
 
-Points on which **all** contributors (or, where one contributor is silent, **all contributors who addressed the point**) agree.
+Plus an attribution plan at the end.
+
+## 1. Coverage/Disposition Record
+
+A table that records, for every contributor and every question or claim under review, what the contributor did. This is required per PR #62 reviewer finding — without it, "all contributors who addressed the point" can label partial coverage as apparent consensus.
+
+| Question / Claim | claude-contrib-1 | codex-contrib-1 | qwen3-contrib-1 | devstral-contrib-1 |
+| --- | --- | --- | --- | --- |
+| Q1: <question 1> | addressed | addressed | silent (out-of-scope) | addressed |
+| Q2: <question 2> | addressed | addressed | addressed | addressed |
+| Q3: <question 3> | addressed | silent (NOT_ASKED) | out-of-scope | addressed |
+
+Coverage codes (per contributor per question):
+
+- `addressed` — the contributor produced content relevant to the question.
+- `silent (NOT_ASKED)` — the contributor's prompt did not include this question. Legitimate scoping.
+- `silent (ASKED_NO_RESPONSE)` — the contributor was asked but produced no relevant content. Possibly a contributor failure.
+- `out-of-scope` — the contributor addressed the question and indicated it was outside their assigned role.
+- `off-topic` — the contributor's response does not engage with the question at all.
+
+A separate Disposition Record captures, for every unique claim that survives into the synthesis, what was done with it:
+
+| Claim ID | Statement (short) | Contributor(s) | Disposition | Reason |
+| --- | --- | --- | --- | --- |
+| C-CLAUDE-001 | <claim statement> | claude-contrib-1 | incorporate | supported by ADR-0013 |
+| C-CODEX-002 | <claim statement> | codex-contrib-1 | reject | contradicts FS-0014 |
+| C-QWEN-003 | <claim statement> | qwen3-contrib-1 | defer | follow-up needed |
+| C-DEVSTRAL-004 | <claim statement> | devstral-contrib-1 | duplicate | same as C-CLAUDE-001 |
+
+Disposition codes (per claim):
+
+- `incorporate` — claim enters the synthesis's body and (if applicable) the commit.
+- `reject` — claim is excluded from the synthesis with a reason (e.g., contradicts an accepted ADR).
+- `defer` — claim is recorded as an open question for follow-up.
+- `duplicate` — claim is the same as another claim already in the synthesis; one survives, the rest are merged.
+- `out-of-scope` — claim is recorded but excluded from this synthesis because it falls outside the task framing.
+
+The Coverage Record is the gate's primary check on attribution fidelity. The Disposition Record is the gate's primary check on whether the synthesis preserves all unique insights rather than silently dropping them.
+
+## 2. Consensus
+
+Points on which **all** contributors with `addressed` coverage agree.
 
 For each consensus point:
 - One sentence stating the consensus.
@@ -38,7 +87,7 @@ For each consensus point:
 
 If no consensus exists on a given point, write "no consensus" — do not invent consensus by averaging.
 
-## 2. Divergent Points
+## 3. Divergent Points
 
 Points on which contributors disagree. **This section is mandatory even if there are no divergent points.** If empty, write "no divergence" and explain why (e.g., "all contributors were scoped to different sub-questions and did not overlap").
 
@@ -50,7 +99,7 @@ For each divergent point:
 
 Do **not** resolve the divergence here. Resolution belongs in Recommended Action or in operator escalation (which may mean revising the task framing, sending the synthesis back for revision, or asking a contributor to weigh in again).
 
-## 3. Unique Insights
+## 4. Unique Insights
 
 Points raised by only one contributor but worth carrying forward.
 
@@ -58,9 +107,9 @@ For each:
 - The insight (one or two sentences).
 - Contributor who raised it.
 - Citation to the input source.
-- Operator's read of whether to incorporate it (yes / no / defer).
+- Operator's read of disposition (incorporate / reject / defer / duplicate / out-of-scope) with a reason.
 
-## 4. Recommended Action
+## 5. Recommended Action
 
 The operator's proposal for what to commit, escalate, or defer.
 
@@ -70,6 +119,11 @@ Must include:
 - **Open questions**: anything that needs human decision before the proposal can be committed (or, in this manual mode, before the operator opens the PR).
 - **Attribution plan**: which contributors' outputs are incorporated, and the `Assisted-By:` and `Contributor-Session:` trailers that will appear in the commit.
 
+The attribution plan uses the render-mode-aware trailer format:
+
+- `external-cli` contributors: `Assisted-By: <model name>`
+- `hermes-chat` and `research-pass` contributors: `Assisted-By: hermes (<model name>)`
+
 ## What the synthesis MUST NOT do
 
 - It MUST NOT average divergent positions into a compromise without flagging the compromise as such.
@@ -77,13 +131,14 @@ Must include:
 - It MUST NOT silently resolve conflicts with accepted ADRs.
 - It MUST NOT commit anything — the synthesis is input to the gate evaluation, then to operator approval, then to the commit per ADR-0013 attribution rules.
 - It MUST NOT transition any governed document's status (per ADR-0013 Mode 2).
+- It MUST NOT treat `silent (NOT_ASKED)` as `addressed` in the Consensus section.
 
 ## Operator-specific guidance
 
 Because the operator is the synthesis author (not a model session), some things to watch for:
 
-- **Editor bias.** The operator has prior beliefs about the task. The synthesis must reflect what the contributors said, not what the operator expected to hear. Where the operator's read diverges from the contributors', that divergence is itself an artifact and goes in §2 (Divergent Points) with the operator's position attributed to "operator" and the contributors' positions attributed to their labels.
-- **Synthesis as curation, not generation.** The four sections are curation of contributor output. The operator's own voice belongs in the *reads* and the *proposal*, not in §1, §2, or §3 directly. (Exception: §2's "operator's read of the disagreement" is the operator's voice; that is allowed and required.)
+- **Editor bias.** The operator has prior beliefs about the task. The synthesis must reflect what the contributors said, not what the operator expected to hear. Where the operator's read diverges from the contributors', that divergence is itself an artifact and goes in §3 (Divergent Points) with the operator's position attributed to "operator" and the contributors' positions attributed to their labels.
+- **Synthesis as curation, not generation.** The sections are curation of contributor output. The operator's own voice belongs in the *reads* and the *proposal*, not in §2, §3, or §4 directly. (Exception: §3's "operator's read of the disagreement" is the operator's voice; that is allowed and required.)
 - **Tone of authority.** The synthesis is the operator's authoritative artifact for this task. It should read as the operator's synthesis, not as a third-party summary. The contributors are inputs, not co-authors.
 
 ## Example structure (illustrative, not template)
@@ -91,38 +146,65 @@ Because the operator is the synthesis author (not a model session), some things 
 ```markdown
 # Synthesis: multi-model-2026-06-24
 
-## 1. Consensus
+## 1. Coverage/Disposition Record
 
-- **X is the right approach.** Affirmed by `claude-contrib-1`, `codex-contrib-1`,
-  `gemini-contrib-1`. Supported by `docs/specifications/FS-XXXX.md` §3.
+| Question / Claim | claude-contrib-1 | codex-contrib-1 | qwen3-contrib-1 |
+| --- | --- | --- | --- |
+| Q1: FS-0015 supporting roles | addressed | addressed | out-of-scope |
+| Q2: gate verdict taxonomy | addressed | silent (NOT_ASKED) | addressed |
 
-## 2. Divergent Points
+| Claim ID | Statement (short) | Contributor(s) | Disposition | Reason |
+| --- | --- | --- | --- | --- |
+| C-CLAUDE-001 | FS-0015 requires declaring all supporting roles | claude-contrib-1 | incorporate | supported by FS-0015 |
+| C-CODEX-002 | gate should have INCOMPLETE verdict | codex-contrib-1 | incorporate | matches action-framework-research pattern |
+| C-QWEN-003 | (skipped; out-of-scope) | qwen3-contrib-1 | out-of-scope | role assignment |
 
-- **Y vs Z for handling failure mode F.**
-  - `claude-contrib-1` argues for Y, citing [source].
-  - `codex-contrib-1` argues for Z, citing [source].
-  - `gemini-contrib-1` is silent (out of scope for the research-pass prompt).
-  - Operator's read: ...
+## 2. Consensus
 
-## 3. Unique Insights
+- **FS-0015 requires declaring all supporting roles, not a single role.** Affirmed by
+  `claude-contrib-1`, `codex-contrib-1`. Supported by `docs/specifications/FS-0015.md`
+  §"Explainability Convention."
 
-- **W is a constraint nobody else mentioned.** Raised by `gemini-contrib-1`,
-  citing [source]. Operator's read: incorporate — this is a real concern that
-  the other contributors did not surface.
+## 3. Divergent Points
 
-## 4. Recommended Action
+- **Gate verdict taxonomy (separate execution status vs. third verdict).**
+  - `claude-contrib-1` argues for adding INCOMPLETE as a third verdict, citing the
+    original bug.
+  - `codex-contrib-1` argues for separating execution status (COMPLETE/NOT_RUN/INVALID)
+    from verdict, citing the action-framework-research skill's pattern.
+  - `qwen3-contrib-1` is silent (out-of-scope for the assigned role).
+  - Operator's read: codex-contrib-1's framing is more orthogonal to the existing
+    verdicts and avoids stretching PROCEED/CONDITIONAL/HALT into execution states.
+    Adopt that direction.
 
-Concrete proposal: ...
+## 4. Unique Insights
+
+- **CONDITIONAL loop is unbounded.** Raised by `claude-contrib-1`, citing
+  `templates/contributor/gate-template.md` §"Failure modes." Operator's read: defer
+  to a follow-up ADR; this pilot does not need an immediate bound, but the framework
+  should grow one before the second pilot.
+
+## 5. Recommended Action
+
+Concrete proposal: Adopt ADR-0016's revised direction with the gate execution status
+(COMPLETE / NOT_RUN / INVALID) orthogonal to the verdict (PROCEED / CONDITIONAL /
+HALT), per codex-contrib-1's framing. Implement in the helper script as a static
+check that errors when gate.model is in contributors[].model unless
+--allow-gate-overlap is passed.
 
 Constraint check:
-- ADR-XXXX (accepted): [relevant section]
-- FS-XXXX (approved): [relevant section]
-- No conflicts identified.
+- ADR-0013 (proposed): no conflict — ADR-0016's gate is additive per §"What this ADR
+  does NOT do."
+- FS-0015 (approved): supported — the gate does not introduce a new session mode or
+  role.
+- FS-0014 (approved): no conflict.
 
 Open questions:
-- ...
+- Should the gate-execution-status be a fourth verdict or a separate field? Codex's
+  framing suggests separate; claude's framing suggests fourth. Operator's read: defer
+  to gate evaluator's actual output shape; both work in practice.
 
 Attribution plan:
-- `Assisted-By: claude-sonnet-4`, `codex`, `gemini-2.5-pro`
+- `Assisted-By: claude-sonnet-4, hermes (codex), hermes (qwen3-coder-next)`
 - `Contributor-Session: <session IDs or PR-comment URLs>`
 ```
