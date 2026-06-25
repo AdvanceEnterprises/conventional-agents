@@ -1,0 +1,65 @@
+task:
+  id: "multi-model-pilot-001"
+  framing: |
+    Review the proposed multi-model orchestration pattern (ADR-0016,
+    PLAN-0016, the three contributor templates, and the helper script)
+    from your assigned role's perspective. Identify:
+
+    1. Whether the FS-0015 explainability convention is captured
+       correctly in the contributor prompt template's transparency
+       statement, or whether it is missing fields the framework
+       requires.
+    2. Whether the structured-output contract (Research Brief vs.
+       JSON schema) is unambiguous, and whether the helper script
+       can render prompts for both contracts without operator
+       intervention.
+    3. Whether the gate verdict categories (PROCEED / CONDITIONAL /
+       HALT) cover the failure modes a real pilot run would surface,
+       or whether additional categories are needed.
+    4. Whether the synthesis structure (Consensus / Divergent /
+       Unique Insights / Recommended Action) loses any information
+       that the pilot needs to recover later.
+
+    Read every file listed in artifact_scope and input_sources before
+    producing output. Cite specific section anchors (e.g.,
+    ADR-0016 §"Decision Outcome" item 5) when making claims. Where
+    you disagree with the proposal, surface the disagreement
+    explicitly rather than softening it.
+  artifact_scope: []
+    - "docs/decisions/ADR-0016.md"
+    - "docs/change-plans/PLAN-0016-multi-model-pilot.md"
+    - "templates/contributor/contributor-prompt.md"
+    - "templates/contributor/synthesis-template.md"
+    - "templates/contributor/gate-template.md"
+    - "scripts/render_contributor_prompt.py"
+  branch: "feature/multi-model-orchestration-foundation"
+  excluded_artifacts: []
+    - "docs/decisions/ADR-0013.md"
+
+session:
+  mode: "Architecture Planning"
+  primary_role: "Head Architect"
+  contributor_role: "Reviewer"
+  attribution_label: "claude-contrib-1"
+
+structured_output:
+  contract: "research_brief"
+  brief_format_path: "references/research-brief-template.md"
+
+input_sources: []
+  - "docs/decisions/ADR-0016.md"
+  - "docs/change-plans/PLAN-0016-multi-model-pilot.md"
+  - "templates/contributor/contributor-prompt.md"
+  - "templates/contributor/synthesis-template.md"
+  - "templates/contributor/gate-template.md"
+  - "scripts/render_contributor_prompt.py"
+
+guardrails:
+  may_modify: []
+  must_not_modify: []
+    - "docs/decisions/ADR-0016.md"
+    - "docs/decisions/ADR-0013.md"
+    - "docs/decisions/README.md"
+  attribution_trailers: []
+    - "Assisted-By: claude-sonnet-4"
+    - "Contributor-Session: claude-contrib-1"

@@ -126,17 +126,18 @@ markdown fences. Do not include prose outside the JSON.
 # GUARDRAILS
 
 You MAY:
-{guardrails.may_modify, formatted as a bulleted list, or "nothing" if empty}
+{may_modify}
+(if empty: nothing — there are no files you may modify)
 
 You MUST NOT:
-{guardrails.must_not_modify, formatted as a bulleted list}
+{must_not_modify}
 
 # ATTRIBUTION
 
 When this output is incorporated into a commit, the following trailers will
 be appended (do NOT include them in your output):
 
-{guardrails.attribution_trailers, formatted as a bulleted list}
+{attribution_trailers}
 
 # ESCALATION
 
@@ -209,17 +210,18 @@ markdown fences. Do not include prose outside the JSON.
 # GUARDRAILS
 
 You MAY:
-{guardrails.may_modify, formatted as a bulleted list, or "nothing" if empty}
+{may_modify}
+(if empty: nothing — there are no files you may modify)
 
 You MUST NOT:
-{guardrails.must_not_modify, formatted as a bulleted list}
+{must_not_modify}
 
 # ATTRIBUTION
 
 When this output is incorporated into a commit, the following trailers will
 be appended (do NOT include them in your output):
 
-{guardrails.attribution_trailers, formatted as a bulleted list}
+{attribution_trailers}
 
 # ESCALATION
 
