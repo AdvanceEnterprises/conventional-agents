@@ -787,6 +787,14 @@ def _validate(params: dict[str, Any], *, allow_gate_overlap: bool = False) -> No
             f"Valid modes: {sorted(VALID_SESSION_MODES)}"
         )
 
+    # Validate session.primary_role against FS-0014 enumeration
+    primary_role = params["session"].get("primary_role")
+    if primary_role and primary_role not in VALID_ROLES:
+        raise SystemExit(
+            f"error: session.primary_role {primary_role!r} is not a valid "
+            f"FS-0014 role. Valid roles: {sorted(VALID_ROLES)}"
+        )
+
     # Validate session.supporting_roles against FS-0014 enumeration if present
     supporting = params["session"].get("supporting_roles", [])
     for role in supporting:
@@ -846,6 +854,29 @@ def _validate(params: dict[str, Any], *, allow_gate_overlap: bool = False) -> No
                 f"error: contributors[{i}].active_contributor_role {active_role!r} "
                 f"is not a valid FS-0014 role. Valid roles: {sorted(VALID_ROLES)}"
             )
+
+        # Enforce role relationships for accountable modes (external-cli, hermes-chat).
+        # research-pass contributors are advisory and exempt from these checks.
+        if render_mode in {"external-cli", "hermes-chat"}:
+            if not supporting:
+                raise SystemExit(
+                    f"error: contributors[{i}] has render_mode {render_mode!r} "
+                    f"(accountable) but session.supporting_roles is empty. "
+                    f"FS-0015 requires declaring all supporting roles."
+                )
+            if not active_role:
+                raise SystemExit(
+                    f"error: contributors[{i}] has render_mode {render_mode!r} "
+                    f"(accountable) but no active_contributor_role. "
+                    f"Add an 'active_contributor_role:' field to the contributor entry."
+                )
+            if active_role not in supporting:
+                raise SystemExit(
+                    f"error: contributors[{i}].active_contributor_role "
+                    f"{active_role!r} is not in session.supporting_roles "
+                    f"{supporting!r}. The active role must be a member of the "
+                    f"declared supporting roles per FS-0015."
+                )
 
         # Validate the structured_output contract
         if "structured_output" not in c:

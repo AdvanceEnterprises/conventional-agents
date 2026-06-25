@@ -83,7 +83,7 @@ input_sources: []
   - "docs/specifications/FS-0015-role-selection-and-session-modes.md"
 YAML
 
-    OUT="$(mktemp)/out.md"
+    OUT="$(mktemp -d)/out.md"
 }
 
 teardown() {
@@ -200,12 +200,14 @@ session:
   mode: "Architecture Planning"
   primary_role: "Head Architect"
   supporting_roles: []
+    - "Reviewer"
 
 contributors: []
   - target: "deepseek-test"
     model: "deepseek-v4-pro"
     render_mode: "hermes-chat"
     provider: "ollama-cloud"
+    toolsets: "file,web"
     active_contributor_role: "Reviewer"
     attribution_label: "deepseek-contrib-1"
     structured_output:
@@ -234,7 +236,7 @@ task:
 YAML
     run python3 "$SCRIPT" --params "$BAD"
     [ "$status" -eq 1 ]
-    [[ "$output" == *"missing required section"* ]]
+    [[ "$output" == *"missing required"* ]]
 }
 
 @test "render_contributor_prompt rejects hermes-chat without provider" {
@@ -251,6 +253,7 @@ session:
   mode: "Architecture Planning"
   primary_role: "Head Architect"
   supporting_roles: []
+    - "Reviewer"
 
 contributors: []
   - target: "test"
@@ -282,6 +285,7 @@ session:
   mode: "Architecture Planning"
   primary_role: "Head Architect"
   supporting_roles: []
+    - "Reviewer"
 
 contributors: []
   - target: "test"

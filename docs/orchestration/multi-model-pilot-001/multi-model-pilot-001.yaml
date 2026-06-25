@@ -43,6 +43,7 @@ session:
   supporting_roles: []
     - "Head Architect"
     - "Reviewer"
+    - "Implementer"
 
 contributors: []
   - target: "claude-code"
