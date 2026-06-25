@@ -361,6 +361,7 @@ _EXTERNAL_CLI = """\
 # TRANSPARENCY STATEMENT (mandatory, per FS-0015)
 
 Operating in {mode} mode, as a contributor to the primary session.
+- My attribution label: {attribution_label}
 - Primary role: {primary_role}
 - Supporting roles: {supporting_roles}
 - My active contributor role: {active_contributor_role}
@@ -426,6 +427,7 @@ hermes chat -m {model} --provider {provider} --toolsets {toolsets} -q "$(cat <<'
 # TRANSPARENCY STATEMENT (mandatory, per FS-0015)
 
 Operating in {mode} mode, as a contributor to the primary session.
+- My attribution label: {attribution_label}
 - Primary role: {primary_role}
 - Supporting roles: {supporting_roles}
 - My active contributor role: {active_contributor_role}
@@ -523,6 +525,7 @@ def render_contributor(
     ctx: dict[str, Any] = {
         "mode": session["mode"],
         "primary_role": session["primary_role"],
+        "attribution_label": contributor.get("attribution_label", ""),
         "supporting_roles": _fmt_list(session.get("supporting_roles", [])),
         "active_contributor_role": contributor.get("active_contributor_role", ""),
         "artifact_scope": _fmt_list(task["artifact_scope"]),
@@ -623,14 +626,19 @@ def _render_contract_block(so: dict[str, Any], envelope_note: str) -> str:
     raise ValueError(f"unknown structured_output.contract: {contract}")
 
 
-_SHARED_ENVELOPE_NOTE = (
-    "Every claim you make MUST carry the shared claim envelope fields:\n\n"
-    "- claim_id: a stable identifier (e.g., C-CLAUDE-001)\n"
-    "- statement: the claim itself\n"
-    "- source_citation: the input source the claim derives from\n"
-    "- contributor_position: affirm / disagree / silent / out-of-scope\n"
-    "- confidence: your self-rated confidence"
-)
+def _shared_envelope_note(attribution_label: str) -> str:
+    """Return the shared claim envelope note with the contributor's
+    attribution_label as the claim-ID namespace prefix."""
+    prefix = f"C-{attribution_label}" if attribution_label else "C-CONTRIB"
+    return (
+        "Every claim you make MUST carry the shared claim envelope fields:\n\n"
+        f"- claim_id: a stable identifier using your namespace prefix "
+        f"(e.g., {prefix}-001)\n"
+        "- statement: the claim itself\n"
+        "- source_citation: the input source the claim derives from\n"
+        "- contributor_position: affirm / disagree / silent / out-of-scope\n"
+        "- confidence: your self-rated confidence"
+    )
 
 
 def _fmt_list(items: list[str]) -> str:
@@ -738,7 +746,9 @@ def main(argv: list[str] | None = None) -> int:
             task=task,
             session=session,
             input_sources=input_sources,
-            shared_envelope_note=_SHARED_ENVELOPE_NOTE,
+            shared_envelope_note=_shared_envelope_note(
+                c.get("attribution_label", "")
+            ),
         )
         label = c.get("target", c.get("model", "<unknown>"))
         sections.append(f"## {label}\n\n```\n{rendered}\n```")
