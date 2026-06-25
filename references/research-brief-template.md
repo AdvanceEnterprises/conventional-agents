@@ -95,6 +95,56 @@ Specific, actionable items. Each recommendation names:
 A recommendation is not "consider X" or "might be worth exploring Y."
 It is "do X" or "do not do X" with a one-paragraph justification.
 
+## Claim envelope
+
+Every claim in a Research Brief MUST carry the **shared claim envelope**
+defined by ADR-0016 §"Structured Output Contract." This applies to every
+section above (Executive Summary, Canonical Concepts, Relevant Standards,
+Tools and Ecosystem, Recommendations). The envelope has five fields:
+
+| Field | Required | Form | Purpose |
+| --- | --- | --- | --- |
+| `claim_id` | yes | stable identifier (e.g. `C-CLAUDE-001`) | Namespaces claims per contributor; enables cross-referencing in the synthesis |
+| `statement` | yes | the claim itself, one sentence | The contributor's contribution in atomic form |
+| `source_citation` | yes | repo-relative path with section anchor (e.g. `docs/decisions/ADR-0016.md §"Decision Outcome" item 5`) | Ties every claim to a verifiable input source |
+| `contributor_position` | yes | one of `affirm` / `disagree` / `silent` / `out-of-scope` | Records the contributor's stance; the synthesis uses this to preserve divergence |
+| `confidence` | yes | `high` / `medium` / `low` | The contributor's self-rated confidence; used to weight dispositions |
+
+### How the envelope appears in a Research Brief
+
+**In table sections** (Canonical Concepts, Relevant Standards, Tools and
+Ecosystem): the envelope fields appear as table columns.
+
+Example (Canonical Concepts):
+
+|| claim_id | Concept | Definition | Why it matters | Source | Position | Confidence |
+|| --- | --- | --- | --- | --- | --- | --- |
+|| C-CLAUDE-001 | Supporting-roles gap | `contributor_role` field conflates primary and contributor role assignments | Round-1 reviewer finding; needs structural fix | `templates/contributor/contributor-prompt.md §"Parameters"` | disagree | high |
+|| C-CLAUDE-002 | FS-0015 not in input_sources | The pilot's parameter file does not include FS-0015 as an input source | Q1 verdict is internally consistent but not verifiable against source | `docs/orchestration/multi-model-pilot-001.yaml §"input_sources"` | disagree | high |
+
+**In prose sections** (Executive Summary, Recommendations): the envelope
+fields appear as inline tags or footnote-style annotations.
+
+Example (Executive Summary):
+
+> I disagree with the synthesis's framing of `attribution_label` validation
+> (C-CLAUDE-003; disagree; medium). The current implementation validates
+> the field but does not render it into the transparency statement...
+
+### Why the envelope is mandatory
+
+Without the envelope, the synthesis can't mechanically extract claims
+from prose and can't preserve divergence without flattening. The
+synthesis template (`templates/contributor/synthesis-template.md`) §"1.
+Coverage/Disposition Record" consumes the envelope directly. A Research
+Brief without envelope fields on every claim requires the synthesis
+operator to re-derive envelope values from prose, which loses confidence
+and position fidelity.
+
+The synthesis's gate evaluator verifies that every claim referenced in
+the synthesis's Disposition Record has an envelope field set. Claims
+without envelopes are flagged as attribution-fidelity gaps.
+
 ## Disagreement handling
 
 If the contributor's reading disagrees with the task framing, with
