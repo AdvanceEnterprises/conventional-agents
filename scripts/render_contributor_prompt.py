@@ -353,14 +353,33 @@ def _render_contract_block(so: dict[str, Any]) -> str:
     contract = so["contract"]
     if contract == "research_brief":
         brief_path = so.get("brief_format_path", "references/research-brief-template.md")
+        # Pre-flight: the format file must exist or the contract is
+        # unsatisfiable for the contributor. Surface this as a hard error
+        # here so the operator catches it before invoking the CLI rather
+        # than the contributor discovering it mid-prompt (the original
+        # multi-model-pilot-001 run caught this bug; see commit history).
+        if not Path(brief_path).is_file():
+            raise ValueError(
+                f"structured_output.contract is 'research_brief' but "
+                f"the format file at {brief_path!r} does not exist. "
+                f"Either create the file (use the existing format at "
+                f"references/research-brief-template.md if you want the "
+                f"canonical Research Brief shape) or change the contract "
+                f"to 'json_schema' with a valid schema_path."
+            )
         return (
             f"Produce a Research Brief in the format defined at\n"
-            f"{brief_path}. The brief must include:\n\n"
+            f"{brief_path}. The canonical format is authoritative; the\n"
+            f"compact list below is a reminder of the section names:\n\n"
             "- Executive Summary (3-5 paragraphs)\n"
             "- Canonical Concepts (table)\n"
             "- Relevant Standards (table)\n"
             "- Tools and Ecosystem (table)\n"
             "- Recommendations (specific, actionable)\n\n"
+            "If the format file is unreachable or contradicts the inline\n"
+            "list, follow the format file (the authoritative reference)\n"
+            "and note the contradiction in your Executive Summary under\n"
+            "'Disagreements with framing' rather than guessing.\n\n"
             "Every claim MUST cite the input source it derives from.\n"
             "Preserve disagreement: if your reading conflicts with the task framing,\n"
             "surface the disagreement explicitly in the Executive Summary rather than\n"
@@ -371,6 +390,13 @@ def _render_contract_block(so: dict[str, Any]) -> str:
         if not schema_path:
             raise ValueError(
                 "structured_output.contract is 'json_schema' but no schema_path provided"
+            )
+        # Pre-flight: same rationale as the research_brief case above.
+        if not Path(schema_path).is_file():
+            raise ValueError(
+                f"structured_output.contract is 'json_schema' but "
+                f"the schema file at {schema_path!r} does not exist. "
+                f"Create the schema or change the contract."
             )
         return (
             f"Produce output that validates against the JSON schema at\n"
