@@ -314,25 +314,6 @@ def parse_minimal_yaml(text: str) -> dict[str, Any]:
     return root
 
 
-def _parse_top_level_key(stripped: str, root: dict[str, Any]) -> tuple[dict[str, Any] | None, tuple[str, dict[str, Any]] | None]:
-    """Parse a top-level key."""
-    if ":" not in stripped:
-        raise ValueError(f"expected 'key: value', got: {stripped!r}")
-    key, _, value = stripped.partition(":")
-    key = key.strip()
-    value = value.strip()
-    if value == "":
-        root[key] = {}
-        return root[key], None
-    if value == "|":
-        return None, None
-    if value == "[]":
-        root[key] = []
-        return None, (key, root)
-    root[key] = _coerce(value)
-    return None, None
-
-
 def _coerce(s: str) -> Any:
     s = s.strip()
     if (s.startswith('"') and s.endswith('"')) or (
