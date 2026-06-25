@@ -29,7 +29,9 @@ Naming patterns:
 
 ## Testing Guidelines
 
-There are no code tests in this repository. Quality gates are documentation-centric.
+Quality gates are documentation-centric. The helper script `scripts/render_contributor_prompt.py` has a bats test suite:
+- `npx bats test/render_contributor_prompt.bats` — 22 tests covering render modes, validation, role relationships, attribution, and gate overlap.
+
 If you add ADRs, ensure they remain lint-clean once markdownlint is enabled (see `docs/decisions/README.md`).
 
 **For projects consuming this kit:** the framework follows a BDD/TDD workflow (Docs → Tests → Code).

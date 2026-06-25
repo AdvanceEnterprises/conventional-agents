@@ -417,7 +417,7 @@ Accepted ADRs:
 - ADR-0016: Multi-model session orchestration with structured output and gate evaluation
   - Status: accepted
   - Source: docs/decisions/ADR-0016.md
-  - Summary: Operationalizes ADR-0013's coordination primitives with a reusable contributor prompt template supporting three render modes (`external-cli`, `hermes-chat`, `research-pass`), two structured-output contract types (Research Brief, JSON schema) with a shared claim envelope (`claim_id`, `statement`, `source_citation`, `contributor_position`, `confidence`), and an independent gate evaluator (`deepseek-v4-pro` via `ollama-cloud`) that issues a verdict distinct from execution status. Validated by pilot `multi-model-pilot-001` (gate-cleared 2026-06-25).
+  - Summary: Operationalizes ADR-0013's coordination primitives with a reusable contributor prompt template supporting three render modes (`external-cli`, `hermes-chat`, `research-pass`), two structured-output contract types (Research Brief, JSON schema) with a shared claim envelope (`claim_id`, `statement`, `source_citation`, `contributor_position`, `confidence`), and an independent gate evaluator (`deepseek-v4-pro` via `ollama-cloud`) that issues a verdict distinct from execution status. Validated by pilot `multi-model-pilot-001` (gate-cleared 2026-06-25). 11 pilot-driven refinements landed 2026-06-25 in PR #63 (role relationship enforcement, `attribution_label` rendering + claim-ID namespace, Disposition Record envelope expansion, `jsonschema` library validation, deterministic renderer tests, and six others).
 
 Notes:
 - ADR-0000, ADR-0001, and ADR-0002 are not empty (they define skills and role/skill referencing conventions).
