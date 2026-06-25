@@ -95,7 +95,7 @@ teardown() {
     python3 "$SCRIPT" --params "$FIXTURE" --output "$OUT"
     run grep -c '^## ' "$OUT"
     [ "$status" -eq 0 ]
-    [ "$output" -eq 3 ]
+    [ "$output" = "3" ] # bats $output is a string; use = not -eq
     run grep -q '^## claude-code$' "$OUT"
     [ "$status" -eq 0 ]
     run grep -q '^## qwen3-coder-next$' "$OUT"
@@ -109,7 +109,7 @@ teardown() {
     # transparency count should be exactly 2 (claude-code + qwen3-coder-next)
     run grep -c 'TRANSPARENCY STATEMENT' "$OUT"
     [ "$status" -eq 0 ]
-    [ "$output" -eq 2 ]
+    [ "$output" = "2" ] # bats $output is a string; use = not -eq
 }
 
 @test "render_contributor_prompt research-pass produces no transparency block" {

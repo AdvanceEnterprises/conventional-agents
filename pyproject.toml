@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "conventional-agents"
+version = "2.0.0"
+description = "Prescriptive governance framework for agentic development"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+keywords = ["governance", "agents", "llm", "adr", "fs", "role-contract"]
+authors = [
+    {name = "Joey Clark", email = "administrator@ajoeofalltrades.dev"},
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Documentation",
+]
+dependencies = [
+    "jsonschema>=4.0,<5.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/Tais-Den/conventional-agents"
+Issues = "https://github.com/Tais-Den/conventional-agents/issues"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+]
+
+# The framework is consumed as a vendored git submodule (vendor/conventional-agents/)
+# or copied directly into a host repo. It is NOT installed as a Python package in
+# the typical sense. The [project] block above is for tooling that expects PEP 621
+# metadata (lint, security scanners, dependency resolvers) and for future pip
+# distribution if the maintainers choose to publish. The scripts/ directory contains
+# standalone CLI entry points that work whether or not the package is "installed."
+#
+# Consumers who run scripts/ directly do: pip install -r requirements.txt
+# (or pip install conventional-agents[dev] if installing via pip).
+# Consumers who vendor via submodule: pip install jsonschema before running scripts.
+#
+# See README.md "Python dependencies" section for details.

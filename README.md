@@ -196,6 +196,24 @@ npm run check:status
 npm run lint:docs
 ```
 
+### Python Dependencies (Orchestration Scripts Only)
+
+The framework's governance documents (ADRs, FSs, PLANs, templates, role contracts) require no runtime — they are plain Markdown read by humans and agents.
+
+The orchestration scripts in `scripts/` are Python 3.9+ and require one runtime dependency: `jsonschema` (used by `render_contributor_prompt.py` for JSON Schema contract validation, added 2026-06-25 per ADR-0016 pilot Refinement 11). Install with:
+
+```bash
+# Recommended: pip install from the project's pyproject.toml
+pip install -e .
+
+# Or just the runtime dep:
+pip install jsonschema>=4.0,<5.0
+```
+
+The `pyproject.toml` at the repo root declares this dependency and is PEP 621-compliant. Consumers who vendor the framework via git submodule should run `pip install jsonschema` before invoking `scripts/render_contributor_prompt.py`. Consumers who install the framework via pip get the dep automatically.
+
+Bats tests in `test/render_contributor_prompt.bats` require `bats` to be installed (run via `npx bats` if Node.js is available).
+
 ## Contributing
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md).
