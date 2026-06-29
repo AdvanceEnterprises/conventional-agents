@@ -203,3 +203,4 @@ If validation fails:
 | ADR-0014 | Background task governance | proposed |
 | ADR-0015 | Tool taxonomy and introduction process | proposed |
 | ADR-0016 | Multi-model session orchestration with structured output and gate evaluation | accepted |
+| ADR-0017 | Domain as a first-class concept — expertise bundles for agentic work | proposed |
