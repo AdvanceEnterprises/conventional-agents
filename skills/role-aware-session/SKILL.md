@@ -1,3 +1,16 @@
+---
+name: role-aware-session
+description: "Infers session mode, primary/supporting roles, and enforces role boundaries for every interaction."
+version: 1.0.0
+author: conventional-agents
+license: MIT
+platforms: [linux, macos, windows]
+metadata:
+  hermes:
+    tags: [roles, session-modes, governance, agent-contract, safety-gates]
+    related_skills: [document-lifecycle, git-gh-workflow, framework-health-audit]
+---
+
 # Role-Aware Session Skill
 
 Encodes the conventional-agents role contract and session mode system into actionable guidance for any agentic session.

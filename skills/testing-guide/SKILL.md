@@ -1,3 +1,16 @@
+---
+name: testing-guide
+description: "Writes tests from approved specs across Python, JS/TS, and Bash; applies implementer guidance and approved test patterns."
+version: 1.0.0
+author: conventional-agents
+license: MIT
+platforms: [linux, macos, windows]
+metadata:
+  hermes:
+    tags: [testing, pytest, vitest, bats, tdd, python, javascript, typescript, bash]
+    related_skills: [document-lifecycle, role-aware-session, test-driven-development]
+---
+
 # Testing Guide Skill
 
 Encodes the conventional-agents language-specific testing guides, implementation guides, and test patterns into actionable guidance for all three supported languages.

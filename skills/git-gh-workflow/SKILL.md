@@ -1,3 +1,16 @@
+---
+name: git-gh-workflow
+description: "Encodes git branching, commits, PR workflow, multi-identity model, versioning, and release process."
+version: 1.0.0
+author: conventional-agents
+license: MIT
+platforms: [linux, macos, windows]
+metadata:
+  hermes:
+    tags: [git, github, branching, prs, versioning, releases, changelog, ci-cd]
+    related_skills: [role-aware-session, framework-health-audit, github-auth, github-pr-workflow]
+---
+
 # Git/GH Workflow Skill
 
 Encodes the conventional-agents git and GitHub conventions, versioning and release process, and multi-identity model into actionable guidance.

@@ -1,3 +1,16 @@
+---
+name: framework-health-audit
+description: "Runs check:status, performs full framework health audits, and enforces the document hygiene gate."
+version: 1.0.0
+author: conventional-agents
+license: MIT
+platforms: [linux, macos, windows]
+metadata:
+  hermes:
+    tags: [audit, compliance, status-checks, governance, document-hygiene]
+    related_skills: [document-lifecycle, role-aware-session, git-gh-workflow]
+---
+
 # Framework Health / Audit Skill
 
 Encodes the conventional-agents status consistency check, document hygiene gate, and framework health audit procedures into actionable guidance.
