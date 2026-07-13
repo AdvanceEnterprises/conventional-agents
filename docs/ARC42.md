@@ -3,7 +3,7 @@ title: "arc42 Architecture Documentation"
 system: "conventional-agents"
 version: "1.0.0"
 status: "Draft"
-last_updated: "2026-01-28"
+last_updated: "2026-07-12"
 ---
 
 # 1. Introduction and Goals
@@ -156,7 +156,7 @@ Contained Building Blocks (black boxes):
 | templates/        | Reusable document templates (ADR, specs, reviews)                    |
 | packs/ (planned)  | Copy-ready anchor files for common tools                              |
 | integrations/ (planned) | Tool-specific integration guidance and precedence summaries   |
-| skills/           | Example skills and guidance for skill structure                      |
+| skills/           | Portable skill modules for session management, document lifecycle, git workflow, framework health, and testing |
 | docs/             | Architecture, ADRs, and process documentation                        |
 | vendor/           | Upstream references (arc42 template, MADR template/docs)             |
 | INTEGRATION.md    | Cross-tool precedence rules and integration guidance                 |
@@ -218,6 +218,19 @@ Planned elements:
 - integrations/spec-kit-plus.md
 - integrations/aicodeguide.md
 - integrations/tool-evaluation.md
+
+### White Box skills/
+
+Purpose:
+- Provide portable skill modules that encode the framework's knowledge into actionable guidance for agents.
+
+Key elements:
+- skills/index.md — canonical catalog of all skills
+- skills/role-aware-session/SKILL.md — session mode inference, role boundaries, safety gates
+- skills/document-lifecycle/SKILL.md — FS/PLAN/ADR lifecycle, templates, front matter hygiene
+- skills/git-gh-workflow/SKILL.md — branching, commits, PRs, multi-identity model, versioning
+- skills/framework-health-audit/SKILL.md — check:status, hygiene gate, full audit procedure
+- skills/testing-guide/SKILL.md — language-specific test patterns for Python, JS/TS, Bash
 
 ### White Box vendor/
 
