@@ -1,3 +1,16 @@
+---
+name: document-lifecycle
+description: "Scaffolds, transitions, and maintains governed documents (FS, PLAN, ADR) with correct front matter and cross-references."
+version: 1.0.0
+author: conventional-agents
+license: MIT
+platforms: [linux, macos, windows]
+metadata:
+  hermes:
+    tags: [document-lifecycle, feature-specs, adrs, change-plans, governance, templates]
+    related_skills: [role-aware-session, git-gh-workflow, framework-health-audit]
+---
+
 # Document Lifecycle Skill
 
 Encodes the conventional-agents document lifecycle, status transition rules, template usage, and front matter hygiene into actionable guidance.
