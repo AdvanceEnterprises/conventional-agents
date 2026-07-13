@@ -93,6 +93,20 @@ Language-specific best practices vendored into host repos:
 
 See `guidelines/` directory.
 
+### Skills
+
+Portable skill modules that encode the framework's knowledge into actionable guidance for agents. Each skill is a self-contained `SKILL.md` in its own directory under `skills/`:
+
+| Skill | Purpose |
+|---|---|
+| **Role-Aware Session** | Infers session mode, primary/supporting roles, and enforces role boundaries |
+| **Document Lifecycle** | Scaffolds, transitions, and maintains FS/PLAN/ADR documents with correct front matter |
+| **Git/GH Workflow** | Branching, commits, PRs, multi-identity model, versioning, and release process |
+| **Framework Health / Audit** | Runs `check:status`, performs full framework health audits, enforces hygiene gate |
+| **Testing Guide** | Writes tests from approved specs across Python, JS/TS, and Bash |
+
+See `skills/index.md` for the full catalog.
+
 ### Templates
 
 Reusable scaffolds for common activities:
