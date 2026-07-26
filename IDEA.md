@@ -1,0 +1,1 @@
+A governance framework that defines role contracts, process gates, document templates, and workflow patterns for agentic development. Self-governing — uses its own framework recursively. It's meant to be vendored as a submodule by other repos.
