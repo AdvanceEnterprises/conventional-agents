@@ -127,6 +127,14 @@ Agent-authored PRs MUST include enough context for review. Use this template (co
 - Changes:
 - Validation:
 - Risk / Rollback:
+- Agent Attribution (only if any agent authored this PR):
+  - Hermes Agent — model=ollama-cloud/deepseek-v4-flash, role=Implementer, session=implementation
+  - GitHub Copilot — model=copilot, role=Implementer, session=implementation
+
+The Agent Attribution section summarizes the agent actors and their roles
+for the PR as a whole. Per-commit model/role metadata lives in
+`Agent-Attribution:` trailers on individual commits (see "Single-identity
+workflow with agent co-attribution" below).
 
 Do not include secrets (tokens, private keys, credentials) in PR descriptions.
 
@@ -237,6 +245,24 @@ Co-authored-by: Hermes Agent <hermes-agent@tais-den.dev>
 GitHub renders `Co-authored-by:` trailers natively as a second author chip
 on the commit page.
 
+For agent actors (Hermes, Copilot, future agents), also include an
+`Agent-Attribution:` trailer recording the model, role, and session mode:
+
+```text
+docs: explain single-identity workflow with agent co-attribution
+
+Co-authored-by: Hermes Agent <hermes-agent@tais-den.dev>
+Agent-Attribution: actor=Hermes Agent; model=ollama-cloud/deepseek-v4-flash; role=Head Architect; session=architecture-planning
+```
+
+The `Agent-Attribution:` trailer is not rendered by GitHub but is parsed
+by `git log --format=%(trailers)` and verified by
+`test/FS-0018/commit-attribution.bats`. It persists the role/session-mode
+declaration that ROLE_CONTRACT §"Role and session transparency" requires
+at session start, into the commit audit trail. Multiple
+`Agent-Attribution:` trailers are permitted when more than one agent
+contributed.
+
 ### Per-session configuration (recommended for sustained agent runs)
 
 For an agent that will author many commits in one session, set the
@@ -270,12 +296,14 @@ export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
   `taisden@tais-den.dev`.
 - **Pure-agent commit** (agent wrote and committed autonomously):
   set the agent's `user.email` via per-commit override or per-session
-  config. No `Co-authored-by:` trailer needed — the email alone
-  identifies the actor.
+  config. Add an `Agent-Attribution:` trailer recording model, role,
+  and session mode. No `Co-authored-by:` trailer needed — the email
+  alone identifies the actor.
 - **Hybrid commit** (human and agent both contributed):
-  set the *committer's* `user.email` to whoever ran `git commit`, and
-  add a `Co-authored-by:` trailer naming the other actor. Both email
-  and trailer are part of the audit trail.
+  set the *committer's* `user.email` to whoever ran `git commit`, add a
+  `Co-authored-by:` trailer naming the other actor, and add an
+  `Agent-Attribution:` trailer for each agent actor with their model
+  and role. Both email and trailers are part of the audit trail.
 
 ### Forward compatibility with ADR-0011
 

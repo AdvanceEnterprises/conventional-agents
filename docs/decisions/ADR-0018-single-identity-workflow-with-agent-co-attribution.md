@@ -140,6 +140,60 @@ sessions:
 GitHub renders `Co-authored-by:` trailers natively as a second author chip
 on the commit page.
 
+**`Agent-Attribution:` trailer** records the model, role, and session mode
+of any agent actor on the commit. This is the third attribution layer,
+on top of `user.email` and `Co-authored-by:`:
+
+- It persists the role/session-mode declaration that
+  `ROLE_CONTRACT §"Role and session transparency"` already requires at
+  session start, into the audit trail.
+- It distinguishes a Reviewer-role agent from an Implementer-role agent
+  even when both commit under the same login.
+- It captures model identity, which matters when an agent runs on
+  different models across sessions.
+
+Format:
+
+```text
+Agent-Attribution: actor=Hermes Agent; model=<provider/model-id>; role=<role>; session=<session-mode>
+```
+
+Examples:
+
+```text
+# Pure-agent commit by Hermes, acting as Head Architect
+Agent-Attribution: actor=Hermes Agent; model=ollama-cloud/deepseek-v4-flash; role=Head Architect; session=architecture-planning
+```
+
+```text
+# Hybrid commit — Tai and Hermes both contributed
+Co-authored-by: Hermes Agent <hermes-agent@tais-den.dev>
+Agent-Attribution: actor=Hermes Agent; model=ollama-cloud/deepseek-v4-flash; role=Implementer; session=implementation
+Agent-Attribution: actor=Tai Solstag; model=human; role=Implementer; session=implementation
+```
+
+GitHub does not render custom trailers natively, but `git log
+--format=%(trailers)` parses them, and downstream tooling
+(`test/FS-0018/commit-attribution.bats`) verifies them. PR bodies should
+also include an "Agent Attribution" section that summarizes the agent
+actors and their roles — see `workflows/git-and-gh-conventions.md` §"PR
+body template (agents)".
+
+**Recommended commit authorship pattern for agent commits.** When an
+agent commits, the commit message should follow this layered structure:
+
+```text
+<type>(<scope>?): <summary>
+
+<body>
+
+Co-authored-by: <actor> <<email>>
+Agent-Attribution: actor=<actor>; model=<provider/model>; role=<role>; session=<session-mode>
+```
+
+Multiple `Agent-Attribution:` trailers are permitted when more than one
+agent actor contributed.
+
 ### How this maps onto the existing rules
 
 **ROLE_CONTRACT §"GitHub identity gate" (ADR-0012).** The gate's literal

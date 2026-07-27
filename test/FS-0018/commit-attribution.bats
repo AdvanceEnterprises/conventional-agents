@@ -15,77 +15,37 @@ ACTOR_EMAILS=(
   "ajoeofalltrades@users.noreply.github.com"
 )
 
-# Regex that matches the `Co-authored-by:` trailer naming any known actor.
-# GitHub's trailer format is "Co-authored-by: Name <email>".
-co_authored_by_pattern() {
-  local emails_re
-  emails_re="$(printf '%s\n' "${ACTOR_EMAILS[@]}" | paste -sd '|' -)"
-  printf 'Co-authored-by:.*(%s)' "$emails_re"
-}
+# How many recent commits to enforce the convention on. ADR-0018
+# takes effect going forward; we don't enforce on legacy history.
+RECENT_COMMIT_COUNT=5
 
-# How far back the convention applies. ADR-0018 enforces attribution
-# from its own merge commit forward. Use the commit hash of the merge
-# that introduces ADR-0018 as the cutoff. Set to the merge commit SHA
-# when ADR-0018 lands; leave empty to apply to all reachable commits.
-#
-# Initial value: empty (test runs against trunk HEAD until the merge
-# commit is known). Update this in a follow-up commit once ADR-0018 is
-# merged, with a comment noting the merge SHA.
-CUTOFF_SHA=""
+# Default GitHub identity email for this repo (used when no
+# distinguishing email override is in effect).
+DEFAULT_EMAIL="ajoeofalltrades@users.noreply.github.com"
 
-@test "every commit at and after the cutoff has a known actor email" {
-  local range="HEAD"
-  if [[ -n "$CUTOFF_SHA" ]]; then
-    range="${CUTOFF_SHA}^..HEAD"
-  fi
-  local commit_emails
-  commit_emails="$(git -C "$REPO_ROOT" log "$range" --format='%ae' | sort -u)"
-  local unknown
-  unknown="$(printf '%s\n' "$commit_emails" | grep -vFx -f <(printf '%s\n' "${ACTOR_EMAILS[@]}"))"
-  if [[ -n "$unknown" ]]; then
-    echo "commits with unknown author emails in range $range:"
-    printf '  %s\n' $unknown
-    return 1
-  fi
-}
-
-@test "every default-email commit at and after the cutoff has a Co-authored-by trailer" {
-  # A commit with the default `ajoeofalltrades@users.noreply.github.com`
-  # email must include a `Co-authored-by:` trailer naming another actor.
-  # Commits with `taisden@tais-den.dev`, `hermes-agent@tais-den.dev`, or
-  # `copilot@tais-den.dev` are self-identifying and need no trailer.
-  local range="HEAD"
-  if [[ -n "$CUTOFF_SHA" ]]; then
-    range="${CUTOFF_SHA}^..HEAD"
-  fi
-  local pattern
-  pattern="$(co_authored_by_pattern)"
-  local default_email="ajoeofalltrades@users.noreply.github.com"
-  local sha email message
-  while read -r sha; do
-    [[ -z "$sha" ]] && continue
-    email="$(git -C "$REPO_ROOT" log -1 --format='%ae' "$sha")"
-    if [[ "$email" == "$default_email" ]]; then
-      message="$(git -C "$REPO_ROOT" log -1 --format='%B' "$sha")"
-      if ! printf '%s\n' "$message" | rg -F -q -- "$pattern"; then
-        echo "commit $sha uses default email but has no Co-authored-by trailer:"
-        git -C "$REPO_ROOT" log -1 --format='  %s' "$sha"
-        return 1
-      fi
-    fi
-  done < <(git -C "$REPO_ROOT" log "$range" --format='%H')
+# Regex that matches a well-formed Agent-Attribution: trailer.
+# Format: Agent-Attribution: actor=<name>; model=<model>; role=<role>; session=<session-mode>
+agent_attribution_pattern() {
+  printf '^Agent-Attribution:[[:space:]]*actor=[^;]+;[[:space:]]*model=[^;]+;[[:space:]]*role=[^;]+;[[:space:]]*session=[^;]+$'
 }
 
 @test "workflow doc teaches the single-identity convention" {
   assert_file_contains "$REPO_ROOT/workflows/git-and-gh-conventions.md" "Single-identity workflow with agent co-attribution"
   assert_file_contains "$REPO_ROOT/workflows/git-and-gh-conventions.md" "hermes-agent@tais-den.dev"
   assert_file_contains "$REPO_ROOT/workflows/git-and-gh-conventions.md" "Co-authored-by:"
+  assert_file_contains "$REPO_ROOT/workflows/git-and-gh-conventions.md" "Agent-Attribution:"
 }
 
 @test "skill teaches the single-identity convention" {
   assert_file_contains "$REPO_ROOT/skills/git-gh-workflow/SKILL.md" "Single-Identity Workflow"
   assert_file_contains "$REPO_ROOT/skills/git-gh-workflow/SKILL.md" "hermes-agent@tais-den.dev"
   assert_file_contains "$REPO_ROOT/skills/git-gh-workflow/SKILL.md" "Co-authored-by:"
+  assert_file_contains "$REPO_ROOT/skills/git-gh-workflow/SKILL.md" "Agent-Attribution:"
+}
+
+@test "PR body template includes Agent Attribution section" {
+  assert_file_contains "$REPO_ROOT/workflows/git-and-gh-conventions.md" "Agent Attribution"
+  assert_file_contains "$REPO_ROOT/workflows/git-and-gh-conventions.md" "session=architecture-planning"
 }
 
 @test "ADR-0018 exists with proposed status" {
@@ -95,4 +55,88 @@ CUTOFF_SHA=""
 
 @test "ADR-0011 cross-references ADR-0018" {
   assert_file_contains "$REPO_ROOT/docs/decisions/ADR-0011-adopt-multi-identity-github-model-human-agent-committer-agent-reviewer.md" "ADR-0018"
+}
+
+@test "roles/ contains only README.md, not a duplicate ROLE_CONTRACT.md" {
+  assert_file_exists "$REPO_ROOT/roles/README.md"
+  if [[ -f "$REPO_ROOT/roles/ROLE_CONTRACT.md" ]]; then
+    echo "roles/ROLE_CONTRACT.md exists; it should be removed per FS-0018"
+    return 1
+  fi
+}
+
+@test "FS-0018 and PLAN-0018 exist with implemented status" {
+  assert_file_exists "$REPO_ROOT/docs/specifications/FS-0018-single-identity-commit-attribution.md"
+  assert_file_contains "$REPO_ROOT/docs/specifications/FS-0018-single-identity-commit-attribution.md" "status: implemented"
+  assert_file_exists "$REPO_ROOT/docs/change-plans/PLAN-0018-implement-fs-0018-single-identity-commit-attribution.md"
+  assert_file_contains "$REPO_ROOT/docs/change-plans/PLAN-0018-implement-fs-0018-single-identity-commit-attribution.md" "status: implemented"
+}
+
+@test "recent commits have known actor emails" {
+  local sha email
+  while read -r sha; do
+    [[ -z "$sha" ]] && continue
+    email="$(git -C "$REPO_ROOT" log -1 --format='%ae' "$sha")"
+    local known=false
+    for known_email in "${ACTOR_EMAILS[@]}"; do
+      if [[ "$email" == "$known_email" ]]; then
+        known=true
+        break
+      fi
+    done
+    if [[ "$known" == "false" ]]; then
+      echo "commit $sha has unknown author email: $email"
+      git -C "$REPO_ROOT" log -1 --format='  subject: %s' "$sha"
+      return 1
+    fi
+  done < <(git -C "$REPO_ROOT" log -n "$RECENT_COMMIT_COUNT" --format='%H')
+}
+
+@test "recent default-email commits have Co-authored-by trailers" {
+  # A commit with the default `ajoeofalltrades@users.noreply.github.com`
+  # email must include a `Co-authored-by:` trailer naming another actor.
+  # Commits with `taisden@tais-den.dev`, `hermes-agent@tais-den.dev`, or
+  # `copilot@tais-den.dev` are self-identifying and need no trailer.
+  local sha email message trailer_lines
+  while read -r sha; do
+    [[ -z "$sha" ]] && continue
+    email="$(git -C "$REPO_ROOT" log -1 --format='%ae' "$sha")"
+    if [[ "$email" == "$DEFAULT_EMAIL" ]]; then
+      message="$(git -C "$REPO_ROOT" log -1 --format='%B' "$sha")"
+      trailer_lines="$(printf '%s\n' "$message" | git -C "$REPO_ROOT" interpret-trailers --parse | grep -i '^Co-authored-by:' || true)"
+      if [[ -z "$trailer_lines" ]]; then
+        echo "commit $sha uses default email but has no Co-authored-by trailer:"
+        git -C "$REPO_ROOT" log -1 --format='  subject: %s' "$sha"
+        return 1
+      fi
+    fi
+  done < <(git -C "$REPO_ROOT" log -n "$RECENT_COMMIT_COUNT" --format='%H')
+}
+
+@test "recent commits with agent emails carry Agent-Attribution trailers" {
+  # Commits authored by an agent email must include at least one
+  # well-formed Agent-Attribution: trailer recording actor, model,
+  # role, and session mode.
+  local sha email message trailer_lines pattern
+  pattern="$(agent_attribution_pattern)"
+  while read -r sha; do
+    [[ -z "$sha" ]] && continue
+    email="$(git -C "$REPO_ROOT" log -1 --format='%ae' "$sha")"
+    case "$email" in
+      hermes-agent@tais-den.dev|copilot@tais-den.dev)
+        message="$(git -C "$REPO_ROOT" log -1 --format='%B' "$sha")"
+        trailer_lines="$(printf '%s\n' "$message" | git -C "$REPO_ROOT" interpret-trailers --parse | grep -i '^Agent-Attribution:' || true)"
+        if [[ -z "$trailer_lines" ]]; then
+          echo "commit $sha authored by agent ($email) has no Agent-Attribution trailer:"
+          git -C "$REPO_ROOT" log -1 --format='  subject: %s' "$sha"
+          return 1
+        fi
+        if ! printf '%s\n' "$trailer_lines" | grep -Eq "$pattern"; then
+          echo "commit $sha Agent-Attribution trailer(s) lack required fields:"
+          printf '%s\n' "$trailer_lines" | sed 's/^/    /'
+          return 1
+        fi
+        ;;
+    esac
+  done < <(git -C "$REPO_ROOT" log -n "$RECENT_COMMIT_COUNT" --format='%H')
 }
