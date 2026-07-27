@@ -1,5 +1,11 @@
 # config/consensus.yml — Multi-model consensus configuration (FS-0019)
 #
+# *** THIS IS A CONSUMER-COPY TEMPLATE, NOT FRAMEWORK CONFIGURATION ***
+# The conventional-agents framework itself does not enable consensus.
+# This file ships with enabled: false and is intended to be copied
+# by consumer repos into their project root and customized.
+# Do not modify this file for framework development — it is a template.
+#
 # This is the project-level configuration for multi-model consensus at
 # workflow gates. See docs/specifications/FS-0019-multi-model-consensus.md
 # for the full specification.

@@ -151,7 +151,9 @@ behavior is `bug`.
 it believes the Type is wrong by posting an Issue comment, but the
 Type change itself requires a human actor. Rationale: Type determines
 safety gate, and an agent should not unilaterally lower its own
-gate by editing its own Type.
+gate by editing its own Type. This rule is stated as a proposed
+default; it will be ratified as a binding ADR when this FS moves
+to approved (see "Notes for Future ADRs").
 
 ### Axis 2: Label (multi-valued)
 
@@ -169,8 +171,14 @@ Six labels classify *what kind of work* and *workflow position*:
 - **`plan`** — the Issue carries the change plan (or references a
   PLAN file). Indicates implementation strategy is set.
 - **`question`** — clarification request. The Issue is parked,
-  awaiting human response. Agent actions are suppressed while this
-  label is present.
+  awaiting human response. While this label is present, the agent
+  MUST NOT perform any Issue transitions (label changes, Status
+  changes, or comments) except to remove the `question` label
+  itself when the human's response resolves the question. The
+  suppression mechanism is agent-side: before any Issue action, the
+  agent checks the label set and skips the action if `question` is
+  present. Consumer repos may additionally enforce this via
+  webhook handler rejection.
 
 Labels are multi-valued: an Issue can have multiple. Most commonly,
 an Issue has one content label (`enhancement`, `bug`, or
@@ -204,11 +212,12 @@ agent-stance comment rule applying to agent transitions.
 - **First artifact**: Issue body contains the casual description.
 - **First actor**: Hermes Agent (autonomous), assuming Head
   Architect role.
-- **First action**: agent reads Issue, elevates to Type `feature`
-  with label `spec`, and Status → Approved. (Type `spec` is not a
-  valid Type value; the Type axis is restricted to `{feature, bug,
-  task}`.) The Issue body now carries the Head Architect's summary
-  of what the FS should cover.
+- **First action**: agent reads Issue, posts an Issue comment
+  suggesting Type `feature` and label `spec`, and transitions
+  Status → Approved. The Issue body now carries the Head
+  Architect's summary of what the FS should cover. (The Type
+  change itself requires a human actor per the Type mutability
+  rule below; the agent's comment is the suggestion mechanism.)
 - **Next step**: Document Author or Implementer agent (human-in-loop
   or autonomous) drafts the FS in a new branch, referencing this
   Issue.
@@ -242,7 +251,8 @@ agent-stance comment rule applying to agent transitions.
 ## Agent Stance on Issue Comments
 
 Every Issue action by an agent (label change, Status change, comment)
-must be preceded by an Issue comment in the following format:
+must be preceded by an Issue comment in the following format
+(proposed default; subject to ADR ratification):
 
 ```text
 agent-stance: mode=<mode>; role=<role>; model=<model>; session=<session-name>; rationale=<one-line reason>
@@ -273,11 +283,14 @@ For Issue-creation actions (Path 3 first artifact), the stance
 comment is the Issue body itself, with the agent-stance metadata
 embedded as a structured comment block.
 
-## Autonomous Gate
+## Autonomous Gate (Proposed Default)
 
 An agent operating without a human present (cron, webhook, subagent
 delegation) MUST NOT transition an Issue's Status past the
 Type-determined checkpoint without explicit human approval.
+This rule is stated as a proposed default; it will be ratified
+as a binding ADR when this FS moves to approved (see "Notes for
+Future ADRs").
 
 Type-determined checkpoints:
 
@@ -420,8 +433,14 @@ Each bullet MUST be objectively testable.
 
 ## Dependencies
 
-- GitHub Issues with the native Type field (single-valued). This
-  requires a GitHub org/repo setting to be enabled.
+- GitHub Issues with a Type classification mechanism. This may be
+  GitHub's native Issue Types (org-level beta feature), a custom
+  single-select field on the GitHub Project board (as used by
+  FS-0011's `Doc Type` field), or a consumer-implemented
+  convention (e.g., a `type:` prefix in the Issue title). The
+  framework describes the required behavior; consumer repos
+  choose the mechanism that matches their GitHub plan and org
+  settings. See Open Question \"Type field mechanism\" below.
 - GitHub Labels API for label management.
 - GitHub Projects v2 for the Status field. Status transitions
   require `gh project` CLI or GraphQL API access.
@@ -448,8 +467,15 @@ Each bullet MUST be objectively testable.
   layer to extend to cron-fired actors. **This is a blocker for
   Path 3 implementation; resolve before approving this FS.** See
   Success Criterion "Cron actor identity" below.
+- **Type field mechanism**: GitHub does not have a universal
+  single-valued "Type" field on Issues. The mechanism varies by
+  GitHub plan: native Issue Types (org-level beta), custom
+  Project fields, or a consumer-implemented convention. The spec
+  should clarify which mechanism(s) the framework recommends and
+  whether the framework provides a fallback convention for repos
+  without org-level Issue Types. **This affects portability of
+  the convention across consumer repos.**
 - **Multi-Issue consolidation**: if Path 1 produces three related
-  `enhancement` Issues, does the Head Architect agent produce one
   consolidated Type `feature` Issue or one per Issue? My read: one
   consolidated Issue, with the three original Issues linked as
   "blocked by" or "related." Confirm.
