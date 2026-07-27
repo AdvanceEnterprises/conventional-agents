@@ -127,6 +127,13 @@ Agent-authored PRs MUST include enough context for review. Use this template (co
 - Changes:
 - Validation:
 - Risk / Rollback:
+- Agent Attribution (only if any agent authored this PR):
+  - Hermes Agent — model=ollama-cloud/deepseek-v4-flash, role=Implementer, session=implementation
+
+The Agent Attribution section summarizes the agent actors and their roles
+for the PR as a whole. Per-commit model/role metadata lives in
+`Agent-Attribution:` trailers on individual commits (see "Single-identity
+workflow with agent co-attribution" below).
 
 Do not include secrets (tokens, private keys, credentials) in PR descriptions.
 
@@ -169,7 +176,8 @@ Example:
 
 ## Multi-identity model (ADR-0011)
 
-We assume three GitHub identities:
+The framework recommends three GitHub identities for projects that have
+separate human and agent operators:
 
 1) Human account (interactive ownership/administration)
 2) Agent-committer account (opens PRs and authors code commits)
@@ -190,3 +198,124 @@ Git commit author identity and GitHub PR/review identity are separate:
 If you use multiple accounts, ensure you explicitly switch contexts before taking actions:
 
 - `gh auth switch -u <username>`
+
+## Single-identity workflow with agent co-attribution (ADR-0018)
+
+Most projects — including this repository — operate with one GitHub login
+shared across human and agent actors. The single-identity workflow uses
+git commit metadata to preserve the audit trail that ADR-0011's three
+identities would otherwise provide.
+
+### The convention
+
+All commits, PRs, and reviews are authored under one GitHub login. The
+distinguishing layer is git's `user.name` / `user.email`:
+
+| Actor | `user.name` | `user.email` |
+| --- | --- | --- |
+| Human (Joey) | `Joey Clark` | `taisden@tais-den.dev` |
+| Hermes Agent | `Hermes Agent` | `hermes-agent@tais-den.dev` |
+
+These addresses are aliases under the same login. GitHub renders each
+commit's author email as a link to the same profile, but `git log`,
+`git shortlog`, and downstream tooling can distinguish actors by email.
+
+### Per-commit override (recommended for one-off agent sessions)
+
+When authoring a single commit as an agent, override the identity inline
+rather than mutating global `git config`:
+
+```bash
+git -c user.name="Hermes Agent" \
+    -c user.email="hermes-agent@tais-den.dev" \
+    commit -m "..."
+```
+
+For hybrid sessions (human + agent co-authoring a single commit), also add
+a `Co-authored-by:` trailer to the commit message:
+
+```text
+docs: explain single-identity workflow with agent co-attribution
+
+Co-authored-by: Hermes Agent <hermes-agent@tais-den.dev>
+```
+
+GitHub renders `Co-authored-by:` trailers natively as a second author chip
+on the commit page.
+
+For local-file agents (Hermes today, future agents that edit files
+in this repo), also include an `Agent-Attribution:` trailer recording
+the model, role, and session mode:
+
+```text
+docs: explain single-identity workflow with agent co-attribution
+
+Co-authored-by: Hermes Agent <hermes-agent@tais-den.dev>
+Agent-Attribution: actor=Hermes Agent; model=ollama-cloud/deepseek-v4-flash; role=Head Architect; session=architecture-planning
+```
+
+The `Agent-Attribution:` trailer is not rendered by GitHub but is parsed
+by `git log --format=%(trailers)` and verified by
+`test/FS-0017/commit-attribution.bats`. It persists the role/session-mode
+declaration that ROLE_CONTRACT §"Role and session transparency" requires
+at session start, into the commit audit trail. Multiple
+`Agent-Attribution:` trailers are permitted when more than one agent
+contributed.
+
+### Per-session configuration (recommended for sustained agent runs)
+
+For an agent that will author many commits in one session, set the
+identity once via environment or a local include:
+
+```bash
+# Bash — export once at session start
+export GIT_AUTHOR_NAME="Hermes Agent"
+export GIT_AUTHOR_EMAIL="hermes-agent@tais-den.dev"
+export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
+export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
+```
+
+```ini
+# ~/.gitconfig — conditional include for agent workspaces
+[includeIf "gitdir:~/Developer/projects/agent-workspace/"]
+    path = ~/.gitconfig-agent
+```
+
+```ini
+# ~/.gitconfig-agent
+[user]
+    name = Hermes Agent
+    email = hermes-agent@tais-den.dev
+```
+
+### When to use each layer
+
+- **Pure-human commit** (Joey wrote the code, the message, the review):
+  no special action. Default `user.email` should already be
+  `taisden@tais-den.dev`.
+- **Pure-agent commit** (agent wrote and committed autonomously):
+  set the agent's `user.email` via per-commit override or per-session
+  config. Add an `Agent-Attribution:` trailer recording model, role,
+  and session mode. No `Co-authored-by:` trailer needed — the email
+  alone identifies the actor.
+- **Hybrid commit** (human and agent both contributed):
+  set the *committer's* `user.email` to whoever ran `git commit`, add a
+  `Co-authored-by:` trailer naming the other actor, and add an
+  `Agent-Attribution:` trailer for each agent actor with their model
+  and role. Both email and trailers are part of the audit trail.
+
+### Forward compatibility with ADR-0011
+
+When this repository (or any project following ADR-0018) is ready to
+transition to separate GitHub accounts, the migration path is:
+
+1. Create `taisden-agent-committer` and `taisden-agent-reviewer` accounts.
+2. Add the existing emails as additional addresses on each actor's
+   GitHub profile so historical commits still link correctly.
+3. Switch per-agent sessions from `GIT_AUTHOR_EMAIL` overrides to
+   `gh auth switch --user <agent-account>`.
+4. The `Co-authored-by:` convention continues unchanged — it now
+   represents a cross-account relationship rather than same-account
+   co-authorship.
+
+See ADR-0018 for the full rationale and consequences.

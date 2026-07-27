@@ -96,3 +96,7 @@ We consider this decision successful if:
 ## Links
 
 - Related Spec: FS-0003 Git + gh CLI conventions for conventional-agents
+- ADR-0018: Single-identity workflow with agent co-attribution
+  (operational model for projects with one GitHub identity; ADR-0011
+  remains the framework's recommendation for projects with separate
+  human/agent identities)

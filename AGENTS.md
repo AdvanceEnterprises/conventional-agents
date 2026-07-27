@@ -15,7 +15,6 @@ vendored by other projects.
 ## Foundation Standards
 
 - `guidelines/ROLE_CONTRACT.md` — role definitions and universal gates
-- `roles/ROLE_CONTRACT.md` — project-customizable role contract
 - `INTEGRATION.md` — integration patterns and precedence rules
 - `workflows/session-modes.md` — session mode definitions
 - `docs/decisions/README.md` — accepted ADRs (binding constraints)
