@@ -143,9 +143,21 @@ ALLOWED_MODES=(
   grep -qE "^  - ADR-0012" "$f"
 }
 
-@test "FS-0018 has Plan Status section" {
+@test "FS-0018 has Plan Status section naming its PLAN" {
   assert_file_contains "$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md" "## Plan Status"
-  assert_file_contains "$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md" "Not yet drafted"
+  assert_file_contains "$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md" "PLAN-0018"
+}
+
+@test "PLAN-0018 exists and is not approved ahead of its FS" {
+  local p="$REPO_ROOT/docs/change-plans/PLAN-0018-implement-fs-0018-issue-lifecycle-and-autonomous-triggers.md"
+  [ -f "$p" ]
+  # A PLAN must not be approved while its primary FS is still draft.
+  local fs_status plan_status
+  fs_status=$(grep -m1 '^status:' "$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md" | awk '{print $2}')
+  plan_status=$(grep -m1 '^status:' "$p" | awk '{print $2}')
+  if [ "$fs_status" = "draft" ]; then
+    [ "$plan_status" = "draft" ]
+  fi
 }
 
 @test "FS-0018 cron-identity is a documented blocker" {

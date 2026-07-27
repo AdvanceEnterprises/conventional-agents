@@ -49,3 +49,5 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | PLAN-0015 | Implement FS-0015 Role Selection and Session Modes | FS-0015 | implemented |
 | PLAN-0016 | Implement FS-0016 Framework Internal Vendor Boundary | FS-0016 | implemented |
 | PLAN-0017 | Implement FS-0017 Single-identity commit attribution | FS-0017 | implemented |
+| PLAN-0018 | Implement FS-0018 Issue Lifecycle and Autonomous Triggers | FS-0018 | draft |
+| PLAN-0019 | Implement FS-0019 Multi-Model Consensus at Workflow Gates | FS-0019 | draft |

@@ -77,9 +77,21 @@ setup() {
   grep -qE "^  - FS-0018" "$f"
 }
 
-@test "FS-0019 has Plan Status section" {
+@test "FS-0019 has Plan Status section naming its PLAN" {
   assert_file_contains "$REPO_ROOT/docs/specifications/FS-0019-multi-model-consensus.md" "## Plan Status"
-  assert_file_contains "$REPO_ROOT/docs/specifications/FS-0019-multi-model-consensus.md" "Not yet drafted"
+  assert_file_contains "$REPO_ROOT/docs/specifications/FS-0019-multi-model-consensus.md" "PLAN-0019"
+}
+
+@test "PLAN-0019 exists and is not approved ahead of its FS" {
+  local p="$REPO_ROOT/docs/change-plans/PLAN-0019-implement-fs-0019-multi-model-consensus.md"
+  [ -f "$p" ]
+  # A PLAN must not be approved while its primary FS is still draft.
+  local fs_status plan_status
+  fs_status=$(grep -m1 '^status:' "$REPO_ROOT/docs/specifications/FS-0019-multi-model-consensus.md" | awk '{print $2}')
+  plan_status=$(grep -m1 '^status:' "$p" | awk '{print $2}')
+  if [ "$fs_status" = "draft" ]; then
+    [ "$plan_status" = "draft" ]
+  fi
 }
 
 @test "FS-0019 has test-harness note about consumer-repo fixtures" {
