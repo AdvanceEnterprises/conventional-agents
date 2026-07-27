@@ -43,7 +43,7 @@ Feature spec IDs currently skip from FS-0002 to FS-0003 (IDs 0003–0010 were ne
 ## ID Mapping
 
 | Old ID | New ID | Title |
-|---|---|---|
+| --- | --- | --- |
 | FS-0001 | FS-0001 | Markdownlint Integration for ADR Quality Gates |
 | FS-0002 | FS-0002 | Move Workflow Skills into conventional-agents |
 | ~~FS-0011~~ | **FS-0003** | Git + gh CLI Conventions |

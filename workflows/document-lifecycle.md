@@ -9,7 +9,7 @@ It is part of the conventional-agents exported surface and applies to any projec
 ## Feature Specs (FS)
 
 | Status | Meaning | Who transitions | When |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `draft` | Under development, not ready for implementation | Agent or human creates | Initial creation |
 | `approved` | Reviewed and ready for implementation | Human approves (merge of spec PR) | After review |
 | `in-progress` | Implementation actively underway | Agent sets when starting PLAN execution | First implementation commit |
@@ -19,7 +19,7 @@ It is part of the conventional-agents exported surface and applies to any projec
 ## Change Plans (PLAN)
 
 | Status | Meaning | Who transitions | When |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `draft` | Under development | Agent or human creates | Initial creation |
 | `approved` | Ready for execution | Human approves (merge of plan PR) | After review |
 | `in-progress` | Execution underway | Agent sets when starting | First implementation commit |
@@ -28,7 +28,7 @@ It is part of the conventional-agents exported surface and applies to any projec
 ## Architecture Decision Records (ADR)
 
 | Status | Meaning | Who transitions | When |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `proposed` | Under consideration | Agent or human creates | Initial creation |
 | `accepted` | Decision made and binding | Human accepts (merge of ADR PR) | After review |
 | `deprecated` | No longer relevant | Human or agent | When context changes |

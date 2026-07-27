@@ -1,56 +1,87 @@
-# Repository Guidelines
+# Agent Instructions: conventional-agents
 
-This repository is a documentation and template kit for AI-assisted development. It is consumed via filesystem paths and git submodules.
+This repository is the `conventional-agents` framework. It provides governance
+documents, role contracts, templates, skills, and workflow patterns for
+agentic development. The framework is recursive: it governs itself and is also
+vendored by other projects.
 
-## Project Structure & Module Organization
+## On Entry
 
-- `guidelines/`: Evidence-based engineering and testing guides.
-- `roles/`: Role contracts and universal guardrails.
-- `templates/`: Reusable templates (ADRs, feature specs, change plans, reviews).
-- `docs/`: Architecture (`docs/ARC42.md`), decisions (`docs/decisions/`), and specs (`docs/specifications/`).
-- `skills/`: Portable skill modules (`skills/<topic>/SKILL.md`).
-- `vendor/`: Upstream submodules (arc42 template, MADR).
+1. Load the `role-aware-session` skill.
+2. Infer the session mode from the work the human describes.
+3. State the mode, primary role, and any supporting roles.
+4. Confirm with the human before acting if the mode is unclear.
 
-There is no application source code or runtime assets in this repo.
+## Foundation Standards
 
-## Build, Test, and Development Commands
+- `guidelines/ROLE_CONTRACT.md` — role definitions and universal gates
+- `roles/ROLE_CONTRACT.md` — project-customizable role contract
+- `INTEGRATION.md` — integration patterns and precedence rules
+- `workflows/session-modes.md` — session mode definitions
+- `docs/decisions/README.md` — accepted ADRs (binding constraints)
 
-No build or test commands are required for day-to-day work.
-- Optional doc linting: `npm install` then `npm run lint:docs` (or `npm run lint:adrs` etc.)
-- Git submodules: `git submodule update --init` to populate `vendor/`
+## Working on the Framework Itself
 
-## Coding Style & Naming Conventions
+This repo contains no application code. Quality is documentation-centric.
 
-Content is Markdown. Follow MADR formatting for ADRs and keep one-sentence-per-line style.
-Naming patterns:
-- ADRs: `docs/decisions/ADR-0001.md`
-- Feature specs: `docs/specifications/FS-0001-<name>.md`
-- Skills: `skills/<topic>/SKILL.md`
+- ADRs go in `docs/decisions/ADR-XXXX-<slug>.md`.
+- Feature specs go in `docs/specifications/FS-XXXX-<slug>.md`.
+- Change plans go in `docs/change-plans/PLAN-XXXX-<slug>.md`.
+- Skills go in `skills/<topic>/SKILL.md`.
+- Follow the document lifecycle in `workflows/document-lifecycle.md`.
 
-## Testing Guidelines
+### Exported Surface vs Internal Governance
 
-There are no code tests in this repository. Quality gates are documentation-centric.
-If you add ADRs, ensure they remain lint-clean once markdownlint is enabled (see `docs/decisions/README.md`).
+| Exported surface (consumers may reference) | Internal governance (framework evolution only) |
+| --- | --- |
+| `guidelines/` | `docs/specifications/` |
+| `roles/` | `docs/change-plans/` |
+| `skills/` | `docs/decisions/` |
+| `templates/` | `docs/ARC42.md` |
+| `workflows/` | `package.json` |
+| `INTEGRATION.md` | `CHANGELOG.md` |
+| `AGENTS.md` | `test/` |
 
-**For projects consuming this kit:** the framework follows a BDD/TDD workflow (Docs → Tests → Code).
-Agents MUST run the project's test suite and verify tests pass before committing changes.
-See `guidelines/ROLE_CONTRACT.md` for role definitions and the testing-first workflow.
+The framework `vendor/` directory is framework-internal. Only `vendor/madr/`
+remains as operational infrastructure for ADR linting. Do not reference
+nested vendor paths in consumer-facing content. See `ADR-0017`.
 
-Language-specific testing guidance:
+### Process Gates
 
-- Bash: `guidelines/bash/BASH_TESTING_GUIDE.md`
-- Python: `guidelines/python/PYTHON_TESTING_GUIDE.md`
-- JavaScript/TypeScript: `guidelines/javascript/JS_TESTING_GUIDE.md`
+- `npm run check:status` — FS/PLAN status consistency and README index sync
+- `npm run lint:docs` — lint all governed documents
+- `npm run lint:adrs` — lint ADRs specifically
+- `npm run lint:specs` — lint feature specs
+- `npm run lint:workflows` — lint workflow docs
 
-## Commit & Pull Request Guidelines
+### Commit and PR Conventions
 
-No formal commit message convention is established. Use clear, descriptive messages (e.g., "Add ADR-000X for <decision>").
-Pull requests should:
-- State the document(s) changed and intent.
-- Link related ADRs or specs when applicable.
-- Avoid editing submodule contents directly.
-- Confirm all tests pass before submitting (agents MUST NOT commit code with failing tests).
+Use Conventional Commits (lite), defined in `workflows/git-and-gh-conventions.md`:
 
-## Architecture Overview
+- `feat`, `fix`, `docs`, `chore`, `refactor`, `test`
 
-Architecture is documented in `docs/ARC42.md`. Decisions live in `docs/decisions/` and are treated as constraints once accepted.
+PRs must state what changed, link related ADRs/specs when applicable, avoid
+editing submodule contents directly, and confirm all tests pass before
+submitting.
+
+## Non-Overridable Safety Gates (ADR-0012)
+
+- **Do not merge PRs.** Merging is human-gated.
+- **Verify GitHub identity** with `gh auth status` before every `gh` or `git push` operation.
+
+## For Projects Consuming This Framework
+
+Point host-repo agents at `vendor/conventional-agents/AGENTS.md` (this file) and
+`vendor/conventional-agents/INTEGRATION.md`. If the host project is part of an
+organization with its own conventions, also vendor the consumer conventions
+repo as a sibling submodule and reference it in the host `AGENTS.md`.
+
+See `ADR-0016` and the `framework-consumer-integration` skill.
+
+## License
+
+MIT License. See `LICENSE`.
+
+---
+
+**Framework Version:** 2.1.0 | **Last Updated:** 2026-07-27

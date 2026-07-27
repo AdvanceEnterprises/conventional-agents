@@ -315,7 +315,7 @@ gh pr status
 
 ### Changelog Conventions
 
-Follow Keep a Changelog format (`vendor/keep-a-changelog/`).
+Follow Keep a Changelog format (<https://keepachangelog.com>). This framework uses a curated subset.
 
 Sections (use only those that apply per release):
 

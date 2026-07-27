@@ -126,7 +126,7 @@ Define in `workflows/document-lifecycle.md`:
 **Feature Specs (FS):**
 
 | Status | Meaning | Who transitions | When |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `draft` | Under development, not ready for implementation | Agent or human creates | Initial creation |
 | `approved` | Reviewed and ready for implementation | Human approves (merge of spec PR) | After review |
 | `in-progress` | Implementation actively underway | Agent sets when starting PLAN execution | First implementation commit |
@@ -136,7 +136,7 @@ Define in `workflows/document-lifecycle.md`:
 **Change Plans (PLAN):**
 
 | Status | Meaning | Who transitions | When |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `draft` | Under development | Agent or human creates | Initial creation |
 | `approved` | Ready for execution | Human approves (merge of plan PR) | After review |
 | `in-progress` | Execution underway | Agent sets when starting | First implementation commit |

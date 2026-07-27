@@ -124,53 +124,93 @@ Result: invalid by default. If you truly must, document a narrowly-scoped except
 
 ⸻
 
-Integration Patterns
+## Integration Patterns
 
-Pattern 1: submodule with minimal stubs
+### Choosing a Pattern
+
+| Scenario | Use This Pattern | Submodules |
+|---|---|---|
+| Single repo, baseline framework guidance | Pattern 1 or 3 | `vendor/conventional-agents` |
+| Organization with shared conventions | Pattern 4 | `vendor/conventional-agents` + `vendor/<consumer-conventions>` |
+| Tool only reads root files | Pattern 2 | None (copy-in) |
+| Heavy customization of the framework | Fork conventional-agents | `vendor/conventional-agents` (fork URL) |
+
+### Pattern 1: submodule with minimal stubs
 
 When to use:
--	Teams or orgs that want consistent standards across multiple repos
--	Repos that will update conventional-agents over time
+- Teams or orgs that want consistent standards across multiple repos
+- Repos that will update conventional-agents over time
 
 Structure:
 
+```text
 your-repo/
 ├── AGENTS.md
 ├── CLAUDE.md (optional)
 └── vendor/
     └── conventional-agents/
-        ├── ...
-        └── vendor/
-            ├── conventional-commits/   # Conventional Commits spec
-            └── keep-a-changelog/       # Keep a Changelog spec
+```
 
 Pros:
--	Single source of truth
--	Easy updates
+- Single source of truth
+- Easy updates
 
 Cons:
--	Requires submodule discipline
+- Requires submodule discipline
 
-Pattern 2: copy-in with local customization
+AGENTS.md stub:
+
+```text
+# Agent Instructions
+
+## Read First
+- vendor/conventional-agents/guidelines/ROLE_CONTRACT.md
+- vendor/conventional-agents/INTEGRATION.md
+- vendor/conventional-agents/workflows/session-modes.md
+
+## Universal Gates
+- vendor/conventional-agents/roles/ROLE_CONTRACT.md
+
+## Project-Specific Rules
+(Add your project-specific context here)
+
+## Precedence
+See vendor/conventional-agents/INTEGRATION.md
+```
+
+### Pattern 2: copy-in with local customization
 
 When to use:
--	Tools that only read root files
--	One-off snapshots or prototypes where drift is acceptable
+- Tools that only read root files
+- One-off snapshots or prototypes where drift is acceptable
 
 Pros:
--	No submodule setup
+- No submodule setup
 
 Cons:
--	Drift risk
+- Drift risk
 
 If you copy, record the snapshot in root AGENTS.md:
--	“Copied from conventional-agents version ”
+- "Copied from conventional-agents version <commit/tag>"
 
-Pattern 3: hybrid (recommended default)
+### Pattern 3: hybrid (recommended default)
 
 Submodule for canonical content plus small root stubs with project additions.
 
-Pattern 4: submodule + consumer conventions repo
+Add a minimal `CLAUDE.md` or `.cursorrules`:
+
+```text
+Defer to AGENTS.md.
+Foundation:
+- vendor/conventional-agents/guidelines/ROLE_CONTRACT.md
+- vendor/conventional-agents/roles/ROLE_CONTRACT.md
+
+Precedence: vendor/conventional-agents/INTEGRATION.md
+```
+
+Keep tool-specific files short. Put project specifics in `AGENTS.md`.
+
+### Pattern 4: submodule + consumer conventions repo
 
 When to use:
 - Organizations or individuals whose setup spans multiple repos
@@ -180,15 +220,18 @@ When to use:
 
 Structure:
 
+```text
 your-repo/
 ├── AGENTS.md
 ├── CLAUDE.md (optional)
 └── vendor/
     ├── conventional-agents/        # Framework
     └── tais-den-conventions/     # Consumer/org conventions
+```
 
 AGENTS.md:
 
+```text
 # Agent Instructions
 
 ## Foundation Standards
@@ -204,6 +247,7 @@ AGENTS.md:
 
 ## Precedence
 See vendor/conventional-agents/INTEGRATION.md
+```
 
 Rules:
 
@@ -213,8 +257,12 @@ Rules:
   its own dogfooding, but consuming projects must not rely on that nested
   path. Always vendor both submodules as siblings.
 - Updates to consumer conventions are independent of framework updates.
+- The framework's `vendor/` directory is framework-internal. No consumer
+  documentation, AGENTS.md, CLAUDE.md, or tool config should reference
+  `vendor/conventional-agents/vendor/...` paths.
 
-For more details, see ADR-0016: Consumer conventions.
+For more details, see ADR-0016: Consumer conventions and ADR-0017: Framework
+vendor directory is internal.
 
 ⸻
 
@@ -372,7 +420,10 @@ Solutions:
 Updates break existing setup
 
 Symptoms:
--	After updating the submodule, paths or expectations changed
+- After updating the submodule, paths or expectations changed
+- A consumer-facing file now references `vendor/conventional-agents/vendor/...`
+- The framework's `README.md` or `INTEGRATION.md` now describes a structure
+  that differs from your local integration
 
 Diagnosis:
 
@@ -383,22 +434,53 @@ git log --oneline HEAD@{1}..HEAD
 cd ../..
 
 Solutions:
-1.	Review CHANGELOG.md (if present)
-2.	Pin to a known good tag or commit
-3.	Update stubs only if stable paths were deprecated
+1. Review CHANGELOG.md (if present)
+2. Pin to a known good tag or commit
+3. Update stubs only if stable paths were deprecated
+4. Remove any references to nested vendor paths; use framework files or upstream URLs
+5. If using consumer conventions, confirm the sibling submodule relationship
 
 Tool only reads root files
 
 Symptoms:
--	Tool does not follow vendor/ references
+- Tool does not follow vendor/ references
 
 Diagnosis:
--	Tool limitation
+- Tool limitation
 
 Solutions:
-1.	Copy the needed docs to root
-2.	Update AGENTS.md to reference the copied files
-3.	Record the snapshot version and schedule periodic sync
+1. Copy the needed docs to root
+2. Update AGENTS.md to reference the copied files
+3. Record the snapshot version and schedule periodic sync
+4. Consider using Pattern 2 (copy-in) instead of submodules for that tool
+
+Consumer conventions not found
+
+Symptoms:
+- `vendor/tais-den-conventions/` is empty or missing
+- Agent cannot find org-specific ADRs
+
+Diagnosis:
+
+git submodule status
+
+Solutions:
+1. Run `git submodule update --init`
+2. Confirm `.gitmodules` includes the consumer conventions repo
+3. Confirm the submodule is a sibling of `vendor/conventional-agents/`, not nested inside it
+
+Nested vendor path leak
+
+Symptoms:
+- AGENTS.md, CLAUDE.md, or a tool config references `vendor/conventional-agents/vendor/...`
+
+Diagnosis:
+- Violation of ADR-0017
+
+Solutions:
+1. Replace the nested path with the framework file path or upstream URL
+2. If the needed content is not in the framework's exported surface, copy it into the host repo
+3. If the framework is missing the wrapper you need, open an issue or PR against conventional-agents
 
 ⸻
 
