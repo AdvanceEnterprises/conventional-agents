@@ -11,7 +11,9 @@ interfaces:
   - "guidelines/ROLE_CONTRACT.md"
   - "skills/git-gh-workflow/SKILL.md"
   - "docs/specifications/README.md"
-related_adrs: []
+related_adrs:
+  - ADR-0018
+  - ADR-0012
 supersedes: []
 requires: []
 tags: [workflow, triggers, agent-orchestration, github-projects]
@@ -34,6 +36,15 @@ PARSING_HINTS:
 ## Status
 
 - Draft
+
+## Plan Status
+
+- **Not yet drafted.** Per `workflows/document-lifecycle.md`, PLANs
+  are drafted after the FS is approved and immediately before
+  implementation. Drafting a PLAN for a `draft` FS would be
+  premature.
+- Open questions blocking PLAN drafting are listed in the
+  "Open Questions" section below.
 
 ## Summary
 
@@ -192,20 +203,22 @@ agent-stance comment rule applying to agent transitions.
 - **First artifact**: Issue body contains the casual description.
 - **First actor**: Hermes Agent (autonomous), assuming Head
   Architect role.
-- **First action**: agent reads Issue, elevates to Type `spec` Issue
-  with summary of what the FS should cover. Transitions label
-  `enhancement` → `spec`, Status → Approved.
+- **First action**: agent reads Issue, elevates to Type `feature`
+  with label `spec`, and Status → Approved. (Type `spec` is not a
+  valid Type value; the Type axis is restricted to `{feature, bug,
+  task}`.) The Issue body now carries the Head Architect's summary
+  of what the FS should cover.
 - **Next step**: Document Author or Implementer agent (human-in-loop
   or autonomous) drafts the FS in a new branch, referencing this
   Issue.
 
-### Path 2: Head Architect conversation produces Type `spec` Issue
+### Path 2: Head Architect conversation produces Type `feature` Issue
 
 - **Trigger**: a Hermes GUI or web-interface conversation between
   human and agent (Head Architect role) reaches a conclusion about
   new work.
-- **First artifact**: Issue of Type `spec`, label `spec`, with the
-  Head Architect's summary as the Issue body.
+- **First artifact**: Issue of Type `feature`, label `spec`, with
+  the Head Architect's summary as the Issue body.
 - **First actor**: Hermes Agent (hybrid session).
 - **First action**: agent creates the Issue with the summary as body,
   no FS yet.
@@ -238,8 +251,11 @@ Where:
 
 - `mode` is one of the five session modes from
   `workflows/session-modes.md` (architecture-planning,
-  document-authoring, implementation, review, communications) or
-  a future autonomous-mode equivalent.
+  document-authoring, implementation, review, communications), or
+  one of the additional mode values defined by FS-0019
+  (consensus) and this spec (autonomous, for cron/webhook-fired
+  agents without a human present). The mode value must be one of
+  this enumerated set; non-enumerated values are invalid.
 - `role` is the primary role from `guidelines/ROLE_CONTRACT.md`.
 - `model` is the model identifier (per ADR-0018).
 - `session-name` is the cron job name, webhook event source, or
@@ -320,7 +336,7 @@ Each bullet MUST be objectively testable.
   Issue's label transitions to `spec` and Status transitions to
   Approved.
 - Given Path 2 (Head Architect conversation concludes), when the
-  conversation ends, then an Issue exists with Type `spec`, label
+  conversation ends, then an Issue exists with Type `feature`, label
   `spec`, and Status `Approved`, whose body matches the
   conversation's conclusion.
 - Given Path 3 (autonomous detection), when the detection signal
@@ -358,6 +374,15 @@ Each bullet MUST be objectively testable.
 - Given an Issue transition by an agent, when the Issue timeline is
   read, then the agent-stance comment precedes the transition by no
   more than one Issue event (label change, Status change, comment).
+
+**Cron actor identity (blocker for Path 3)**:
+
+- Given a cron-fired agent creating or transitioning an Issue, when
+  the resulting commit or Issue comment is read, then the actor
+  identity is unambiguous: it identifies as a cron-fired actor (not
+  as Joey or as an interactive agent), it carries an
+  `Agent-Attribution:` trailer or comment with `mode=autonomous`,
+  and it cites the cron job name in `session=<cron-job-name>`.
 
 ## Edge Cases
 
@@ -419,10 +444,12 @@ Each bullet MUST be objectively testable.
   what `user.email` and GitHub identity applies? The active
   service-account identity? An explicitly-configured
   `cron@tais-den.dev` style? This needs ADR-0018's commit-attribution
-  layer to extend to cron-fired actors. Confirm scope.
+  layer to extend to cron-fired actors. **This is a blocker for
+  Path 3 implementation; resolve before approving this FS.** See
+  Success Criterion "Cron actor identity" below.
 - **Multi-Issue consolidation**: if Path 1 produces three related
   `enhancement` Issues, does the Head Architect agent produce one
-  consolidated Type `spec` Issue or one per Issue? My read: one
+  consolidated Type `feature` Issue or one per Issue? My read: one
   consolidated Issue, with the three original Issues linked as
   "blocked by" or "related." Confirm.
 - **Auto-add workflow**: per FS-0011, auto-add to project is
