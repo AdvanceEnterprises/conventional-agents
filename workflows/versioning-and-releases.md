@@ -127,7 +127,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com).
 ## Agent-Safe vs Human-Gated Actions (Summary)
 
 | Action | Agent-safe? | Notes |
-|---|---|---|
+| --- | --- | --- |
 | Draft changelog entries | Yes (when instructed) | Append to `[Unreleased]` only |
 | Bump minor/patch version | Yes (when instructed) | Release-prep PRs only |
 | Bump major version | **No** | Requires human approval |
