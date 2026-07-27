@@ -41,10 +41,12 @@ PARSING_HINTS:
 
 ## Plan Status
 
-- **Not yet drafted.** Per `workflows/document-lifecycle.md`, PLANs
-  are drafted after the FS is approved and immediately before
-  implementation. Drafting a PLAN for a `draft` FS would be
-  premature.
+- **Drafted as PLAN-0018** (`status: draft`), as part of the PR #71
+  bootstrap package. This is a deliberate, one-time departure from
+  the usual ordering in `workflows/document-lifecycle.md`, where
+  PLANs are drafted after the FS is approved. PLAN-0018 cannot be
+  approved until this FS is approved; its Readiness Check records
+  that dependency.
 - **Cron identity precondition**: Path 3 (autonomous Issue creation)
   cannot be implemented until the cron-identity question (Open
   Questions) is resolved via ADR-0018 extension or separate ADR.
