@@ -12,6 +12,7 @@ interfaces:
   - "skills/git-gh-workflow/SKILL.md"
   - "docs/specifications/README.md"
   - "test/FS-0018/issue-lifecycle.bats"
+  - "GitHub Project custom single-select field: Issue Type (feature, bug, task)"
 related_adrs:
   - ADR-0018
   - ADR-0012
@@ -433,14 +434,14 @@ Each bullet MUST be objectively testable.
 
 ## Dependencies
 
-- GitHub Issues with a Type classification mechanism. This may be
-  GitHub's native Issue Types (org-level beta feature), a custom
-  single-select field on the GitHub Project board (as used by
-  FS-0011's `Doc Type` field), or a consumer-implemented
-  convention (e.g., a `type:` prefix in the Issue title). The
-  framework describes the required behavior; consumer repos
-  choose the mechanism that matches their GitHub plan and org
-  settings. See Open Question \"Type field mechanism\" below.
+- **Issue Type field mechanism**: The framework recommends a **GitHub
+  Project custom single-select field** (parallel to FS-0011's `Doc Type`
+  field) with options `feature`, `bug`, `task`. Consumer repos implement
+  this via their project board configuration. For repos without Projects,
+  a consumer-implemented convention (e.g., `type:` prefix in Issue title)
+  is an acceptable fallback. The framework describes the required
+  behavior; consumer repos choose the mechanism that matches their GitHub
+  plan and org settings.
 - GitHub Labels API for label management.
 - GitHub Projects v2 for the Status field. Status transitions
   require `gh project` CLI or GraphQL API access.
@@ -467,14 +468,6 @@ Each bullet MUST be objectively testable.
   layer to extend to cron-fired actors. **This is a blocker for
   Path 3 implementation; resolve before approving this FS.** See
   Success Criterion "Cron actor identity" below.
-- **Type field mechanism**: GitHub does not have a universal
-  single-valued "Type" field on Issues. The mechanism varies by
-  GitHub plan: native Issue Types (org-level beta), custom
-  Project fields, or a consumer-implemented convention. The spec
-  should clarify which mechanism(s) the framework recommends and
-  whether the framework provides a fallback convention for repos
-  without org-level Issue Types. **This affects portability of
-  the convention across consumer repos.**
 - **Multi-Issue consolidation**: if Path 1 produces three related
   consolidated Type `feature` Issue or one per Issue? My read: one
   consolidated Issue, with the three original Issues linked as
