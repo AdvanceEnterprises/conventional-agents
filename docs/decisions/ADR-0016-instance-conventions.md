@@ -1,7 +1,7 @@
 ---
 type: adr
 id: ADR-0016
-status: proposed
+status: accepted
 decision_scope: architecture
 reversible: yes
 related_specs:
@@ -13,7 +13,7 @@ superseded_by: null
 
 ## Status
 
-- Proposed
+- Accepted
 
 ## Context and Problem Statement
 
@@ -111,7 +111,7 @@ we use the term **consumer conventions**.
 A consumer conventions repository is a small documentation repository with
 its own governance, optionally vendoring the framework for its own use.
 
-```
+```text
 tais-den-conventions/
 ├── README.md                    # Consumer/org overview, how to consume
 ├── ADR-0001.md                  # Consumer-specific decisions
@@ -126,7 +126,7 @@ Projects that follow the consumer conventions vendor both the framework and the
 consumer conventions repository as sibling submodules. They must not rely on
 a nested framework path inside the consumer conventions repository.
 
-```
+```text
 feral-fleet/
 ├── vendor/conventional-agents/     # Framework
 ├── vendor/tais-den-conventions/  # Consumer conventions
