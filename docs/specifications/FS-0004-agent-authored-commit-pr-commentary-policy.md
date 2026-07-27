@@ -10,17 +10,21 @@ interfaces:
 related_adrs:
   - ADR-0011
   - ADR-0012
+  - ADR-0018
 supersedes: []
 requires:
   - FS-0003
   - FS-0014
+  - FS-0017
+  - FS-0018
+  - FS-0019
 tags:
   - git
   - github
   - agents
   - roles
 created: 2026-02-07
-updated: 2026-06-08
+updated: 2026-07-27
 ---
 
 <!--
@@ -100,6 +104,25 @@ Required fields for non-trivial commits:
 - **Risk** — what could break or regress (write "none" if genuinely none).
 - **Validation** — what was run to verify correctness (write "not run" if not
   applicable, e.g., doc-only changes with no test suite).
+
+In addition to the four required fields above, agent-authored commits MUST carry
+attribution trailers per [FS-0017](FS-0017-single-identity-commit-attribution.md)
+and [ADR-0018](../decisions/ADR-0018-single-identity-workflow-with-agent-co-attribution.md):
+
+- **`Co-authored-by:`** trailer naming the non-primary actor for hybrid sessions
+  (e.g., `Co-authored-by: Hermes Agent <hermes-agent@tais-den.dev>`).
+- **`Agent-Attribution:`** trailer recording `actor=<actor>; model=<model>;
+  role=<role>; session=<session-name>` so the commit is parseable by
+  `git log --format=%(trailers)` and verifiable by the framework's bats tests.
+
+The `role` value in the `Agent-Attribution:` trailer must be one of the seven
+mode values from the session-mode vocabulary: `architecture-planning`,
+`document-authoring`, `implementation`, `review`, `communications` (per
+`workflows/session-modes.md`), plus `autonomous` (for cron/webhook-fired
+agents, per [FS-0018](FS-0018-issue-lifecycle-and-autonomous-triggers.md))
+and `consensus` (for multi-model consensus rounds, per
+[FS-0019](FS-0019-multi-model-consensus.md)). The `session` value is the
+interactive session name, cron job name, or webhook event source.
 
 Do not include secrets, tokens, private keys, or credentials in commit messages.
 
@@ -181,6 +204,36 @@ comment summarizing:
 - what changed in response (one line per item)
 - what validation was performed, or explicitly "not run"
 
+### Issue-stance comments (autonomous and hybrid agents)
+
+When an agent transitions an Issue (label change, Status change, comment) under
+autonomous or hybrid conditions, the agent MUST post an Issue comment in the
+`agent-stance:` format defined by
+[FS-0018](FS-0018-issue-lifecycle-and-autonomous-triggers.md) §"Agent Stance on
+Issue Comments":
+
+```text
+agent-stance: mode=<mode>; role=<role>; model=<model>; session=<session-name>; rationale=<one-line reason>
+```
+
+The `mode` value must be one of the seven mode values from the session-mode
+vocabulary (see Commit body section above). For autonomous cron/webhook-fired
+agents, `mode=autonomous` and `session=<cron-job-name>`; for interactive
+sessions, `session=<session-identifier>`.
+
+The Issue-stance comment is the persistent record of the agent's role stance
+for that Issue action. It is the autonomous-equivalent of the role-transition
+phrase required by `guidelines/ROLE_CONTRACT.md` §"Role and session
+transparency" for interactive sessions. The `agent-stance:` comment is
+required for *every* Issue action by an agent, not just for status
+transitions; label-only changes, comment-only updates, and Issue creation
+each require a preceding `agent-stance:` comment if the actor is an agent.
+
+This is forward-referenced to [FS-0018](FS-0018-issue-lifecycle-and-autonomous-triggers.md);
+that spec defines the full Issue lifecycle and is the canonical reference for
+Issue-stance format. This section in FS-0004 is the policy reminder; FS-0018
+is the spec.
+
 ---
 
 ## Success Criteria
@@ -225,8 +278,19 @@ Each bullet MUST be objectively testable.
 - FS-0003: Git + gh conventions (commit subjects, branching, merge strategy).
 - FS-0014: Six-role model — this spec's per-role templates depend on the roles defined
   there.
+- FS-0017: Single-identity commit attribution — defines the `Co-authored-by:` and
+  `Agent-Attribution:` trailer format and the actor-email convention. FS-0004's commit
+  body section now references these trailers.
+- FS-0018: Issue lifecycle and autonomous triggers — defines the `agent-stance:`
+  Issue comment format. FS-0004's Issue-stance comments section is a policy reminder;
+  FS-0018 is the canonical spec.
+- FS-0019: Multi-model consensus at workflow gates — defines the `consensus` mode
+  value and the consensus round artifact shape. FS-0004's mode vocabulary includes
+  `consensus` per FS-0019.
 - ADR-0011: Multi-identity model — agent-committer vs. agent-reviewer identities.
 - ADR-0012: Non-overridable gates — PR merge prohibition is not relaxed by this policy.
+- ADR-0018: Single-identity workflow with agent co-attribution — ratifies the
+  commit-attribution convention that FS-0004 references.
 
 ## Rollout / Migration
 
@@ -241,4 +305,20 @@ Each bullet MUST be objectively testable.
 
 ## Open Questions
 
-None.
+- **Model metadata in commit body vs trailer**: the `Agent-Attribution:` trailer
+  includes `model=<model>`. The four required commit body fields (Why / What /
+  Risk / Validation) do not currently include a model field. Should model
+  metadata be (a) trailer-only, (b) duplicated in the commit body, or
+  (c) optional in the body and trailer is the source of truth? My read:
+  (c) — trailer is canonical, body may repeat for reader convenience. Confirm.
+- **Issue-stance comment placement**: should the `agent-stance:` comment be the
+  *first* comment on the Issue (regardless of who acted first), or should it
+  be posted immediately before the action it describes? My read: immediately
+  before, so the Issue timeline reads `agent-stance: ...` followed by the
+  action (label change, Status change, etc.) as the next two events. Confirm.
+- **Role value in Issue-stance vs `Co-authored-by:` trailer**: the trailer uses
+  a full role name (e.g., `Hermes Agent`); the Issue-stance `role=` field
+  uses the framework role (e.g., `Document Author`). Should these be the
+  same? My read: they are intentionally different — the trailer names the
+  *actor* (a person or agent instance), the Issue-stance names the *role*
+  (a framework role). Confirm.
