@@ -170,6 +170,52 @@ Pattern 3: hybrid (recommended default)
 
 Submodule for canonical content plus small root stubs with project additions.
 
+Pattern 4: submodule + consumer conventions repo
+
+When to use:
+- Organizations or individuals whose setup spans multiple repos
+- Cases where the framework is not enough — there are org-specific or
+  consumer-specific conventions (tool boundaries, identity mappings,
+  planning surface rules) that must be documented separately
+
+Structure:
+
+your-repo/
+├── AGENTS.md
+├── CLAUDE.md (optional)
+└── vendor/
+    ├── conventional-agents/        # Framework
+    └── tais-den-conventions/     # Consumer/org conventions
+
+AGENTS.md:
+
+# Agent Instructions
+
+## Foundation Standards
+- vendor/conventional-agents/guidelines/ROLE_CONTRACT.md
+- vendor/conventional-agents/workflows/session-modes.md
+
+## Consumer Conventions
+- vendor/tais-den-conventions/README.md
+- vendor/tais-den-conventions/ADR-0001-notion-github-boundary.md
+
+## Project-Specific Rules
+(Add your project-specific context here)
+
+## Precedence
+See vendor/conventional-agents/INTEGRATION.md
+
+Rules:
+
+- Consumer conventions use the same ADR format as the framework but are
+  governed by the consumer, not by conventional-agents.
+- The consumer conventions repo may itself vendor conventional-agents for
+  its own dogfooding, but consuming projects must not rely on that nested
+  path. Always vendor both submodules as siblings.
+- Updates to consumer conventions are independent of framework updates.
+
+For more details, see ADR-0016: Consumer conventions.
+
 ⸻
 
 Tool-Specific Integration
