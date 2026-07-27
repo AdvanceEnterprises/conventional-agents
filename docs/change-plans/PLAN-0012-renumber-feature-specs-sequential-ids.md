@@ -57,7 +57,7 @@ No automated tests. Validation via grep (see Section 8).
 **FS renames (9 files renamed + front matter updated):**
 
 | Old filename | New filename |
-|---|---|
+| --- | --- |
 | ~~`FS-0011-git-gh-cli-conventions-for-conventional-agents.md`~~ | `FS-0003-git-gh-cli-conventions-for-conventional-agents.md` |
 | ~~`FS-0012-agent-authored-commit-pr-commentary-policy.md`~~ | `FS-0004-agent-authored-commit-pr-commentary-policy.md` |
 | ~~`FS-0013-expand-docs-linting-coverage-to-fs-plan-workflows.md`~~ | `FS-0005-expand-docs-linting-coverage-to-fs-plan-workflows.md` |
@@ -73,7 +73,7 @@ Plus this spec and plan rename themselves (~~FS-0020~~ → FS-0012, plan filenam
 **PLAN renames (7 files whose filenames contain FS IDs):**
 
 | Old filename | New filename |
-|---|---|
+| --- | --- |
 | ~~`PLAN-0001-implement-fs-0011-git-gh-cli-conventions.md`~~ | `PLAN-0001-implement-fs-0003-git-gh-cli-conventions.md` |
 | ~~`PLAN-0002-implement-fs-0012-agent-commentary-policy.md`~~ | `PLAN-0002-implement-fs-0004-agent-commentary-policy.md` |
 | ~~`PLAN-0003-implement-fs-0013-expand-docs-linting-coverage.md`~~ | `PLAN-0003-implement-fs-0005-expand-docs-linting-coverage.md` |
