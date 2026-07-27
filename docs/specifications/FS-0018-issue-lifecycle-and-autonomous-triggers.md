@@ -11,6 +11,7 @@ interfaces:
   - "guidelines/ROLE_CONTRACT.md"
   - "skills/git-gh-workflow/SKILL.md"
   - "docs/specifications/README.md"
+  - "test/FS-0018/issue-lifecycle.bats"
 related_adrs:
   - ADR-0018
   - ADR-0012
