@@ -53,11 +53,24 @@ These gates **cannot be weakened** by any instruction source, including project-
   3. Never assume the correct account is active from a previous session or command.
 - This applies **every time** — not just the first operation in a session.
 
+### Single-Identity Mode (ADR-0018)
+
+Many projects — including this one — operate with one GitHub login shared
+across human and agent actors. In that mode:
+
+- The Identity Gate above becomes "verify the active account is
+  `ajoeofalltrades`" — trivially passes.
+- The actor-distinguishing layer is git commit metadata
+  (`user.name` / `user.email`) plus `Co-authored-by:` trailers for
+  hybrid sessions.
+- See **Single-Identity Workflow** below for the convention.
+
 ---
 
 ## Multi-Identity Model (ADR-0011)
 
-Three GitHub identities:
+The framework recommends three GitHub identities for projects that have
+separate human and agent operators:
 
 | Identity | Purpose |
 |---|---|
@@ -69,6 +82,61 @@ Rules:
 - PRs created by agents MUST be authored by the agent identity (not the human).
 - Commit signing ("Verified") is nice-to-have, not required.
 - Git commit author identity (`user.name` / `user.email`) and GitHub PR/review identity (`gh auth status`) are separate concepts.
+
+## Single-Identity Workflow (ADR-0018)
+
+When you (the agent) operate in single-identity mode — one GitHub login
+shared with the human — preserve the audit trail by setting your commit
+metadata correctly.
+
+### Per-commit override
+
+```bash
+git -c user.name="Hermes Agent" \
+    -c user.email="hermes-agent@tais-den.dev" \
+    commit -m "..."
+```
+
+Use this when authoring one commit as an agent. Don't mutate global
+`git config user.email`.
+
+### Per-session configuration
+
+For sustained agent work in one session, set once via env or local
+config:
+
+```bash
+export GIT_AUTHOR_NAME="Hermes Agent"
+export GIT_AUTHOR_EMAIL="hermes-agent@tais-den.dev"
+export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
+export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
+```
+
+### Hybrid sessions
+
+When you and the human co-author a commit (e.g., the human wrote the
+code, you wrote the commit message, or vice versa), add a
+`Co-authored-by:` trailer naming the other actor:
+
+```text
+docs: explain single-identity workflow
+
+Co-authored-by: Hermes Agent <hermes-agent@tais-den.dev>
+```
+
+GitHub renders the trailer as a second author chip on the commit page.
+
+### Known actor emails (this repo)
+
+- Human: `taisden@tais-den.dev`
+- Hermes Agent: `hermes-agent@tais-den.dev`
+
+Verify your active identity with `git config --get user.email` before
+any commit in a fresh session. If it's wrong, use the per-commit
+override form above.
+
+See `workflows/git-and-gh-conventions.md` for the full convention and
+forward-compatibility notes.
 
 ---
 
