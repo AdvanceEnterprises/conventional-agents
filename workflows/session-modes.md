@@ -204,3 +204,23 @@ project consistently encounters a pattern that does not fit any mode (e.g., a su
 maintenance phase with a distinct role stance), add a sixth mode to your project's
 `roles/session-modes.md`. Do not modify this file in `guidelines/` unless the new mode
 is general enough to apply across all project types that vendor this framework.
+
+---
+
+## Meta-Modes: Autonomous and Consensus
+
+Two additional mode values extend the vocabulary for specialized contexts:
+
+- **`autonomous`** — Agent operates without a human present (cron-fired, webhook-triggered,
+  or delegated subagent). Defined in FS-0018. The agent-stance comment format is the
+  autonomous-equivalent of the role-transition phrase.
+- **`consensus`** — Multi-model consensus round at a workflow gate. Defined in FS-0019.
+  A meta-mode that invokes one of the standard modes (Document Author, Reviewer, etc.)
+  with the constraint that multiple independent models participate.
+
+These are **meta-modes**: they describe *how* a session is executed (unattended or
+multi-model) rather than *what* role stance the agent adopts. When using a meta-mode,
+the agent still declares its primary role (e.g., `role=Head Architect` with
+`mode=autonomous`).
+
+See FS-0018 and FS-0019 for full definitions.

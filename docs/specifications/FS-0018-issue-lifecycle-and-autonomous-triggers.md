@@ -45,6 +45,12 @@ PARSING_HINTS:
   are drafted after the FS is approved and immediately before
   implementation. Drafting a PLAN for a `draft` FS would be
   premature.
+- **Cron identity precondition**: Path 3 (autonomous Issue creation)
+  cannot be implemented until the cron-identity question (Open
+  Questions) is resolved via ADR-0018 extension or separate ADR.
+  **This FS may be approved without Path 3 being implementable** —
+  Paths 1 and 2 are fully specified and implementable pending only
+  the Type field mechanism (resolved in Dependencies).
 - Open questions blocking PLAN drafting are listed in the
   "Open Questions" section below.
 
