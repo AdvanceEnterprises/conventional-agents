@@ -22,15 +22,17 @@ preserve an audit trail, avoid agents reviewing their own work under the same
 identity. The model assumes three GitHub accounts.
 
 The current operational reality of this repository is different. Only one
-GitHub account is in use (`ajoeofalltrades` / Tai Solstag), and two agents
-currently operate in or against the repo: **Hermes Agent** (running on
-`hades-01` via Quadlet, also operating in interactive sessions like this one)
-and **GitHub Copilot** (operating via IDE integration). More agents may be
-added later, but the identity model must work today with these two.
+GitHub account is in use (`ajoeofalltrades` / Joey Clark), and one agent
+currently operates on local files in this repo: **Hermes Agent**
+(running on `hades-01` via Quadlet, also operating in interactive
+sessions like this one). GitHub Copilot is used for cloud-side work but
+does not touch local files in this workflow; if cloud-agent attribution
+becomes relevant, it warrants its own ADR. This ADR is scoped to the
+This ADR is scoped to the local-file workflow.
 
 This creates three concrete problems:
 
-1. **Audit trail ambiguity.** PRs opened by Hermes or Copilot are authored by
+1. **Audit trail ambiguity.** PRs opened by Hermes are authored by
    `ajoeofalltrades`. Reviews posted by an agent are posted by
    `ajoeofalltrades`. A reader of the repository cannot tell, from GitHub
    alone, which actions were human-driven, agent-driven, or hybrid.
@@ -109,17 +111,16 @@ trailer.**
 
 ### The convention
 
-**Single GitHub identity** (`ajoeofalltrades` / Tai Solstag) is used for all
-commits, PRs, and reviews in this repository. The identity layer does not
-distinguish actors.
+**Single GitHub identity** (`ajoeofalltrades` / Joey Clark) is used for
+all commits, PRs, and reviews in this repository. The identity layer
+does not distinguish actors.
 
 **Git `user.email` distinguishes actors** at the commit-metadata level:
 
 | Actor | `user.name` | `user.email` |
 | --- | --- | --- |
-| Human (Tai) | `Tai Solstag` | `taisden@tais-den.dev` |
+| Human (Joey) | `Joey Clark` | `taisden@tais-den.dev` |
 | Hermes Agent | `Hermes Agent` | `hermes-agent@tais-den.dev` |
-| GitHub Copilot | `GitHub Copilot` | `copilot@tais-den.dev` |
 
 These addresses are aliases under the same GitHub login. GitHub will render
 each commit's author email as a link to the `ajoeofalltrades` profile, but
@@ -129,11 +130,18 @@ email.
 **`Co-authored-by:` trailer** names the non-primary actor for hybrid
 sessions:
 
-- A commit where Tai wrote the code and Hermes wrote the commit message
+- A commit where Joey wrote the code and Hermes wrote the commit message
   includes `Co-authored-by: Hermes Agent <hermes-agent@tais-den.dev>` in
   the message body.
-- A commit where Copilot suggested a function and Tai integrated it
-  includes `Co-authored-by: GitHub Copilot <copilot@tais-den.dev>`.
+- A commit where Copilot suggested a function and Joey integrated
+  it into a local commit would include
+  `Co-authored-by: GitHub Copilot <copilot@tais-den.dev>` if and
+  only if Copilot is registered as a local co-author at the time
+  the commit is made. In the current workflow, Copilot's cloud-side
+  suggestions never reach the local commit audit trail on their own;
+  they are surfaced through Joey's edits and committed under
+  Joey's identity. If a future workflow change makes Copilot a
+  co-author of local commits, the convention applies naturally.
 - A pure-agent commit (e.g., autonomous batch update) does not need a
   trailer — the email alone identifies the actor.
 
@@ -166,10 +174,10 @@ Agent-Attribution: actor=Hermes Agent; model=ollama-cloud/deepseek-v4-flash; rol
 ```
 
 ```text
-# Hybrid commit — Tai and Hermes both contributed
+# Hybrid commit — Joey and Hermes both contributed
 Co-authored-by: Hermes Agent <hermes-agent@tais-den.dev>
 Agent-Attribution: actor=Hermes Agent; model=ollama-cloud/deepseek-v4-flash; role=Implementer; session=implementation
-Agent-Attribution: actor=Tai Solstag; model=human; role=Implementer; session=implementation
+Agent-Attribution: actor=Joey Clark; model=human; role=Implementer; session=implementation
 ```
 
 GitHub does not render custom trailers natively, but `git log
@@ -227,12 +235,13 @@ commits, and add `Co-authored-by:` trailers in hybrid sessions.
 
 ### Why not the other options?
 
-**Option A** loses the audit trail entirely. Once Copilot and Hermes are
-both authoring commits invisibly, the repo's history tells no story about
-who did what. This is a step backwards from ADR-0011's intent.
+**Option A** loses the audit trail entirely. Once Hermes and any
+future local-file agents are operating invisibly, the repo's history
+tells no story about who did what. This is a step backwards from
+ADR-0011's intent.
 
 **Option B** preserves the email distinction but loses the hybrid-session
-case. When Tai and Hermes work together on one commit, only the committer's
+case. When Joey and Hermes work together on one commit, only the committer's
 email is recorded; the contributor's involvement is invisible. Two-layer
 attribution is the minimum needed to represent hybrid sessions accurately.
 
@@ -289,7 +298,7 @@ section lists ADR-0011 as the framework-level target).
   `user.email` correctly or the audit trail degrades to Option A.
 - Two email aliases must be kept deliverable (or at least valid) so GitHub
   doesn't reject commit attribution. The `tais-den.dev` domain must
-  remain under Tai's control.
+  remain under Joey's control.
 - Readers of the repo who don't know the convention will see "Hermes
   Agent <hermes-agent@tais-den.dev>" and not realize that's the same
   login as `ajoeofalltrades`. README and AGENTS.md should briefly explain.
@@ -315,7 +324,7 @@ We will consider this decision successful if:
    in this repo's history, with the agent email appearing on commits that
    were agent-driven.
 2. **Hybrid sessions show `Co-authored-by:` trailers.** A representative
-   hybrid commit (one authored by Tai with Hermes drafting, or vice
+   hybrid commit (one authored by Joey with Hermes drafting, or vice
    versa) carries the appropriate trailer.
 3. **The bats test passes.** `test/FS-0016/attribution.bats` (or
    equivalent new test) verifies that every commit on `trunk` and on

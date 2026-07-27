@@ -3,7 +3,7 @@ type: feature-spec
 id: FS-0016
 status: implemented
 title: Framework Internal Vendor Boundary
-owner: taisden
+owner: ajoeofalltrades
 test_required: true
 interfaces:
   - ".gitmodules"

@@ -129,7 +129,6 @@ Agent-authored PRs MUST include enough context for review. Use this template (co
 - Risk / Rollback:
 - Agent Attribution (only if any agent authored this PR):
   - Hermes Agent — model=ollama-cloud/deepseek-v4-flash, role=Implementer, session=implementation
-  - GitHub Copilot — model=copilot, role=Implementer, session=implementation
 
 The Agent Attribution section summarizes the agent actors and their roles
 for the PR as a whole. Per-commit model/role metadata lives in
@@ -214,9 +213,8 @@ distinguishing layer is git's `user.name` / `user.email`:
 
 | Actor | `user.name` | `user.email` |
 | --- | --- | --- |
-| Human (Tai) | `Tai Solstag` | `taisden@tais-den.dev` |
+| Human (Joey) | `Joey Clark` | `taisden@tais-den.dev` |
 | Hermes Agent | `Hermes Agent` | `hermes-agent@tais-den.dev` |
-| GitHub Copilot | `GitHub Copilot` | `copilot@tais-den.dev` |
 
 These addresses are aliases under the same login. GitHub renders each
 commit's author email as a link to the same profile, but `git log`,
@@ -245,8 +243,9 @@ Co-authored-by: Hermes Agent <hermes-agent@tais-den.dev>
 GitHub renders `Co-authored-by:` trailers natively as a second author chip
 on the commit page.
 
-For agent actors (Hermes, Copilot, future agents), also include an
-`Agent-Attribution:` trailer recording the model, role, and session mode:
+For local-file agents (Hermes today, future agents that edit files
+in this repo), also include an `Agent-Attribution:` trailer recording
+the model, role, and session mode:
 
 ```text
 docs: explain single-identity workflow with agent co-attribution
@@ -291,7 +290,7 @@ export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
 
 ### When to use each layer
 
-- **Pure-human commit** (Tai wrote the code, the message, the review):
+- **Pure-human commit** (Joey wrote the code, the message, the review):
   no special action. Default `user.email` should already be
   `taisden@tais-den.dev`.
 - **Pure-agent commit** (agent wrote and committed autonomously):

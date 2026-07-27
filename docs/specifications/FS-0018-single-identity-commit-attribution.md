@@ -3,7 +3,7 @@ type: feature-spec
 id: FS-0018
 status: implemented
 title: Single-identity commit attribution with model, role, and session metadata
-owner: taisden
+owner: ajoeofalltrades
 test_required: true
 interfaces:
   - "docs/decisions/ADR-0018-single-identity-workflow-with-agent-co-attribution.md"
@@ -113,10 +113,10 @@ Each bullet MUST be objectively verifiable, typically by
 
 - **Given the workflow doc, when reading the "Single-identity workflow
   with agent co-attribution" section, then it documents the actor
-  email table with at least three entries (human, Hermes Agent,
-  GitHub Copilot), per-commit override form, per-session configuration
-  form, and the three attribution layers (`user.email`,
-  `Co-authored-by:`, `Agent-Attribution:`).**
+  email table with at least two entries (human, Hermes Agent),
+  per-commit override form, per-session configuration form, and the
+  three attribution layers (`user.email`, `Co-authored-by:`,
+  `Agent-Attribution:`).**
 
 - **Given the workflow doc, when reading the PR body template, then
   it includes an "Agent Attribution" subsection with example entries

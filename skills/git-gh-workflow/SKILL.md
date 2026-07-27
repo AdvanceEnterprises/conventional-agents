@@ -130,7 +130,6 @@ GitHub renders the trailer as a second author chip on the commit page.
 
 - Human: `taisden@tais-den.dev`
 - Hermes Agent: `hermes-agent@tais-den.dev`
-- GitHub Copilot: `copilot@tais-den.dev`
 
 Verify your active identity with `git config --get user.email` before
 any commit in a fresh session. If it's wrong, use the per-commit
