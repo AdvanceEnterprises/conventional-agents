@@ -11,6 +11,7 @@ interfaces:
   - "workflows/document-lifecycle.md"
   - "skills/git-gh-workflow/SKILL.md"
   - "config/consensus.yml (project-level configuration, opt-in)"
+  - "docs/consensus/<FS-or-PLAN-id>/<gate>-<timestamp>.yml (consensus round artifact)"
   - "docs/specifications/README.md"
 related_adrs:
   - ADR-0018
@@ -200,6 +201,31 @@ Concretely:
 This is the framework's most important consensus constraint.
 Same-model consensus is theater, not consensus.
 
+## Relationship to Mixture of Agents (MoA)
+
+Consumer repos may implement consensus rounds using a Mixture of
+Agents (MoA) provider, such as the one built into Hermes Agent.
+In this pattern:
+
+- The MoA **reference models** serve as independent consensus
+  participants. Each receives the same input (the draft or PR
+  diff) and produces an independent assessment.
+- The MoA **aggregator model** produces the consensus artifact
+  (`docs/consensus/<FS-or-PLAN-id>/<gate>-<timestamp>.yml`) as
+  structured output, including the agreement check and verdict.
+- The different-models requirement above is satisfied by MoA's
+  own model-diversity constraint: the reference models must be
+  distinct, and the aggregator must be a different model from
+  any reference.
+
+This is a consumer-level implementation choice. The framework
+describes the required behavior (what consensus looks like);
+consumer repos choose the invocation mechanism (how to run the
+round). Using MoA as the invocation layer is valid but not
+required — a consumer may implement consensus rounds via
+independent API calls, a custom orchestrator, or any other
+mechanism that satisfies the different-models requirement.
+
 ## Threshold and Failure Modes
 
 ### Threshold
@@ -234,6 +260,13 @@ Consumers choose one of three failure modes per project, set in
   artifact. The original artifact does not advance past the gate
   until a subsequent consensus round passes.
 
+  **Termination condition**: if the new consensus round also
+  disagrees, the escalation repeats. After N consecutive
+  escalation rounds (default: 3, configurable per consumer), the
+  round fails as `hard_block` and requires a human override
+  (`consensus-override: <reason>` comment on the Issue). This
+  prevents infinite escalation loops.
+
 ## Configuration
 
 Per-project config file: `config/consensus.yml`. Schema:
@@ -261,11 +294,22 @@ consensus:
   min_models: 2                     # minimum different models per round
 ```
 
+**Validation note**: setting `enabled: true` while `models: []` is
+empty is a misconfiguration. The consensus machinery MUST validate
+at startup (or at the first consensus round) that `models` contains
+at least `min_models` distinct entries. If validation fails, the
+round fails with a configuration error and the workflow proceeds
+without consensus (graceful degradation). Consumer repos should
+surface this error in their startup logs or CI output.
+
 Per-document override: an FS or PLAN may set
 `consensus_required: true|false` in its front matter. If set, it
 overrides the project-level config for that document. Useful for
 high-stakes artifacts that warrant consensus even when the project
-default is off.
+default is off. This is a front-matter field on the FS or PLAN
+document itself, not a config field — see the FS and PLAN templates
+(`templates/core/feature-spec.md`, `templates/core/change-plan.md`)
+for the canonical field list.
 
 ## Role Stance for Consensus Rounds
 
