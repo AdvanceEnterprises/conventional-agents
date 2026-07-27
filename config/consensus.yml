@@ -1,0 +1,63 @@
+# config/consensus.yml — Multi-model consensus configuration (FS-0019)
+#
+# This is the project-level configuration for multi-model consensus at
+# workflow gates. See docs/specifications/FS-0019-multi-model-consensus.md
+# for the full specification.
+#
+# Consumer repos copy this file into their project root (or into a
+# location of their choice; update the path in skills/git-gh-workflow
+# accordingly) and customize it.
+#
+# Default state: consensus is DISABLED. Set `enabled: true` below to
+# opt in.
+
+consensus:
+  # Master switch. When false, no consensus rounds are invoked and the
+  # workflow proceeds as a single-model flow. Defaults to false at the
+  # framework level.
+  enabled: false
+
+  # Default threshold: N-of-M participants must agree for a round to
+  # pass. Per-gate overrides available below.
+  default_threshold: 2/2
+
+  # Default failure mode when the threshold is not met. Per-gate
+  # overrides available below.
+  #   hard_block: workflow does not advance; human may override
+  #   soft_flag: workflow advances; disagreement is recorded
+  #   escalation: creates a Type `task` Issue under Head Architect role
+  default_failure_mode: hard_block
+
+  # Per-gate configuration. Each gate may opt in independently.
+  gates:
+    # Gate A: pre-submission consensus on the draft.
+    pre_submission:
+      enabled: false
+      # role_mode: drafter (each participant produces an artifact) or
+      #            reviewer (each participant reviews a single draft).
+      role_mode: reviewer
+      threshold: null    # null = use default_threshold
+      failure_mode: null # null = use default_failure_mode
+
+    # Gate B: review-time consensus on the PR review.
+    review_time:
+      enabled: false
+      role_mode: reviewer # always reviewer for this gate
+      threshold: null
+      failure_mode: null
+
+  # Available models for consensus. Each must be a distinct model
+  # identifier. Different versions of the same model family do NOT
+  # count as different models; same-model consensus is forbidden as
+  # theater per FS-0019 §"Different-Models Requirement".
+  models: []
+
+  # Minimum number of different models required per round. Enforced
+  # by the consensus machinery; rounds fail with a configuration
+  # error if fewer than this many distinct models are available.
+  min_models: 2
+
+  # Optional cost ceiling. If set, rounds fail with a cost-exceeded
+  # error when total estimated cost would exceed this value (in
+  # USD or consumer-defined units). Leave null to disable.
+  max_cost_per_issue: null
