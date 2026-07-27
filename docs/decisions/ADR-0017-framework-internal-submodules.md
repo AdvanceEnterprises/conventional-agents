@@ -51,6 +51,11 @@ This ADR partially supersedes FS-0009, which added
 `vendor/conventional-commits/` and `vendor/keep-a-changelog/` as submodules.
 Those submodules are now removed from the consumer-facing surface.
 
+**Why FS-0001 and FS-0008 are related:** FS-0001 (markdownlint implementation)
+and FS-0008 (self-versioning and changelog) are the framework's quality gates
+that help detect future drift between the framework's curated copies and any
+remaining upstream references.
+
 ## Decision Drivers
 
 - **Exported surface clarity** — Consumers should see only the framework's own

@@ -11,29 +11,25 @@ For this project (a documentation/standards kit), semver follows the
 
 ## [Unreleased]
 
-### Breaking Changes
-
-- **Framework vendor directory is now internal** (ADR-0017). Consumers must not
-  reference nested vendor paths such as `vendor/conventional-agents/vendor/...`.
-  The dropped submodules (`vendor/conventional-commits/`,
-  `vendor/keep-a-changelog/`, `vendor/arc42-template/`) are no longer available
-  to consumers. Use framework files (e.g., `workflows/git-and-gh-conventions.md`,
-  `workflows/versioning-and-releases.md`) and upstream URLs instead.
-- **AGENTS.md rewritten** as the agent briefing surface for this repo. Projects
-  consuming the framework should model their own root `AGENTS.md` on the new
-  structure.
-
 ### Added
 
 - `ADR-0017`: Framework vendor directory is internal; consumers must not
   reference nested submodules.
+- `FS-0016`: Framework Internal Vendor Boundary feature spec.
+- `PLAN-0016`: Implementation plan for FS-0016.
 - `skills/framework-consumer-integration/SKILL.md`: a skill that guides agents
   through integrating conventional-agents into a host repository, selecting the
   right pattern, writing `AGENTS.md`, and avoiding common mistakes such as
   nested vendor paths.
+- `test/FS-0016/vendor-boundary.bats`: asserts that no consumer-facing file
+  references `vendor/conventional-agents/vendor/...` paths.
 
 ### Changed
 
+- **Framework vendor directory is now internal** (ADR-0017). Consumers must not
+  reference nested vendor paths such as `vendor/conventional-agents/vendor/...`.
+  This is a conceptual-contract tightening, not a working-tree breakage for
+  consumers that already referenced framework files or upstream URLs.
 - `README.md`: reorganized "Exported Surface vs Internal Governance" table,
   added "For Projects Consuming This Framework" and "For Agents Working on This
   Repo" sections, and updated "Upstream References" to list URLs as canonical
@@ -48,6 +44,10 @@ For this project (a documentation/standards kit), semver follows the
   `CHANGELOG.md`, `skills/git-gh-workflow/SKILL.md`: removed stale
   parenthetical references to dropped `vendor/conventional-commits/` and
   `vendor/keep-a-changelog/` submodules.
+- Historical documents updated with status notes linking to ADR-0017:
+  `docs/ARC42.md`, `docs/decisions/ADR-0003.md`,
+  `docs/specifications/FS-0009-vendor-upstream-specs.md`,
+  `docs/change-plans/PLAN-0009-vendor-upstream-specs.md`.
 
 ### Removed
 
@@ -56,6 +56,7 @@ For this project (a documentation/standards kit), semver follows the
 - `vendor/arc42-template/` git submodule.
 - `docs/instances/` directory and `IDEA.md` (relocated to
   `Tais-Den/tais-den-conventions` per ADR-0016).
+- `docs/implementation-plans/` legacy directory.
 
 ## [2.0.0] - 2026-06-08
 

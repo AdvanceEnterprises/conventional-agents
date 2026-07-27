@@ -74,6 +74,50 @@ Create `AGENTS.md`:
 See vendor/conventional-agents/INTEGRATION.md
 ```
 
+## Pattern 2: Copy-In
+
+Use when tools only read root files, or for one-off snapshots where submodule
+maintenance is not worth the overhead.
+
+```bash
+git clone https://github.com/Tais-Den/conventional-agents.git /tmp/conventional-agents
+cp -r /tmp/conventional-agents/guidelines /path/to/host-repo/
+cp -r /tmp/conventional-agents/roles /path/to/host-repo/
+cp -r /tmp/conventional-agents/workflows /path/to/host-repo/
+```
+
+Then create `AGENTS.md` pointing at the copied files and record the snapshot
+version:
+
+```text
+# Agent Instructions
+
+## Read First
+- guidelines/ROLE_CONTRACT.md
+- INTEGRATION.md
+- workflows/session-modes.md
+
+## Universal Gates
+- roles/ROLE_CONTRACT.md
+
+## Snapshot
+Copied from conventional-agents <commit-or-tag>.
+
+## Project-Specific Rules
+(Add host-repo context here)
+
+## Precedence
+See INTEGRATION.md
+```
+
+Pros:
+- No submodule setup.
+- Works with tools that ignore `vendor/`.
+
+Cons:
+- Drift risk.
+- Updates require manual re-copy.
+
 ## Pattern 3: Hybrid (Recommended Default)
 
 Same as Pattern 1, but add small root stubs that capture project-specific
@@ -131,10 +175,11 @@ See vendor/conventional-agents/INTEGRATION.md
 
 ### 1. Do not reference nested vendor paths
 
-The framework's `vendor/` directory is framework-internal. Never write:
+The framework's `vendor/` directory is framework-internal. Never write a real
+path such as:
 
 ```text
-vendor/conventional-agents/vendor/conventional-commits/...
+vendor/conventional-agents/vendor/<upstream-repo>/README.md
 ```
 
 Instead, reference framework files or upstream URLs:
