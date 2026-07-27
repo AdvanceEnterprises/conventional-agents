@@ -169,7 +169,8 @@ Example:
 
 ## Multi-identity model (ADR-0011)
 
-We assume three GitHub identities:
+The framework recommends three GitHub identities for projects that have
+separate human and agent operators:
 
 1) Human account (interactive ownership/administration)
 2) Agent-committer account (opens PRs and authors code commits)
@@ -190,3 +191,104 @@ Git commit author identity and GitHub PR/review identity are separate:
 If you use multiple accounts, ensure you explicitly switch contexts before taking actions:
 
 - `gh auth switch -u <username>`
+
+## Single-identity workflow with agent co-attribution (ADR-0018)
+
+Most projects — including this repository — operate with one GitHub login
+shared across human and agent actors. The single-identity workflow uses
+git commit metadata to preserve the audit trail that ADR-0011's three
+identities would otherwise provide.
+
+### The convention
+
+All commits, PRs, and reviews are authored under one GitHub login. The
+distinguishing layer is git's `user.name` / `user.email`:
+
+| Actor | `user.name` | `user.email` |
+| --- | --- | --- |
+| Human (Tai) | `Tai Solstag` | `taisden@tais-den.dev` |
+| Hermes Agent | `Hermes Agent` | `hermes-agent@tais-den.dev` |
+| GitHub Copilot | `GitHub Copilot` | `copilot@tais-den.dev` |
+
+These addresses are aliases under the same login. GitHub renders each
+commit's author email as a link to the same profile, but `git log`,
+`git shortlog`, and downstream tooling can distinguish actors by email.
+
+### Per-commit override (recommended for one-off agent sessions)
+
+When authoring a single commit as an agent, override the identity inline
+rather than mutating global `git config`:
+
+```bash
+git -c user.name="Hermes Agent" \
+    -c user.email="hermes-agent@tais-den.dev" \
+    commit -m "..."
+```
+
+For hybrid sessions (human + agent co-authoring a single commit), also add
+a `Co-authored-by:` trailer to the commit message:
+
+```text
+docs: explain single-identity workflow with agent co-attribution
+
+Co-authored-by: Hermes Agent <hermes-agent@tais-den.dev>
+```
+
+GitHub renders `Co-authored-by:` trailers natively as a second author chip
+on the commit page.
+
+### Per-session configuration (recommended for sustained agent runs)
+
+For an agent that will author many commits in one session, set the
+identity once via environment or a local include:
+
+```bash
+# Bash — export once at session start
+export GIT_AUTHOR_NAME="Hermes Agent"
+export GIT_AUTHOR_EMAIL="hermes-agent@tais-den.dev"
+export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
+export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
+```
+
+```ini
+# ~/.gitconfig — conditional include for agent workspaces
+[includeIf "gitdir:~/Developer/projects/agent-workspace/"]
+    path = ~/.gitconfig-agent
+```
+
+```ini
+# ~/.gitconfig-agent
+[user]
+    name = Hermes Agent
+    email = hermes-agent@tais-den.dev
+```
+
+### When to use each layer
+
+- **Pure-human commit** (Tai wrote the code, the message, the review):
+  no special action. Default `user.email` should already be
+  `taisden@tais-den.dev`.
+- **Pure-agent commit** (agent wrote and committed autonomously):
+  set the agent's `user.email` via per-commit override or per-session
+  config. No `Co-authored-by:` trailer needed — the email alone
+  identifies the actor.
+- **Hybrid commit** (human and agent both contributed):
+  set the *committer's* `user.email` to whoever ran `git commit`, and
+  add a `Co-authored-by:` trailer naming the other actor. Both email
+  and trailer are part of the audit trail.
+
+### Forward compatibility with ADR-0011
+
+When this repository (or any project following ADR-0018) is ready to
+transition to separate GitHub accounts, the migration path is:
+
+1. Create `taisden-agent-committer` and `taisden-agent-reviewer` accounts.
+2. Add the existing emails as additional addresses on each actor's
+   GitHub profile so historical commits still link correctly.
+3. Switch per-agent sessions from `GIT_AUTHOR_EMAIL` overrides to
+   `gh auth switch --user <agent-account>`.
+4. The `Co-authored-by:` convention continues unchanged — it now
+   represents a cross-account relationship rather than same-account
+   co-authorship.
+
+See ADR-0018 for the full rationale and consequences.

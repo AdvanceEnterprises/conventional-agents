@@ -204,3 +204,4 @@ If validation fails:
 | ADR-0015 | Tool taxonomy and introduction process | proposed |
 | ADR-0016 | Consumer conventions — local adaptations of the framework | accepted |
 | ADR-0017 | Framework vendor directory is internal; consumers must not reference nested submodules | proposed |
+| ADR-0018 | Single-identity workflow with agent co-attribution | proposed |
