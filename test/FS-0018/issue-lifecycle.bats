@@ -82,13 +82,30 @@ ALLOWED_MODES=(
   pattern="$(agent_stance_pattern)"
   local negatives=(
     "agent-stance: role=Head Architect; model=foo; session=bar; rationale=baz"
-    "agent-stance: mode=foo; role=bar; model=baz; session=qux; rationale=quux"
     "agent-stance: mode=foo"
     "agent-stance: mode=foo; role=bar; model=baz; session=qux"
   )
   for s in "${negatives[@]}"; do
     if echo "$s" | grep -Eq "$pattern"; then
       echo "FAIL: negative case matched (should reject): $s"
+      return 1
+    fi
+  done
+}
+
+@test "FS-0018 agent-stance regex is format-only, not value validation" {
+  # The regex validates field presence and ordering, not value semantics.
+  # A string with all five fields in the correct order matches even if
+  # the values are invalid (e.g., mode=foo). Value validation is a
+  # separate concern enforced by the enumerated-mode test below.
+  local pattern
+  pattern="$(agent_stance_pattern)"
+  local format_valid=(
+    "agent-stance: mode=foo; role=bar; model=baz; session=qux; rationale=quux"
+  )
+  for s in "${format_valid[@]}"; do
+    if ! echo "$s" | grep -Eq "$pattern"; then
+      echo "FAIL: format-valid case did not match: $s"
       return 1
     fi
   done
