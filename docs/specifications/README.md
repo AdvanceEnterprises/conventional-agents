@@ -58,3 +58,4 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0014 | Role Definitions Overhaul | implemented |
 | FS-0015 | Role Selection and Session Modes | implemented |
 | FS-0016 | Framework Internal Vendor Boundary | implemented |
+| FS-0018 | Single-identity commit attribution with model, role, and session metadata | implemented |
