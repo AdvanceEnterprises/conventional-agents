@@ -12,9 +12,11 @@ interfaces:
   - "skills/git-gh-workflow/SKILL.md"
   - "config/consensus.yml (project-level configuration, opt-in)"
   - "docs/specifications/README.md"
-related_adrs: []
+related_adrs:
+  - ADR-0018
 supersedes: []
-requires: []
+requires:
+  - FS-0018
 tags: [consensus, multi-model, workflow-gates, optional-feature]
 created: 2026-07-27
 updated: 2026-07-27
@@ -35,6 +37,16 @@ PARSING_HINTS:
 ## Status
 
 - Draft
+
+## Plan Status
+
+- **Not yet drafted.** Per `workflows/document-lifecycle.md`, PLANs
+  are drafted after the FS is approved and immediately before
+  implementation.
+- Requires FS-0018 to be approved first, since the consensus gates
+  integrate with the Issue lifecycle defined there.
+- Open questions blocking PLAN drafting are listed in the
+  "Open Questions" section below.
 
 ## Summary
 
@@ -213,9 +225,14 @@ Consumers choose one of three failure modes per project, set in
   the disagreement is recorded on the Issue and the human is
   informed. The artifact is marked with
   `consensus-disagreement: <summary>` in its metadata.
-- **`escalation`**: disagreement automatically invokes the Head
-  Architect role to mediate. The Head Architect's decision is
-  final unless the human overrides.
+- **`escalation`**: disagreement automatically creates a Type
+  `task` Issue titled `Consensus escalation: <round-id>` with the
+  failed round's artifact attached (see Audit Trail). The Issue
+  transitions through Status (Backlog → Approved → In Review)
+  under the Head Architect role. The Head Architect's mediation
+  output is the input to a new consensus round on the same
+  artifact. The original artifact does not advance past the gate
+  until a subsequent consensus round passes.
 
 ## Configuration
 
@@ -355,6 +372,16 @@ Each bullet MUST be objectively testable.
   project-level `consensus.enabled: false`, when the FS is
   submitted for review, then a consensus round runs at Gate A
   even though project consensus is disabled.
+
+**Test-harness note**:
+
+- The success criteria above describe behavior in a consumer repo.
+  Validation is by fixture-based bats tests against a sample
+  consumer-repo fixture (provided by the consumer repo's test
+  harness), not by framework unit tests. The framework's
+  framework-level tests verify the schema and structural rules
+  (artifact shape, configuration schema, mode values), not the
+  end-to-end consumer behavior.
 
 **Audit trail**:
 
