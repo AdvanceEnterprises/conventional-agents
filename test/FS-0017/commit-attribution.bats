@@ -59,16 +59,16 @@ agent_attribution_pattern() {
 @test "roles/ contains only README.md, not a duplicate ROLE_CONTRACT.md" {
   assert_file_exists "$REPO_ROOT/roles/README.md"
   if [[ -f "$REPO_ROOT/roles/ROLE_CONTRACT.md" ]]; then
-    echo "roles/ROLE_CONTRACT.md exists; it should be removed per FS-0018"
+    echo "roles/ROLE_CONTRACT.md exists; it should be removed per FS-0017"
     return 1
   fi
 }
 
-@test "FS-0018 and PLAN-0018 exist with implemented status" {
-  assert_file_exists "$REPO_ROOT/docs/specifications/FS-0018-single-identity-commit-attribution.md"
-  assert_file_contains "$REPO_ROOT/docs/specifications/FS-0018-single-identity-commit-attribution.md" "status: implemented"
-  assert_file_exists "$REPO_ROOT/docs/change-plans/PLAN-0018-implement-fs-0018-single-identity-commit-attribution.md"
-  assert_file_contains "$REPO_ROOT/docs/change-plans/PLAN-0018-implement-fs-0018-single-identity-commit-attribution.md" "status: implemented"
+@test "FS-0017 and PLAN-0017 exist with implemented status" {
+  assert_file_exists "$REPO_ROOT/docs/specifications/FS-0017-single-identity-commit-attribution.md"
+  assert_file_contains "$REPO_ROOT/docs/specifications/FS-0017-single-identity-commit-attribution.md" "status: implemented"
+  assert_file_exists "$REPO_ROOT/docs/change-plans/PLAN-0017-implement-fs-0017-single-identity-commit-attribution.md"
+  assert_file_contains "$REPO_ROOT/docs/change-plans/PLAN-0017-implement-fs-0017-single-identity-commit-attribution.md" "status: implemented"
 }
 
 @test "recent commits have known actor emails" {

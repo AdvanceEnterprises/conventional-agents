@@ -182,7 +182,7 @@ Agent-Attribution: actor=Joey Clark; model=human; role=Implementer; session=impl
 
 GitHub does not render custom trailers natively, but `git log
 --format=%(trailers)` parses them, and downstream tooling
-(`test/FS-0018/commit-attribution.bats`) verifies them. PR bodies should
+(`test/FS-0017/commit-attribution.bats`) verifies them. PR bodies should
 also include an "Agent Attribution" section that summarizes the agent
 actors and their roles — see `workflows/git-and-gh-conventions.md` §"PR
 body template (agents)".
@@ -326,10 +326,11 @@ We will consider this decision successful if:
 2. **Hybrid sessions show `Co-authored-by:` trailers.** A representative
    hybrid commit (one authored by Joey with Hermes drafting, or vice
    versa) carries the appropriate trailer.
-3. **The bats test passes.** `test/FS-0016/attribution.bats` (or
-   equivalent new test) verifies that every commit on `trunk` and on
-   the most recent release branch has either a known-actor email or a
-   `Co-authored-by:` trailer naming a known actor.
+3. **The bats test passes.** `test/FS-0017/commit-attribution.bats`
+   verifies that recent commits on the current branch have either a
+   known-actor email or a `Co-authored-by:` trailer naming a known
+   actor, and that agent-authored commits also carry a well-formed
+   `Agent-Attribution:` trailer.
 4. **README and AGENTS.md mention the convention.** A reader landing on
    the repo can discover the convention without reading ADR-0018
    directly.

@@ -256,7 +256,7 @@ Agent-Attribution: actor=Hermes Agent; model=ollama-cloud/deepseek-v4-flash; rol
 
 The `Agent-Attribution:` trailer is not rendered by GitHub but is parsed
 by `git log --format=%(trailers)` and verified by
-`test/FS-0018/commit-attribution.bats`. It persists the role/session-mode
+`test/FS-0017/commit-attribution.bats`. It persists the role/session-mode
 declaration that ROLE_CONTRACT §"Role and session transparency" requires
 at session start, into the commit audit trail. Multiple
 `Agent-Attribution:` trailers are permitted when more than one agent

@@ -3,17 +3,17 @@ type: change-plan
 role: implementer
 language: markdown
 status: implemented
-related_specs: [FS-0018]
+related_specs: [FS-0017]
 related_adrs: [ADR-0018]
 created: 2026-07-27
 updated: 2026-07-27
 ---
 
-# Change Plan: Implement FS-0018 Single-identity Commit Attribution
+# Change Plan: Implement FS-0017 Single-identity Commit Attribution
 
 ## 1. Feature / Issue Reference
 
-- Feature Spec ID(s): FS-0018
+- Feature Spec ID(s): FS-0017
 - Related ADR ID(s): ADR-0018
 - Issue / PR Reference: TBD
 
@@ -41,17 +41,17 @@ updated: 2026-07-27
   and documenting the customization workflow for host repos.
 - Remove `roles/ROLE_CONTRACT.md` (byte-identical duplicate of
   `guidelines/ROLE_CONTRACT.md`) per the reviewer finding.
-- Add `docs/specifications/FS-0018-single-identity-commit-attribution.md`.
-- Add `docs/change-plans/PLAN-0018-implement-fs-0018-single-identity-commit-attribution.md`.
-- Add `test/FS-0018/commit-attribution.bats` enforcing the convention
+- Add `docs/specifications/FS-0017-single-identity-commit-attribution.md`.
+- Add `docs/change-plans/PLAN-0017-implement-fs-0017-single-identity-commit-attribution.md`.
+- Add `test/FS-0017/commit-attribution.bats` enforcing the convention
   on recent commits with a "last N" cutoff strategy that does not
   require a future merge SHA.
 - Add `docs/decisions/ADR-0011` cross-reference to ADR-0018 (Status-section
   addition; permitted per ADR-0000's append-only rule).
 - Add `docs/decisions/README.md` index row for ADR-0018 (already
   present from the prior commit on this branch).
-- Add `docs/specifications/README.md` index row for FS-0018.
-- Add `docs/change-plans/README.md` index row for PLAN-0018.
+- Add `docs/specifications/README.md` index row for FS-0017.
+- Add `docs/change-plans/README.md` index row for PLAN-0017.
 
 **This change will NOT:**
 
@@ -68,7 +68,7 @@ Validation is via:
   index sync).
 - `npm run lint:docs` passing (markdownlint across ADRs, specs, plans,
   workflows).
-- `test/FS-0018/commit-attribution.bats` passing against recent
+- `test/FS-0017/commit-attribution.bats` passing against recent
   commits on the current branch (the "last N" cutoff strategy means
   the test does not require a future merge SHA to function).
 - Manual review of the layered commit-message pattern in the workflow
@@ -82,12 +82,12 @@ Validation is via:
 - `docs/decisions/ADR-0011-adopt-multi-identity-github-model-human-agent-committer-agent-reviewer.md`
   (modify — append cross-reference in Links section)
 - `docs/decisions/README.md` (modify — add ADR-0018 row)
-- `docs/specifications/FS-0018-single-identity-commit-attribution.md`
+- `docs/specifications/FS-0017-single-identity-commit-attribution.md`
   (new)
-- `docs/specifications/README.md` (modify — add FS-0018 row)
-- `docs/change-plans/PLAN-0018-implement-fs-0018-single-identity-commit-attribution.md`
+- `docs/specifications/README.md` (modify — add FS-0017 row)
+- `docs/change-plans/PLAN-0017-implement-fs-0017-single-identity-commit-attribution.md`
   (new — this file)
-- `docs/change-plans/README.md` (modify — add PLAN-0018 row)
+- `docs/change-plans/README.md` (modify — add PLAN-0017 row)
 - `workflows/git-and-gh-conventions.md` (modify — add ADR-0018
   section, update PR body template, update "When to use each layer")
 - `skills/git-gh-workflow/SKILL.md` (modify — add Single-Identity Mode
@@ -95,14 +95,14 @@ Validation is via:
 - `roles/ROLE_CONTRACT.md` (delete — duplicate of
   `guidelines/ROLE_CONTRACT.md`)
 - `roles/README.md` (new — explains why `roles/` ships empty)
-- `test/FS-0018/commit-attribution.bats` (new — enforces the
+- `test/FS-0017/commit-attribution.bats` (new — enforces the
   convention on recent commits)
 
 ## 5. Implementation Steps (High-Level)
 
 1. **Author ADR-0018** — document the convention, the rationale, and
    the relationship to ADR-0011.
-2. **Author FS-0018** — define the success criteria for the
+2. **Author FS-0017** — define the success criteria for the
    convention, including the three attribution layers and the
    `roles/` empty-by-design decision.
 3. **Update `workflows/git-and-gh-conventions.md`** — add the
@@ -113,7 +113,7 @@ Validation is via:
 5. **Remove `roles/ROLE_CONTRACT.md`** — it's a byte-for-byte duplicate
    of `guidelines/ROLE_CONTRACT.md`.
 6. **Add `roles/README.md`** — explain the customization workflow.
-7. **Add `test/FS-0018/commit-attribution.bats`** — enforce the
+7. **Add `test/FS-0017/commit-attribution.bats`** — enforce the
    convention on recent commits with the "last N" cutoff strategy.
 8. **Add cross-reference in ADR-0011's Links section** — note that
    ADR-0018 is the operational model for single-identity projects.
@@ -127,7 +127,7 @@ Validation is via:
 
 ## 6. Constraints and Guardrails
 
-- FS-0018 Non-Goals: no separate GitHub accounts; no backfilling
+- FS-0017 Non-Goals: no separate GitHub accounts; no backfilling
   legacy commits; no pre-populated `roles/ROLE_CONTRACT.md`.
 - ADR-0011 is `accepted` and append-only per ADR-0000's immutability
   rule. The only permitted edit is a Status-section or Links-section
@@ -152,7 +152,7 @@ Validation is via:
 - **PR body "Agent Attribution" section is informal** — the section
   is not enforced by the bats test. It exists as a documentation
   convention for reviewers. Enforcing it would require a PR-body
-  test, which is out of scope for FS-0018.
+  test, which is out of scope for FS-0017.
 - **`roles/` empty by default** — host repos that vendored the
   framework before this PR may have copy-pasted the
   pre-populated `ROLE_CONTRACT.md` into their own tree. Removing the
@@ -164,7 +164,7 @@ Validation is via:
 
 - `npm run check:status` passes.
 - `npm run lint:docs` passes (ADRs, specs, plans, workflows).
-- `test/FS-0018/commit-attribution.bats` passes against recent
+- `test/FS-0017/commit-attribution.bats` passes against recent
   commits on the current branch.
 - The `roles/` directory contains only `README.md`.
 - ADR-0018 exists with `status: proposed` (the human-only approval
@@ -182,7 +182,7 @@ Validation is via:
 
 ## 10. Readiness Check
 
-- [x] Spec is approved (FS-0018 status: implemented; lands with this PR)
+- [x] Spec is approved (FS-0017 status: implemented; lands with this PR)
 - [x] Tests exist or are clearly defined (commit-attribution.bats)
 - [x] Scope is minimal and explicit (six files modified, four new)
 - [x] No architectural changes implied beyond the new ADR-0018

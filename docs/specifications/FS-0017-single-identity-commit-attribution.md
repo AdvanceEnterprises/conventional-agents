@@ -1,6 +1,6 @@
 ---
 type: feature-spec
-id: FS-0018
+id: FS-0017
 status: implemented
 title: Single-identity commit attribution with model, role, and session metadata
 owner: ajoeofalltrades
@@ -12,7 +12,7 @@ interfaces:
   - "roles/README.md"
   - "docs/specifications/README.md"
   - "docs/change-plans/README.md"
-  - "test/FS-0018/commit-attribution.bats"
+  - "test/FS-0017/commit-attribution.bats"
 related_adrs:
   - ADR-0018
 supersedes: []
@@ -51,7 +51,7 @@ projects: distinguishing `user.email` per actor, `Co-authored-by:`
 trailers for hybrid sessions, and `Agent-Attribution:` trailers
 recording model, role, and session mode for any agent actor.
 
-The convention is enforced by `test/FS-0018/commit-attribution.bats`,
+The convention is enforced by `test/FS-0017/commit-attribution.bats`,
 which verifies that recent commits on the working branch follow the
 layered pattern.
 
@@ -100,15 +100,15 @@ layered pattern.
   agents recognize and apply it in interactive sessions.
 - **`roles/README.md`** — explains that `roles/` ships empty by
   design and documents the customization workflow for host repos.
-- **`docs/specifications/README.md`** — index row for FS-0018.
-- **`docs/change-plans/README.md`** — index row for PLAN-0018.
-- **`test/FS-0018/commit-attribution.bats`** — enforces the
+- **`docs/specifications/README.md`** — index row for FS-0017.
+- **`docs/change-plans/README.md`** — index row for PLAN-0017.
+- **`test/FS-0017/commit-attribution.bats`** — enforces the
   convention for recent commits.
 
 ## Success Criteria
 
 Each bullet MUST be objectively verifiable, typically by
-`test/FS-0018/commit-attribution.bats` or by direct `git log` /
+`test/FS-0017/commit-attribution.bats` or by direct `git log` /
 `git config` inspection.
 
 - **Given the workflow doc, when reading the "Single-identity workflow
@@ -142,7 +142,7 @@ Each bullet MUST be objectively verifiable, typically by
   why the directory ships empty and how to populate it for host
   repos.**
 
-- **Given `test/FS-0018/commit-attribution.bats`, when read, then it
+- **Given `test/FS-0017/commit-attribution.bats`, when read, then it
   contains assertions for: (a) recent commits have known actor
   emails, (b) recent commits using the default email have
   `Co-authored-by:` trailers, (c) the workflow doc and skill teach
@@ -172,7 +172,7 @@ We will consider this feature implemented successfully when:
 
 1. `npm run check:status` passes.
 2. `npm run lint:docs` passes (ADRs, specs, plans, workflows).
-3. `test/FS-0018/commit-attribution.bats` passes against recent
+3. `test/FS-0017/commit-attribution.bats` passes against recent
    commits on the current branch.
 4. A reviewer reading ADR-0018, the workflow doc section, and the
    bats test can identify the three attribution layers and understand
