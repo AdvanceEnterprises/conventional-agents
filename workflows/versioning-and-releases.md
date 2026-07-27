@@ -49,7 +49,7 @@ The cost of an unnecessary major bump is low; the cost of a missed breaking chan
 
 ### Format
 
-Follow the Keep a Changelog format (<https://keepachangelog.com>; vendored at `vendor/keep-a-changelog/`).
+Follow the Keep a Changelog format (<https://keepachangelog.com>). This framework uses a curated subset; see the sections below.
 
 Sections (use only those that apply per release):
 
@@ -127,7 +127,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com).
 ## Agent-Safe vs Human-Gated Actions (Summary)
 
 | Action | Agent-safe? | Notes |
-|---|---|---|
+| --- | --- | --- |
 | Draft changelog entries | Yes (when instructed) | Append to `[Unreleased]` only |
 | Bump minor/patch version | Yes (when instructed) | Release-prep PRs only |
 | Bump major version | **No** | Requires human approval |

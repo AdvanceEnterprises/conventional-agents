@@ -12,12 +12,12 @@ interfaces:
   - "workflows/versioning-and-releases.md"
   - "CHANGELOG.md"
   - "INTEGRATION.md"
-related_adrs: [ADR-0010]
+related_adrs: [ADR-0010, ADR-0017]
 supersedes: []
 requires: []
 tags: [vendoring, upstream, standards]
 created: 2026-02-08
-updated: 2026-06-08
+updated: 2026-07-27
 ---
 
 <!--
@@ -35,6 +35,13 @@ PARSING_HINTS:
 ## Status
 
 - Implemented
+- **Subsequently superseded in part** by ADR-0017 (2026-07-27): the
+  `vendor/conventional-commits/` and `vendor/keep-a-changelog/` submodules were
+  removed from the framework's consumer-facing surface. Only `vendor/madr/`
+  remains as framework-internal infrastructure. Consumers now reference
+  framework files (`workflows/git-and-gh-conventions.md`,
+  `workflows/versioning-and-releases.md`) and upstream URLs instead of nested
+  vendor paths.
 
 ## Summary
 

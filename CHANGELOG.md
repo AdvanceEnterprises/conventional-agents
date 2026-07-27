@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com) (vendored at `vendor/keep-a-changelog/`),
+The format is based on [Keep a Changelog](https://keepachangelog.com),
 and this project adheres to [Semantic Versioning](https://semver.org).
 
 For this project (a documentation/standards kit), semver follows the
@@ -10,6 +10,53 @@ For this project (a documentation/standards kit), semver follows the
 `workflows/versioning-and-releases.md`.
 
 ## [Unreleased]
+
+### Added
+
+- `ADR-0017`: Framework vendor directory is internal; consumers must not
+  reference nested submodules.
+- `FS-0016`: Framework Internal Vendor Boundary feature spec.
+- `PLAN-0016`: Implementation plan for FS-0016.
+- `skills/framework-consumer-integration/SKILL.md`: a skill that guides agents
+  through integrating conventional-agents into a host repository, selecting the
+  right pattern, writing `AGENTS.md`, and avoiding common mistakes such as
+  nested vendor paths.
+- `test/FS-0016/vendor-boundary.bats`: asserts that no consumer-facing file
+  references `vendor/conventional-agents/vendor/...` paths.
+
+### Changed
+
+- **Framework vendor directory is now internal** (ADR-0017). Consumers must not
+  reference nested vendor paths such as `vendor/conventional-agents/vendor/...`.
+  This is a conceptual-contract tightening, not a working-tree breakage for
+  consumers that already referenced framework files or upstream URLs.
+- `README.md`: reorganized "Exported Surface vs Internal Governance" table,
+  added "For Projects Consuming This Framework" and "For Agents Working on This
+  Repo" sections, and updated "Upstream References" to list URLs as canonical
+  with framework-subset pointers.
+- `AGENTS.md`: rewritten as an agent instructions document with On Entry,
+  Foundation Standards, Working on the Framework Itself, Process Gates,
+  Non-Overridable Safety Gates, and consumer guidance sections.
+- `INTEGRATION.md`: added a "Choosing a Pattern" decision table and
+  troubleshooting entries for consumer conventions and nested vendor path
+  leaks.
+- `workflows/git-and-gh-conventions.md`, `workflows/versioning-and-releases.md`,
+  `CHANGELOG.md`, `skills/git-gh-workflow/SKILL.md`: removed stale
+  parenthetical references to dropped `vendor/conventional-commits/` and
+  `vendor/keep-a-changelog/` submodules.
+- Historical documents updated with status notes linking to ADR-0017:
+  `docs/ARC42.md`, `docs/decisions/ADR-0003.md`,
+  `docs/specifications/FS-0009-vendor-upstream-specs.md`,
+  `docs/change-plans/PLAN-0009-vendor-upstream-specs.md`.
+
+### Removed
+
+- `vendor/conventional-commits/` git submodule.
+- `vendor/keep-a-changelog/` git submodule.
+- `vendor/arc42-template/` git submodule.
+- `docs/instances/` directory and `IDEA.md` (relocated to
+  `Tais-Den/tais-den-conventions` per ADR-0016).
+- `docs/implementation-plans/` legacy directory.
 
 ## [2.0.0] - 2026-06-08
 
@@ -57,7 +104,7 @@ For this project (a documentation/standards kit), semver follows the
 - Document hygiene gate in ROLE_CONTRACT: 6-item pre-commit/PR checklist (statuses, dates, READMEs, CHANGELOG, cross-refs, interface alignment).
 - `workflows/document-lifecycle.md` — status values, transition rules, front matter hygiene, README index maintenance for FS/PLAN/ADR documents.
 - Document index tables in `docs/specifications/README.md`, `docs/change-plans/README.md`, and `docs/decisions/README.md` with agent-update requirements.
-- Vendored upstream specs: Conventional Commits (`vendor/conventional-commits/`) and Keep a Changelog (`vendor/keep-a-changelog/`) as git submodules (FS-0009 (formerly FS-0017), PLAN-0009).
+- Vendored upstream specs: Conventional Commits (`vendor/conventional-commits/`) and Keep a Changelog (`vendor/keep-a-changelog/`) as git submodules (FS-0009 (formerly FS-0017), PLAN-0009). These submodules were later removed from the consumer-facing surface in v2.1.0 per ADR-0017; consumers now reference framework files and upstream URLs.
 - "Upstream References" section in README with vendored specs and joelparkerhenderson ADR resource.
 - ADR-0012: Introduce non-overridable gates (super-gates).
 - FS-0009 (formerly FS-0017), FS-0010 (formerly FS-0018), PLAN-0009, PLAN-0010.

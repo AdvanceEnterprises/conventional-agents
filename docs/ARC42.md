@@ -158,14 +158,23 @@ Contained Building Blocks (black boxes):
 | integrations/ (planned) | Tool-specific integration guidance and precedence summaries   |
 | skills/           | Portable skill modules for session management, document lifecycle, git workflow, framework health, and testing |
 | docs/             | Architecture, ADRs, and process documentation                        |
-| vendor/           | Upstream references (arc42 template, MADR template/docs)             |
+| vendor/madr/      | ADR template and ADR documentation (framework-internal)            |
 | INTEGRATION.md    | Cross-tool precedence rules and integration guidance                 |
 | README.md         | Entry point and usage overview                                        |
 
+> **Note (v2.1.0):** `vendor/conventional-commits/`, `vendor/keep-a-changelog/`,
+> and `vendor/arc42-template/` were removed as consumer-facing submodules per
+> ADR-0017. Only `vendor/madr/` remains as internal infrastructure. Consumers
+> should use framework files and upstream URLs, not nested vendor paths.
+
 Important Interfaces:
 - Stable file paths referenced by host repos and tools.
-- vendor/arc42-template for architecture template reference.
-- vendor/madr for ADR templates and ADR documentation.
+- `vendor/madr/` for ADR templates and ADR documentation.
+
+> **Note (v2.1.0):** `vendor/arc42-template/` was removed as a consumer-facing
+> submodule per ADR-0017. `docs/ARC42.md` remains hand-curated prose following
+> the arc42 structure; consumers should consult [arc42.org](https://arc42.org/)
+> for the full upstream template.
 
 ## 5.2 Level 2
 
@@ -238,8 +247,11 @@ Purpose:
 - Track upstream reference material as submodules.
 
 Key elements:
-- vendor/arc42-template/
-- vendor/madr/
+- `vendor/madr/`
+
+> **Note (v2.1.0):** `vendor/arc42-template/` was removed as a consumer-facing
+> submodule per ADR-0017. Only `vendor/madr/` remains as framework-internal
+> infrastructure.
 
 ## 5.3 Level 3
 

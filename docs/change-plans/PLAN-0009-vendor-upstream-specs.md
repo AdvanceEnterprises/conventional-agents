@@ -6,7 +6,7 @@ status: implemented
 related_specs: [FS-0009]
 related_adrs: [ADR-0010]
 created: 2026-02-08
-updated: 2026-06-08
+updated: 2026-07-27
 ---
 
 # Change Plan: Vendor Upstream Specs (Conventional Commits, Keep a Changelog)
@@ -14,12 +14,12 @@ updated: 2026-06-08
 ## 1. Feature / Issue Reference
 
 - Feature Spec ID(s): FS-0009
-- Related ADR ID(s): ADR-0010
+- Related ADR ID(s): ADR-0010, ADR-0017
 - Issue / PR Reference: TBD
 
 ## 2. Scope of Change
 
-**This change WILL:**
+**This change WILL (as originally implemented):**
 
 - Add `vendor/conventional-commits/` as a git submodule
 - Add `vendor/keep-a-changelog/` as a git submodule
@@ -27,6 +27,15 @@ updated: 2026-06-08
 - Update `workflows/versioning-and-releases.md` with vendor path references
 - Update CHANGELOG.md format header with vendor path reference
 - Update INTEGRATION.md to mention vendored upstream specs
+
+**This change was subsequently superseded in part by ADR-0017 (2026-07-27):**
+
+- `vendor/conventional-commits/`, `vendor/keep-a-changelog/`, and
+  `vendor/arc42-template/` were removed from the consumer-facing surface.
+- Consumers now use framework files (`workflows/git-and-gh-conventions.md`,
+  `workflows/versioning-and-releases.md`) and upstream URLs instead of nested
+  vendor paths.
+- `vendor/madr/` remains as the only framework-internal submodule.
 
 **This change will NOT:**
 
