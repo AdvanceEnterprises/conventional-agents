@@ -59,5 +59,6 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0015 | Role Selection and Session Modes | implemented |
 | FS-0016 | Framework Internal Vendor Boundary | implemented |
 | FS-0017 | Single-identity commit attribution with model, role, and session metadata | implemented |
-| FS-0018 | Issue lifecycle and autonomous triggers for governed work | draft |
+| FS-0018 | Work item lifecycle and autonomous triggers for governed work | draft |
 | FS-0019 | Multi-model consensus at workflow gates (optional consumer feature) | draft |
+| FS-0021 | Review board collaboration mode | draft |
