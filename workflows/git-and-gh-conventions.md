@@ -207,8 +207,13 @@ git commit metadata to preserve the audit trail that ADR-0011's three
 identities would otherwise provide.
 
 **This section is the convention in force.** ADRs record why it changed;
-this document records what it is. Where an ADR and this section appear to
-disagree, this section is current and the ADR is historical.
+this section records what it is (ADR-0030).
+
+If this section and an individual ADR appear to disagree, the likely cause
+is that a later ADR revised that rule — check for one before concluding
+either is wrong. If no later ADR exists, this section is stale: report it
+and fix it. Accepted ADRs remain precedence level 1 per ROLE_CONTRACT;
+this section is a materialized view over them, not a competing authority.
 
 ### The convention
 
