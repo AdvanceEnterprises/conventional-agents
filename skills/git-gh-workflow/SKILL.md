@@ -92,8 +92,8 @@ metadata correctly.
 ### Per-commit override
 
 ```bash
-git -c user.name="Hermes Agent" \
-    -c user.email="hermes-agent@tais-den.dev" \
+git -c user.name="Opus 5" \
+    -c user.email="claude-code@tais-den.dev" \
     commit -m "..."
 ```
 
@@ -106,8 +106,8 @@ For sustained agent work in one session, set once via env or local
 config:
 
 ```bash
-export GIT_AUTHOR_NAME="Hermes Agent"
-export GIT_AUTHOR_EMAIL="hermes-agent@tais-den.dev"
+export GIT_AUTHOR_NAME="Opus 5"
+export GIT_AUTHOR_EMAIL="claude-code@tais-den.dev"
 export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
 export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
 ```
@@ -121,19 +121,31 @@ code, you wrote the commit message, or vice versa), add a
 ```text
 docs: explain single-identity workflow
 
-Co-authored-by: Hermes Agent <hermes-agent@tais-den.dev>
+Co-authored-by: Opus 5 <claude-code@tais-den.dev>
 ```
 
 GitHub renders the trailer as a second author chip on the commit page.
 
-### Known actor emails (this repo)
+### Authorship form (this repo)
 
-- Human: `taisden@tais-den.dev`
-- Hermes Agent: `hermes-agent@tais-den.dev`
+`user.name` carries the **model** display name; `user.email` carries the
+**actor** — the agent framework, or the human:
 
-Verify your active identity with `git config --get user.email` before
-any commit in a fresh session. If it's wrong, use the per-commit
-override form above.
+| Commit source | Author line |
+| --- | --- |
+| Claude Code running Opus 5 | `Opus 5 <claude-code@tais-den.dev>` |
+| Hermes running DeepSeek V4 | `DeepSeek V4 <hermes-agent@tais-den.dev>` |
+| The human, unassisted | `Joey Clark <taisden@tais-den.dev>` |
+
+Known actor emails: `claude-code@tais-den.dev`, `hermes-agent@tais-den.dev`,
+`taisden@tais-den.dev`.
+
+Verify both fields with `git config --get user.name` and
+`git config --get user.email` before any commit in a fresh session. An
+unset identity is the common failure — git will fall back to a
+hostname-derived value and write a meaningless author into the audit
+trail. If either is wrong or unset, use the per-commit override form
+above.
 
 See `workflows/git-and-gh-conventions.md` for the full convention and
 forward-compatibility notes.

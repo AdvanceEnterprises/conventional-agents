@@ -199,26 +199,47 @@ If you use multiple accounts, ensure you explicitly switch contexts before takin
 
 - `gh auth switch -u <username>`
 
-## Single-identity workflow with agent co-attribution (ADR-0018)
+## Single-identity workflow with agent co-attribution (ADR-0018, ADR-0029)
 
 Most projects — including this repository — operate with one GitHub login
 shared across human and agent actors. The single-identity workflow uses
 git commit metadata to preserve the audit trail that ADR-0011's three
 identities would otherwise provide.
 
+**This section is the convention in force.** ADRs record why it changed;
+this document records what it is. Where an ADR and this section appear to
+disagree, this section is current and the ADR is historical.
+
 ### The convention
 
 All commits, PRs, and reviews are authored under one GitHub login. The
 distinguishing layer is git's `user.name` / `user.email`:
 
-| Actor | `user.name` | `user.email` |
+| Field | Carries | Example |
 | --- | --- | --- |
-| Human (Joey) | `Joey Clark` | `taisden@tais-den.dev` |
-| Hermes Agent | `Hermes Agent` | `hermes-agent@tais-den.dev` |
+| `user.name` | Model display name, human-readable | `Opus 5` |
+| `user.email` | The actor — agent framework or human — as an alias | `claude-code@tais-den.dev` |
+
+| Commit source | Author line |
+| --- | --- |
+| Claude Code running Opus 5 | `Opus 5 <claude-code@tais-den.dev>` |
+| Hermes running DeepSeek V4 | `DeepSeek V4 <hermes-agent@tais-den.dev>` |
+| Joey, unassisted | `Joey Clark <taisden@tais-den.dev>` |
+
+The human row is the exception: a human is not a model, so `user.name`
+carries the person's name.
 
 These addresses are aliases under the same login. GitHub renders each
 commit's author email as a link to the same profile, but `git log`,
 `git shortlog`, and downstream tooling can distinguish actors by email.
+
+`user.name` carries a display form; the `Agent-Attribution:` trailer
+carries the canonical provider-qualified model id. Where the two
+disagree, the trailer is authoritative.
+
+Note that `git shortlog` without `-e` groups by model and fragments across
+model versions. Use `git shortlog -e` to group by actor, or add a
+`.mailmap`.
 
 ### Per-commit override (recommended for one-off agent sessions)
 
@@ -226,8 +247,8 @@ When authoring a single commit as an agent, override the identity inline
 rather than mutating global `git config`:
 
 ```bash
-git -c user.name="Hermes Agent" \
-    -c user.email="hermes-agent@tais-den.dev" \
+git -c user.name="Opus 5" \
+    -c user.email="claude-code@tais-den.dev" \
     commit -m "..."
 ```
 
@@ -237,7 +258,7 @@ a `Co-authored-by:` trailer to the commit message:
 ```text
 docs: explain single-identity workflow with agent co-attribution
 
-Co-authored-by: Hermes Agent <hermes-agent@tais-den.dev>
+Co-authored-by: Opus 5 <claude-code@tais-den.dev>
 ```
 
 GitHub renders `Co-authored-by:` trailers natively as a second author chip
@@ -250,8 +271,8 @@ the model, role, and session mode:
 ```text
 docs: explain single-identity workflow with agent co-attribution
 
-Co-authored-by: Hermes Agent <hermes-agent@tais-den.dev>
-Agent-Attribution: actor=Hermes Agent; model=ollama-cloud/deepseek-v4-flash; role=Head Architect; session=architecture-planning
+Co-authored-by: Opus 5 <claude-code@tais-den.dev>
+Agent-Attribution: actor=Claude Code; model=anthropic/claude-opus-5; role=Head Architect; session=architecture-planning
 ```
 
 The `Agent-Attribution:` trailer is not rendered by GitHub but is parsed
@@ -269,8 +290,8 @@ identity once via environment or a local include:
 
 ```bash
 # Bash — export once at session start
-export GIT_AUTHOR_NAME="Hermes Agent"
-export GIT_AUTHOR_EMAIL="hermes-agent@tais-den.dev"
+export GIT_AUTHOR_NAME="Opus 5"
+export GIT_AUTHOR_EMAIL="claude-code@tais-den.dev"
 export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
 export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
 ```
@@ -284,8 +305,8 @@ export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
 ```ini
 # ~/.gitconfig-agent
 [user]
-    name = Hermes Agent
-    email = hermes-agent@tais-den.dev
+    name = Opus 5
+    email = claude-code@tais-den.dev
 ```
 
 ### When to use each layer
@@ -306,7 +327,7 @@ export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
 
 ### Forward compatibility with ADR-0011
 
-When this repository (or any project following ADR-0018) is ready to
+When this repository (or any project following this convention) is ready to
 transition to separate GitHub accounts, the migration path is:
 
 1. Create `taisden-agent-committer` and `taisden-agent-reviewer` accounts.
@@ -318,4 +339,5 @@ transition to separate GitHub accounts, the migration path is:
    represents a cross-account relationship rather than same-account
    co-authorship.
 
-See ADR-0018 for the full rationale and consequences.
+See ADR-0018 for the original rationale and ADR-0029 for the change to
+the name-field assignment.
