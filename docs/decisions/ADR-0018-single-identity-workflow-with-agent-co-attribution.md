@@ -1,24 +1,18 @@
 ---
 type: adr
 id: ADR-0018
-status: superseded
+status: accepted
 decision_scope: workflow
 reversible: yes
 related_specs: []
-superseded_by: ADR-0029
+superseded_by: null
 ---
 
 # ADR-0018: Single-identity workflow with agent co-attribution
 
 ## Status
 
-- Superseded by ADR-0029
-
-ADR-0029 restates this convention in full, changing only which field carries
-the model: `user.name` now carries the model display name and `user.email`
-carries the actor. Read ADR-0029 for the convention in force. This document
-remains as the record of the decision made on 2026-07-27 and the reasoning
-behind it.
+- Accepted
 
 ## Context and Problem Statement
 

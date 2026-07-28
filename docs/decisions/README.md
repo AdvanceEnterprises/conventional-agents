@@ -204,7 +204,7 @@ If validation fails:
 | ADR-0015 | Tool taxonomy and introduction process | proposed |
 | ADR-0016 | Consumer conventions — local adaptations of the framework | accepted |
 | ADR-0017 | Framework vendor directory is internal; consumers must not reference nested submodules | accepted |
-| ADR-0018 | Single-identity workflow with agent co-attribution | superseded |
+| ADR-0018 | Single-identity workflow with agent co-attribution | accepted |
 | ADR-0019 | Issue Type immutability and the autonomous gate | proposed |
 | ADR-0020 | The `question` label suppresses agent Issue actions | proposed |
 | ADR-0021 | Cron actor identity for unattended agents | proposed |
