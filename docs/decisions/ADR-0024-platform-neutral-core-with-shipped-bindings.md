@@ -29,19 +29,20 @@ field. The phase axis "lives on the GitHub Project." The parked state is the
 directly, and its Dependencies section requires the GitHub Labels API, GitHub Projects
 v2, and `gh project` CLI or GraphQL access.
 
-This creates a conflict with constraints the framework has already accepted.
+This creates a conflict with constraints the framework has already stated.
 `docs/ARC42.md` §2 states that the framework "must not require adoption of a specific
 workflow kit or runtime," and §1.2 ranks Tool Neutrality as the second-highest quality
-goal, above both Submodule Friendliness and Enforceability. ADR-0007 positions the
-framework as adjacent to workflow orchestration — quality standards only, never
-orchestration itself. ARC42 §11 lists scope creep into workflow orchestration as a
-high-impact risk whose stated mitigation is to "enforce non-goals and document
-deviations via ADRs."
+goal, above both Submodule Friendliness and Enforceability. ARC42 §11 lists scope creep
+into workflow orchestration as a high-impact risk whose stated mitigation is to "enforce
+non-goals and document deviations via ADRs." ADR-0007 chose "stay strictly adjacent —
+standards only, never orchestration" for the same reason.
 
-Under the framework's own precedence order, an accepted ADR outranks architecture
-documentation, which outranks a draft feature spec. FS-0018 cannot settle this
-question by assuming its way past ADR-0007. Either the constraints bend, by an ADR
-that says so explicitly, or the spec does.
+None of those sources settles the question by precedence. ARC42 is itself `status:
+Draft`, and ADR-0007 is `status: proposed` — the README index listing it as accepted is
+one of eleven inaccurate entries in that table. So this is not an accepted constraint
+overruling a draft spec; it is two draft-level sources pointing one way, a third
+drafting itself the other way, and nothing adjudicating. That is precisely the situation
+an ADR exists to resolve.
 
 There is a second force, pulling the other way, and it is not weaker. ARC42 §8.2
 requires quality gates to be checkable rather than aspirational, and no test can be
@@ -63,8 +64,8 @@ own GitHub usage remains honestly documented?**
 
 ## Decision Drivers
 
-- **Accepted constraints outrank draft specs.** Tool Neutrality and ADR-0007 are in
-  force; a new spec does not get to quietly narrow them.
+- **Stated constraints deserve an explicit override, not a silent one.** Tool Neutrality
+  and ADR-0007 point one way; a new spec may overrule them, but only by saying so.
 - **Abstraction must be extracted, not imagined.** Guidance derived from a working
   implementation is testable; guidance written ahead of one becomes `packs/`.
 - **The framework's own substrate should be documented, not hidden.** This repo uses
@@ -249,7 +250,8 @@ documented rather than assumed.
 ## Links
 
 - ADR-0007: Adjacent-to-Spec-Kit positioning — quality standards, never orchestration.
-- ADR-0009: Separation of exported surface from internal governance.
+- ADR-0007: Adjacent-to-Spec-Kit positioning — standards only, never orchestration
+  (`proposed`; cited for its reasoning, not as a binding constraint).
 - ADR-0016: Consumer conventions as local adaptations of the framework.
 - `docs/ARC42.md` §1.2 (Tool Neutrality), §2 (architecture constraints), §5.1
   (`integrations/` as a planned building block), §8.2 (checkable gates), §11 (scope

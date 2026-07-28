@@ -19,8 +19,10 @@ superseded_by: null
 The framework maintains two families of document that both describe how something works.
 ADRs in `docs/decisions/` are internal governance. Workflow documents, guidelines,
 skills, templates, and integration bindings are exported surface — the material agents
-and consumers actually read. `ADR-0009` separates the two by audience, but says nothing
-about which one is authoritative when both describe the same rule.
+and consumers actually read. `README.md` and `AGENTS.md` both publish this split as a
+two-column table, and no ADR governs it: the separation is established practice with no
+decision record behind it, and nothing states which side is authoritative when both
+describe the same rule.
 
 The gap produced a concrete failure. The commit-attribution convention existed
 simultaneously in `ADR-0018`, in `workflows/git-and-gh-conventions.md`, and in
@@ -205,8 +207,9 @@ co-attribution", which both ADRs point to and which ADR-0029 updated in the same
 
 ## Links
 
-- ADR-0009: Separate exported surface from internal governance — establishes the audience
-  split this ADR assigns jobs to.
+- `README.md`, `AGENTS.md`: publish the exported-surface / internal-governance split this
+  ADR assigns jobs to. That split has no governing ADR, which is a gap worth closing
+  separately.
 - ADR-0018 / ADR-0029: the worked instance; neither supersedes the other, and
   `workflows/git-and-gh-conventions.md` carries the convention in force.
 - `docs/decisions/README.md` §"Editing Rules and Immutability" — the append-only policy
