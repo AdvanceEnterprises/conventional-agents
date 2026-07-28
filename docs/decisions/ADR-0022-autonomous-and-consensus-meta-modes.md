@@ -104,12 +104,21 @@ The framework recognizes two categories of value in the `mode=` field:
 `architecture-planning`, `document-authoring`, `implementation`, `review`,
 `communications`.
 
-**Meta-modes** (two) describe the *execution context* of the session:
+**Meta-modes** (three) describe the *execution context* of the session:
 
 - **`autonomous`** — no human is present. The session was fired by cron, by a webhook,
   or delegated as a subagent with no interactive human in the loop.
 - **`consensus`** — multiple independent models participate in a structured round at a
-  workflow gate.
+  workflow gate, performing the same task, and their outputs are compared for
+  agreement (FS-0019).
+- **`review-board`** — multiple independent models examine one artifact from *different*
+  role stances, and their findings are merged rather than compared (FS-0021).
+
+`consensus` and `review-board` are both multi-model collaboration rounds under
+ADR-0031 and are governed by the same integrity constraints (ADR-0023). They are
+separate mode values because they answer different questions: whether participants
+converged, versus what each perspective caught that the others missed. A session is
+never both at once — a round is one or the other.
 
 A meta-mode is not a stance. It is a fact about how the session runs.
 
@@ -122,6 +131,7 @@ prohibited actions. The underlying session mode is implied by the role.
 ```text
 agent-stance: mode=autonomous; role=Head Architect; model=<model>; session=nightly-audit; rationale=<reason>
 agent-stance: mode=consensus; role=Reviewer; model=<model>; session=pr-142-gate-b; rationale=<reason>
+agent-stance: mode=review-board; role=Head Architect; model=<model>; session=fs-0020-board; rationale=<reason>
 ```
 
 Both meta-modes may apply at once. An unattended consensus round declares
@@ -129,9 +139,10 @@ Both meta-modes may apply at once. An unattended consensus round declares
 
 ### The closed vocabulary
 
-The `mode=` field accepts exactly seven values: the five session modes and the two
+The `mode=` field accepts exactly eight values: the five session modes and the three
 meta-modes, singly or as a comma-separated combination of meta-modes with at most one
-session mode. Any other value is invalid.
+session mode. `consensus` and `review-board` are mutually exclusive. Any other value,
+or that pairing, is invalid.
 
 This closes the vocabulary. FS-0018's stance regex validates *format*; this ADR
 supplies the *value set* that format is checked against.
