@@ -7,6 +7,7 @@ reversible: yes
 related_specs:
   - FS-0014
   - FS-0015
+  - FS-0018
 superseded_by: null
 ---
 
@@ -99,11 +100,20 @@ its declared role and session mode.
 
 Every parallel primary MUST declare at session start:
 
-- **PLAN ID** (or governing task identifier, e.g., a GitHub issue number)
+- **PLAN ID** (or governing work item identifier — see `FS-0018`)
 - **Branch name** being used for this task
 - **Artifact scope** — which files or directories this session may modify
 - **Known excluded artifacts** — any files in the branch that are explicitly out of
   scope for this session
+
+**Artifact scope is the PLAN's `touches:` field.** `ADR-0027` requires every change
+plan to declare the paths it will modify, and routes approval on whether that set falls
+within the governing FS's `interfaces:`. A parallel primary executing a PLAN declares
+that same set — it does not maintain a second, hand-written scope list that can drift
+from the first. Where a session has no governing PLAN, it declares scope explicitly and
+the same overlap rule applies.
+
+One declaration, two uses: `touches:` routes approval and bounds concurrency.
 
 Rule: Parallel primaries MUST NOT modify the same governed artifacts concurrently. If
 two primaries need to touch the same file, they must be sequenced, not parallelized.
@@ -122,8 +132,33 @@ and holds final authority. Other sessions are **contributors**. A contributor:
 - Does NOT open PRs on behalf of the task.
 - Does NOT make status transitions on governed documents.
 
-The primary incorporates contributor outputs at its discretion, with attribution in the
-commit message or PR description.
+The primary incorporates contributor outputs at its discretion, with attribution per
+Convention 4 below.
+
+### Mode 2 and collaboration rounds are the same shape
+
+`ADR-0031` defines a structured collaboration round: participants produce outputs to a
+declared contract, a primary synthesizes them, and on gated rounds an independent
+evaluator returns a verdict. `FS-0019` and `FS-0021` specialize it for consensus and
+review boards.
+
+That is Mode 2 with a contract attached. The authority rules are identical — one
+primary holds commit, PR and status-transition authority; contributors read, produce,
+and deliver through a declared channel — and a round's participants are Mode 2
+contributors by another name.
+
+The division of labour between this ADR and `ADR-0031`:
+
+| This ADR decides | `ADR-0031` decides |
+| --- | --- |
+| Who holds authority | What shape the outputs take |
+| What a contributor may not do | What a contributor must produce |
+| How overlap is escalated | How outputs are combined and checked |
+
+A structured round therefore inherits Mode 2's authority rules without restating them,
+and Mode 2 sessions that are *not* structured rounds — an ad-hoc second opinion, a
+one-off analysis — remain valid under this ADR alone. Not every contribution needs a
+claim envelope.
 
 ### Why not Option C or D?
 
@@ -165,10 +200,16 @@ requirement that a single identity be responsible for any given git action.
 
 ## Coordination Conventions
 
-1. **Declare at session start**: A contributor session begins with a transparency
-   statement naming the primary session and its contributor scope.
+1. **Declare at session start, durably**: A contributor session begins with a
+   transparency statement naming the primary session and its contributor scope.
    Example: "Operating as contributor to [primary session/task]. My outputs will be
-   delivered as PR comments on [PR URL] and will not be committed directly."
+   delivered as review comments on [PR URL] and will not be committed directly."
+
+   Where the work has a work item, this declaration is an agent-stance entry on its
+   activity record in the format `FS-0018` defines — not only a statement in the
+   session transcript. A declaration that exists only in a conversation is not
+   auditable once the conversation ends, which is the failure this ADR's own
+   auditability driver names.
 
 2. **Artifact boundaries for parallel primaries**: Each primary session declares its
    PLAN scope in its opening transparency statement. A session MUST NOT modify
@@ -179,14 +220,22 @@ requirement that a single identity be responsible for any given git action.
    overlap is detected, the session stops and escalates rather than resolving the
    conflict unilaterally.
 
-4. **Attribution**: When the primary incorporates contributor output, the commit message
-   or PR description notes the contribution using trailers that do not conflict with
-   GitHub's `Co-Authored-By` convention (which requires a real name + email identity):
+4. **Attribution**: When the primary incorporates contributor output, the commit
+   carries the contribution using `ADR-0018` as amended by `ADR-0029`:
 
    ```text
-   Assisted-By: [model name or session identifier]
-   Contributor-Session: [session identifier or PR comment URL]
+   Co-authored-by: <Model Display Name> <actor@example.dev>
+   Agent-Attribution: actor=<actor>; model=<provider/model-id>; role=<role>; session=<session>
    ```
+
+   An earlier revision of this ADR specified `Assisted-By:` and `Contributor-Session:`
+   trailers instead, reasoning that `Co-authored-by:` requires a real name and email
+   identity which an agent contributor lacks. That premise was overtaken: `ADR-0018`
+   gives every actor a real name and address — aliases under a single login — and
+   `ADR-0029` puts the model in the name. The framework has one attribution convention
+   and this is it. The superseded trailers survive in
+   `docs/orchestration/multi-model-pilot-001/`, which is preserved evidence from before
+   that decision, not a template.
 
 5. **Conflict escalation**: If two sessions discover they need to modify the same
    artifact, they stop and escalate to human. Neither session proceeds unilaterally.
@@ -195,5 +244,11 @@ requirement that a single identity be responsible for any given git action.
 
 - ADR-0011: Multi-identity GitHub model (agent-committer vs. agent-reviewer)
 - ADR-0012: Non-overridable gates (apply to all sessions, primary and contributor)
+- ADR-0018 / ADR-0029: the attribution convention Convention 4 uses
+- ADR-0027: PLAN self-approval — defines the `touches:` field that Mode 1's artifact
+  scope declaration reuses
+- ADR-0031: Structured multi-model collaboration — specializes Mode 2 with an output
+  contract, synthesis, and optional gate
 - FS-0014: Six-role model (role taxonomy applies to all sessions)
 - FS-0015: Session modes (each session declares a mode independently)
+- FS-0018: Work item lifecycle — the activity record where session declarations persist
