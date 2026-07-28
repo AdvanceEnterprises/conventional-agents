@@ -84,6 +84,35 @@ matching `ADR-0015`'s existing structure; determine whether an MCP server's auth
 is bounded by the session's role, by `ADR-0014`'s background-task rules, or by
 something new.
 
+### Model provider guidance
+
+A spec covering how models are selected for collaboration rounds, how
+transports differ, and how cost and latency are managed across providers.
+
+**Why deferred — and why it may never be needed.** Most of what this was
+scoped to cover has either landed elsewhere or was deliberately ruled out
+of scope:
+
+- The Mixture-of-Agents mapping is in `FS-0019` §"Relationship to Mixture
+  of Agents", including the correction that an MoA aggregator is the
+  synthesizing primary and never the gate.
+- Transport enumeration was rejected on purpose. `render_mode` is a
+  consumer-named value, because attribution and output contract are
+  identical across transports and that is what makes outputs comparable.
+- Model-to-role assignment is consumer configuration, the same as
+  participant selection in `FS-0019` and seat composition in `FS-0021`.
+
+What remains is provider-selection heuristics — which models suit which
+role stances — and there is no evidence base for that. The one run on
+record used a fixed set chosen by the operator. Writing guidance from a
+single unmeasured run would be the imagined abstraction `ADR-0024` exists
+to prevent.
+
+**What closing it requires:** enough runs across varied model sets to say
+something falsifiable about selection. If that evidence never accumulates,
+the correct outcome is to close this entry without writing the spec, not
+to write it anyway.
+
 ### Notion substrate binding
 
 `integrations/notion.md` — the second binding under `ADR-0024`.
