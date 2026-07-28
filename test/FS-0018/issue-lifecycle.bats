@@ -124,9 +124,9 @@ ALLOWED_MODES=(
 
 @test "FS-0018 declares autonomous gate by Type" {
   local f="$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md"
-  assert_file_contains "$f" "feature.*Approved"
-  assert_file_contains "$f" "bug.*Approved"
-  assert_file_contains "$f" "task.*In Progress"
+  assert_file_contains "$f" "**Type \`feature\`**: Status may not advance past Approved"
+  assert_file_contains "$f" "**Type \`bug\`**: Status may not advance past Approved"
+  assert_file_contains "$f" "**Type \`task\`**: Status may not advance past In Progress"
 }
 
 @test "FS-0018 declares three origination paths" {
