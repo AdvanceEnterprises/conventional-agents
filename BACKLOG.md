@@ -1,0 +1,189 @@
+# Backlog
+
+Work deliberately deferred out of the current bootstrap PR, plus known gaps found
+along the way.
+
+**What this file is:** a durable record of things we decided *not* to do now, with
+enough context to act on them later without reconstructing the conversation that
+deferred them. When a reference to future work is removed from a spec, ADR, or
+workflow document to keep that document's scope clean, the reference lands here.
+
+**What this file is not:** normative. Nothing here is a decision, a commitment, or a
+constraint. Per `ADR-0030`, decisions live in `docs/decisions/` and current rules live
+in the exported surface. This file holds neither — it is internal governance, and an
+agent must not treat an entry here as authorization to act.
+
+Entries are removed when the work lands or is explicitly abandoned.
+
+---
+
+## Next after this PR
+
+### Implement the GitHub guidance on this repository, and write the runbook
+
+The first real exercise of the workflows defined in this PR. `conventional-agents`
+runs on GitHub Issues and Projects, and `integrations/github-issues-projects.md`
+describes the substrate binding — but the binding is documentation, not
+configuration. Nothing described in it has been provisioned.
+
+**What closing it requires:**
+
+- Work through the binding's Setup Checklist against the live repository: the
+  `Issue Type` single-select field, the label vocabulary, auto-add, the unattended
+  actor identity and its token, branch protection, trigger handlers, per-work-item
+  concurrency serialization, and `Issue Type` change alerting.
+- Write a runbook documenting the process as performed, not as imagined. Deviations
+  between the binding and what GitHub actually permits are findings, and belong back
+  in the binding.
+- Repository merge settings must be switched to rebase-merge per `ADR-0025`. This is
+  operator work; it is not reachable from an agent session.
+
+**Why this order:** it is the first end-to-end test of the work item lifecycle
+(`FS-0018`), and it produces the runbook that consuming projects copy. It also
+exercises the binding as a real conformance checklist rather than a hypothetical one.
+
+---
+
+## Deferred concepts
+
+### Domain concept
+
+A first-class `DOMAIN-XXXX` document declaring a domain's required skills, default
+role, default personality, description, related domains, and context pointers — so
+that switching between areas of work (advocacy, infrastructure, legal, personal
+history, software) stops being a manual reload of skills, role, and tone.
+
+**Material:** `docs/decisions/ADR-0017-domain-concept.md`,
+`docs/specifications/FS-0016-domain-document-type.md`, `docs/domains/README.md`, and
+`templates/core/domain.md`, all on branch `docs/domain-concept-adr-fs` (PR #64).
+
+**Why deferred:** genuinely orthogonal to the SDLC workflows this PR defines. It
+concerns agent profile and skill bundling, not how governed work moves. Including it
+would widen an already large PR without improving it.
+
+**What closing it requires:** renumber — its ADR-0017 and FS-0016 both collide with
+documents already on trunk. Re-enter as `proposed`/`draft`; the branch versions carry
+statuses they never earned through merge. Reconcile against the layer table it
+proposes, which references `ADR-0016` for render mode — an ID that means something
+else on trunk.
+
+### MCP tooling integration
+
+Model Context Protocol servers as a governed tool category: how an MCP server is
+introduced, what authority it carries, how its capabilities are declared, and which
+role is accountable for it.
+
+**Why deferred:** `ADR-0015` establishes a three-category tool taxonomy (governance
+gates, productivity skills, platform capabilities) and MCP servers do not cleanly
+occupy any of them. Slotting them in is a taxonomy question, and taxonomy questions
+are cheaper to answer once the workflows that consume tools are settled.
+
+**What closing it requires:** decide whether MCP servers are a fourth category or a
+subtype of platform capability; define introduction and modification requirements
+matching `ADR-0015`'s existing structure; determine whether an MCP server's authority
+is bounded by the session's role, by `ADR-0014`'s background-task rules, or by
+something new.
+
+### Notion substrate binding
+
+`integrations/notion.md` — the second binding under `ADR-0024`.
+
+**Why deferred:** the GitHub binding must be exercised against a live repository first
+(see "Next after this PR"). Writing a second binding before the first is proven would
+repeat the mistake `ADR-0024` exists to prevent.
+
+**Why it matters:** most Tais-Den projects consuming this framework use Notion for
+knowledge base and project tracking, not GitHub Projects. This binding is required,
+not hypothetical, and its arrival triggers `ADR-0024`'s review checkpoint: if
+extracting it forces a change to the six core capabilities, the core was
+under-generalized.
+
+**Known risk area:** capability 6 (trigger source). Notion's event surface is shaped
+differently from GitHub's webhooks. Under level-triggered semantics this should cost
+latency rather than correctness — the substrate needs to be *enumerable*, not
+*event-emitting* — but that expectation is untested.
+
+---
+
+## Known gaps
+
+### No ADR governs the exported-surface / internal-governance split
+
+`README.md` and `AGENTS.md` both publish the split as a two-column table, and
+`ADR-0009`'s index entry claimed to establish it — but `ADR-0009` is "Feature
+Specification Template Selection" and the split has no decision record at all.
+Verified by grepping `docs/decisions/` for "exported surface": only `ADR-0016`,
+`ADR-0017`, and ADRs written in the current session mention it.
+
+`ADR-0030` depends on this split to assign document families their jobs, and
+currently cites `README.md`/`AGENTS.md` as the only sources.
+
+### `docs/ARC42.md` is stale
+
+- `status: Draft`, `last_updated: 2026-07-12`.
+- §9 duplicates its "Accepted ADRs" block verbatim and stops at ADR-0009 — every ADR
+  from 0010 onward is missing, including `ADR-0012`'s non-overridable gates.
+- References `guidelines/context-engineering.md` and
+  `guidelines/multi-agent-coordination.md` (§8.3, §8.4). Neither file exists.
+- §5.1 lists `packs/` as a planned building block. It has never been built.
+  `integrations/` was also phantom until this PR created it.
+
+### `scripts/README.md` does not exist
+
+`ADR-0015` requires every governance gate to carry a description in
+`scripts/README.md` explaining its purpose, when it runs, and what a failure means.
+`scripts/` contains `check-status.sh` and no README. Now binding, since ADR-0015 moved
+to `accepted`.
+
+### Lint coverage is enumerated, not discovered
+
+`npm run lint:docs` and `.github/workflows/lint-docs.yml` both list directories
+explicitly. Anything outside `docs/decisions`, `docs/specifications`,
+`docs/change-plans`, and `workflows/` is unlinted — currently `integrations/`,
+`templates/`, `guidelines/`, `skills/`, and root-level documents including this file.
+
+Related: `scripts/check-status.sh` has no ADR coverage at all, which is why the ADR
+index drifted to eleven wrong titles and nine wrong statuses undetected. Both are
+tracked for the PLAN work rather than here, but they share a root cause worth naming
+once: coverage is opt-in by enumeration, so new surfaces are unguarded by default.
+
+---
+
+## Cleanup
+
+### Close PRs #62, #63, #64 after extraction
+
+Cumulative branches (#62 → #63 → #64) carrying the multi-model orchestration pilot.
+To be closed unmerged once their useful content is extracted and renumbered.
+
+**Extract:** gate-evaluator independence, execution-status vs verdict separation, the
+Coverage/Disposition Record, the disagreement-preserving synthesis structure, bounded
+CONDITIONAL cycles, render modes, and the synthesis-only fallback.
+
+**Preserve as evidence:** `multi-model-pilot-001-synthesis.md` and the three gate
+verdict files. Raw `contrib-*.md` outputs are session artifacts and are dropped; any
+validation section citing them must be rewritten to cite what survives.
+
+**Do not carry over:** `Assisted-By:` / `Contributor-Session:` trailers (superseded by
+`ADR-0018`/`ADR-0029`), `status: accepted` on unmerged documents, and all four
+colliding IDs (their ADR-0016, ADR-0017, FS-0016, PLAN-0016 are all occupied on
+trunk).
+
+**Also on those branches:** `scripts/render_contributor_prompt.py` with a bats suite,
+and `pyproject.toml`. Real code with real tests, but adopting it means deciding its
+category under `ADR-0015` and introducing a Python toolchain to a repository that has
+none. Evaluate separately rather than extracting by default.
+
+### Stale work-tracking issues
+
+GitHub issues #28–#49 are backfilled FS/PLAN tracking issues, all OPEN while their
+documents are `implemented` on trunk. Several still name the pre-2.0 project
+`agentic-dev-kit`. They contradict the framework's own status-consistency principle
+and should be closed or reconciled.
+
+### `.mailmap` for author grouping
+
+`ADR-0029` moves the model into `user.name`, so `git shortlog` without `-e` groups by
+model and fragments across model versions (`Opus 5` and `Opus 4.8` count separately).
+A `.mailmap` mapping model names to actor addresses restores actor-level grouping.
+Named in ADR-0029 as the first remedy; not yet needed.
