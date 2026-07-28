@@ -79,6 +79,19 @@ Some PLANs span multiple PRs. In this case:
 - Keep `in-progress` for intermediate PRs
 - Set `implemented` only in the final PR
 
+### Bootstrap merges (ADR-0026)
+
+Merging normally *is* approving: a spec or plan reaches `approved`, and an ADR reaches `accepted`, when a human merges its PR.
+
+A **bootstrap merge** is the declared exception — a merge that lands governed documents without approving them. It is valid only when all of the following hold:
+
+1. **Declared before merge.** The PR description states that it is a bootstrap merge and lists every document landing un-approved.
+2. **Documents land at `draft` or `proposed`.** Nothing arrives at `approved`, `accepted`, `in-progress`, or `implemented`.
+3. **Approval is a separate later change** that touches status fields and index tables only.
+4. **No implementation may begin.** The spec-first rule applies unchanged — a `draft` spec is not implementable. A bootstrap merge lands documents; it authorizes nothing.
+
+Use one only when the value of the PR is the coherence of the package rather than any single document, and the number of independent decisions makes a single merge-as-approval act unreviewable. If the PR could be split into document-sized PRs without inventing ordering constraints, split it.
+
 ### Stale documents
 
 If an `approved` spec has not been worked on for an extended period and is no longer planned:
