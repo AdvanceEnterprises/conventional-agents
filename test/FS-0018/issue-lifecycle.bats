@@ -31,10 +31,10 @@ ALLOWED_MODES=(
   assert_file_contains "$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md" "status: draft"
 }
 
-@test "FS-0018 declares three-axis Issue schema" {
+@test "FS-0018 declares three-axis work item schema" {
   assert_file_contains "$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md" "Type (single-valued)"
   assert_file_contains "$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md" "Label (multi-valued)"
-  assert_file_contains "$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md" "Status (single-valued, lives on the GitHub Project)"
+  assert_file_contains "$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md" "Phase (single-valued)"
 }
 
 @test "FS-0018 lists six labels" {
@@ -53,7 +53,7 @@ ALLOWED_MODES=(
   done
 }
 
-@test "FS-0018 lists five Status values" {
+@test "FS-0018 lists five phase values" {
   local statuses=("Backlog" "Approved" "In Progress" "In Review" "Done")
   local f="$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md"
   for s in "${statuses[@]}"; do
@@ -124,16 +124,16 @@ ALLOWED_MODES=(
 
 @test "FS-0018 declares autonomous gate by Type" {
   local f="$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md"
-  assert_file_contains "$f" "**Type \`feature\`**: Status may not advance past Approved"
-  assert_file_contains "$f" "**Type \`bug\`**: Status may not advance past Approved"
-  assert_file_contains "$f" "**Type \`task\`**: Status may not advance past In Progress"
+  assert_file_contains "$f" "**Type \`feature\`**: phase may not advance past Approved"
+  assert_file_contains "$f" "**Type \`bug\`**: phase may not advance past Approved"
+  assert_file_contains "$f" "**Type \`task\`**: phase may not advance past In Progress"
 }
 
 @test "FS-0018 declares three origination paths" {
   local f="$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md"
-  assert_file_contains "$f" "Path 1: Human opens Issue with \`enhancement\` label"
-  assert_file_contains "$f" "Path 2: Head Architect conversation produces Type \`feature\` Issue"
-  assert_file_contains "$f" "Path 3: Autonomous agent creates Issue from drift"
+  assert_file_contains "$f" "Path 1: Human opens a work item with the \`enhancement\` label"
+  assert_file_contains "$f" "Path 2: Head Architect conversation produces a Type \`feature\` work item"
+  assert_file_contains "$f" "Path 3: Autonomous agent creates a work item from drift"
 }
 
 @test "FS-0018 lists ADR dependencies" {
@@ -141,6 +141,7 @@ ALLOWED_MODES=(
   grep -qE "^related_adrs:" "$f" || return 1
   grep -qE "^  - ADR-0018" "$f"
   grep -qE "^  - ADR-0012" "$f"
+  grep -qE "^  - ADR-0024" "$f"
 }
 
 @test "FS-0018 has Plan Status section naming its PLAN" {
@@ -160,9 +161,30 @@ ALLOWED_MODES=(
   fi
 }
 
-@test "FS-0018 cron-identity is a documented blocker" {
+@test "FS-0018 cron-identity precondition is resolved by ADR-0021" {
   local f="$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md"
-  assert_file_contains "$f" "Cron actor identity (blocker for Path 3)"
+  assert_file_contains "$f" "Cron identity precondition — resolved."
+  assert_file_contains "$f" "Unattended actor identity"
+}
+
+@test "FS-0018 is platform-neutral: no GitHub product nouns in body" {
+  # ADR-0024: platform mechanics belong in integrations/ bindings, not in
+  # the spec. The only permitted mentions are references to the binding
+  # document itself.
+  local f="$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md"
+  local hits
+  hits=$(grep -n "GitHub" "$f" | grep -v "integrations/github-issues-projects.md" | grep -v "GitHub Issues and Projects" || true)
+  if [ -n "$hits" ]; then
+    echo "FAIL: unbound GitHub references in FS-0018:"
+    echo "$hits"
+    return 1
+  fi
+}
+
+@test "FS-0018 declares the six ADR-0024 substrate capabilities" {
+  local f="$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md"
+  assert_file_contains "$f" "## Substrate Assumptions"
+  assert_file_contains "$f" "attributable"
 }
 
 @test "FS-0018 references FS-0019 as a follow-on" {
