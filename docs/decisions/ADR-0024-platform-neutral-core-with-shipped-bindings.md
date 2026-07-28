@@ -233,8 +233,8 @@ documented rather than assumed.
   `test/FS-0016/vendor-boundary.bats`.
 - **Signal:** `integrations/github-issues-projects.md` maps all six core capabilities,
   with no capability marked deferred or planned.
-- **Signal:** FS-0020, FS-0021, and FS-0022, when drafted, reference core capabilities
-  rather than GitHub mechanisms.
+- **Signal:** specifications built on this core reference capabilities rather than
+  platform mechanisms. FS-0021 satisfies this; FS-0020 is pending.
 - **Review checkpoint:** when a second binding is first proposed. If extracting it
   requires changing core capabilities, the core was under-generalized and this ADR's
   ordering rule needs revisiting.

@@ -39,10 +39,10 @@ Per participant:
 
 **On `render_mode`:** how a participant is invoked — a CLI session, an
 API call, a provider-managed pool — is a transport concern, not a
-governance one. The framework does not enumerate transports. Attribution
-and output contract are identical regardless of transport, and that is
-what makes outputs comparable. Provider-level guidance is specified
-separately.
+governance one. The framework does not enumerate transports, and does not
+need to: attribution and output contract are identical regardless of
+transport, and that is what makes outputs comparable. Consumers name their
+own values.
 
 **Composition checks before rendering.** These are `ADR-0023` constraints
 and are not advisory:
