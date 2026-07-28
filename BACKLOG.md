@@ -44,6 +44,77 @@ exercises the binding as a real conformance checklist rather than a hypothetical
 
 ---
 
+## Enforcement obligations from this PR
+
+**Distinct from everything else in this file.** These are not deferred — they are
+decisions made in this PR whose enforcement was not built alongside them. They belong
+in this PR's PLANs, and this section exists so a PLAN author can assemble the list
+without reading twelve ADRs to find their Consequences sections.
+
+Remove each entry as its PLAN absorbs it.
+
+**These require their own FS before implementation.** `ADR-0015` — accepted — requires
+an approved FS and PLAN before any governance gate is written or modified, and
+`ADR-0027` reserves `scripts/`, `.github/workflows/`, and `package.json` as
+always-human-approval paths. The gate work below cannot be folded into PLAN-0018 or
+PLAN-0019 as incidental scope.
+
+### Gate coverage — `scripts/check-status.sh`
+
+The script currently validates FS↔PLAN status pairing and README index sync for specs
+and plans. It contains zero references to `docs/decisions/`, `touches:`,
+`integrations/`, or `templates/`.
+
+| Obligation | Source | Note |
+| --- | --- | --- |
+| ADR index sync — titles and statuses against files | — | Root cause of the eleven fabricated titles and nine wrong statuses this PR corrected. Nothing would catch a recurrence. |
+| `touches:` containment against the governing FS's `interfaces:` | `ADR-0027` | Plus the reserved-path set. Without it, PLAN self-approval is unenforced. |
+| An ADR changing a rule must touch a current-state document | `ADR-0030` rule 3 | Catchable case: an ADR whose Links name a current-state document the same change did not modify. |
+
+### Lint coverage
+
+`npm run lint:docs` and `.github/workflows/lint-docs.yml` both enumerate four globs.
+Uncovered directories containing markdown: `guidelines/` (10), `skills/` (8),
+`templates/` (11), `integrations/` (1), `roles/` (1), and the repository root (16,
+including `README.md`, `AGENTS.md`, `CONTRIBUTING.md`, `BACKLOG.md`).
+
+`docs/orchestration/multi-model-pilot-001/` is deliberately exempt and carries its own
+`default: false` config; expanding coverage must not override it.
+
+### Test execution
+
+`bats` is invoked nowhere — not in `package.json`, not in any workflow. Five suites
+exist and none run: `test/FS-0001`, `FS-0016`, `FS-0017`, `FS-0018`, `FS-0019`.
+
+Every "validation" claim in this PR's commits rests on assertions verified by hand
+because the suite could not be executed. `ROLE_CONTRACT`'s pre-commit testing gate
+requires running the suite before committing code changes, and there is no suite to
+run.
+
+`test/FS-0021/review-board.bats` is named in FS-0021's rollout and is not written —
+correctly, since tests follow FS approval.
+
+### Convention-only rules, by design
+
+Recorded so a PLAN author does not mistake these for oversights. Each is enforced by
+detection or discipline, and the deciding document says so:
+
+| Rule | Source | Why not enforced |
+| --- | --- | --- |
+| Parallel primaries must not touch the same artifact | `ADR-0013` | Relies on discipline; no tooling proposed |
+| Primary/contributor designation | `ADR-0013` | Undeclared sessions can both act as primary |
+| Work item Type is human-mutable only | `ADR-0019` | No substrate offers per-field ACLs (`ADR-0024`) |
+| Parked-state suppression | `ADR-0020` | No substrate offers per-label permissions |
+| Bootstrap merge must be declared in advance | `ADR-0026` | Nothing prevents a PR description claiming it after the fact |
+
+### Documentation reconciliation
+
+Conventions currently stated in more than one place, which `ADR-0030` rule 1 forbids
+going forward but does not retroactively fix. Also `scripts/README.md`, required by
+`ADR-0015` — now accepted — and absent.
+
+---
+
 ## Deferred concepts
 
 ### Domain concept
