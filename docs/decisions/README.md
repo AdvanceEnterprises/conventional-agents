@@ -211,3 +211,4 @@ If validation fails:
 | ADR-0022 | Autonomous and consensus are meta-modes, not session modes | proposed |
 | ADR-0023 | Consensus integrity constraints | proposed |
 | ADR-0024 | Platform-neutral core with shipped bindings | proposed |
+| ADR-0029 | Commit-author naming for multi-model agent frameworks | proposed |
