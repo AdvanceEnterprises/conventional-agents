@@ -12,7 +12,7 @@ Normative requirements are derived from:
 - Default branch name: `trunk`
 - Canonical remote name: `origin`
 - GitHub is required (for now)
-- Default merge strategy: squash-merge
+- Default merge strategy: rebase-merge (ADR-0025)
 
 ## Setup (one-time per machine)
 
@@ -170,7 +170,16 @@ Example:
 
 ### 8) Merge
 
-- Use squash-merge.
+- Use rebase-merge (ADR-0025). Each commit lands on trunk individually,
+  preserving its `Agent-Attribution:` trailer, and trunk history stays
+  linear.
+- If the branch conflicts with trunk and rebasing is impractical, use a
+  merge commit. Attribution is preserved either way.
+- Squash-merge only when the branch's commits are not individually
+  meaningful (e.g. successive review-fix commits on one document) **and**
+  every distinct `Agent-Attribution:` trailer on the branch is carried
+  into the squashed message. Squashing away a trailer set that appears
+  nowhere else on trunk is data loss, not formatting.
 - Delete the branch after merge.
 - **Agents MUST NOT merge PRs.** Merging is a human-gated action. This is a non-overridable safety gate (ADR-0012). Agents open the PR; humans merge it.
 
