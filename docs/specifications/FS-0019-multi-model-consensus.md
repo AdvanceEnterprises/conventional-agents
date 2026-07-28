@@ -15,6 +15,8 @@ interfaces:
   - "docs/specifications/README.md"
 related_adrs:
   - ADR-0018
+  - ADR-0022
+  - ADR-0023
 supersedes: []
 requires:
   - FS-0018
