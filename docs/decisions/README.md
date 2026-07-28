@@ -211,6 +211,8 @@ If validation fails:
 | ADR-0022 | Autonomous and consensus are meta-modes, not session modes | proposed |
 | ADR-0023 | Consensus integrity constraints | proposed |
 | ADR-0024 | Platform-neutral core with shipped bindings | proposed |
+| ADR-0025 | Merge strategy preserves per-commit attribution | proposed |
+| ADR-0026 | Bootstrap merges | proposed |
 | ADR-0027 | PLAN self-approval within declared interfaces | proposed |
 | ADR-0029 | Commit-author naming for multi-model agent frameworks | proposed |
 | ADR-0030 | Decision records versus current-state documents | proposed |
