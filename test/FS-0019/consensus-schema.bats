@@ -12,8 +12,8 @@ setup() {
 }
 
 @test "FS-0019 declares consensus disabled by default" {
-  assert_file_contains "$REPO_ROOT/docs/specifications/FS-0019-multi-model-consensus.md" "Default.*disabled"
-  assert_file_contains "$REPO_ROOT/docs/specifications/FS-0019-multi-model-consensus.md" "Default: consensus is"
+  assert_file_contains "$REPO_ROOT/docs/specifications/FS-0019-multi-model-consensus.md" "**Default**: consensus is **disabled**"
+  assert_file_contains "$REPO_ROOT/docs/specifications/FS-0019-multi-model-consensus.md" "framework's own evolution does not use consensus"
 }
 
 @test "FS-0019 declares different-models requirement" {
@@ -66,7 +66,7 @@ setup() {
 
 @test "config/consensus.yml models list starts empty" {
   local cfg="$REPO_ROOT/config/consensus.yml"
-  assert_file_contains "$cfg" "models: \\[\\]"
+  assert_file_contains "$cfg" "models: []"
 }
 
 @test "FS-0019 lists dependencies on FS-0018 and ADR-0018" {
@@ -100,6 +100,6 @@ setup() {
 
 @test "FS-0019 same-model consensus is forbidden" {
   local f="$REPO_ROOT/docs/specifications/FS-0019-multi-model-consensus.md"
-  assert_file_contains "$f" "Same-model consensus is forbidden"
+  assert_file_contains "$f" "Same-model-with-same-prompt is forbidden"
   assert_file_contains "$f" "noise dressed as consensus"
 }
