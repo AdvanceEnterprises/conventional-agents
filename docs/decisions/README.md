@@ -210,3 +210,4 @@ If validation fails:
 | ADR-0021 | Cron actor identity for unattended agents | proposed |
 | ADR-0022 | Autonomous and consensus are meta-modes, not session modes | proposed |
 | ADR-0023 | Consensus integrity constraints | proposed |
+| ADR-0024 | Platform-neutral core with shipped bindings | proposed |
