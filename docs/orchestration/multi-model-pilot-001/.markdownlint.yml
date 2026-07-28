@@ -1,0 +1,16 @@
+# Preserved evidence — not style-linted.
+#
+# Every file in this directory is reproduced byte-for-byte from the pilot run
+# that produced it (PR #62 and successors). They are a record of what four
+# models actually emitted, not authored framework content. Reformatting them to
+# satisfy style rules would alter the record, so all rules are disabled here.
+#
+# Authored content about this evidence lives in ../README.md, which is linted
+# under the repository defaults.
+#
+# This directory is not currently in `npm run lint:docs` scope. This file exists
+# so that expanding coverage — tracked in BACKLOG.md under "Lint coverage is
+# enumerated, not discovered" — cannot force a choice between linting the repo
+# and keeping the evidence intact.
+
+default: false

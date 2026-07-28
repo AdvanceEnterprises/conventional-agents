@@ -1,0 +1,122 @@
+task:
+  id: "multi-model-pilot-001"
+  framing: |
+    Review the proposed multi-model orchestration pattern (ADR-0016,
+    PLAN-0016, the three contributor templates, and the helper script)
+    from your assigned role's perspective. Identify:
+
+    1. Whether the FS-0015 explainability convention is captured
+       correctly in the contributor prompt template's transparency
+       statement, or whether it is missing fields the framework
+       requires.
+    2. Whether the structured-output contract (Research Brief vs.
+       JSON schema) is unambiguous, and whether the helper script
+       can render prompts for both contracts without operator
+       intervention.
+    3. Whether the gate verdict categories (PROCEED / CONDITIONAL /
+       HALT) cover the failure modes a real pilot run would surface,
+       or whether additional categories are needed.
+    4. Whether the synthesis structure (Consensus / Divergent /
+       Unique Insights / Recommended Action) plus the new
+       Coverage/Disposition Record loses any information that the
+       pilot needs to recover later.
+
+    Read every file listed in artifact_scope and input_sources before
+    producing output. Cite specific section anchors (e.g.,
+    ADR-0016 §"Decision Outcome" item 5) when making claims. Where
+    you disagree with the proposal, surface the disagreement
+    explicitly rather than softening it.
+  artifact_scope: []
+    - "docs/decisions/ADR-0016.md"
+    - "docs/change-plans/PLAN-0016-multi-model-pilot.md"
+    - "templates/contributor/contributor-prompt.md"
+    - "templates/contributor/synthesis-template.md"
+    - "templates/contributor/gate-template.md"
+    - "scripts/render_contributor_prompt.py"
+  branch: "feature/multi-model-orchestration-foundation"
+  excluded_artifacts: []
+    - "docs/decisions/ADR-0013.md"
+
+session:
+  mode: "Architecture Planning"
+  primary_role: "Head Architect"
+  supporting_roles: []
+    - "Head Architect"
+    - "Reviewer"
+    - "Implementer"
+
+contributors: []
+  - target: "claude-code"
+    model: "claude-sonnet-4"
+    render_mode: "external-cli"
+    active_contributor_role: "Reviewer"
+    attribution_label: "claude-contrib-1"
+    structured_output:
+      contract: "research_brief"
+      brief_format_path: "references/research-brief-template.md"
+    guardrails:
+      may_modify: []
+      must_not_modify: []
+        - "docs/decisions/ADR-0016.md"
+        - "docs/decisions/ADR-0013.md"
+        - "docs/decisions/README.md"
+  - target: "codex"
+    model: "codex"
+    render_mode: "external-cli"
+    active_contributor_role: "Implementer"
+    attribution_label: "codex-contrib-1"
+    structured_output:
+      contract: "research_brief"
+      brief_format_path: "references/research-brief-template.md"
+    guardrails:
+      may_modify: []
+      must_not_modify: []
+        - "docs/decisions/ADR-0016.md"
+        - "docs/decisions/ADR-0013.md"
+        - "docs/decisions/README.md"
+  - target: "qwen3-coder-next"
+    model: "qwen3-coder-next"
+    render_mode: "hermes-chat"
+    provider: "ollama-cloud"
+    toolsets: "file,web"
+    active_contributor_role: "Reviewer"
+    attribution_label: "qwen3-contrib-1"
+    structured_output:
+      contract: "research_brief"
+      brief_format_path: "references/research-brief-template.md"
+    guardrails:
+      may_modify: []
+      must_not_modify: []
+        - "docs/decisions/ADR-0016.md"
+        - "docs/decisions/ADR-0013.md"
+        - "docs/decisions/README.md"
+  - target: "devstral2"
+    model: "devstral-2:123b"
+    render_mode: "hermes-chat"
+    provider: "ollama-cloud"
+    toolsets: "file,web"
+    active_contributor_role: "Implementer"
+    attribution_label: "devstral-contrib-1"
+    structured_output:
+      contract: "research_brief"
+      brief_format_path: "references/research-brief-template.md"
+    guardrails:
+      may_modify: []
+      must_not_modify: []
+        - "docs/decisions/ADR-0016.md"
+        - "docs/decisions/ADR-0013.md"
+        - "docs/decisions/README.md"
+
+input_sources: []
+  - "docs/decisions/ADR-0016.md"
+  - "docs/change-plans/PLAN-0016-multi-model-pilot.md"
+  - "templates/contributor/contributor-prompt.md"
+  - "templates/contributor/synthesis-template.md"
+  - "templates/contributor/gate-template.md"
+  - "scripts/render_contributor_prompt.py"
+  - "references/research-brief-template.md"
+
+gate:
+  enabled: false
+  model: "deepseek-v4-pro"
+  provider: "ollama-cloud"
