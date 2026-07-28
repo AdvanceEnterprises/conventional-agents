@@ -17,12 +17,13 @@ related_adrs:
   - ADR-0018
   - ADR-0022
   - ADR-0023
+  - ADR-0031
 supersedes: []
 requires:
   - FS-0018
 tags: [consensus, multi-model, workflow-gates, optional-feature]
 created: 2026-07-27
-updated: 2026-07-27
+updated: 2026-07-28
 ---
 
 <!--
@@ -48,7 +49,7 @@ PARSING_HINTS:
   the usual ordering in `workflows/document-lifecycle.md`, where
   PLANs are drafted after the FS is approved.
 - Requires FS-0018 to be approved first, since the consensus gates
-  integrate with the Issue lifecycle defined there. PLAN-0019 cannot
+  integrate with the work item lifecycle defined there. PLAN-0019 cannot
   be approved until both FS-0019 and FS-0018 are approved; its
   Readiness Check records both dependencies.
 - Open questions blocking PLAN drafting are listed in the
@@ -137,8 +138,12 @@ opt in explicitly.
   Defined per consumer; the framework recommends two gates (see
   below).
 - **artifact**: the persisted output of a consensus round, including
-  each participant's output, the agreement check, and the verdict
-  (pass/fail with rationale).
+  each participant's output, the coverage record, the agreement check,
+  and — on gated rounds — the gate's execution status and verdict.
+- **synthesis-only round**: a round with participants and an agreement
+  check but no independent gate. The default shape.
+- **gated round**: a round whose synthesis is additionally evaluated by a
+  model that filled no participant slot, per `ADR-0031`.
 
 ## Gates
 
@@ -173,7 +178,7 @@ declared per round (see "Audit Trail" below).
 
 ### Gate B: Review-Time Consensus (In Review → Done)
 
-When a PR is opened against an Issue (and the related FS or PLAN),
+When a PR is opened against a work item (and the related FS or PLAN),
 the framework recommends a consensus round on the review.
 
 **Round shape**: N different models each independently review the
@@ -208,28 +213,66 @@ Same-model consensus is theater, not consensus.
 
 ## Relationship to Mixture of Agents (MoA)
 
-Consumer repos may implement consensus rounds using a Mixture of
-Agents (MoA) provider, such as the one built into Hermes Agent.
-In this pattern:
+Consumer repos may run consensus rounds through a Mixture of Agents
+provider. MoA maps cleanly onto two of the three artifacts `ADR-0031`
+requires, and **not onto the third**:
 
-- The MoA **reference models** serve as independent consensus
-  participants. Each receives the same input (the draft or PR
-  diff) and produces an independent assessment.
-- The MoA **aggregator model** produces the consensus artifact
-  (`docs/consensus/<FS-or-PLAN-id>/<gate>-<timestamp>.yml`) as
-  structured output, including the agreement check and verdict.
-- The different-models requirement above is satisfied by MoA's
-  own model-diversity constraint: the reference models must be
-  distinct, and the aggregator must be a different model from
-  any reference.
+| MoA component | Maps to | Notes |
+| --- | --- | --- |
+| Reference models | Participants | Must satisfy the different-models requirement |
+| Aggregator model | The primary producing the synthesis | Aggregation *is* synthesis |
+| — | Gate evaluator | **MoA supplies no equivalent** |
 
-This is a consumer-level implementation choice. The framework
-describes the required behavior (what consensus looks like);
-consumer repos choose the invocation mechanism (how to run the
-round). Using MoA as the invocation layer is valid but not
-required — a consumer may implement consensus rounds via
-independent API calls, a custom orchestrator, or any other
-mechanism that satisfies the different-models requirement.
+The mapping to watch is the aggregator. Its job is to blend several
+responses into one better response — it synthesizes. It does not
+adjudicate whether the references agreed, and asking it to emit the
+agreement check makes the party that produced the synthesis the party
+that validates it. That is the self-grading `ADR-0023` Constraint 3
+forbids.
+
+Therefore, when a round is **gated**:
+
+- The MoA aggregator MAY produce the synthesis and its agreement check.
+- The gate evaluator MUST be a model outside the MoA stack entirely —
+  not a reference model, and not the aggregator.
+- If no such model is available, the round is **synthesis-only** and
+  records that, per `ADR-0031`. It does not promote the aggregator's
+  output to a verdict.
+
+When a round is **synthesis-only**, MoA supplies everything needed. The
+agreement check is the aggregator's, is labelled as such, and carries no
+claim of independent validation.
+
+Using MoA is one invocation mechanism among several. A consumer may run
+consensus through independent API calls, a custom orchestrator, or any
+other mechanism satisfying the same constraints. Nothing in the framework
+prefers MoA; this section exists because the aggregator mapping is the
+one an implementer is most likely to get wrong.
+
+## Coverage and Partial Response
+
+A threshold computed over participants who happened to respond is not a
+threshold. If two participants are configured and only one addresses a
+point, "1 of 1 agreed" and "1 of 2 agreed" are different facts, and a
+round that reports the first while the second is true has manufactured
+consensus out of silence.
+
+Every round MUST therefore record, per participant and per point under
+evaluation, one of:
+
+- **`addressed`** — the participant gave a position on this point.
+- **`silent (not asked)`** — the point was outside what this participant
+  was given.
+- **`silent (asked)`** — the point was in scope and the participant did
+  not address it.
+- **`off-topic`** — the participant responded, but not to this point.
+
+**A point on which fewer than `min_models` participants are `addressed`
+cannot reach consensus**, whatever the configured threshold says. It is
+recorded as insufficient coverage, not as agreement.
+
+This record is the consensus form of `ADR-0031`'s Coverage / Disposition
+Record and is mandatory in the round artifact.
 
 ## Threshold and Failure Modes
 
@@ -249,18 +292,17 @@ Consumers choose one of three failure modes per project, set in
 
 - **`hard_block`** (default if consensus is enabled): the workflow
   does not advance past the gate until consensus is reached. The
-  human is informed via Issue comment; the human may override
+  human is informed via an activity-record entry; the human may override
   (e.g., by editing the artifact directly and posting a
   `consensus-override: <reason>` comment).
 - **`soft_flag`**: the workflow advances despite disagreement, but
-  the disagreement is recorded on the Issue and the human is
+  the disagreement is recorded on the work item and the human is
   informed. The artifact is marked with
   `consensus-disagreement: <summary>` in its metadata.
-- **`escalation`**: disagreement automatically creates a Type
-  `task` Issue titled `Consensus escalation: <round-id>` with the
-  failed round's artifact attached (see Audit Trail). The Issue
-  transitions through Status (Backlog → Approved → In Review)
-  under the Head Architect role. The Head Architect's mediation
+- **`escalation`**: disagreement automatically creates a Type `task` work item
+  titled `Consensus escalation: <round-id>` with the failed round's artifact
+  attached (see Audit Trail). The work item transitions through phase
+  (Backlog → Approved → In Review) under the Head Architect role. The Head Architect's mediation
   output is the input to a new consensus round on the same
   artifact. The original artifact does not advance past the gate
   until a subsequent consensus round passes.
@@ -269,7 +311,7 @@ Consumers choose one of three failure modes per project, set in
   disagrees, the escalation repeats. After N consecutive
   escalation rounds (default: 3, configurable per consumer), the
   round fails as `hard_block` and requires a human override
-  (`consensus-override: <reason>` comment on the Issue). This
+  (`consensus-override: <reason>` entry on the work item). This
   prevents infinite escalation loops.
 
 ## Configuration
@@ -319,7 +361,7 @@ for the canonical field list.
 ## Role Stance for Consensus Rounds
 
 A consensus round's role stance is declared per round, on the
-Issue comment that records the round's initiation:
+activity-record entry that records the round's initiation:
 
 ```text
 agent-stance: mode=consensus; role=<role>; model=<model>; session=<session-name>; rationale=<one-line reason>
@@ -328,7 +370,7 @@ agent-stance: mode=consensus; role=<role>; model=<model>; session=<session-name>
 Where `<role>` is the role each participant operates in
 (`Document Author`, `Implementer`, `Reviewer`, or `Head Architect`).
 The `mode=consensus` is a new value added to the session-mode
-vocabulary (see FS-0018 §"Agent Stance on Issue Comments").
+vocabulary (see FS-0018 §"Agent Stance on Activity Records").
 
 The framework treats `consensus` as a *meta-mode*: a consensus round
 is a structured invocation of one of the standard modes, with the
@@ -357,16 +399,39 @@ round:
       role: <role>
       output: <output-summary or file-path>
       output_hash: <sha256>
+  coverage:
+    - point: <identifier or short description>
+      by_participant:
+        <model-id>: addressed | silent (not asked) | silent (asked) | off-topic
+        <model-id>: addressed | silent (not asked) | silent (asked) | off-topic
+      addressed_count: <int>
+      sufficient: true | false        # false when addressed_count < min_models
   agreement_check:
     method: <consumer-implemented>
-    result: pass | fail
+    produced_by: <model-id>           # the synthesizing model, not an evaluator
+    result: pass | fail | insufficient_coverage
     rationale: <string>
-  verdict: pass | fail
+  gate:                               # omitted entirely on synthesis-only rounds
+    evaluator: <model-id>             # MUST NOT appear in participants
+    execution_status: COMPLETE | NOT_RUN | INVALID
+    verdict: PROCEED | CONDITIONAL | HALT   # present only when COMPLETE
+    rationale: <string>
   failure_mode: hard_block | soft_flag | escalation
 ```
 
+`execution_status` and `verdict` are separate fields because they answer
+separate questions. `NOT_RUN` and `INVALID` are not verdicts — they record
+that the gate produced none, and the round is treated as synthesis-only.
+Collapsing them into a `fail` verdict would make "the evaluator was
+unreachable" indistinguishable from "the evaluator rejected this."
+
+An `execution_status` of `INVALID` is emitted when the gate ran but its
+response was malformed, or when a required input was missing or unreadable
+— in the latter case **before** evaluating, rather than converting a
+missing input into a `HALT`.
+
 The artifact is committed to the consumer repo's `docs/consensus/`
-directory and linked from the Issue that triggered the round.
+directory and linked from the work item that triggered the round.
 
 Per ADR-0018's three-layer convention, the commit producing this
 artifact carries the agent's `user.email`, `Co-authored-by:`
@@ -382,7 +447,7 @@ Each bullet MUST be objectively testable.
   repo is initialized, then `config/consensus.yml` is created with
   `enabled: false` by default.
 - Given a consumer repo with `consensus.enabled: false`, when an
-  Issue transitions through Status, then no consensus rounds are
+  work item transitions through phase, then no consensus rounds are
   invoked. The workflow proceeds as a single-model flow.
 
 **Different-models requirement**:
@@ -432,12 +497,32 @@ Each bullet MUST be objectively testable.
   (artifact shape, configuration schema, mode values), not the
   end-to-end consumer behavior.
 
+**Coverage**:
+
+- Given a consensus round, when its artifact is read, then it contains a
+  coverage record naming every participant against every point evaluated.
+- Given a point addressed by fewer participants than `min_models`, when
+  the agreement check runs, then the result is `insufficient_coverage`
+  and not `pass`, whatever the configured threshold.
+
+**Gate independence and status**:
+
+- Given a gated round, when the artifact is read, then `gate.evaluator`
+  does not appear in `participants`.
+- Given a gated round whose evaluator could not be reached, when the
+  artifact is read, then `gate.execution_status` is `NOT_RUN`, no
+  `verdict` is present, and the round is recorded as synthesis-only.
+- Given a round run through a Mixture of Agents provider, when the
+  artifact is read, then `gate.evaluator` is neither a reference model
+  nor the aggregator.
+
 **Audit trail**:
 
 - Given a completed consensus round, when the
   `docs/consensus/<FS-or-PLAN-id>/<gate>-<timestamp>.yml` file
   exists, then it conforms to the artifact shape above, including
-  participants, agreement check, and verdict.
+  participants, coverage record, agreement check, and — on gated rounds
+  — gate execution status and verdict.
 
 ## Edge Cases
 
@@ -451,12 +536,12 @@ Each bullet MUST be objectively testable.
   Consumers should specify this behavior in
   `config/consensus.yml`.
 - **Cost ceiling**: a consumer repo may want to limit
-  per-Issue consensus cost. Add a `max_cost_per_issue` field to
+  per-work-item consensus cost. Add a `max_cost_per_item` field to
   `config/consensus.yml` to enforce.
 - **Disagreement persistence**: a soft-flag disagreement may
   accumulate across rounds. The artifact schema should support
-  multiple disagreements per Issue; consumers decide whether to
-  surface them as a unified Issue comment or a thread.
+  multiple disagreements per work item; consumers decide whether to
+  surface them as a unified activity-record entry or a thread.
 - **Override without rationale**: a human override of a failed
   consensus round should require a `consensus-override: <reason>`
   comment. The framework recommends but does not enforce this.
@@ -466,7 +551,7 @@ Each bullet MUST be objectively testable.
 - Specific consensus algorithms (majority vote, weighted vote,
   judge model, debate, etc.). Consumers choose.
 - Cost and latency budgets. Consumers may optimize.
-- Cross-Issue consensus (e.g., "all PRs in milestone X must
+- Cross-work-item consensus (e.g., "all PRs in milestone X must
   reach consensus"). Out of scope; consumer can implement if
   needed.
 - Privacy and data-handling rules for consensus round inputs.
@@ -476,7 +561,12 @@ Each bullet MUST be objectively testable.
 
 ## Dependencies
 
-- FS-0018: the Issue lifecycle and three-axis schema that this
+- `ADR-0031`: the three-artifact round, the synthesis-only versus gated
+  distinction, and the Coverage / Disposition Record this spec's coverage
+  record is the consensus form of.
+- `ADR-0023`: the different-models requirement and gate-evaluator
+  independence, both non-overridable.
+- FS-0018: the work item lifecycle and three-axis schema that this
   spec extends with consensus gates.
 - ADR-0018: the three-layer attribution convention that this spec
   extends to consensus rounds.
@@ -492,7 +582,7 @@ Each bullet MUST be objectively testable.
 
 - **Override authority**: who can override a failed consensus
   round? My read: any human actor with repo write access can
-  override by posting `consensus-override: <reason>` on the Issue.
+  override by posting `consensus-override: <reason>` on the work item.
   Confirm.
 - **Drafter vs Reviewer mode default**: at Gate A, should the
   default be Drafter (more expensive, higher quality) or Reviewer
