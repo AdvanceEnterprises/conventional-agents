@@ -46,7 +46,7 @@ setup() {
 @test "FS-0019 consensus round escalation creates Type task Issue" {
   local f="$REPO_ROOT/docs/specifications/FS-0019-multi-model-consensus.md"
   assert_file_contains "$f" "Consensus escalation"
-  assert_file_contains "$f" "Type \`task\` Issue"
+  assert_file_contains "$f" "Type \`task\` work item"
 }
 
 @test "config/consensus.yml template exists with all-defaults state" {
