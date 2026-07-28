@@ -151,28 +151,18 @@ once: coverage is opt-in by enumeration, so new surfaces are unguarded by defaul
 
 ## Cleanup
 
-### Close PRs #62, #63, #64 after extraction
+### Close PRs #62, #63, #64
 
 Cumulative branches (#62 → #63 → #64) carrying the multi-model orchestration pilot.
-To be closed unmerged once their useful content is extracted and renumbered.
+Their useful content is extracted in the current PR — into `FS-0019`'s amendments and
+`FS-0021` — so the branches can be closed unmerged once that work lands. Closing them
+is a GitHub action, not a change to this repository.
 
-**Extract:** gate-evaluator independence, execution-status vs verdict separation, the
-Coverage/Disposition Record, the disagreement-preserving synthesis structure, bounded
-CONDITIONAL cycles, render modes, and the synthesis-only fallback.
-
-**Preserve as evidence:** `multi-model-pilot-001-synthesis.md` and the three gate
-verdict files. Raw `contrib-*.md` outputs are session artifacts and are dropped; any
-validation section citing them must be rewritten to cite what survives.
-
-**Do not carry over:** `Assisted-By:` / `Contributor-Session:` trailers (superseded by
-`ADR-0018`/`ADR-0029`), `status: accepted` on unmerged documents, and all four
-colliding IDs (their ADR-0016, ADR-0017, FS-0016, PLAN-0016 are all occupied on
-trunk).
-
-**Also on those branches:** `scripts/render_contributor_prompt.py` with a bats suite,
-and `pyproject.toml`. Real code with real tests, but adopting it means deciding its
-category under `ADR-0015` and introducing a Python toolchain to a repository that has
-none. Evaluate separately rather than extracting by default.
+**Not extracted, still undecided:** `scripts/render_contributor_prompt.py` with its
+bats suite, and the `pyproject.toml` those branches add. Real code with real tests,
+but adopting it means deciding its category under `ADR-0015` and introducing a Python
+toolchain to a repository that currently has none. Evaluate on its own merits rather
+than inheriting it with the rest.
 
 ### Stale work-tracking issues
 
