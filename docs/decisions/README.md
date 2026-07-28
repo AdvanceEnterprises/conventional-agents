@@ -204,11 +204,12 @@ If validation fails:
 | ADR-0015 | Tool taxonomy and introduction process | proposed |
 | ADR-0016 | Consumer conventions — local adaptations of the framework | accepted |
 | ADR-0017 | Framework vendor directory is internal; consumers must not reference nested submodules | accepted |
-| ADR-0018 | Single-identity workflow with agent co-attribution | accepted |
+| ADR-0018 | Single-identity workflow with agent co-attribution | superseded |
 | ADR-0019 | Issue Type immutability and the autonomous gate | proposed |
 | ADR-0020 | The `question` label suppresses agent Issue actions | proposed |
 | ADR-0021 | Cron actor identity for unattended agents | proposed |
 | ADR-0022 | Autonomous and consensus are meta-modes, not session modes | proposed |
 | ADR-0023 | Consensus integrity constraints | proposed |
 | ADR-0024 | Platform-neutral core with shipped bindings | proposed |
+| ADR-0027 | PLAN self-approval within declared interfaces | proposed |
 | ADR-0029 | Commit-author naming for multi-model agent frameworks | proposed |
