@@ -43,6 +43,7 @@ the framework is recursive.
 | `skills/` | Portable SKILL.md modules |
 | `templates/` | FS / ADR / PLAN / review scaffolds |
 | `workflows/` | Process docs usable in any repo |
+| `integrations/` | Substrate bindings — platform mappings per ADR-0024 |
 | `INTEGRATION.md` | How to integrate and precedence rules |
 | `AGENTS.md` | Agent briefing surface for this repo |
 
@@ -54,6 +55,7 @@ the framework is recursive.
 | `docs/change-plans/` | Change Plans (PLAN) |
 | `docs/decisions/` | Architecture Decision Records (ADRs) |
 | `docs/ARC42.md` | Architecture overview |
+| `BACKLOG.md` | Deferred work and known gaps |
 | `package.json` | Doc lint scripts |
 | `test/` | Framework self-tests |
 

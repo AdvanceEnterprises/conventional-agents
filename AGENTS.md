@@ -37,7 +37,8 @@ This repo contains no application code. Quality is documentation-centric.
 | `roles/` | `docs/change-plans/` |
 | `skills/` | `docs/decisions/` |
 | `templates/` | `docs/ARC42.md` |
-| `workflows/` | `package.json` |
+| `workflows/` | `BACKLOG.md` |
+| `integrations/` | `package.json` |
 | `INTEGRATION.md` | `CHANGELOG.md` |
 | `AGENTS.md` | `test/` |
 
