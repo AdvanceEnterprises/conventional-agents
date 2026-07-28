@@ -6,10 +6,11 @@ decision_scope: architecture
 reversible: yes
 related_specs:
   - FS-0019
+  - FS-0021
 superseded_by: null
 ---
 
-# ADR-0023: Consensus integrity constraints
+# ADR-0023: Collaboration integrity constraints
 
 ## Status
 
@@ -88,9 +89,23 @@ framework.
 **Chosen option: Option C — different-models is non-overridable; consensus ships
 disabled.**
 
+### Scope: both collaboration modes
+
+The framework defines two multi-model collaboration modes, and these constraints govern
+both. `FS-0019` specifies **consensus** — participants perform the same task and their
+outputs are compared for agreement. `FS-0021` specifies the **review board** —
+participants examine one artifact from complementary role stances and their findings are
+merged. `ADR-0031` supplies the primitives both are built from.
+
+The modes differ in what they produce: consensus yields a verdict, a review board yields
+findings. They do not differ in what makes them honest. A same-model review board has
+the same defect as a same-model consensus round — correlated outputs presented as
+independent judgement — so the constraints below say "collaboration round" and mean
+both.
+
 ### Constraint 1: The different-models requirement is non-overridable
 
-A consensus round MUST invoke at least two participants that are **different models
+A collaboration round MUST invoke at least two participants that are **different models
 with independent state**. This constraint cannot be relaxed by configuration, by
 per-document front matter, by instruction file, or by any other mechanism.
 
@@ -111,28 +126,58 @@ that the shortcut-taker may disable is not a rule.
 When the constraint cannot be satisfied — one model configured, duplicate identifiers,
 a model unavailable at round time — the round **fails with a configuration error**. It
 does not fall back to a single-model check and report success. The workflow proceeds
-without consensus (graceful degradation, per FS-0019), and the failure is surfaced.
+without the round (graceful degradation, per FS-0019), and the failure is surfaced.
 The distinction that matters: the workflow may continue, but no artifact claiming
-consensus is produced.
+independent judgement is produced.
 
-### Constraint 2: Consensus ships disabled
+### Constraint 2: Collaboration modes ship disabled
 
-`config/consensus.yml` ships with `consensus.enabled: false`, every gate independently
-`enabled: false`, and `models: []`. A consumer opts in by editing the file.
+Shipped configuration for both modes is disabled: `enabled: false`, every gate
+independently `enabled: false`, and an empty model list. A consumer opts in by editing
+the file. `config/consensus.yml` is the shipped template for consensus; `FS-0021`
+defines the equivalent for review boards.
 
-The framework's own repository does not enable consensus. Its FSs, PLANs, and ADRs —
-including this one — are produced without consensus rounds.
+The framework's own repository enables neither. Its FSs, PLANs, and ADRs — including
+this one — are produced without collaboration rounds.
 
 Per-document override (`consensus_required: true` in FS or PLAN front matter) remains
 available and can raise consensus for a specific high-stakes artifact even when the
 project default is off. Override can turn consensus *on* for a document; it cannot
 turn the different-models constraint off.
 
+### Constraint 3: A gate evaluator may not have participated in the round it evaluates
+
+`ADR-0031` defines the gated round: contributors produce outputs, a primary synthesizes
+them, and an evaluator returns a verdict on the synthesis. The evaluator MUST be a model
+that filled no contributor slot in that round. This constraint is non-overridable on the
+same terms as Constraint 1.
+
+An overlapping evaluator judges a synthesis that incorporates its own claims. It is not
+merely biased toward them — it cannot distinguish "this synthesis is sound" from "this
+synthesis agrees with me," because for its own claims those are the same observation.
+That is self-grading with an extra step, and it is exactly what the gate exists to
+prevent.
+
+**When no independent evaluator is available**, the round degrades to **synthesis-only**
+per `ADR-0031` and the degraded state is recorded. It does not run an overlapping gate.
+This parallels Constraint 1's failure behaviour: the workflow continues, but no artifact
+claiming independent validation is produced. An ungated synthesis honestly labelled
+is sound; a gated synthesis whose gate was a participant is a false claim.
+
+**Rejecting the escape hatch.** The material this constraint is extracted from
+implemented independence as a static check with an `--allow-gate-overlap` override "when
+there is a specific reason." That override is this ADR's Option B failure mode, one layer
+down: an exception that looks principled, is taken under exactly the pressure the rule
+guards against — a small model pool, a third invocation that costs money — and produces
+an artifact the framework appears to endorse. The constraint is kept and the override is
+not carried over. Consumers who cannot field an independent evaluator run ungated rounds,
+which is a supported configuration.
+
 ### What remains configurable
 
 Everything else. Threshold (subject to the two-participant floor), failure mode,
 per-gate opt-in, role mode at Gate A, model list contents, escalation depth, cost
-ceiling, and the entire orchestration mechanism. FS-0019's Open Questions on drafter
+ceiling, whether a round is gated at all, and the entire orchestration mechanism. FS-0019's Open Questions on drafter
 versus reviewer defaults and override authority are unaffected by this ADR.
 
 ### Why not the other options?
@@ -170,6 +215,10 @@ framework does not itself run. Defaults should reflect practice.
 - The framework does not prescribe a workflow it declines to follow.
 - Misconfiguration is loud. A consumer who enables consensus with one model gets an
   error, not a silently weaker check.
+- A gate verdict means a model outside the round read the synthesis. Constraint 3 makes
+  that inference safe, which is the only thing that makes a verdict worth recording.
+- One rule set covers both collaboration modes, so a review board cannot be introduced
+  as a way around consensus's integrity requirements.
 
 ### Bad
 
@@ -182,6 +231,9 @@ framework does not itself run. Defaults should reflect practice.
   configurability defeats its entire purpose.
 - Shipping disabled means the feature sees less real-world exercise, so bugs in the
   artifact schema or gate placement surface more slowly.
+- Constraint 3 raises the floor on a gated round to three distinct models — two
+  contributors plus an evaluator. Consumers with a two-model pool can run ungated rounds
+  only. This is intended, and it is a real narrowing of who can use gating.
 
 ### Neutral
 
@@ -213,6 +265,10 @@ We will consider this decision successful if:
    `docs/consensus/` directory exists in this repository.
 5. **`test/FS-0019/consensus-schema.bats` passes**, including the same-model
    rejection and default-disabled assertions.
+6. **No gate verdict names an evaluator that appears in its own round's participant
+   list.** Checkable directly from any round's artifacts.
+7. **Rounds that could not field an independent evaluator are recorded as
+   synthesis-only**, not as gated rounds with an overlapping evaluator.
 
 ## Links
 
@@ -222,8 +278,11 @@ We will consider this decision successful if:
   integrate with)
 - ADR-0012: Non-overridable gates (the precedent for rules no instruction source may
   weaken; the different-models constraint joins this category)
+- ADR-0031: Structured multi-model collaboration (defines the three-artifact round and
+  the gated/synthesis-only distinction these constraints govern)
+- FS-0021: Review board (the second collaboration mode brought under these constraints)
 - ADR-0022: Autonomous and consensus meta-modes (defines `mode=consensus` and the
-  role composition rule for consensus rounds)
+  role composition rule for collaboration rounds)
 - ADR-0018: Single-identity workflow with agent co-attribution (the attribution layers
   carried by commits producing consensus artifacts)
 - `config/consensus.yml` (the shipped consumer-copy template this ADR governs)
