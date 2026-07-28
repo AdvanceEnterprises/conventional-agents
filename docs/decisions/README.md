@@ -186,19 +186,19 @@ If validation fails:
 
 | ID | Title | Status |
 |---|---|---|
-| ADR-0000 | Use MADR for architecture decisions | accepted |
-| ADR-0001 | Adopt prescriptive templates for LLM-driven development | accepted |
-| ADR-0002 | Use explicit role contracts for coding agents | accepted |
-| ADR-0003 | Adopt evidence-graded guidelines as a first-class document type | accepted |
-| ADR-0004 | Define instruction precedence for multi-source agent environments | accepted |
-| ADR-0005 | Adopt skill-pack pattern for portable agent capabilities | accepted |
-| ADR-0006 | Adopt BDD-style feature specifications as the primary requirements format | accepted |
-| ADR-0007 | Adopt structured change plans as a required pre-implementation artifact | accepted |
-| ADR-0008 | Adopt markdownlint as the baseline markdown quality gate | accepted |
-| ADR-0009 | Separate exported surface from internal governance docs | accepted |
-| ADR-0010 | Adopt arc42 as the architecture documentation framework | accepted |
-| ADR-0011 | Adopt multi-identity GitHub model | accepted |
-| ADR-0012 | Introduce non-overridable gates (super-gates) | accepted |
+| ADR-0000 | Use MADR and arc42 template as documentation origins | accepted |
+| ADR-0001 | Incorporate cross-tool portable skills as SKILL.md | accepted |
+| ADR-0002 | Roles reference skills via convention and skills index | accepted |
+| ADR-0003 | Mirror arc42-template as an upstream-tracking git submodule | accepted |
+| ADR-0004 | AGENTS.md as Canonical Integration Surface | accepted |
+| ADR-0005 | Submodule-First Referencing Strategy | accepted |
+| ADR-0006 | Role-as-Skill-Card Format | accepted |
+| ADR-0007 | Adjacent-to-Spec-Kit Positioning | accepted |
+| ADR-0008 | Adopt markdownlint for ADR Formatting Consistency | accepted |
+| ADR-0009 | Feature Specification Template Selection | accepted |
+| ADR-0010 | Use Custom Change Plan Template Instead of Open Source Alternative | accepted |
+| ADR-0011 | Adopt multi-identity GitHub model (human + agent-committer + agent-reviewer) | accepted |
+| ADR-0012 | Introduce non-overridable gates ("super-gates") in ROLE_CONTRACT | accepted |
 | ADR-0013 | Multi-model session coordination model | proposed |
 | ADR-0014 | Background task governance | proposed |
 | ADR-0015 | Tool taxonomy and introduction process | proposed |
