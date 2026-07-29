@@ -45,9 +45,10 @@ PARSING_HINTS:
 ## Plan Status
 
 - **Drafted as PLAN-0019** (`status: draft`), as part of the PR #71
-  bootstrap package. This is a deliberate, one-time departure from
-  the usual ordering in `workflows/document-lifecycle.md`, where
-  PLANs are drafted after the FS is approved.
+  bootstrap package. This is not a departure from
+  `workflows/document-lifecycle.md`, which places PLAN creation at
+  "initial creation" and constrains only approval — a PLAN may not
+  reach `approved` while its FS is `draft`.
 - Requires FS-0018 to be approved first, since the consensus gates
   integrate with the work item lifecycle defined there. PLAN-0019 cannot
   be approved until both FS-0019 and FS-0018 are approved; its
