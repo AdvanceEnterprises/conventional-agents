@@ -233,6 +233,78 @@ Verified by grepping `docs/decisions/` for "exported surface": only `ADR-0016`,
 `ADR-0030` depends on this split to assign document families their jobs, and
 currently cites `README.md`/`AGENTS.md` as the only sources.
 
+### The Agent Skills format is an unnamed upstream dependency
+
+`SKILL.md` is not a `conventional-agents` invention. It is **Agent Skills**, an open
+standard at [agentskills.io](https://agentskills.io/specification) — originally
+developed by Anthropic, released as an open standard, and implemented by roughly
+forty-five agent products including Cursor, GitHub Copilot, VS Code, Gemini CLI,
+OpenAI Codex, Goose, OpenHands and JetBrains Junie. It has a published specification,
+a GitHub organisation (`agentskills/agentskills`), and a conformance validator
+(`skills-ref validate ./my-skill`).
+
+The framework adopted the format and never recorded the dependency. `README.md`'s
+"Upstream References" documents four adopted standards — Conventional Commits, Keep a
+Changelog, MADR, arc42 — each with a URL and a pointer to where the framework's subset
+lives. Agent Skills is the fifth and is absent. Grepping the repository for any
+reference to the format's origin returns nothing.
+
+**`ADR-0001`'s premise has been overtaken by events.** Its Context reads: *"Claude Code
+provides native support for 'skills,' but most other tools do not have a formal skills
+system."* That was true when written. It is now false, and the change vindicates the
+decision while invalidating its reasoning — the framework chose `SKILL.md` to avoid
+Claude-only lock-in, and the format became the cross-vendor standard.
+
+**Conformance is broken in three ways**, measured against the published spec:
+
+| Issue | Detail |
+| --- | --- |
+| Non-spec top-level fields | All six skills carry `version`, `author` and `platforms`. None are spec fields; the spec's own example places `author` and `version` **under `metadata:`** |
+| `metadata` typing violated | The spec defines `metadata` as *"a map from string keys to string values"*. Ours is `metadata.hermes.tags: [array]` — nested maps containing arrays |
+| Oversize skill | `skills/git-gh-workflow/SKILL.md` is 558 lines, over the spec's *"keep your main SKILL.md under 500 lines"* and over `ADR-0001`'s ~400-line signal |
+
+Clean: every skill's `name` matches its parent directory, which the spec requires.
+
+Unused: the spec's optional `scripts/`, `references/` and `assets/` directories. That
+matters for the oversize skill — the spec's own remedy is moving detail into
+`references/`, not splitting the skill.
+
+**What closing it requires**, in four parts, none belonging to the current PR:
+
+1. Add Agent Skills to `README.md`'s Upstream References with its URL, matching the
+   treatment of the other four.
+2. A **new ADR** — `ADR-0001` is `accepted` and append-only — recording that the
+   framework *profiles* an external standard rather than defining one, that ADR-0001's
+   premise was overtaken, and which rules are the framework's own profile (the minimum
+   content checklist, the no-duplicate-gates rule, standalone-usefulness, the line
+   signal) as distinct from the spec's requirements.
+3. Fix conformance: move `version`/`author`/`platforms` under `metadata` as string
+   values, flatten the `hermes` nesting, and relocate `git-gh-workflow`'s overflow into
+   `references/`.
+4. Adopt `skills-ref validate` as a gate. It is Category 1 under `ADR-0015`, so it
+   needs an approved FS and PLAN before it is written — and it is the mechanical check
+   that would have caught every item above.
+
+**`skills/example-skill/SKILL.md` is empty, and should stay that way or be removed.**
+Filling it as a format reference was considered and rejected: the specification is the
+reference, `skills-ref validate` is the conformance check, and a hand-written local
+example would fork a standard the framework does not own and freeze whatever it
+understood the format to be on the day it was written.
+
+**New skills are deferred with it.** Several were proposed — `adr-authoring`,
+`spec-authoring`, `work-item-lifecycle`, `bootstrap-merge-authoring`,
+`platform-neutral-authoring`, `mcp-tool-governance`. Most would teach procedures from
+ADRs accepted in this PR and never yet performed, which is the imagined-abstraction
+failure `ADR-0024` exists to prevent. `adr-authoring` and `spec-authoring` are the two
+worth revisiting first: they teach the two document types this repository has watched
+get mis-authored repeatedly, including by its own agents.
+
+**The pattern worth naming.** The framework has now vendored or adopted five upstream
+standards and lost track of one. Its second-highest quality goal is Tool Neutrality
+(`docs/ARC42.md` §1.2), and that goal is better served by tracking upstreams than by
+inventing — but only if the tracking is recorded. An adopted standard with no reference
+entry is the same class of gap as a rule with no ADR.
+
 ### `docs/ARC42.md` is stale
 
 - `status: Draft`, `last_updated: 2026-07-12`.
