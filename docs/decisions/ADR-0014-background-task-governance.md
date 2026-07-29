@@ -298,6 +298,43 @@ lifecycle.
    its scope declaration, it stops and writes an escalation note rather than expanding
    its own scope.
 
+## Validation
+
+We will consider this decision successful if:
+
+1. **Every spawned task carries a declaration.** Role, artifact scope,
+   communication channel, and commit permission are stated at spawn time. A
+   background task whose authority has to be inferred from what it did was
+   spawned without this ADR being applied.
+2. **The default holds.** Tasks without an explicit `Commit: allowed` produce
+   no commits. Checkable from the commit history against the spawn records.
+3. **No background task pushes or opens a PR.** The role-authority table
+   forbids both for every role. Violations are visible in the reflog and the
+   PR author list.
+4. **Unattended sessions are not treated as background tasks.** A scheduled or
+   trigger-fired session that reports to a parent, or that declines to open a
+   PR on the grounds that this ADR forbids it, has been misclassified — it is a
+   primary under `ADR-0013` with `FS-0018`'s autonomous gate applying instead.
+   This is the distinction most likely to be got wrong, because the earlier
+   draft of this ADR did get it wrong.
+5. **Repeating executions are idempotent.** A reconciler running on a schedule
+   produces one stance entry per transition, not one per pass. Directly
+   observable on any work item a reconciler has visited more than once, and the
+   activity record is both the mechanism and the evidence.
+6. **Nothing fails silently.** A task that cannot complete its scope leaves a
+   summary of what it did, what it encountered, and why it stopped. Absence of
+   output from a task known to have run is a failure of this rule regardless of
+   whether the task's work was needed.
+
+**Review checkpoint:** when a background task is first spawned by an unattended
+session rather than an interactive one. The composition rule — authority does
+not widen by being delegated — is stated but has never been exercised.
+
+**Failure condition:** if background tasks are observed committing outside
+their declared artifact scope, the scope declaration is decorative. The remedy
+is the same as `ADR-0013`'s: a check comparing what was touched against what
+was declared, not a firmer restatement of the rule.
+
 ## Links
 
 - ADR-0012: Non-overridable gates — apply to background tasks regardless of declared

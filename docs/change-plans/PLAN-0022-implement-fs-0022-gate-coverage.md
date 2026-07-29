@@ -14,9 +14,8 @@ touches:
   - test/FS-0022/gate-coverage.bats
   - docs/specifications/README.md
   - docs/change-plans/README.md
-  - docs/decisions/ADR-0013-multi-model-session-coordination.md
-  - docs/decisions/ADR-0014-background-task-governance.md
-  - roles/ROLE_CONTRACT.md
+  - CONTRIBUTING.md
+  - INTEGRATION.md
 created: 2026-07-28
 updated: 2026-07-28
 
@@ -90,11 +89,9 @@ verified by the two-PR manual check in §8.
 * `test/FS-0022/gate-coverage.bats` (new)
 * `docs/specifications/README.md` — index title regeneration (§5a)
 * `docs/change-plans/README.md` — index title regeneration (§5a)
-* `docs/decisions/ADR-0013-multi-model-session-coordination.md` — add
-  Validation section (§5a)
-* `docs/decisions/ADR-0014-background-task-governance.md` — add Validation
-  section (§5a)
-* `roles/ROLE_CONTRACT.md` (new) — delegating document (§5a)
+
+* `CONTRIBUTING.md` — lint remediation (§5a)
+* `INTEGRATION.md` — lint remediation, whitespace only (§5a)
 
 Deliberately **not** listed: the seven documents that reference
 `roles/ROLE_CONTRACT.md`. They are correct as written and are fixed by the
@@ -129,15 +126,35 @@ Validation section was written in this PR, not by this plan.
 Audited before this plan was written, so the implementer knows the size of
 the failure set rather than discovering it.
 
+**Widened lint — 173 violations, concentrated in two files.** Measured, not
+estimated, by running markdownlint against each currently-unlinted surface:
+
+| Surface | Violations |
+| --- | --- |
+| `guidelines/`, `skills/`, `templates/`, `integrations/`, `roles/` | 0 |
+| `CONTRIBUTING.md` | 6 |
+| `INTEGRATION.md` | **165** |
+| `docs/decisions/README.md` | 2 |
+
+`INTEGRATION.md` is the whole problem: 86 MD010 (hard tabs), 44 MD032 (list
+spacing), 17 MD022 (heading spacing). Mechanical whitespace, no prose changes,
+and `markdownlint --fix` handles all three rule classes.
+
+The exported directories being clean is the useful finding — widening coverage
+is nearly free everywhere except one file that has never been linted and shows
+it.
+
+`docs/decisions/README.md`'s 12 MD060 errors are already fixed in this PR. Its
+remaining 2 MD036 are pre-existing and trivial.
+
 **FS index titles — 15 of 22 rows.** Abbreviated rather than fabricated,
 unlike the ADR index this PR already corrected. Regenerate every row from
 front matter.
 
-**ADR structural completeness — three ADRs.** `ADR-0013`, `ADR-0014`, and
-`ADR-0015` have no Validation section, which `docs/decisions/README.md` §2
-requires before acceptance.
-
-`ADR-0013` and `ADR-0014` are `proposed`; adding one is ordinary drafting.
+**ADR structural completeness — resolved.** `ADR-0013`, `ADR-0014`, and
+`ADR-0015` all lacked the Validation section `docs/decisions/README.md` §2
+requires. All three are written in this PR. Nothing remains for the
+implementer.
 
 **`ADR-0015` — resolved.** It was `accepted` without a Validation section,
 and adding one to an accepted ADR needed a human call rather than an
@@ -152,8 +169,11 @@ registered in `package.json`, described in `scripts/README.md`, and traceable
 to an approved FS" is checkable only once `scripts/README.md` exists and the
 Category 1 check is written. §5 of this plan delivers both.
 
-**`roles/ROLE_CONTRACT.md` — restore the file, do not repoint the
-references.** `PLAN-0017` deleted it as a byte-identical duplicate of
+**`roles/ROLE_CONTRACT.md` — resolved.** The file is written in this PR as a
+delegating document, and all seven references now resolve. The reasoning below
+is retained because it is what the implementer must not undo.
+
+Original finding: `PLAN-0017` deleted it as a byte-identical duplicate of
 `guidelines/ROLE_CONTRACT.md`, leaving seven documents pointing at nothing —
 `INTEGRATION.md` alone names it eleven times, once as precedence level 2,
 "cannot be weakened."

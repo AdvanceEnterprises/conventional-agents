@@ -240,6 +240,46 @@ requirement that a single identity be responsible for any given git action.
 5. **Conflict escalation**: If two sessions discover they need to modify the same
    artifact, they stop and escalate to human. Neither session proceeds unilaterally.
 
+## Validation
+
+We will consider this decision successful if:
+
+1. **Parallel primaries declare scope, and the declaration is the PLAN's.**
+   Every session operating as a parallel primary names its work item or PLAN,
+   its branch, and its artifact scope, and that scope is the governing PLAN's
+   `touches:` rather than a second hand-written list. Two lists for one path
+   set is the drift this unification exists to prevent, and the check is that
+   only one exists.
+2. **Declarations survive the session.** Where the work has a work item, the
+   declaration appears as an agent-stance entry on its activity record.
+   Checkable from the timeline; a declaration recoverable only from a
+   conversation transcript has failed this.
+3. **No two primaries modify the same governed artifact concurrently.**
+   Observable as the absence of a specific event: two sessions committing to
+   overlapping paths on the same branch within one working period. One
+   occurrence means the scope declarations are not being read.
+4. **Overlap escalates rather than resolving.** When two sessions do discover
+   they need the same artifact, both stop. A commit that silently resolves an
+   overlap — rebasing over another session's work, or reconciling two versions
+   without human involvement — is the failure this rule guards against, and it
+   is detectable in the commit history.
+5. **Contributor outputs are attributable.** Commits incorporating contributor
+   work carry `Co-authored-by:` and `Agent-Attribution:` per `ADR-0018` as
+   amended by `ADR-0029`. The superseded `Assisted-By:` and
+   `Contributor-Session:` trailers appear nowhere outside preserved evidence.
+
+**Review checkpoint:** the first time a structured collaboration round
+(`ADR-0031`) runs under Mode 2 with a model primary rather than an operator.
+Mode 2's authority rules were written for an operator-held primary, and the
+claim that they transfer unchanged is untested.
+
+**Failure condition:** if two sessions are repeatedly found working the same
+artifact, the artifact-scope declaration is not doing its job. The remedy is
+tooling — a pre-commit check comparing the working tree against declared scope
+— not a restatement of the rule. This ADR's own Consequences already record
+that the boundary relies on discipline; repeated violation is the evidence
+that discipline is insufficient.
+
 ## Links
 
 - ADR-0011: Multi-identity GitHub model (agent-committer vs. agent-reviewer)

@@ -149,8 +149,9 @@ For this project (a documentation/standards kit), semver follows the
 
 - **A version decision is required and is not made here.** Several changes are
   contract-affecting for consumers: the attribution convention (`ADR-0029`), the
-  substrate capability model (`ADR-0024`, `ADR-0028`), and the approval
-  mechanism (`ADR-0026`). Whether that is a minor or major bump is a human call
+  substrate capability model (`ADR-0024`, `ADR-0028`), the approval mechanism
+  (`ADR-0026`), and PLAN self-approval (`ADR-0027`) — a consumer adopting that
+  inherits the reserved-path set along with it. Whether that is a minor or major bump is a human call
   per `guidelines/ROLE_CONTRACT.md`.
 - Every document added in this cycle is `draft` or `proposed`. Nothing here is
   binding until approved.

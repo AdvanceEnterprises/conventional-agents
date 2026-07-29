@@ -406,7 +406,9 @@ round:
         <model-id>: addressed | silent (not asked) | silent (asked) | off-topic
         <model-id>: addressed | silent (not asked) | silent (asked) | off-topic
       addressed_count: <int>
-      sufficient: true | false        # false when addressed_count < min_models
+      sufficient: true | false        # false when addressed_count < min_models;
+                                      # such a point cannot reach consensus whatever
+                                      # the configured threshold says
   agreement_check:
     method: <consumer-implemented>
     produced_by: <model-id>           # the synthesizing model, not an evaluator

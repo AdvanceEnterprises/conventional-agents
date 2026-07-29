@@ -47,7 +47,7 @@ If linting fails in CI, copy the rule name (e.g., `MD010`) and search for it in 
 #### Common Issues and Fixes
 
 | Issue | Cause | Fix |
-|-------|-------|-----|
+| --- | --- | --- |
 | MD001 | Incorrect heading hierarchy | Ensure headings use correct level (# → ## → ###) |
 | MD009 | Trailing whitespace | Remove spaces at end of lines |
 | MD010 | Hard tabs | Use spaces instead (2 or 4 spaces per indent level) |
@@ -211,7 +211,7 @@ If validation fails:
 ## Current ADRs
 
 | ID | Title | Status |
-|---|---|---|
+| --- | --- | --- |
 | ADR-0000 | Use MADR and arc42 template as documentation origins | accepted |
 | ADR-0001 | Incorporate cross-tool portable skills as SKILL.md | accepted |
 | ADR-0002 | Roles reference skills via convention and skills index | accepted |
