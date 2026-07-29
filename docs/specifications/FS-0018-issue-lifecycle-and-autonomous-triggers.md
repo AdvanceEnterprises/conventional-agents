@@ -300,10 +300,11 @@ Where:
 - `mode` is one of the five session modes from
   `workflows/session-modes.md` (architecture-planning,
   document-authoring, implementation, review, communications), or one
-  of the meta-modes `autonomous` and `consensus`, per `ADR-0022`. The
-  value must come from that enumerated set; non-enumerated values are
-  invalid. Meta-modes may combine with each other and with at most one
-  session mode.
+  of the meta-modes `autonomous`, `consensus`, and `review-board`, per
+  `ADR-0022`. The value must come from that enumerated set;
+  non-enumerated values are invalid. Meta-modes may combine with at most
+  one session mode; `consensus` and `review-board` are mutually
+  exclusive, since a round is one or the other.
 - `role` is the primary role from `guidelines/ROLE_CONTRACT.md`.
 - `model` is the model identifier.
 - `session-name` is the scheduled job name, trigger event source, or

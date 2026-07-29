@@ -15,7 +15,7 @@ agent_stance_pattern() {
 # Allowed mode values per FS-0018 and FS-0019.
 # Architecture-planning, document-authoring, implementation, review,
 # communications (from workflows/session-modes.md), plus
-# autonomous (FS-0018) and consensus (FS-0019).
+# autonomous (FS-0018), consensus (FS-0019), review-board (FS-0021).
 ALLOWED_MODES=(
   "architecture-planning"
   "document-authoring"
@@ -24,6 +24,7 @@ ALLOWED_MODES=(
   "communications"
   "autonomous"
   "consensus"
+  "review-board"
 )
 
 @test "FS-0018 exists with draft status" {
