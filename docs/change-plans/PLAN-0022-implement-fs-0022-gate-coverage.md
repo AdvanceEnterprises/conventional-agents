@@ -10,6 +10,7 @@ related_adrs: [ADR-0008, ADR-0015, ADR-0027, ADR-0030]
 touches:
   - scripts/check-status.sh
   - scripts/README.md
+  - scripts/check-current-state.sh
   - package.json
   - .github/workflows/lint-docs.yml
   - test/FS-0022/gate-coverage.bats
@@ -83,14 +84,25 @@ updated: 2026-07-29
   * `test_scripts_readme__documents_every_check`
   * `test_consumer_impact__exported_interfaces_require_changelog_entry`
   * `test_consumer_impact__internal_only_spec_not_flagged`
+  * `test_current_state__unmodified_linked_doc_fails`
+  * `test_current_state__modified_linked_doc_passes`
+  * `test_current_state__directory_link_matches_by_prefix`
+  * `test_current_state__adr_naming_no_current_state_doc_out_of_scope`
 
-Rule 3 (§3 of the spec) is CI-only and has no bats coverage; it is
-verified by the two-PR manual check in §8.
+Rule 3 (§3 of the spec) is CI-only, and an earlier draft of this section
+concluded it therefore had no bats coverage and rested entirely on the
+two-PR manual check in §8. That was a consequence of packaging, not of the
+rule: putting the logic in `check-current-state.sh` with its git access
+separated from its comparison lets bats drive the comparison with synthetic
+change sets. Seven assertions cover it. §8's manual checks remain, because
+only a real PR exercises the CI wiring — the base ref, `fetch-depth: 0`, and
+the `pull_request` condition.
 
 ## 4. Files to Be Modified
 
 * `scripts/check-status.sh`
 * `scripts/README.md` (new)
+* `scripts/check-current-state.sh` (new) — ADR-0030 rule 3 (§3)
 * `package.json`
 * `.github/workflows/lint-docs.yml`
 * `test/FS-0022/gate-coverage.bats` (new)
@@ -240,6 +252,20 @@ is why the two paths were added to this plan's `touches:` and to `FS-0022`'s
 `interfaces:` after initial approval, and why the approval was re-recorded:
 the containment check correctly refused to let a widened `touches:` ride the
 earlier approval.
+
+**Rule 3 (§3) — built last, and it was nearly lost.** The check shipped after
+the rest of this plan had landed. Until then `scripts/README.md` told readers
+to "see `lint-docs.yml` §'current-state update' job" — a job that did not
+exist. Every other §3 artefact was in place: the spec section, two Success
+Criteria, step 6 below, and §8's manual checks. Only the job was missing, and
+nothing detected that, because a prose cross-reference is not a path and rule
+8 cannot see it.
+
+It is in scope when the diff adds a `status: accepted` line, which is
+narrower than §3's "every ADR added or modified". A typo fix in an accepted
+ADR whose Links name a workflow would otherwise demand an unrelated edit;
+`ADR-0030` rule 3 binds on changing a rule, and acceptance is the detectable
+moment a rule becomes binding.
 
 **Two scoping decisions §1c did not settle**, both resolved narrower than a
 literal reading because a literal reading fails on correct documents:

@@ -278,3 +278,72 @@ PLAN_EOF
     echo "$line" | grep -q '#' || { echo "undocumented exemption: $line"; return 1; }
   done <<< "$block"
 }
+
+# --- Current-state update, ADR-0030 rule 3 (FS-0022 §3) -----------------------
+#
+# The script is sourced, not executed: its logic is separated from git so these can
+# drive it with synthetic change sets rather than building throwaway history.
+
+@test "current_state: script exists and is sourceable without running" {
+  local s="$REPO_ROOT/scripts/check-current-state.sh"
+  [ -f "$s" ]
+  run bash -c "source '$s'; echo SOURCED_CLEAN"
+  [ "$status" -eq 0 ]
+  echo "$output" | grep -qF "SOURCED_CLEAN"
+  # Sourcing must not execute the check.
+  ! echo "$output" | grep -qF "ADR-0030 rule 3:"
+}
+
+@test "current_state: ADR naming an unmodified current-state doc fails" {
+  local adr="docs/decisions/ADR-0025-merge-strategy-preserves-per-commit-attribution.md"
+  [ -f "$REPO_ROOT/$adr" ] || skip "ADR-0025 filename changed"
+  run bash -c "source '$REPO_ROOT/scripts/check-current-state.sh'; \
+    check_links_against_changes 'README.md' '$adr'"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "ADR-0030 rule 3"
+  echo "$output" | grep -qF "workflows/git-and-gh-conventions.md"
+}
+
+@test "current_state: ADR whose linked doc is modified passes" {
+  local adr="docs/decisions/ADR-0025-merge-strategy-preserves-per-commit-attribution.md"
+  [ -f "$REPO_ROOT/$adr" ] || skip "ADR-0025 filename changed"
+  run bash -c "source '$REPO_ROOT/scripts/check-current-state.sh'; \
+    check_links_against_changes 'workflows/git-and-gh-conventions.md' '$adr'"
+  [ "$status" -eq 0 ]
+}
+
+@test "current_state: a directory link is satisfied by any change beneath it" {
+  # ADR-0024 links `integrations/` as well as a file. A link naming a directory can
+  # never match a changed file path exactly, so prefix matching is required.
+  local adr="docs/decisions/ADR-0024-platform-neutral-core-with-shipped-bindings.md"
+  [ -f "$REPO_ROOT/$adr" ] || skip "ADR-0024 filename changed"
+  run bash -c "source '$REPO_ROOT/scripts/check-current-state.sh'; \
+    check_links_against_changes 'integrations/github-issues-projects.md' '$adr'"
+  [ "$status" -eq 0 ]
+}
+
+@test "current_state: an ADR naming no current-state document is out of scope" {
+  # ADR-0031's Links name no workflows/guidelines/skills/templates/integrations path.
+  local adr="docs/decisions/ADR-0031-structured-multi-model-collaboration.md"
+  [ -f "$REPO_ROOT/$adr" ] || skip "ADR-0031 filename changed"
+  run bash -c "source '$REPO_ROOT/scripts/check-current-state.sh'; \
+    check_links_against_changes 'README.md' '$adr'"
+  [ "$status" -eq 0 ]
+}
+
+@test "current_state: only ADRs becoming accepted are in scope" {
+  # A status-preserving edit must not drag in an unrelated current-state change.
+  # adr_becomes_accepted keys on the diff adding `status: accepted`.
+  run bash -c "source '$REPO_ROOT/scripts/check-current-state.sh'; \
+    declare -f adr_becomes_accepted"
+  [ "$status" -eq 0 ]
+  echo "$output" | grep -qF 'status:'
+  echo "$output" | grep -qF 'accepted'
+}
+
+@test "current_state: the CI job exists and runs on pull_request" {
+  local ci="$REPO_ROOT/.github/workflows/lint-docs.yml"
+  assert_file_contains "$ci" "current-state-update:"
+  assert_file_contains "$ci" "check-current-state.sh"
+  assert_file_contains "$ci" "fetch-depth: 0"
+}
