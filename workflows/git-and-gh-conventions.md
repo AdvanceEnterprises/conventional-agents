@@ -352,34 +352,9 @@ Per `ADR-0021`, an unattended actor — cron, webhook, scheduled detection — c
 - A `mode=autonomous` marker in every stance entry and `Agent-Attribution:` trailer.
 - A `session=<job-name>` value naming the triggering job.
 
-This makes unattended work distinguishable from supervised work at commit level and
+This makes unattended work distinguishable from supervised work at commit level and at
 work-item-comment level. The autonomous gate (`ADR-0019`) is auditable because the actor
 identity is.
-
-### Consensus-round comments (`FS-0019`)
-
-When a consumer repo opts into multi-model consensus at a workflow gate (`FS-0019`), two
-comment forms appear on the work item:
-
-```text
-agent-stance: mode=consensus; role=<role>; model=<model>; session=<round-id>; rationale=<one-line reason>
-```
-
-Posted by the round initiator at the start of the round. The `mode=consensus` is a meta-mode
-per `ADR-0022`; the `role=` field carries the stance each participant operates in.
-
-```text
-consensus-override: <reason>
-```
-
-Posted by a human to override a failed `hard_block` round and authorize the gate to pass. The
-reason is required and is the durable record that the human chose to override the gate. The
-framework recommends but does not enforce this; consumer repos may make it binding through
-their handler logic.
-
-These comments live on the work item timeline, alongside `agent-stance:` entries, and are the
-audit trail for the round. The round artifact itself lives at
-`docs/consensus/<FS-or-PLAN-id>/<gate>-<timestamp>.yml` per `FS-0019` §"Audit Trail".
 
 ### When to use each layer
 

@@ -68,56 +68,6 @@ vim AGENTS.md
 
 ⸻
 
-## Multi-model consensus (optional, FS-0019)
-
-Multi-model consensus is an optional, consumer-implemented feature. The framework supplies
-vocabulary, artifact shape, gate placement, and failure modes; consumer repos implement
-the orchestration. The framework itself does **not** enable consensus — it does not invoke
-models, compare outputs, or post artifacts.
-
-### Opting in
-
-1. **Copy** [`config/consensus.yml`](./config/consensus.yml) from the framework into the
-   consumer repo's project root (or a location of the consumer's choosing).
-2. **Set `consensus.enabled: true`** in the copied file.
-3. **Configure** the `models:` list with at least two distinct model identifiers. Different
-   versions of the same model family do not count as distinct; same-model consensus is
-   forbidden per `ADR-0023` Constraint 1.
-4. **Wire** the consumer's orchestration to invoke the round, compare outputs, and write
-   the artifact at `docs/consensus/<FS-or-PLAN-id>/<gate>-<timestamp>.yml`. The
-   configuration is read by the consumer's machinery, not by the framework.
-
-### Gates
-
-Two gates are defined and may be enabled independently:
-
-- **Gate A — Pre-submission.** A round runs on a draft before it transitions to
-  `approved` (or to `in-progress`/`implemented` in single-PR flows).
-- **Gate B — Review-time.** A round runs on the PR diff when a PR opens against a work
-  item.
-
-Per-gate opt-in is independent. Per-document override (`consensus_required: true` in FS or
-PLAN front matter) can turn consensus on for a specific document when project-level
-consensus is off, but it cannot relax the different-models requirement.
-
-### Failure modes
-
-- `hard_block` (default when enabled) — the workflow does not advance past the gate.
-  Human may override via `consensus-override: <reason>` on the work item.
-- `soft_flag` — the workflow advances despite disagreement; the artifact is marked
-  `consensus-disagreement`.
-- `escalation` — disagreement creates a Type `task` work item under Head Architect role.
-  After N consecutive escalations (default 3, configurable), the round fails as
-  `hard_block` to prevent infinite loops.
-
-### What this section is not
-
-- **Not an implementation guide.** The framework does not implement orchestration.
-- **Not a recommendation.** Consensus is opt-in, off by default, and unused by the
-  framework itself.
-- **Not a gate that bypasses `ADR-0012`.** A passing consensus round does not authorize a
-  merge. Merging remains human-gated.
-
 ## Consumer Issue Configuration (Work Item Lifecycle, FS-0018)
 
 Consumer repos adopting `conventional-agents` configure their work-tracking substrate to match
