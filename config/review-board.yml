@@ -1,0 +1,84 @@
+# config/review-board.yml — Multi-model review board configuration (FS-0021)
+#
+# *** THIS IS A CONSUMER-COPY TEMPLATE, NOT FRAMEWORK CONFIGURATION ***
+# The conventional-agents framework itself does not enable review boards.
+# This file ships with enabled: false and is intended to be copied
+# by consumer repos into their project root and customized.
+# Do not modify this file for framework development — it is a template.
+#
+# This is the project-level configuration for the review board collaboration
+# mode defined in FS-0021. The review board is the second of the framework's
+# two multi-model collaboration modes (FS-0019 is the first — consensus).
+# Boards differ from consensus in three load-bearing ways:
+#
+#   1. Seats are diverse in ROLE STANCE, not (only) in model. A board with
+#      two seats in the same role stance is not a board — it is a consensus
+#      round wearing the wrong name. min_roles: 2 is the floor.
+#   2. Findings are merged and disagreements are PRESERVED. Contradictions
+#      between seats are information, not failure.
+#   3. A board never decides. It is advisory to the phase's leading role,
+#      which retains authority. A finding of severity `blocking` blocks
+#      nothing; it informs the Reviewer, who dispositions it.
+#
+# Default state: review boards are DISABLED. Set `enabled: true` below to
+# opt in.
+
+review_board:
+  # Master switch. When false, no boards are invoked and the workflow
+  # proceeds without review boards. Defaults to false at the framework
+  # level.
+  enabled: false
+
+  # Per-placement configuration. Each placement may opt in independently.
+  placements:
+    # Placement A: artifact review (a board reviews a completed draft:
+    # an FS, PLAN, ADR, or design document, before it transitions status).
+    artifact_review:
+      enabled: false
+
+    # Placement B: change review (a board reviews a PR diff against its
+    # governing FS and the ADRs it cites).
+    change_review:
+      enabled: false
+
+  # Seat list. Each seat pairs a model with a declared role stance from
+  # guidelines/ROLE_CONTRACT.md. Empty by default; consumers configure on
+  # opt-in.
+  #
+  # Composition rules (FS-0021, ADR-0023):
+  #   - At least min_models distinct model identifiers.
+  #   - At least min_roles distinct role stances.
+  #   - No two seats may share both model AND role (that is a consensus
+  #     round, not a board).
+  seats: []
+
+  # Minimum number of distinct models per board. Enforced by the consumer's
+  # board machinery; configuration is rejected if it would seat fewer.
+  min_models: 2
+
+  # Minimum number of distinct role stances per board. This is what makes
+  # the configuration a BOARD rather than a consensus round — a set of
+  # seats all in the same role stance is a consensus review, and FS-0019
+  # covers that.
+  min_roles: 2
+
+  # Severity taxonomy. The framework defines four values; consumers may
+  # extend. A finding of `blocking` is advisory only — no transition,
+  # approval, or merge is performed by the board. Mechanical effect would
+  # make the board a gate, which it is not (FS-0021 §"Advisory boundary").
+  severity_values:
+    - blocking
+    - substantive
+    - minor
+    - question
+
+  # Optional cost ceiling. If set, boards fail with a cost-exceeded error
+  # when total estimated cost would exceed this value. Leave null to
+  # disable.
+  max_cost_per_board: null
+
+  # Maximum depth of consecutive `HALT`-verdict synthesis cycles before
+  # the board is recorded as advisory-only and the human reviews
+  # directly. Mirrors consensus's escalation-depth limit, but for the
+  # gate's HALT verdict rather than a recurring round.
+  max_synthesis_cycles: 3
