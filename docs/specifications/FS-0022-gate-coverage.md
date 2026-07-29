@@ -7,6 +7,7 @@ owner: ajoeofalltrades
 test_required: true
 interfaces:
   - "scripts/check-status.sh"
+  - "scripts/README.md"
   - "package.json"
   - ".github/workflows/lint-docs.yml"
   - "docs/specifications/README.md"
@@ -170,7 +171,18 @@ Coverage is **derived, not enumerated** where the tooling allows. The
 enumerated-glob pattern is what produced these gaps: every new directory
 was unguarded by default, and nobody noticed because nothing reported it.
 
-### 5. Test execution
+### 5. Gate documentation
+
+`ADR-0015` requires every governance gate to carry a description in
+`scripts/README.md` explaining its purpose, when it runs, and what a
+failure means. That file does not exist, and `scripts/` contains
+`check-status.sh`.
+
+This spec creates it and documents every check it adds, alongside the
+checks already present. A gate whose failure message is the only
+explanation of what it wanted is a gate people work around.
+
+### 6. Test execution
 
 - `npm test` runs the `bats` suites under `test/`.
 - CI runs the same, as a job that blocks merge.
@@ -214,6 +226,12 @@ was unguarded by default, and nobody noticed because nothing reported it.
   when `npm run lint:docs` runs, then it exits non-zero.
 - Given a file under `docs/orchestration/multi-model-pilot-001/` with a
   style violation, when lint runs, then it does not fail.
+
+**Gate documentation**:
+
+- Given `scripts/README.md`, when it is read, then every check
+  `check-status.sh` performs has an entry naming its purpose, when it
+  runs, and what a failure means.
 
 **Test execution**:
 
@@ -280,7 +298,8 @@ None blocking approval.
 2. Add the §3 CI job.
 3. Widen lint coverage per §4, verifying the orchestration exemption
    survives.
-4. Add `npm test` and the CI job per §5. Expect existing suites to reveal
+4. Create `scripts/README.md` per §5, covering both existing and new checks.
+5. Add `npm test` and the CI job per §6. Expect existing suites to reveal
    failures never previously executed.
-5. Update `ADR-0027` and `ADR-0030` `related_specs` to name this spec.
-6. Remove the corresponding entries from `BACKLOG.md`.
+6. Update `ADR-0027` and `ADR-0030` `related_specs` to name this spec.
+7. Remove the corresponding entries from `BACKLOG.md`.

@@ -114,8 +114,11 @@ detection or discipline, and the deciding document says so:
 ### Documentation reconciliation
 
 Conventions currently stated in more than one place, which `ADR-0030` rule 1 forbids
-going forward but does not retroactively fix. Also `scripts/README.md`, required by
-`ADR-0015` — now accepted — and absent.
+going forward but does not retroactively fix.
+
+`scripts/README.md` — required by `ADR-0015` and absent — is no longer listed here. It
+is now `FS-0022` §5, since that spec adds checks whose documentation `ADR-0015`
+requires.
 
 ---
 
@@ -231,13 +234,6 @@ currently cites `README.md`/`AGENTS.md` as the only sources.
   `guidelines/multi-agent-coordination.md` (§8.3, §8.4). Neither file exists.
 - §5.1 lists `packs/` as a planned building block. It has never been built.
   `integrations/` was also phantom until this PR created it.
-
-### `scripts/README.md` does not exist
-
-`ADR-0015` requires every governance gate to carry a description in
-`scripts/README.md` explaining its purpose, when it runs, and what a failure means.
-`scripts/` contains `check-status.sh` and no README. Now binding, since ADR-0015 moved
-to `accepted`.
 
 ### Lint coverage is enumerated, not discovered
 
