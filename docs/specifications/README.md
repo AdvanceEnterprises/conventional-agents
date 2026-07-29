@@ -90,7 +90,7 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | ID | Title | Status |
 | --- | --- | --- |
 | FS-0001 | Markdownlint Integration for ADR Quality Gates | implemented |
-| FS-0002 | Move workflow skills into conventional-agents (dual-mode) | approved |
+| FS-0002 | Move workflow skills into conventional-agents (dual-mode) | deprecated |
 | FS-0003 | Git + gh CLI conventions for the kit | implemented |
 | FS-0004 | Agent-authored commit + PR commentary policy (role-aware) | draft |
 | FS-0005 | Expand docs linting coverage to FS/PLAN/workflows | implemented |

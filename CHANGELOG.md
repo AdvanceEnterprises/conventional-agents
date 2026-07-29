@@ -39,6 +39,13 @@ For this project (a documentation/standards kit), semver follows the
 - No runbooks ship yet. The first documents provisioning this repository's own GitHub
   Issues and Projects configuration.
 
+#### `deprecated` is now a change-plan status
+
+- `workflows/document-lifecycle.md` adds `deprecated` to the PLAN status table. Feature
+  specs and ADRs have always had it; a plan whose governing spec was deprecated had
+  nowhere to go. If you have tooling that reads `status:` from change plans, it can now
+  encounter this value.
+
 #### Review feedback fixes
 
 Per reviewer feedback on the bootstrap package:
@@ -312,6 +319,21 @@ Per reviewer feedback on the bootstrap package:
   `docs/ARC42.md`, `docs/decisions/ADR-0003.md`,
   `docs/specifications/FS-0009-vendor-upstream-specs.md`,
   `docs/change-plans/PLAN-0009-vendor-upstream-specs.md`.
+
+### Deprecated
+
+- **`FS-0002` / `PLAN-0005` (move workflow skills into the framework) — never
+  implemented, now deprecated.** They specified ten generator and review skills
+  (`adrgen`, `specgen`, `changeplangen`, `stubgen`, `instructionlint`, `skillindex`,
+  `prreview`, `specreview`, `testreview`, `newskill`) with Python helpers and dual-mode
+  template path resolution. None of the ten has ever existed on any branch. If you were
+  waiting on those skills, they are not coming under this spec — the `skills/` directory
+  ships a different, documentation-oriented set.
+- The dual-mode path-resolution requirement is **not** retired with the spec: a helper
+  script shipped by this framework should still resolve templates from `./templates/…`
+  when run inside the framework and `./vendor/conventional-agents/templates/…` when run
+  from a host repo. It is recorded in `FS-0002`'s Status section for whatever ships
+  executable tooling next.
 
 ### Removed
 

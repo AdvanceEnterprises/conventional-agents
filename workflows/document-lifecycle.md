@@ -90,6 +90,12 @@ Every agent transition is attributable per `ADR-0018` as amended by `ADR-0029` �
 | `approved` | Ready for execution | Human approves (merge of plan PR) | After review |
 | `in-progress` | Execution underway | Agent sets when starting | First implementation commit |
 | `implemented` | All steps complete | Agent sets in the completing PR | Same PR that finishes implementation |
+| `deprecated` | Abandoned before implementation; will not be executed | Human | When the governing FS is deprecated, or the plan is otherwise abandoned |
+
+`deprecated` closes an asymmetry rather than adding a new idea: FS and ADR have had it
+since the beginning, and a PLAN whose governing FS is deprecated had no status to move
+to. A deprecated PLAN MUST record why in its §2, and is exempt from the `touches:`
+containment check — it is not seeking approval.
 
 ## Architecture Decision Records (ADR)
 
