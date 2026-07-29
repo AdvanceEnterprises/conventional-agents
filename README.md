@@ -111,14 +111,6 @@ Multi-agent collaboration modes — `consensus` (FS-0019) and `review-board` (FS
 autonomous meta-mode (ADR-0022) are documented in [`workflows/session-modes.md`](./workflows/session-modes.md)
 and operationalized in [`skills/git-gh-workflow/SKILL.md`](./skills/git-gh-workflow/SKILL.md).
 
-
-Multi-model consensus (`FS-0019`) is an optional, consumer-implemented feature for projects
-that want fan-out validation at workflow gates. It ships **disabled** in
-[`config/consensus.yml`](./config/consensus.yml) and the framework itself does not use it.
-Consumer repos that opt in implement their own orchestration; see
-[`INTEGRATION.md`](./INTEGRATION.md) §"Multi-model consensus (optional)" and the
-configuration template for shape. Consensus rounds are advisory at the gate they attach to
-— the human merge gate (`ADR-0012`) is unchanged.
 ### Process Gates
 
 The framework enforces correctness through layered gates:

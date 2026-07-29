@@ -73,13 +73,12 @@ The framework recommends three GitHub identities for projects that have
 separate human and agent operators:
 
 | Identity | Purpose |
-| --- | --- |
+|---|---|
 | **Human account** | Interactive ownership, administration, merging |
 | **Agent-committer account** | Opens PRs, authors code commits |
 | **Agent-reviewer account** | Authors reviews and comments |
 
 Rules:
-
 - PRs created by agents MUST be authored by the agent identity (not the human).
 - Commit signing ("Verified") is nice-to-have, not required.
 - Git commit author identity (`user.name` / `user.email`) and GitHub PR/review identity (`gh auth status`) are separate concepts.
@@ -96,7 +95,7 @@ metadata correctly.
 git -c user.name="Opus 5" \
     -c user.email="claude-code@tais-den.dev" \
     commit -m "..."
-```text
+```
 
 Use this when authoring one commit as an agent. Don't mutate global
 `git config user.email`.
@@ -111,7 +110,7 @@ export GIT_AUTHOR_NAME="Opus 5"
 export GIT_AUTHOR_EMAIL="claude-code@tais-den.dev"
 export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
 export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
-```text
+```
 
 ### Hybrid sessions
 
@@ -123,7 +122,7 @@ code, you wrote the commit message, or vice versa), add a
 docs: explain single-identity workflow
 
 Co-authored-by: Opus 5 <claude-code@tais-den.dev>
-```text
+```
 
 GitHub renders the trailer as a second author chip on the commit page.
 
@@ -156,7 +155,7 @@ forward-compatibility notes.
 ## Defaults
 
 | Setting | Value |
-| --- | --- |
+|---|---|
 | Default branch | `trunk` |
 | Canonical remote | `origin` |
 | Merge strategy | Squash-merge |
@@ -178,27 +177,27 @@ The only exception is an emergency hotfix explicitly authorized by a human, and 
 
 ```bash
 gh auth status
-```text
+```
 
 If the wrong account is active:
 
 ```bash
 gh auth switch --user <correct-username>
-```text
+```
 
 ### 1. Sync Trunk
 
 ```bash
 git switch trunk
 git pull --ff-only origin trunk
-```text
+```
 
 ### 2. Create a Feature Branch
 
 Use these prefixes:
 
 | Prefix | Use |
-| --- | --- |
+|---|---|
 | `feat/` | User-visible or functional change |
 | `fix/` | Bug fix |
 | `docs/` | Documentation-only |
@@ -208,14 +207,14 @@ Use these prefixes:
 
 ```bash
 git switch -c feat/<short-slug>
-```text
+```
 
 ### 3. Commit Your Work
 
 Use Conventional Commits (lite):
 
 | Type | Use |
-| --- | --- |
+|---|---|
 | `feat:` | New feature |
 | `fix:` | Bug fix |
 | `docs:` | Documentation |
@@ -227,47 +226,47 @@ Optional scope: `feat(api): ...`
 
 **Commit body (agents):** Include a useful body unless the change is truly trivial:
 
-```text
+```
 Why: intent / context
 What: high-level summary
 Risk: what could break
 Validation: what was run (or explicitly "not run")
-```text
+```
 
 Do not include secrets (tokens, private keys, credentials) in commit messages.
 
 ```bash
 git add -A
 git commit -m "<type>: <summary>"
-```text
+```
 
 ### 4. Push
 
 ```bash
 git push -u origin HEAD
-```text
+```
 
 ### 5. Open a PR
 
 ```bash
 gh pr create --fill
-```text
+```
 
 Use `--draft` if you expect iteration:
 
 ```bash
 gh pr create --fill --draft
-```text
+```
 
 **PR body template (agents):**
 
-```text
+```
 Summary:
 Context / Why:
 Changes:
 Validation:
 Risk / Rollback:
-```text
+```
 
 Do not include secrets in PR descriptions.
 
@@ -278,29 +277,29 @@ Preferred: rebase on `trunk`.
 ```bash
 git fetch origin
 git rebase origin/trunk
-```text
+```
 
 If already pushed, update the PR branch safely:
 
 ```bash
 git push --force-with-lease
-```text
+```
 
 **PR update comment (agents):** After pushing follow-up commits (especially in response to review feedback), add a PR comment summarizing:
 
-```text
+```
 Addressed review feedback:
 - ✅ ITEM_1
 - ✅ ITEM_2
 Validation: COMMANDS_RUN (or "not run")
-```text
+```
 
 ### 7. Checks + Review
 
 ```bash
 gh pr view --web
 gh pr status
-```text
+```
 
 ### 8. Merge
 
@@ -319,7 +318,7 @@ If the repository has GitHub auto-merge or a merge queue enabled, the agent can 
 ```bash
 # Enable auto-merge with squash strategy after CI checks pass
 gh pr merge --auto --squash
-```text
+```
 
 This is **not** the same as `gh pr merge` (which merges immediately). `--auto` tells GitHub "merge this PR automatically once all required CI checks pass." The actual merge is performed by GitHub's infrastructure, not by the agent. This is compliant with ADR-0012 because:
 
@@ -371,7 +370,7 @@ gh pr merge --auto --squash
 
 # 6. Confirm merge completed
 gh pr status
-```text
+```
 
 ### What the Agent Must Not Do
 
@@ -386,7 +385,7 @@ gh pr status
 ### Semantic Versioning by Project Type
 
 | Project Type | Major (breaking) | Minor (feature) | Patch (fix) |
-| --- | --- | --- | --- |
+|---|---|---|---|
 | **Libraries** | Removing/renaming public exports, changing signatures | Adding new exports, optional params | Bug fixes, internal refactors |
 | **Services/APIs** | Removing endpoints, changing response shapes | Adding new endpoints, optional fields | Bug fixes, perf improvements |
 | **Doc/Standards Kits** | Removing/renaming exported files, changing vendored mount path | New guidelines, workflows, templates, skills | Typo fixes, clarifications |
@@ -401,7 +400,7 @@ Follow Keep a Changelog format (<https://keepachangelog.com>). This framework us
 Sections (use only those that apply per release):
 
 | Section | Use |
-| --- | --- |
+|---|---|
 | **Added** | New features or capabilities |
 | **Changed** | Changes to existing functionality |
 | **Deprecated** | Features that will be removed in a future release |
@@ -410,7 +409,6 @@ Sections (use only those that apply per release):
 | **Security** | Vulnerability fixes |
 
 **Ownership:**
-
 - Changelogs are **human-curated**, not auto-generated from commits.
 - Agents MAY append entries to the `[Unreleased]` section when explicitly instructed during feature work.
 - Humans review and finalize changelog entries as part of the release decision.
@@ -430,7 +428,7 @@ Sections (use only those that apply per release):
 ### Agent-Safe vs Human-Gated Actions
 
 | Action | Agent-safe? | Notes |
-| --- | --- | --- |
+|---|---|---|
 | Draft changelog entries | Yes (when instructed) | Append to `[Unreleased]` only |
 | Bump minor/patch version | Yes (when instructed) | Release-prep PRs only |
 | Bump major version | **No** | Requires human approval |
@@ -468,7 +466,7 @@ be preceded by an activity-record entry in the documented stance format:
 
 ```text
 agent-stance: mode=<mode>; role=<role>; model=<model>; session=<session-name>; rationale=<one-line reason>
-```text
+```
 
 Where `<mode>` is one of the five session modes from `workflows/session-modes.md`, or one of the
 meta-modes `autonomous`, `consensus`, or `review-board` per `ADR-0022`. `<role>` is a primary role
@@ -503,33 +501,6 @@ An unattended agent (cron, webhook, scheduled detection) carries:
 - A `session=<job-name>` value naming the triggering job.
 
 The actor table in `workflows/git-and-gh-conventions.md` carries the email aliases per actor.
-
-## Consensus Rounds (FS-0019, optional)
-
-Multi-model consensus is an optional, consumer-implemented feature. The framework supplies vocabulary, artifact shape, gate placement, and failure modes; consumer repos implement the orchestration. The rules below apply when a consumer repo opts in by setting `enabled: true` in `config/consensus.yml`.
-
-### Round initiation
-
-- A consensus round is invoked at Gate A (pre-submission) or Gate B (review-time), or when an FS/PLAN's front matter carries `consensus_required: true`.
-- The initiator posts an `agent-stance:` entry on the work item with `mode=consensus` per `ADR-0022`, naming the role each participant operates in (`Document Author`, `Implementer`, `Reviewer`, or `Head Architect`).
-- The initiator runs N participant invocations with **distinct models** and **independent state** (no shared prompt cache, no shared context, no shared tool-use history). Different versions of the same model family do not count as distinct.
-
-### Audit trail
-
-- Each round produces an artifact at `docs/consensus/<FS-or-PLAN-id>/<gate>-<timestamp>.yml` carrying: participants, role mode, threshold, coverage record (per `ADR-0031`), agreement check (with `produced_by: <synthesizing-model>` — never the gate evaluator), and — for gated rounds — the gate evaluator's execution status and verdict.
-- The commit producing the artifact carries the actor's `user.email`, optional `Co-authored-by:`, and `Agent-Attribution:` trailer per `ADR-0018`.
-
-### Failure modes
-
-- `hard_block` (default when enabled) — the workflow does not advance past the gate. Human may override via `consensus-override: <reason>` comment on the work item.
-- `soft_flag` — the workflow advances despite disagreement; the artifact is marked `consensus-disagreement`.
-- `escalation` — disagreement creates a Type `task` work item under Head Architect role. After N consecutive escalations (default 3, configurable), the round fails as `hard_block` to prevent infinite loops.
-
-### What the framework does NOT do
-
-- The framework does not implement orchestration. It does not invoke models, compare outputs, or post artifacts. Consumers implement these themselves.
-- `config/consensus.yml` is a consumer-copy template. The framework's own evolution does not enable consensus; the file ships with `enabled: false` and `models: []`.
-- A `docs/consensus/` directory does not exist in this repository, and PLAN-0019 explicitly excludes creating one. Its absence is the validation signal that consensus is opt-in and framework-side inert.
 
 ## Document Hygiene Gate (Before Marking PR Ready)
 

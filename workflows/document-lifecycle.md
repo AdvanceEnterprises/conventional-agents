@@ -72,21 +72,6 @@ A work item whose Type is unset has not been classified, and the gate treats it 
 Every agent transition is attributable per `ADR-0018` as amended by `ADR-0029` — commit-author identity, `Co-authored-by:` trailer for hybrid sessions, `Agent-Attribution:` trailer, and the activity-record stance entry above. The activity timeline is therefore a record of role transitions, with each entry traceable to a specific model + role + session combination, subject to the retractability limits noted above.
 
 ---
-## Multi-model Consensus Gates (FS-0019, optional)
-
-Two consensus gates integrate with the lifecycle above as **optional, consumer-implemented checkpoints** defined in `FS-0019`. They are documented here so consumers see how the gates attach to the FS/PLAN/ADR status state machine; consumers on the same substrate as this repository configure them via `config/consensus.yml`, and consumers on other substrates author the equivalent per their platform.
-
-These gates are **disabled by default** at the framework level (`ADR-0023` Constraint 2) and **must not be described as configurable** away — the different-models requirement is non-overridable. Consumers opt in explicitly.
-
-- **Gate A — Pre-submission (Draft → Approved).** Before an FS or PLAN transitions to `approved` (or `in-progress`/`implemented` in single-PR flows), a consensus round runs on the draft. Each participant is invoked independently; outputs are semantically compared against a configured threshold. Pass advances the lifecycle; fail applies the configured `failure_mode` (`hard_block`, `soft_flag`, or `escalation`).
-- **Gate B — Review-time (In Review → Done).** When a PR opens, a consensus round runs on the PR diff against the governing FS. Same shape as Gate A.
-
-The two gates share configuration and artifact shape. Per-gate opt-in is independent. Per-document override (`consensus_required: true|false` on an FS or PLAN) can turn consensus on for a high-stakes document when project-level consensus is off, but it cannot relax the different-models requirement. The framework ships `config/consensus.yml` as a consumer-copy template with `enabled: false` and an empty `models: []` list; consumers copy it into their project root and customize.
-
-Rounds emit a persisted artifact at `docs/consensus/<FS-or-PLAN-id>/<gate>-<timestamp>.yml`, per `FS-0019` §"Audit Trail". The artifact records participants, role mode, threshold, the coverage record (per `ADR-0031`), the agreement check, and — for gated rounds — the gate evaluator's execution status and verdict. The presence of a `gate:` block is conditional: when no independent evaluator is available the round is **synthesis-only** and the block is omitted entirely.
-
-The autonomous gate (`ADR-0019`) and the consensus gate are independent. An unattended agent on a project with consensus enabled still cannot bypass human approval of the Type-keyed checkpoint. The merge gate (`ADR-0012`) is also independent: a passing consensus round does not authorize a merge.
-
 ## Feature Specs (FS)
 
 | Status | Meaning | Who transitions | When |

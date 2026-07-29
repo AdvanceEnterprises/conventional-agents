@@ -37,20 +37,6 @@ Key references:
   rules. Convention-level enforcement on most platforms; audit-trail-based detection
   everywhere.
 
-## SDLC workflows
-
-Two named SDLC workflows traverse the same seven-phase spine:
-
-- [`workflows/sdlc-single-model.md`](./workflows/sdlc-single-model.md) — single model
-  occupying every role in turn. No collaboration rounds available.
-- [`workflows/sdlc-multi-model.md`](./workflows/sdlc-multi-model.md) — different models
-  in different roles, handing off through artifacts. Collaboration rounds attach at
-  gates.
-
-Both share the same three human-held gates (`ADR-0012`, `ADR-0026`). They differ only
-on whether collaboration is available. The cross-document consistency is enforced by
-`test/FS-0020/sdlc-workflows.bats`.
-
 ## Working on the Framework Itself
 
 This repo contains no application code. Quality is documentation-centric.
