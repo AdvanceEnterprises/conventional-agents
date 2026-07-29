@@ -16,16 +16,14 @@ PARSING_HINTS:
 
 type: change-plan
 role: implementer
-language: `language or "n/a" for documentation-only work`
+language: <language or "n/a" for documentation-only work>
 status: draft
 related_specs: []
 related_adrs: []
-
 # consensus_required: true    # optional per-document override for FS-0019 (off by default)
-
 touches: []
-created: `YYYY-MM-DD`
-updated: `YYYY-MM-DD`
+created: <YYYY-MM-DD>
+updated: <YYYY-MM-DD>
 
 ---
 
@@ -46,47 +44,48 @@ gate checks touched files against the FS `interfaces:` at PR time, so an
 under-declared plan fails later and louder.
 -->
 
+
 ## 1. Feature / Issue Reference
 
 * Feature Spec ID(s): FS-XXXX
 * Related ADR ID(s): ADR-XXXX (if any)
-* Issue / PR Reference: `ID or link`
+* Issue / PR Reference: <ID or link>
 
 ## 2. Scope of Change
 
 **This change WILL:**
 
-* `bullet derived directly from Success Criteria`
+* <bullet derived directly from Success Criteria>
 
 **This change will NOT:**
 
-* `explicit non-goal`
+* <explicit non-goal>
 
 ## 3. Tests Driving This Change
 
 * Test file(s):
 
-  * tests/test_`feature`.py
+  * tests/test_<feature>.py
 
 * Target test(s):
 
-  * test_sc_1__`name`
-  * test_sc_2__`name`
+  * test_sc_1__<name>
+  * test_sc_2__<name>
 
 ## 4. Files to Be Modified
 
 Only list files that will be changed.
 
-* src/`package`/`module`.py
-* src/`package`/errors.py
+* src/<package>/<module>.py
+* src/<package>/errors.py
 
 ## 5. Implementation Steps (High-Level)
 
 Describe concrete steps without code.
 
-1. `step`
-2. `step`
-3. `step`
+1. <step>
+2. <step>
+3. <step>
 
 ## 6. Constraints and Guardrails
 
@@ -100,22 +99,22 @@ Describe concrete steps without code.
 
 * Architecture constraints:
 
-  * `layering / boundaries`
+  * <layering / boundaries>
 
 ## 7. Risks and Edge Cases
 
-* `risk or edge case`
-* `error handling concern`
+* <risk or edge case>
+* <error handling concern>
 
 ## 8. Validation
 
 * Tests expected to pass:
 
-  * `list`
+  * <list>
 
 * Manual checks (if any):
 
-  * `steps or "None"`
+  * <steps or "None">
 
 ## 9. Explicit Non-Changes
 

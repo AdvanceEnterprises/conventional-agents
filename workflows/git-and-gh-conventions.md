@@ -237,7 +237,10 @@ distinguishing layer is git's `user.name` / `user.email`:
 | Commit source | Author line |
 | --- | --- |
 | Claude Code running Opus 5 | `Opus 5 <claude-code@tais-den.dev>` |
-| Hermes running DeepSeek V4 | `DeepSeek V4 <hermes-agent@tais-den.dev>` |
+| Hermes Agent (interactive) | `Hermes Agent <hermes-agent@tais-den.dev>` |
+| Hermes Agent (unattended / cron) | `Hermes Agent (cron) <hermes-cron@tais-den.dev>` |
+| Codex (interactive) | `Minimax M3 <codex@tais-den.dev>` |
+| Codex (unattended / cron) | `Minimax M3 (cron) <codex-cron@tais-den.dev>` |
 | Joey, unassisted | `Joey Clark <taisden@tais-den.dev>` |
 
 The human row is the exception: a human is not a model, so `user.name`
@@ -322,6 +325,61 @@ export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
     name = Opus 5
     email = claude-code@tais-den.dev
 ```
+
+### Issue / work-item stance
+
+Work items carry agent-stance entries on their activity timeline in addition to commit metadata.
+The format is defined by `FS-0018`:
+
+```text
+agent-stance: mode=<mode>; role=<role>; model=<model>; session=<session-name>; rationale=<one-line reason>
+```
+
+`<mode>` is one of the five session modes from `workflows/session-modes.md`, or one of the
+meta-modes `autonomous`, `consensus`, or `review-board` per `ADR-0022`. `<role>` is a primary
+role from `guidelines/ROLE_CONTRACT.md`. The value must come from the enumerated set; non-enumerated
+values are invalid.
+
+An agent authoring a work-item action without an accompanying commit records the stance on the
+timeline. An agent authoring both records the stance on the timeline and the
+`Agent-Attribution:` trailer on the commit; the trailer remains the durable record.
+
+#### Cron-fired actors
+
+Per `ADR-0021`, an unattended actor — cron, webhook, scheduled detection — carries:
+
+- A dedicated `user.email` distinct from both the human and the interactive-agent address.
+- A `mode=autonomous` marker in every stance entry and `Agent-Attribution:` trailer.
+- A `session=<job-name>` value naming the triggering job.
+
+This makes unattended work distinguishable from supervised work at commit level and
+work-item-comment level. The autonomous gate (`ADR-0019`) is auditable because the actor
+identity is.
+
+### Consensus-round comments (`FS-0019`)
+
+When a consumer repo opts into multi-model consensus at a workflow gate (`FS-0019`), two
+comment forms appear on the work item:
+
+```text
+agent-stance: mode=consensus; role=<role>; model=<model>; session=<round-id>; rationale=<one-line reason>
+```
+
+Posted by the round initiator at the start of the round. The `mode=consensus` is a meta-mode
+per `ADR-0022`; the `role=` field carries the stance each participant operates in.
+
+```text
+consensus-override: <reason>
+```
+
+Posted by a human to override a failed `hard_block` round and authorize the gate to pass. The
+reason is required and is the durable record that the human chose to override the gate. The
+framework recommends but does not enforce this; consumer repos may make it binding through
+their handler logic.
+
+These comments live on the work item timeline, alongside `agent-stance:` entries, and are the
+audit trail for the round. The round artifact itself lives at
+`docs/consensus/<FS-or-PLAN-id>/<gate>-<timestamp>.yml` per `FS-0019` §"Audit Trail".
 
 ### When to use each layer
 
