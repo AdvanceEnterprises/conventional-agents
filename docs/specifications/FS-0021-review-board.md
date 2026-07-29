@@ -41,9 +41,9 @@ PARSING_HINTS:
 
 ## Plan Status
 
-- No PLAN drafted. Per `workflows/document-lifecycle.md`, PLAN-0021 is
-  authored after this FS is approved. FS-0018 and FS-0019 departed from
-  that ordering as a declared one-time exception; this spec does not.
+- **PLAN-0021 drafted** (`status: draft`). `workflows/document-lifecycle.md`
+  places PLAN creation at "initial creation" and constrains only its
+  *approval*: a PLAN may not reach `approved` while its FS is `draft`.
 
 ## Summary
 

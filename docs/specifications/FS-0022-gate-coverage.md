@@ -42,8 +42,9 @@ PARSING_HINTS:
 
 ## Plan Status
 
-- No PLAN drafted. PLAN-0022 follows approval, per
-  `workflows/document-lifecycle.md`.
+- **PLAN-0022 drafted** (`status: draft`). `workflows/document-lifecycle.md`
+  places PLAN creation at "initial creation" and constrains only its
+  *approval*: a PLAN may not reach `approved` while its FS is `draft`.
 
 ## Summary
 
