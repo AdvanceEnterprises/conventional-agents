@@ -6,9 +6,3 @@ MD013: false
 # Allow duplicate sibling headings (needed for CHANGELOG: Added, Changed, Fixed repeat per release)
 MD024:
   siblings_only: true
-
-# INTEGRATION.md is excluded from `lint:roots` in package.json rather than being
-# exempted by rule here. It is not a whitespace problem: the document has never
-# used code fences, so its shell commands and example AGENTS.md contents are parsed
-# as markdown headings. Fixing it means adding fences to a consumer-facing document
-# — a content change, not a formatting one. Tracked in BACKLOG.md.
