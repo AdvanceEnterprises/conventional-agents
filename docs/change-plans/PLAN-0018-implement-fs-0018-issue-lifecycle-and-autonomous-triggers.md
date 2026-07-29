@@ -2,7 +2,7 @@
 type: change-plan
 role: implementer
 language: markdown
-status: draft
+status: approved
 related_specs: [FS-0018]
 related_adrs: [ADR-0019, ADR-0020, ADR-0021, ADR-0022, ADR-0012, ADR-0018]
 created: 2026-07-27
