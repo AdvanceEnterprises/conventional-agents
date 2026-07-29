@@ -12,6 +12,7 @@ touches:
   - scripts/README.md
   - scripts/check-current-state.sh
   - scripts/run-bats.sh
+  - test/FS-0001/helpers.bash
   - package.json
   - .github/workflows/lint-docs.yml
   - test/FS-0022/gate-coverage.bats
