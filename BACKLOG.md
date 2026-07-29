@@ -61,6 +61,168 @@ an imagined substrate, which is the failure the runbook type exists to prevent.
 
 ---
 
+## Public release
+
+The repository is private and consumed by a handful of private repositories. Making it
+public is a distinct project from anything above, and it is sequenced **after** the
+GitHub provisioning work — the automations are what turn this list into tracked work
+items.
+
+Everything below was verified against the repository on 2026-07-29, not inferred.
+Tiers are ordered by whether they block publication, not by effort.
+
+### Tier 0 — Legal and identity
+
+**`LICENSE` names the wrong copyright holder.** It reads `Copyright (c) 2026 Anthropic`.
+This is not Anthropic's project. The MIT text itself is fine; the holder line is a
+scaffolding artifact that nobody has read since it was generated. Publishing with
+another party's copyright notice is the single highest-consequence item in this file.
+
+**`config/project.yml` ships one organization's private infrastructure.** It hardcodes
+the Tais-Den GitHub Project number, project ID, board URL, and every field and option
+ID:
+
+```text
+project.id: "PVT_kwDOD3aO3M4BQcYf"
+project.url: "https://github.com/orgs/Tais-Den/projects/2"
+```
+
+These are not credentials, but they are deployment config for one org sitting in a
+framework that consumers vendor — and they contradict `ADR-0024`'s platform-neutral
+core directly. A consumer vendoring the framework gets a pointer to a board they cannot
+read. Decide whether `config/` is exported at all; if it is, it needs to ship as an
+example with the real values held outside the repository.
+
+**Decide the disposition of personal and organizational identifiers.** Present in
+tracked files: `Tais-Den` (28 files), `Hermes` (23), `ajoeofalltrades` (14),
+`taisden@tais-den.dev` (12). **Not all of these should be removed** — `owner:` fields
+and `approved_by:` records are legitimate attribution, and they are already in the git
+history that publication exposes regardless. What is needed is a deliberate decision,
+made once and written down, covering: the maintainer's email in commit trailers, the
+`Hermes` agent's name if that is proprietary, and whether `tais-den-conventions` stays
+as `INTEGRATION.md` Pattern 4's worked example or is replaced with a neutral one.
+
+A secrets scan for GitHub tokens, private keys, and AWS keys found nothing.
+
+### Tier 1 — The documented integration path does not work
+
+**`packs/` has never existed.** `INTEGRATION.md` instructs consumers to run:
+
+```text
+cp vendor/conventional-agents/packs/agents-md/AGENTS.full.example.md ./AGENTS.md
+cp vendor/conventional-agents/packs/claude/CLAUDE.full.example.md ./CLAUDE.md
+cp vendor/conventional-agents/packs/aider/CONVENTIONS.md ./CONVENTIONS.md
+```
+
+Four references across the Quick Start, Pattern 2, and the Aider section.
+`docs/ARC42.md` §5.1 lists `packs/` as "(planned)" and has since the beginning. This is
+the copy-in path — the one recommended for tools that only read root files — and it is
+the first thing a new public user runs. Either build `packs/` or rewrite those
+instructions to point at what exists.
+
+**`<REPO_URL>` is still a placeholder.** `INTEGRATION.md` Quick Start step 1 says
+"replace with the actual repository URL when known". On a public repo it is known, and
+the submodule command is the first thing anyone executes.
+
+### Tier 2 — The threat model changes when the repository is public
+
+**Recorded approval is forgeable by anyone who can open a pull request.** This is the
+most consequential finding, and it is not a bug — it is a design that assumed trusted
+committers.
+
+`scripts/check-status.sh` gates reserved paths (`scripts/`, `.github/workflows/`,
+`package.json`, `docs/decisions/`, `guidelines/ROLE_CONTRACT.md`) behind `ADR-0026`
+recorded approval. It requires the most recent commit touching a PLAN to carry an
+`Approved-By:` trailer matching the PLAN's `approved_by:` front matter, authored by
+someone other than the commit author. **In a fork pull request, every one of those
+inputs is contributor-controlled**: the front matter is in the diff, the trailer is in
+their commit, and the author-differs constraint is satisfied by naming any maintainer
+they like. An outside contributor can open a PR whose PLAN self-certifies as
+human-approved for `.github/workflows/`.
+
+This is consistent with the framework's stated "detection over prevention" stance, and
+the honest fix is not to make the check unforgeable — it cannot be. What is required
+before publication:
+
+- `CODEOWNERS` plus branch protection as the actual control, with the check demoted to
+  advisory on fork PRs.
+- A statement in `integrations/github-issues-projects.md` §7 ("What This Binding Does
+  Not Guarantee") saying so plainly, in the same voice as the existing three
+  not-technically-enforceable capabilities.
+- Review of whether `ADR-0026` needs a public-repository amendment or a successor.
+
+**`ADR-0011` and `ADR-0021` assume a private organization.** The multi-identity model
+and the cron actor identity both rest on the set of people who can push being known.
+`FS-0018`'s autonomous gate keys on the agent's `user.email` matching an unattended
+alias — trivially set by anyone in a fork. Same class as the above; needs the same
+review pass.
+
+### Tier 3 — Records that contradict the repository
+
+**`FS-0022` §1c was specified and never implemented.** The section defines
+referenced-path resolution — every backticked path in a governed document must resolve
+— complete with an exclusion list for orchestration evidence, to-be-created paths, and
+uninitialised submodules. `scripts/check-status.sh` implements rules 1, 1a, 1b, 1d, and
+2. There is no 1c. `FS-0022` is `approved` with an undelivered success criterion, which
+is exactly the class of defect this PR spent its length removing.
+
+Running that check ad-hoc finds **25 distinct unresolved path-like references across 39
+sites**. Most are in decision records describing what was true when written, which is
+legitimate. The consumer-facing ones are not:
+
+| Broken reference | Named by |
+| --- | --- |
+| `roles/session-modes.md` | `README.md` |
+| `docs/governance/role-contract.md` | `roles/README.md` |
+| `docs/decisions/ADR-0012.md`, `ADR-0011.md` | two `skills/*/SKILL.md` |
+| `docs/specifications/FS-0013.md` | `skills/framework-health-audit/SKILL.md` |
+
+Build the check, then fix what it finds. Building it second means fixing by hand what a
+gate should have caught.
+
+**`docs/ARC42.md` is stale** — already recorded below, but publication raises its
+priority. `status: Draft`, §9's ADR list stops at `ADR-0009`, and it references two
+guidelines that do not exist.
+
+**`ADR-0003`** mirrors arc42 as a submodule; that submodule was removed in v2.1.0.
+`docs/ARC42.md` records the removal, but the ADR's status does not.
+
+**Approved-but-never-implemented work is publicly visible.** `FS-0002`/`PLAN-0005` are
+`approved` and unimplemented; `FS-0004`/`PLAN-0002` are `draft` with an open PR (#60).
+A public repository advertising approved work that never shipped needs a disposition —
+implement, deprecate, or say why it is parked.
+
+### Tier 4 — Community health and contribution
+
+- **No `CODE_OF_CONDUCT.md`.**
+- **No `SECURITY.md`.** For a framework whose subject is constraining what autonomous
+  agents may do, an absent security policy is conspicuous. It should name the Tier 2
+  boundary explicitly: the gates are detection, not prevention.
+- **No issue or pull request templates.** `.github/` contains only `workflows/`.
+  `FS-0018` defines a three-axis work-item schema, and issue templates are how `Type`
+  gets set correctly at creation rather than corrected afterward. This is the natural
+  output of the GitHub provisioning work.
+- **`CONTRIBUTING.md` is written for the internal loop.** It needs an outside-
+  contributor path: what a first-time contributor may change without an FS, how the
+  role model applies to someone who is not running an agent session, and what happens
+  to their PR.
+- Repository description, topics, and social preview are unset.
+
+### Tier 5 — Release mechanics
+
+- **Version and tags disagree.** `package.json` is `2.1.0`; the only tag in the
+  repository is `v2.0.0`; `CHANGELOG.md` `[Unreleased]` holds the whole of this PR.
+  Cut a release per `workflows/versioning-and-releases.md` before or with publication.
+- **Close PRs #62, #63, #64** — already recorded below, but they should not be the
+  first thing a visitor sees.
+- **The exported surface is enumerated five times** — recorded below; a public API
+  surface maintained by hand in five places will diverge, and now with witnesses.
+- **The Agent Skills format is an unnamed upstream dependency** — recorded below.
+  Publishing a framework that implements someone else's open standard without citing it
+  is both a correctness problem and a courtesy one.
+
+---
+
 ## Enforcement obligations from this PR
 
 **Distinct from everything else in this file.** These are not deferred — they are
