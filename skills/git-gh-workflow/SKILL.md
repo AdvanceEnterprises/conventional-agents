@@ -19,8 +19,8 @@ Encodes the conventional-agents git and GitHub conventions, versioning and relea
 
 - `workflows/git-and-gh-conventions.md` — branching, commits, PRs, multi-identity model
 - `workflows/versioning-and-releases.md` — semver, changelogs, release process, agent-safe vs human-gated actions
-- `docs/decisions/ADR-0011.md` — multi-identity GitHub model (human + agent-committer + agent-reviewer)
-- `docs/decisions/ADR-0012.md` — non-overridable safety gates
+- `docs/decisions/ADR-0011-adopt-multi-identity-github-model-human-agent-committer-agent-reviewer.md` — multi-identity GitHub model (human + agent-committer + agent-reviewer)
+- `docs/decisions/ADR-0012-non-overridable-gates.md` — non-overridable safety gates
 
 ## Purpose
 

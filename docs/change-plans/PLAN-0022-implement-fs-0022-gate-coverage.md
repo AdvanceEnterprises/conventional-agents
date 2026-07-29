@@ -17,8 +17,10 @@ touches:
   - docs/change-plans/README.md
   - CONTRIBUTING.md
   - INTEGRATION.md
+  - skills/framework-health-audit/SKILL.md
+  - skills/git-gh-workflow/SKILL.md
 created: 2026-07-28
-updated: 2026-07-28
+updated: 2026-07-29
 
 ---
 
@@ -96,6 +98,8 @@ verified by the two-PR manual check in §8.
 * `docs/change-plans/README.md` — index title regeneration (§5a)
 * `CONTRIBUTING.md` — lint remediation (§5a)
 * `INTEGRATION.md` — lint remediation, fences and headings (§5a)
+* `skills/framework-health-audit/SKILL.md` — §1c remediation (§5a)
+* `skills/git-gh-workflow/SKILL.md` — §1c remediation (§5a)
 
 Deliberately **not** listed: the seven documents that reference
 `roles/ROLE_CONTRACT.md`. They are correct as written and are fixed by the
@@ -216,6 +220,47 @@ are records of work performed when it existed. Leave them.
 working tree. Its files appear after `git submodule update --init`. The
 path check must exclude uninitialised submodule contents rather than the
 corpus being edited.
+
+**Referenced-path resolution (§1c) — what the check actually found.** Built
+after the rest of this plan had landed. The audit above predicted the
+`roles/ROLE_CONTRACT.md` cluster, which was already resolved by restoring
+the file. Running the check found four remaining defects, all of the same
+kind — a document naming an ADR or FS by bare ID after the file acquired a
+descriptive suffix:
+
+| Document | Reference | Resolves to |
+| --- | --- | --- |
+| `skills/framework-health-audit/SKILL.md` | `docs/specifications/FS-0013.md` | `FS-0013-status-consistency-check.md` |
+| `skills/framework-health-audit/SKILL.md` | `docs/decisions/ADR-0012.md` | `ADR-0012-non-overridable-gates.md` |
+| `skills/git-gh-workflow/SKILL.md` | `docs/decisions/ADR-0011.md` | `ADR-0011-adopt-multi-identity-github-model-…md` |
+| `skills/git-gh-workflow/SKILL.md` | `docs/decisions/ADR-0012.md` | `ADR-0012-non-overridable-gates.md` |
+
+Both files are skills — exported surface a consumer reads and follows. That
+is why the two paths were added to this plan's `touches:` and to `FS-0022`'s
+`interfaces:` after initial approval, and why the approval was re-recorded:
+the containment check correctly refused to let a widened `touches:` ride the
+earlier approval.
+
+**Two scoping decisions §1c did not settle**, both resolved narrower than a
+literal reading because a literal reading fails on correct documents:
+
+1. *Which documents.* Current-state only. `ADR-0006` names three role files
+   that were later renamed; that is history, and ADRs are append-only after
+   acceptance. Checking decision records would force edits to satisfy a
+   linter — the exact inversion §1c warns against. `BACKLOG.md` is excluded
+   for the opposite reason: naming things that do not exist yet is its
+   purpose.
+2. *Which tokens.* Only those containing a directory separator. A bare
+   `tsconfig.json` or `pnpm-lock.yaml` in a guideline names a file in the
+   **reader's** repository.
+
+Rule 2 does not cover everything. A path-like reference to a file the
+framework tells a consumer to create in *their* repo is indistinguishable
+from a reference to one of ours — `README.md` recommending a project-level
+`roles/session-modes.md`, `roles/README.md` saying "in your own repo, e.g.
+`docs/governance/role-contract.md`". There is no syntax separating them, so
+they are listed in a `REF_EXEMPT` array with reasons rather than the corpus
+being edited. Three entries.
 
 ## 6. Constraints and Guardrails
 

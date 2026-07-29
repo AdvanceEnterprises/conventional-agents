@@ -46,6 +46,20 @@ For this project (a documentation/standards kit), semver follows the
   nowhere to go. If you have tooling that reads `status:` from change plans, it can now
   encounter this value.
 
+#### Broken references in two skills fixed (`FS-0022` §1c)
+
+- `skills/framework-health-audit/SKILL.md` and `skills/git-gh-workflow/SKILL.md` pointed
+  at `docs/decisions/ADR-0011.md`, `ADR-0012.md`, and `docs/specifications/FS-0013.md`.
+  Those files acquired descriptive suffixes; the references were never updated. If you
+  followed either skill's reading list, three of the documents it told you to read were
+  not at the paths given. Now corrected.
+- `npm run check:status` gained a **referenced-path resolution** check that would have
+  caught this. Every path a current-state document names in backticks must resolve.
+  Decision records (ADR, FS, PLAN), `BACKLOG.md`, and `CHANGELOG.md` are out of scope,
+  as are bare filenames like `tsconfig.json` — those name files in *your* repo, not the
+  framework's. If you vendor this framework and run its checks, expect the same
+  scoping.
+
 #### Review feedback fixes
 
 Per reviewer feedback on the bootstrap package:

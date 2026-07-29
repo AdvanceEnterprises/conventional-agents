@@ -195,18 +195,86 @@ PLAN_EOF
 }
 
 @test "consumer_impact: internal-only spec is not flagged" {
-  # FS-0022 is fully internal (scripts/, package.json, .github/workflows/, test/,
-  # docs/specifications/, docs/change-plans/). It does not name exported-surface paths
-  # in interfaces:.
-  local fs="$REPO_ROOT/docs/specifications/FS-0022-gate-coverage.md"
-  assert_file_contains "$fs" "scripts/"
-  # But the consumer-impact check should not fire because no exported path is named.
-  # Run check-status.sh and confirm no FS-0022 consumer-impact error.
+  # FS-0012 is fully internal: its interfaces: name only docs/ paths. This test used
+  # FS-0022 until §1c's remediation added two skills/ paths to FS-0022's interfaces,
+  # making it consumer-affecting. It kept passing — FS-0022 is named in CHANGELOG.md,
+  # so the check stayed silent — but for the wrong reason. Assert the premise, not
+  # just the outcome, so the next time it stops holding the test says so.
+  local fs="$REPO_ROOT/docs/specifications/FS-0012-renumber-feature-specs-sequential-ids.md"
+  assert_file_exists "$fs"
+  local ifaces
+  ifaces=$(awk '/^interfaces:/{f=1;next} f&&/^[a-z_]+:/{exit} f' "$fs")
+  # Premise: no exported-surface path is named.
+  ! echo "$ifaces" | grep -qE '(guidelines|roles|skills|templates|workflows|integrations|runbooks)/|INTEGRATION\.md|AGENTS\.md'
   run bash "$CHECK"
-  # The check should NOT report FS-0022 as failing the consumer-impact rule because it
-  # names only internal paths. If the grep below finds the pattern, that's a failure.
-  if echo "$output" | grep -F "FS-0022 (status="; then
-    echo "FAIL: FS-0022 was incorrectly flagged for consumer-impact"
+  if echo "$output" | grep -F "FS-0012 (status="; then
+    echo "FAIL: FS-0012 was incorrectly flagged for consumer-impact"
     return 1
   fi
+}
+
+# --- Referenced-path resolution (FS-0022 §1c) ---------------------------------
+
+@test "ref_paths: a dangling path in a current-state document is detected" {
+  local doc="$REPO_ROOT/workflows/document-lifecycle.md"
+  local backup
+  backup=$(mktemp)
+  cp "$doc" "$backup"
+  printf '\n`workflows/does-not-exist-%s.md`\n' "$$" >> "$doc"
+  run bash "$CHECK"
+  cp "$backup" "$doc"; rm -f "$backup"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -F "does-not-exist"
+  echo "$output" | grep -F "FS-0022 §1c"
+}
+
+@test "ref_paths: a resolving path is not flagged" {
+  local doc="$REPO_ROOT/workflows/document-lifecycle.md"
+  local backup
+  backup=$(mktemp)
+  cp "$doc" "$backup"
+  printf '\n`scripts/check-status.sh`\n' >> "$doc"
+  run bash "$CHECK"
+  cp "$backup" "$doc"; rm -f "$backup"
+  # Assert the specific error is absent rather than global exit 0 — this test must not
+  # fail because some unrelated check is red.
+  ! echo "$output" | grep -F "references 'scripts/check-status.sh'"
+}
+
+@test "ref_paths: decision records are out of scope" {
+  # ADRs are append-only after acceptance and describe what was true when written.
+  # Checking them would force edits to satisfy a linter — the inversion §1c warns
+  # against. ADR-0006 already names three role files that were later renamed.
+  local adr="$REPO_ROOT/docs/decisions/ADR-0006.md"
+  [ -f "$adr" ] || skip "ADR-0006 filename changed"
+  local backup
+  backup=$(mktemp)
+  cp "$adr" "$backup"
+  printf '\n`docs/decisions/never-existed-%s.md`\n' "$$" >> "$adr"
+  run bash "$CHECK"
+  cp "$backup" "$adr"; rm -f "$backup"
+  ! echo "$output" | grep -F "never-existed"
+}
+
+@test "ref_paths: bare filenames are not treated as repository paths" {
+  # `tsconfig.json` in a guideline names a file in the reader's repo, not ours.
+  local doc="$REPO_ROOT/guidelines/javascript/JS_STYLE_GUIDE.md"
+  [ -f "$doc" ] || skip "guideline moved"
+  run bash "$CHECK"
+  ! echo "$output" | grep -F "references 'tsconfig.json'"
+}
+
+@test "ref_paths: REF_EXEMPT entries are documented with the consumer-side reason" {
+  # The exemptions exist because a path the framework tells a consumer to create in
+  # their own repo is indistinguishable from one of ours. If an entry is added without
+  # a reason, the array becomes an unreviewable suppression list.
+  local block
+  block=$(awk '/^REF_EXEMPT=\(/{f=1;next} f&&/^\)/{exit} f' "$CHECK")
+  [ -n "$block" ]
+  # Every non-comment entry carries a trailing # reason.
+  while IFS= read -r line; do
+    [[ "$line" =~ ^[[:space:]]*# ]] && continue
+    [[ -z "${line// }" ]] && continue
+    echo "$line" | grep -q '#' || { echo "undocumented exemption: $line"; return 1; }
+  done <<< "$block"
 }
