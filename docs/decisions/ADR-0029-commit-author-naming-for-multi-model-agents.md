@@ -133,6 +133,14 @@ are not the place to look up what the rules are.
 
 ### Neutral
 
+- **The branch proposing this ADR already used the scheme.** Its commits are authored
+  `Opus 5 <claude-code@tais-den.dev>` from the first one, at the maintainer's explicit
+  direction when asked what identity to commit under — but `ADR-0018`'s accepted actor
+  table has two rows, Joey and Hermes Agent, and no Claude Code row. The convention was
+  human-sanctioned and not ADR-sanctioned at the time it was used. Recorded because the
+  alternative was to commit under an identity the framework did not recognise either,
+  and because a reader auditing that branch's authorship against trunk's ADR-0018 will
+  otherwise find an unexplained third actor.
 - No change to the GitHub identity layer. All addresses remain aliases under
   `ajoeofalltrades`.
 - Historical commits are not rewritten and remain valid records of the convention in

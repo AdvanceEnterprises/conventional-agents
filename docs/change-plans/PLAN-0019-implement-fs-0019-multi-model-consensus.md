@@ -86,7 +86,7 @@ tests in a consumer repo, not here.
 - `templates/core/feature-spec.md` (modify — add optional `consensus_required` field)
 - `templates/core/change-plan.md` (modify — add optional `consensus_required` field)
 - `README.md` (modify — add optional-feature pointer)
-- `docs/decisions/ADR-0023-consensus-integrity-constraints.md` (new)
+- `docs/decisions/ADR-0023-collaboration-integrity-constraints.md` (new)
 - `docs/decisions/README.md` (modify — add ADR-0023 row)
 - `docs/change-plans/PLAN-0019-implement-fs-0019-multi-model-consensus.md` (new —
   this file)
