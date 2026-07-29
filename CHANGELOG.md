@@ -13,6 +13,32 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
+#### Runbooks — a new exported surface (`FS-0023`)
+
+- **`runbooks/` is a new top-level directory you receive when you vendor the
+  framework**, alongside `workflows/` and `integrations/`. A runbook records an
+  operational procedure *as performed against a real substrate* — what was actually
+  done, in order, and what the substrate did back. `workflows/` tells you how work
+  should proceed and `integrations/` tells you how a capability maps onto a platform;
+  a runbook tells you what happened when someone tried it.
+- Runbooks use their own status vocabulary — `current`, `stale`, `superseded` — not
+  the `draft → approved → implemented` model used by specs and plans. If you have
+  tooling that reads `status:` from framework documents, it will encounter these three
+  new values under `runbooks/`. `stale` is deliberately cheap to set and needs no
+  review: a procedure that has quietly stopped matching its substrate is more
+  dangerous than one flagged unverified.
+- Every runbook carries `last_verified:` and `verified_by:`, recording when someone
+  last ran the procedure end to end and watched it work — not when the file was last
+  edited.
+- A runbook's **Deviations Observed** section is mandatory even when empty (recorded
+  as "None observed on `<date>`"). It is where the gap between a binding and the
+  substrate's real behaviour gets written down, so it can flow back into
+  `integrations/` instead of staying folklore.
+- Scaffold at `templates/core/runbook.md`; convention and index at
+  `runbooks/README.md`; lifecycle in `workflows/document-lifecycle.md`.
+- No runbooks ship yet. The first documents provisioning this repository's own GitHub
+  Issues and Projects configuration.
+
 #### Review feedback fixes
 
 Per reviewer feedback on the bootstrap package:

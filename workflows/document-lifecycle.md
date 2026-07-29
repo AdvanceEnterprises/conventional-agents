@@ -102,6 +102,36 @@ Every agent transition is attributable per `ADR-0018` as amended by `ADR-0029` �
 
 ADR lifecycle details are also documented in `docs/decisions/README.md`.
 
+## Runbooks (RB)
+
+A runbook records an operational procedure **as performed against a real substrate**.
+It is a current-state document under `ADR-0030`, and it does not use the
+`draft → approved → implemented` model above. That model describes work moving toward
+completion; a runbook describes a procedure that either still matches reality or does
+not.
+
+| Status | Meaning | Who transitions | When |
+| --- | --- | --- | --- |
+| `current` | Last execution succeeded; believed to match the substrate | Operator | On successful end-to-end execution |
+| `stale` | Substrate known or suspected to have changed; unverified | Anyone | On a failed step, or a substrate change notice |
+| `superseded` | Replaced by a newer runbook | Operator | When replaced |
+
+Because runbooks use their own vocabulary, the `## Transition Rules` below — which
+speak in `draft`, `approved`, and `implemented` — do not apply to them. Two rules do
+apply, restated here rather than inherited:
+
+- **`stale` is not forward-only.** A runbook returns to `current` when someone executes
+  it end to end and it works. Setting `stale` requires no review, deliberately: a
+  runbook that has quietly stopped matching its substrate is more dangerous than one
+  flagged unverified.
+- **`last_verified:` is not an edit date.** It records when a human or agent last
+  executed the procedure and observed it work. Editing prose does not advance it.
+
+Runbooks live in `runbooks/` and are indexed in `runbooks/README.md`, which carries the
+same index-maintenance obligation as the `docs/` indexes below. See
+`runbooks/README.md` for the front matter and required sections, and
+`templates/core/runbook.md` for the scaffold.
+
 ---
 
 ## Transition Rules
