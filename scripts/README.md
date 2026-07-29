@@ -113,6 +113,18 @@ consumer-impact CHANGELOG entries.
 `npm run check:status` and resolve every reported violation before
 committing.
 
+**Requires full git history.** Check 6's `ADR-0026` approval-provenance test
+reads `git log` for the `Approved-By:` trailer on the commit that last touched
+each PLAN, and `git show <sha>:<plan>` to compare the approved `touches:` set
+against the current one. **A shallow clone has neither.** Every approval lookup
+then fails and every reserved path reports as unapproved — 18 errors on this
+repository at the time of writing, against zero with full history.
+
+If you vendor this framework and run the check in CI, set `fetch-depth: 0` on
+your checkout (or the equivalent for your runner). The failure is loud rather
+than silent, but its message points at the PLANs rather than at the clone
+depth, which is the wrong place to start looking.
+
 **Performance.** ~7s on a clean tree. The script spawns `awk` per PLAN per
 `interfaces:` row and `grep -F` per ADR; this is acceptable for CI. A future
 optimization could cache file reads in bash arrays.
