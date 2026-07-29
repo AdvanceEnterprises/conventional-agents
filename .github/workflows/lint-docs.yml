@@ -13,6 +13,19 @@ on:
       - "docs/change-plans/.markdownlint.yml"
       - "workflows/*.md"
       - "workflows/.markdownlint.yml"
+      - "guidelines/**/*.md"
+      - "skills/**/*.md"
+      - "templates/**/*.md"
+      - "integrations/*.md"
+      - "roles/*.md"
+      - "AGENTS.md"
+      - "README.md"
+      - "INTEGRATION.md"
+      - "CONTRIBUTING.md"
+      - "CHANGELOG.md"
+      - "package.json"
+      - "scripts/**/*"
+      - "test/**/*.bats"
   pull_request:
     branches: [trunk]
     paths:
@@ -25,6 +38,19 @@ on:
       - "docs/change-plans/.markdownlint.yml"
       - "workflows/*.md"
       - "workflows/.markdownlint.yml"
+      - "guidelines/**/*.md"
+      - "skills/**/*.md"
+      - "templates/**/*.md"
+      - "integrations/*.md"
+      - "roles/*.md"
+      - "AGENTS.md"
+      - "README.md"
+      - "INTEGRATION.md"
+      - "CONTRIBUTING.md"
+      - "CHANGELOG.md"
+      - "package.json"
+      - "scripts/**/*"
+      - "test/**/*.bats"
 
 jobs:
   lint-adrs:
@@ -59,11 +85,46 @@ jobs:
         with:
           globs: "workflows/*.md"
 
+  lint-docs-widened:
+    # Widened lint coverage: per FS-0022 §4, this is the lint chain that catches
+    # drift across the full corpus (guidelines/, skills/, templates/, integrations/,
+    # roles/, and root-level docs). Catches mechanical whitespace issues, missing
+    # code-fence languages, and structural problems that the original four-glob chain
+    # would not.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run widened markdownlint chain
+        run: npm run lint:docs
+      - name: Confirm widened lint passed
+        run: test $? -eq 0
+
   check-status:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Check FS/PLAN status consistency
         run: bash scripts/check-status.sh
+
+  test-bats:
+    # Per FS-0022 §6, npm test runs the bats suites that were inert since the
+    # repo's beginning. ROLE_CONTRACT's pre-commit testing gate relies on this.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install bats
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bats
+      - name: Run bats suites
+        run: npm test
+      - name: Confirm bats passed
+        run: test $? -eq 0
 
 # noop: retrigger CI
