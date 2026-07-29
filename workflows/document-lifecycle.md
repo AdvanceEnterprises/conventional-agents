@@ -79,18 +79,40 @@ Some PLANs span multiple PRs. In this case:
 - Keep `in-progress` for intermediate PRs
 - Set `implemented` only in the final PR
 
-### Bootstrap merges (ADR-0026)
+### How approval happens (ADR-0026)
 
-Merging normally *is* approving: a spec or plan reaches `approved`, and an ADR reaches `accepted`, when a human merges its PR.
+Approval is a **human act with a locatable record**. Three shapes, all human-performed:
 
-A **bootstrap merge** is the declared exception — a merge that lands governed documents without approving them. It is valid only when all of the following hold:
+| Shape | When | The record |
+| --- | --- | --- |
+| **Merge approval** (default) | The human merges the document's PR | The merge itself |
+| **Recorded approval** | The human approves in session, before merge | A commit transitioning the status, carrying `Approved-By:` |
+| **Deferred approval** | Documents land un-approved; approval comes later | Declared in the PR description, then a later recorded approval |
 
-1. **Declared before merge.** The PR description states that it is a bootstrap merge and lists every document landing un-approved.
-2. **Documents land at `draft` or `proposed`.** Nothing arrives at `approved`, `accepted`, `in-progress`, or `implemented`.
-3. **Approval is a separate later change** that touches status fields and index tables only.
-4. **No implementation may begin.** The spec-first rule applies unchanged — a `draft` spec is not implementable. A bootstrap merge lands documents; it authorizes nothing.
+**Recorded approval.** When a human approves in session, the agent commits the status
+transition with trailers naming who approved and what:
 
-Use one only when the value of the PR is the coherence of the package rather than any single document, and the number of independent decisions makes a single merge-as-approval act unreviewable. If the PR could be split into document-sized PRs without inventing ordering constraints, split it.
+```text
+Approved-By: <Human Name> <human@example.dev>
+Approved-Artifacts: FS-0018, PLAN-0018
+```
+
+The agent may *record* the approval; the agent may not *be* the approval. The trailer
+names a human who is not the commit's author, and a commit whose `Approved-By:` matches
+its own author is malformed.
+
+None of the following is an approval: silence, absence of objection, an approval of
+something else in the same session, an approval from a prior session for work that has
+since changed, or the agent's own view that the work is ready. **If you are unsure
+whether approval was given, it was not. Ask.**
+
+**Deferred approval** lands governed documents un-approved. Valid only when it is
+declared in the PR description with a complete list of the documents affected, those
+documents land at `draft` or `proposed`, approval follows as a separate recorded
+approval, and no implementation begins — the spec-first rule applies unchanged, so a
+`draft` spec is not implementable. Use it only when the value of the PR is the coherence
+of the package rather than any single document. If the PR could be split into
+document-sized PRs without inventing ordering constraints, split it.
 
 ### Stale documents
 
