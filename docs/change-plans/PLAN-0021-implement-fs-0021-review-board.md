@@ -8,10 +8,15 @@ related_specs: [FS-0021]
 approved_by: "Joey Clark <taisden@tais-den.dev>"
 related_adrs: [ADR-0022, ADR-0023, ADR-0031]
 touches:
-  - test/FS-0021/review-board.bats
-  - templates/collaboration/review-board-findings.md
-  - config/review-board.yml
-  - INTEGRATION.md
+  - "config/review-board.yml"
+
+  - "test/FS-0021/review-board.bats"
+
+  - "templates/collaboration/review-board-findings.md"
+
+  - "INTEGRATION.md"
+
+  - "CHANGELOG.md"
 created: 2026-07-28
 updated: 2026-07-28
 

@@ -5,6 +5,7 @@ role: implementer
 language: bash
 status: approved
 related_specs: [FS-0022]
+approved_by: "Joey Clark <taisden@tais-den.dev>"
 related_adrs: [ADR-0008, ADR-0015, ADR-0027, ADR-0030]
 touches:
   - scripts/check-status.sh

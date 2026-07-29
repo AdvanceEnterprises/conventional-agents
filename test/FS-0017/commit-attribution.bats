@@ -11,6 +11,7 @@ setup() {
 ACTOR_EMAILS=(
   "taisden@tais-den.dev"
   "hermes-agent@tais-den.dev"
+  "codex@tais-den.dev"
   "ajoeofalltrades@users.noreply.github.com"
 )
 
@@ -47,21 +48,33 @@ agent_attribution_pattern() {
   assert_file_contains "$REPO_ROOT/workflows/git-and-gh-conventions.md" "session=architecture-planning"
 }
 
-@test "ADR-0018 exists with proposed status" {
+@test "ADR-0018 exists with accepted status" {
+  # ADR-0018 was accepted in a prior session (commit 987db28). It is the single-identity
+  # workflow decision in force.
   assert_file_exists "$REPO_ROOT/docs/decisions/ADR-0018-single-identity-workflow-with-agent-co-attribution.md"
-  assert_file_contains "$REPO_ROOT/docs/decisions/ADR-0018-single-identity-workflow-with-agent-co-attribution.md" "status: proposed"
+  assert_file_contains "$REPO_ROOT/docs/decisions/ADR-0018-single-identity-workflow-with-agent-co-attribution.md" "status: accepted"
 }
 
 @test "ADR-0011 cross-references ADR-0018" {
   assert_file_contains "$REPO_ROOT/docs/decisions/ADR-0011-adopt-multi-identity-github-model-human-agent-committer-agent-reviewer.md" "ADR-0018"
 }
 
-@test "roles/ contains only README.md, not a duplicate ROLE_CONTRACT.md" {
+@test "roles/ contains README.md and a delegating ROLE_CONTRACT.md" {
+  # Per PLAN-0022 §5a, roles/ROLE_CONTRACT.md was restored as a delegating document
+  # (not a byte-identical duplicate of guidelines/ROLE_CONTRACT.md). It states that
+  # this project adopts the framework contract unmodified and points at guidelines/.
+  # FS-0017/PLAN-0017's removal of a byte-identical duplicate remains correct; the
+  # failure mode PLAN-0017 objected to (a byte-identical duplicate drifting) is
+  # prevented by the delegating structure, not by file absence.
   assert_file_exists "$REPO_ROOT/roles/README.md"
-  if [[ -f "$REPO_ROOT/roles/ROLE_CONTRACT.md" ]]; then
-    echo "roles/ROLE_CONTRACT.md exists; it should be removed per FS-0017"
+  assert_file_exists "$REPO_ROOT/roles/ROLE_CONTRACT.md"
+  # Delegating structure: not a byte-identical duplicate.
+  if diff -q "$REPO_ROOT/roles/ROLE_CONTRACT.md" "$REPO_ROOT/guidelines/ROLE_CONTRACT.md" >/dev/null 2>&1; then
+    echo "FAIL: roles/ROLE_CONTRACT.md is a byte-identical duplicate of guidelines/ROLE_CONTRACT.md (ADR-0030 rule 1)"
     return 1
   fi
+  # States that the project adopts the framework contract unmodified.
+  assert_file_contains "$REPO_ROOT/roles/ROLE_CONTRACT.md" "guidelines/ROLE_CONTRACT.md"
 }
 
 @test "FS-0017 and PLAN-0017 exist with implemented status" {

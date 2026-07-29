@@ -1,0 +1,38 @@
+# Per-directory markdownlint config for guidelines/.
+#
+# Guidelines content predates this lint coverage. Mechanical rules are disabled to avoid
+# flooding the report with whitespace / formatting noise that doesn't affect content.
+# Style rules (MD001, MD003, etc.) remain enabled.
+
+default: true
+
+# Allow arbitrary line length (one-sentence-per-line style)
+MD013: false
+
+# Lists should be surrounded by blank lines
+MD032: false
+
+# Fenced code blocks should be surrounded by blank lines
+MD031: false
+
+# Fenced code blocks should have a language specified
+MD040: false
+
+# Inline HTML allowed
+MD033: false
+
+# Allow duplicate sibling headings (cross-document consistency)
+MD024:
+  siblings_only: true
+
+# Headings should be surrounded by blank lines
+MD022: false
+
+# Hard tabs (legacy file uses tabs)
+MD010: false
+
+# Trailing whitespace
+MD009: false
+
+# First line in a file should be a top-level heading (front matter present)
+MD041: false

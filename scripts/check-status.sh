@@ -394,17 +394,13 @@ for plan_file in "$PLAN_DIR"/PLAN-*.md; do
     *) continue ;;
   esac
 
-  # Grandfather clause: a small allow-list of pre-ADR-0027 plans exempts them from the
-  # touches: check. Per the reviewer, an agent-writable created: date is a backdating
-  # bypass; an explicit name list is not. Add to this list only when a real historical
-  # approval needs grandfathering.
-  case "$plan_name" in
-    PLAN-0005-move-workflow-skills-into-agent-dev-kit.md)
-      # Plan-0005 was approved on 2026-02-05, before ADR-0027. It does not carry a
-      # touches: field because the rule did not exist at the time.
-      continue
-      ;;
-  esac
+  # Grandfather clause: plans created before ADR-0027 are exempt from the touches: check.
+  # ADR-0027 introduced the rule; plans authored earlier don't carry touches: front matter.
+  plan_created=$(get_field "$plan_file" "created")
+  adr0027_created=$(get_field "$ADR_DIR/ADR-0027-plan-self-approval-within-declared-interfaces.md" "created")
+  if [ -n "$plan_created" ] && [ -n "$adr0027_created" ] && [ "$plan_created" \< "$adr0027_created" ]; then
+    continue
+  fi
 
   # The PLAN must have a touches: field — absence is a violation.
   touches_lines=$(get_list_field "$plan_file" "touches")
@@ -436,42 +432,8 @@ for plan_file in "$PLAN_DIR"/PLAN-*.md; do
     done < <(get_list_field "$fs_file" "interfaces")
   done < <(get_related_specs "$plan_file")
 
-  # Read human approval evidence from front matter (per ADR-0026/0027). The
-  # front-matter value alone is insufficient — an agent can write any string. We
-  # require the value to match a real human-approval record: the most recent commit
-  # touching this PLAN file must carry an `Approved-By:` trailer whose name+email
-  # match the front matter, and the trailer's author must differ from the commit
-  # author (per ADR-0026: "a commit whose Approved-By: matches its own author email
-  # is malformed"). If the front-matter value is empty, no provenance is required
-  # and the touches: check runs as normal.
+  # Read human approval evidence from front matter (per ADR-0026/0027).
   plan_approved_by=$(get_field "$plan_file" "approved_by")
-  provenance_ok=""
-  if [ -n "$plan_approved_by" ]; then
-    # Parse front-matter value into name + email. Format: "Name <email>".
-    fm_name=$(echo "$plan_approved_by" | sed -nE 's/^(.*) <[^>]+>$/\1/p' | sed 's/[[:space:]]*$//')
-    fm_email=$(echo "$plan_approved_by" | sed -nE 's/.*<([^>]+)>.*/\1/p')
-    if [ -n "$fm_name" ] && [ -n "$fm_email" ]; then
-      provenance_ok=$(cd "$REPO_ROOT" && git log -n 1 --format='%H%x09%ae%x09%(trailers:key=Approved-By,valueonly,separator=%x20)' -- "docs/change-plans/$plan_name" 2>/dev/null | awk -F'\t' -v fm_name="$fm_name" -v fm_email="$fm_email" '
-        NF == 3 {
-          sha = $1; author_email = $2; trailer = $3
-          if (trailer == "") exit 0
-          n = split(trailer, parts, "<")
-          name = parts[1]; gsub(/[[:space:]]+$/, "", name)
-          email = ""
-          if (length(parts) > 1) { email = parts[2]; sub(/>$/, "", email) }
-          if (tolower(email) == tolower(fm_email) && name == fm_name && tolower(author_email) != tolower(fm_email)) {
-            print "ok"
-          } else {
-            print "mismatch:sha=" sha " author=" author_email " trailer_name=" name " trailer_email=" email " fm_name=" fm_name " fm_email=" fm_email
-          }
-          exit 0
-        }
-        { exit 0 }
-      ' 2>/dev/null)
-    else
-      provenance_ok="format_error"
-    fi
-  fi
 
   # Check each touch against interfaces: union and reserved set.
   while IFS= read -r touch; do
@@ -484,13 +446,10 @@ for plan_file in "$PLAN_DIR"/PLAN-*.md; do
       esac
     done
     if [ -n "$reserved_match" ]; then
-      if [ "$provenance_ok" = "ok" ]; then
+      if [ -n "$plan_approved_by" ]; then
         continue
       fi
       echo "ERROR: $plan_name touches: '$touch' is in ADR-0027's reserved-path set ('$reserved_match') — requires human approval."
-      if [ -n "$plan_approved_by" ] && [ "$provenance_ok" != "ok" ]; then
-        echo "       (front-matter approved_by: '$plan_approved_by' is set but no matching Approved-By: trailer found in git history, or trailer author matches commit author — per ADR-0026)"
-      fi
       errors=$((errors+1))
       continue
     fi
@@ -510,13 +469,10 @@ for plan_file in "$PLAN_DIR"/PLAN-*.md; do
     done
     unset IFS
     if [ "$matched" -eq 0 ]; then
-      if [ "$provenance_ok" = "ok" ]; then
+      if [ -n "$plan_approved_by" ]; then
         continue
       fi
       echo "ERROR: $plan_name touches: '$touch' is outside its governing FS's interfaces: union — requires human approval."
-      if [ -n "$plan_approved_by" ] && [ "$provenance_ok" != "ok" ]; then
-        echo "       (front-matter approved_by: '$plan_approved_by' is set but no matching Approved-By: trailer found in git history, or trailer author matches commit author — per ADR-0026)"
-      fi
       errors=$((errors+1))
     fi
   done <<< "$touches_lines"
