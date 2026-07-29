@@ -2,11 +2,11 @@
 type: change-plan
 role: implementer
 language: python
-status: approved
+status: deprecated
 related_specs: [FS-0002]
 related_adrs: [ADR-0001, ADR-0002]
 created: 2026-02-05
-updated: 2026-02-05
+updated: 2026-07-29
 ---
 
 <!--
@@ -25,6 +25,23 @@ PARSING_HINTS:
 - Issue / PR Reference: TBD
 
 ## 2. Scope of Change
+
+**Deprecated 2026-07-29. This plan will not be executed.** Its governing spec
+`FS-0002` is deprecated; see that document's Status section for the verification —
+none of the ten skills has ever existed on any branch, and the source workspace this
+plan reads from is no longer reachable.
+
+Two reasons it could not be resumed as written even if the source were recovered:
+
+- §4 below states the file list "will be finalized during implementation". `ADR-0027`
+  requires a bounded `touches:` set declared before approval; this plan predates that
+  rule and does not satisfy it. It would have to be rewritten, not restarted.
+- The tests in §3 target Python helper scripts that were never written, in a language
+  (`language: python`) this repository has otherwise not adopted for tooling.
+
+The original scope is preserved unchanged below as the record of what was planned.
+
+---
 
 This change WILL:
 
