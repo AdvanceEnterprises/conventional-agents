@@ -663,6 +663,10 @@ collect_planned_paths() {
   done
 }
 planned_paths=$(collect_planned_paths | sed 's/^[[:space:]]*//; s/"//g' | sort -u)
+# Newline-delimited on both ends so membership is a fork-free `case` match below.
+# bash 3.2 (macOS system bash) has no associative arrays, and forking one grep per
+# referenced path made this check the slowest thing in the suite.
+planned_paths_str=$'\n'"$planned_paths"$'\n'
 
 while IFS= read -r doc; do
   [ -f "$REPO_ROOT/$doc" ] || continue
@@ -688,7 +692,7 @@ while IFS= read -r doc; do
     [ -e "$REPO_ROOT/$ref" ] && continue
     [ -e "$REPO_ROOT/$bare" ] && continue
     [ "$doc_dir" != "." ] && [ -e "$REPO_ROOT/$doc_dir/$ref" ] && continue
-    printf '%s\n' "$planned_paths" | grep -qxF "$ref" && continue
+    case "$planned_paths_str" in *$'\n'"$ref"$'\n'*) continue ;; esac
     ref_exempt "$doc" "$ref" && continue
     echo "ERROR: $doc references '$ref', which does not resolve (FS-0022 §1c)."
     errors=$((errors+1))

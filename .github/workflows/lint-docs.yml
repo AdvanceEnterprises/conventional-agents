@@ -111,6 +111,23 @@ jobs:
       - name: Check FS/PLAN status consistency
         run: bash scripts/check-status.sh
 
+  current-state-update:
+    # ADR-0030 rule 3, per FS-0022 §3: an ADR that changes a rule must modify the
+    # current-state document carrying that rule in the same change. CI-only because it
+    # needs the change set — check-status.sh must stay runnable against a working tree
+    # with no diff context.
+    #
+    # Runs on pull_request only. On a push to trunk the merge has happened and there is
+    # no base to compare against that means anything.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # full history; the check diffs against the base ref
+      - name: Check ADR-0030 rule 3
+        run: bash scripts/check-current-state.sh "origin/${{ github.base_ref }}"
+
   test-bats:
     # Per FS-0022 §6, npm test runs the bats suites that were inert since the
     # repo's beginning. ROLE_CONTRACT's pre-commit testing gate relies on this.

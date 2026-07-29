@@ -87,8 +87,8 @@ consumer-impact CHANGELOG entries.
 
 - **Rule 3 of `ADR-0030`** (an ADR that changes a rule must modify the
   governing current-state document in the same change). This requires the
-  change set and runs in CI only — see `lint-docs.yml` §"current-state
-  update" job.
+  change set, so it lives in `check-current-state.sh` and runs in CI only —
+  see below, and the `current-state-update` job in `lint-docs.yml`.
 - **Convention-only rules** (`ADR-0019`, `ADR-0020`, `ADR-0026`,
   `ADR-0013`'s artifact boundaries). Detection or discipline, not
   enforcement, per `FS-0022` §Non-Goals.
@@ -103,6 +103,44 @@ committing.
 optimization could cache file reads in bash arrays.
 
 ---
+
+## check-current-state.sh
+
+`bash scripts/check-current-state.sh [base-ref]` (default `origin/trunk`).
+
+**Purpose.** `ADR-0030` rule 3, specified by `FS-0022` §3: an ADR that changes
+a rule must modify the current-state document carrying that rule in the same
+change. A decision recorded only in the decision log leaves the document a
+reader actually follows still saying the old thing.
+
+For each ADR in scope, the check reads its `## Links` section, collects the
+paths under `workflows/`, `guidelines/`, `skills/`, `templates/`,
+`integrations/`, and `runbooks/`, and requires at least one of them to be
+modified in the same change. A link naming a directory is satisfied by any
+change beneath it; a link naming a file must match exactly.
+
+**When it runs.** CI only, on `pull_request`. It needs the change set, and
+`FS-0022` §3 requires `check-status.sh` to stay runnable against a working
+tree with no diff context — so this is a separate script rather than a flag.
+On a push to `trunk` the merge has already happened and there is no
+meaningful base, so the job does not run.
+
+**Scope, narrower than `FS-0022` §3's literal wording.** The spec says "every
+ADR added or modified in a pull request". Read literally, a typo fix in an
+accepted ADR whose Links name `workflows/session-modes.md` would demand an
+unrelated edit to that workflow. `ADR-0030` rule 3 binds on *changing a rule*,
+not on touching a file, and the detectable moment a rule becomes binding is
+acceptance. **An ADR is in scope when the diff adds a `status: accepted`
+line** — covering both an ADR added at `accepted` and one transitioning to it.
+An ADR added as `proposed` is out of scope; its current-state update is due
+when it is accepted.
+
+**What a failure means.** The ADR names a document that carries the rule it
+changed, and that document was not touched. Update the document — do not
+delete the link.
+
+**Not caught.** An ADR that changes a rule and names no current-state document
+at all. That is a documentation defect the hygiene gate covers.
 
 ## run-bats.sh
 
