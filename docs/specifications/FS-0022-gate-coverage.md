@@ -10,6 +10,7 @@ interfaces:
   - "scripts/README.md"
   - "scripts/check-current-state.sh"
   - "scripts/run-bats.sh"
+  - "test/FS-0001/helpers.bash"
   - "package.json"
   - ".github/workflows/lint-docs.yml"
   - "docs/specifications/README.md"
