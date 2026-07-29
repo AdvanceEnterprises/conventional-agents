@@ -19,6 +19,38 @@ vendored by other projects.
 - `workflows/session-modes.md` — session mode definitions
 - `docs/decisions/README.md` — accepted ADRs (binding constraints)
 
+## Multi-agent and autonomous operation
+
+Conventional-agents supports unattended agent operation (cron, webhook, scheduled detection) and
+multi-agent collaboration (consensus rounds, review boards). The lifecycle and rules are in
+`FS-0018` (work item layer) and `FS-0019` (consensus), and the meta-mode vocabulary in
+`workflows/session-modes.md` documents `autonomous`, `consensus`, and `review-board`.
+
+Key references:
+
+- `FS-0018-issue-lifecycle-and-autonomous-triggers.md` — work item schema, three-axis
+  classification, three origination paths, agent-stance format, autonomous gate.
+- `workflows/document-lifecycle.md` §"Work Items" — lifecycle summary.
+- `skills/git-gh-workflow/SKILL.md` §"Work-Item Stance and Autonomous Gates" — operational
+  rules for `agent-stance:` entries, Type-keyed checkpoints, `question` suppression.
+- `ADR-0019`, `ADR-0020`, `ADR-0021`, `ADR-0022` — the binding decisions that ratify these
+  rules. Convention-level enforcement on most platforms; audit-trail-based detection
+  everywhere.
+
+## SDLC workflows
+
+Two named SDLC workflows traverse the same seven-phase spine:
+
+- [`workflows/sdlc-single-model.md`](./workflows/sdlc-single-model.md) — single model
+  occupying every role in turn. No collaboration rounds available.
+- [`workflows/sdlc-multi-model.md`](./workflows/sdlc-multi-model.md) — different models
+  in different roles, handing off through artifacts. Collaboration rounds attach at
+  gates.
+
+Both share the same three human-held gates (`ADR-0012`, `ADR-0026`). They differ only
+on whether collaboration is available. The cross-document consistency is enforced by
+`test/FS-0020/sdlc-workflows.bats`.
+
 ## Working on the Framework Itself
 
 This repo contains no application code. Quality is documentation-centric.

@@ -13,19 +13,6 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
-#### Review board (optional)
-
-- `FS-0021`: review board collaboration mode — several models examine one artifact from
-  different role stances and findings are merged rather than compared. Disabled by
-  default; ships advisory-only.
-- `config/review-board.yml`: consumer-copy template, `enabled: false`, empty seats,
-  `min_models: 2`, `min_roles: 2`. No `--allow-gate-overlap` override (ADR-0023
-  Constraint 3).
-- `test/FS-0021/review-board.bats`: 20 schema and text assertions covering composition,
-  findings, coverage, gate independence, and advisory boundary.
-- `INTEGRATION.md` §"Review boards (optional)": what a board is, how it differs from
-  consensus, opt-in steps, and the no-override-flag rule.
-
 #### SDLC workflows
 
 - `FS-0020`: two SDLC workflows — single-model and multi-model — over one shared
