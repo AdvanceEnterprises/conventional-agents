@@ -106,6 +106,17 @@ something else in the same session, an approval from a prior session for work th
 since changed, or the agent's own view that the work is ready. **If you are unsure
 whether approval was given, it was not. Ask.**
 
+**Approved is provisional until merged.** A status set before merge describes intent
+for trunk, not fact about it. An `approved` spec or `accepted` ADR on an unmerged branch
+is real approval — a human performed it — but takes full force at merge, and is treated
+as a draft by anyone outside that branch until then. This applies to every status: an
+`approved` FS on an unmerged branch authorizes implementation *on that branch*, not
+against trunk; an `implemented` PLAN on an unmerged branch has implemented nothing
+anyone else can see.
+
+An agent reading a document **on trunk** may trust its status. An agent working on a
+branch must know it is on one.
+
 **Deferred approval** lands governed documents un-approved. Valid only when it is
 declared in the PR description with a complete list of the documents affected, those
 documents land at `draft` or `proposed`, approval follows as a separate recorded

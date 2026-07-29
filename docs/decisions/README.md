@@ -234,13 +234,13 @@ If validation fails:
 | ADR-0019 | Issue Type immutability and the autonomous gate | proposed |
 | ADR-0020 | The `question` label suppresses agent Issue actions | proposed |
 | ADR-0021 | Cron actor identity for unattended agents | proposed |
-| ADR-0022 | Autonomous and consensus are meta-modes, not session modes | proposed |
+| ADR-0022 | Autonomous and consensus are meta-modes, not session modes | accepted |
 | ADR-0023 | Collaboration integrity constraints | proposed |
-| ADR-0024 | Platform-neutral core with shipped bindings | proposed |
-| ADR-0025 | Merge strategy preserves per-commit attribution | proposed |
-| ADR-0026 | Approval is a recorded act | proposed |
+| ADR-0024 | Platform-neutral core with shipped bindings | accepted |
+| ADR-0025 | Merge strategy preserves per-commit attribution | accepted |
+| ADR-0026 | Approval is a recorded act | accepted |
 | ADR-0027 | PLAN self-approval within declared interfaces | proposed |
-| ADR-0028 | Level-triggered reconciliation | proposed |
-| ADR-0029 | Commit-author naming for multi-model agent frameworks | proposed |
+| ADR-0028 | Level-triggered reconciliation | accepted |
+| ADR-0029 | Commit-author naming for multi-model agent frameworks | accepted |
 | ADR-0030 | Decision records versus current-state documents | proposed |
-| ADR-0031 | Structured multi-model collaboration | proposed |
+| ADR-0031 | Structured multi-model collaboration | accepted |
