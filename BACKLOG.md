@@ -159,26 +159,13 @@ review pass.
 
 ### Tier 3 — Records that contradict the repository
 
-**`FS-0022` §1c was specified and never implemented.** The section defines
-referenced-path resolution — every backticked path in a governed document must resolve
-— complete with an exclusion list for orchestration evidence, to-be-created paths, and
-uninitialised submodules. `scripts/check-status.sh` implements rules 1, 1a, 1b, 1d, and
-2. There is no 1c. `FS-0022` is `approved` with an undelivered success criterion, which
-is exactly the class of defect this PR spent its length removing.
-
-Running that check ad-hoc finds **25 distinct unresolved path-like references across 39
-sites**. Most are in decision records describing what was true when written, which is
-legitimate. The consumer-facing ones are not:
-
-| Broken reference | Named by |
-| --- | --- |
-| `roles/session-modes.md` | `README.md` |
-| `docs/governance/role-contract.md` | `roles/README.md` |
-| `docs/decisions/ADR-0012.md`, `ADR-0011.md` | two `skills/*/SKILL.md` |
-| `docs/specifications/FS-0013.md` | `skills/framework-health-audit/SKILL.md` |
-
-Build the check, then fix what it finds. Building it second means fixing by hand what a
-gate should have caught.
+**`FS-0022` §1c — resolved.** Referenced-path resolution is implemented as
+`check-status.sh` rule 8 and found four broken references, all in `skills/`, all
+corrected. Two scoping decisions the spec left open are recorded in `scripts/README.md`
+and `PLAN-0022` §5a: the check covers current-state documents only, and only tokens
+containing a directory separator. The residue is `REF_EXEMPT`, three entries for paths
+the framework tells a consumer to create in *their* repo — syntactically identical to
+references to ours, so they cannot be distinguished automatically.
 
 **`docs/ARC42.md` is stale** — already recorded below, but publication raises its
 priority. `status: Draft`, §9's ADR list stops at `ADR-0009`, and it references two
@@ -192,13 +179,18 @@ guidelines that do not exist.
 Status section. `FS-0004`/`PLAN-0002` remain `draft` with an open PR (#60) and still
 need a disposition.
 
-The `FS-0002` case is worth reading before publication, because it is the shape of the
-problem rather than one instance of it: an `approved` spec sat for five months while a
-different set of skills was built and shipped past it, and nothing detected the
-divergence. Together with `FS-0022` §1c that is two `approved` documents whose success
-criteria were never delivered. A status-versus-reality check — does an `approved` or
-`implemented` document's declared output actually exist? — would have caught both, and
-is better value than fixing either by hand.
+**Both known instances are now closed, and that is the reason to build the check, not
+a reason to skip it.** `FS-0002` sat `approved` for five months while a different set
+of skills was built and shipped past it; `FS-0022` §1c sat `approved` with a success
+criterion nobody had written. Neither was found by a gate — both were found by reading,
+which does not scale and did not happen for months.
+
+A status-versus-reality check — does an `approved` or `implemented` document's declared
+output actually exist? — would have caught both at the commit that created the gap.
+`FS-0022` §1c is the shape to copy: it reads `interfaces:` and asserts the paths
+resolve. The harder half is asserting that a *behaviour* a spec describes exists, which
+is not mechanically checkable; scoping it to declared paths would have caught `FS-0002`
+(ten named skill directories, none present) and is worth building on its own.
 
 ### Tier 4 — Community health and contribution
 
