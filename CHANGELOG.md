@@ -11,6 +11,18 @@ For this project (a documentation/standards kit), semver follows the
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [2.1.0] - 2026-07-29
+
+This release carries the work-item layer (FS-0018), the multi-model collaboration
+framework (FS-0019, FS-0021, ADR-0031), the platform-neutral substrate model
+(ADR-0024, ADR-0028), the single-identity attribution convention (ADR-0018,
+ADR-0029), the approval model (ADR-0026, ADR-0027), and the runbook document type
+(FS-0023). No consumer is forced to migrate by this release — every addition is
+opt-in — but several contracts are now better-defined and a consumer adopting a
+new surface should expect to read its governing ADR before integrating.
+
 ### Added
 
 #### Runbooks — a new exported surface (`FS-0023`)
@@ -370,17 +382,6 @@ Per reviewer feedback on the bootstrap package:
 - `docs/instances/` directory and `IDEA.md` (relocated to
   `Tais-Den/tais-den-conventions` per ADR-0016).
 - `docs/implementation-plans/` legacy directory.
-
-### Notes for release
-
-- **A version decision is required and is not made here.** Several changes are
-  contract-affecting for consumers: the attribution convention (`ADR-0029`), the
-  substrate capability model (`ADR-0024`, `ADR-0028`), the approval mechanism
-  (`ADR-0026`), and PLAN self-approval (`ADR-0027`) — a consumer adopting that
-  inherits the reserved-path set along with it. Whether that is a minor or major bump is a human call
-  per `guidelines/ROLE_CONTRACT.md`.
-- Every document added in this cycle is `draft` or `proposed`. Nothing here is
-  binding until approved.
 
 ## [2.0.0] - 2026-06-08
 
