@@ -152,8 +152,8 @@ something checks it.
 Statement, Considered Options, Decision Outcome, Consequences, and
 Validation before it may move to `accepted`. Nothing checks this.
 
-`ADR-0013`, `ADR-0014`, and `ADR-0015` have no Validation section.
-`ADR-0015` is `accepted` without one.
+`ADR-0013`, `ADR-0014`, and `ADR-0015` had no Validation section; all three
+now do. Nothing checked, which is why three accumulated.
 
 The check verifies all five sections are present, and reports an ADR at
 `accepted` missing any of them as a distinct, higher-severity failure.
