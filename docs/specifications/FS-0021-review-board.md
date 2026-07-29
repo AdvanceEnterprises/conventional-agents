@@ -282,6 +282,13 @@ single session in that role would not have.
 
 ## Artifact
 
+**Path divergence from consensus is deliberate.** `FS-0019` keys its rounds on
+the governing document (`docs/consensus/<FS-or-PLAN-id>/…`) because a consensus
+round always has one. A board may review a PR diff, a design note, or anything
+else, so it keys on an artifact id instead. The cost is that a board reviewing
+`FS-0020` is not reachable from `FS-0020` without a backlink; consumers who want
+that should record the board's path on the work item that triggered it.
+
 ```yaml
 # File path: docs/review-boards/<artifact-id>/<placement>-<timestamp>.yml
 board:
