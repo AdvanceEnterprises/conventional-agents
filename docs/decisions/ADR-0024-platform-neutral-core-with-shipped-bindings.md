@@ -144,11 +144,18 @@ product, or an API. A substrate conforms when it provides:
 5. An **activity record** whose entries are ordered and attributable. Entries recording
    state transitions must be non-retractable; entries recording agent commentary need
    not be.
-6. A **trigger source** capable of invoking an agent on work-item events or on a
-   schedule.
+6. **Enumerability** — work items and their attributes readable on demand, so a
+   reconciler can evaluate current state. A substrate may additionally offer event
+   notification, which reduces latency and is never the sole trigger.
 
 Conformance is checkable: a binding either maps all six onto concrete platform
 mechanisms or it does not.
+
+> Capability 6 was originally "a trigger source capable of invoking an agent on
+> work-item events **or** on a schedule." `ADR-0028` amended it: the two are not
+> interchangeable, and requiring the weaker property — enumerability — guarantees more,
+> because it is the property that actually carries correctness. The current statement of
+> all six capabilities is `integrations/README.md`.
 
 ### Detection over prevention
 
@@ -253,6 +260,8 @@ documented rather than assumed.
 - ADR-0007: Adjacent-to-Spec-Kit positioning — standards only, never orchestration
   (`proposed`; cited for its reasoning, not as a binding constraint).
 - ADR-0016: Consumer conventions as local adaptations of the framework.
+- ADR-0028: Level-triggered reconciliation — amends capability 6.
+- `integrations/README.md`: the current-state statement of the six capabilities.
 - `docs/ARC42.md` §1.2 (Tool Neutrality), §2 (architecture constraints), §5.1
   (`integrations/` as a planned building block), §8.2 (checkable gates), §11 (scope
   creep risk).
