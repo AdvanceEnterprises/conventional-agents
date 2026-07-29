@@ -239,7 +239,7 @@ If validation fails:
 | ADR-0024 | Platform-neutral core with shipped bindings | accepted |
 | ADR-0025 | Merge strategy preserves per-commit attribution | accepted |
 | ADR-0026 | Approval is a recorded act | accepted |
-| ADR-0027 | PLAN self-approval within declared interfaces | proposed |
+| ADR-0027 | PLAN self-approval within declared interfaces | accepted |
 | ADR-0028 | Level-triggered reconciliation | accepted |
 | ADR-0029 | Commit-author naming for multi-model agent frameworks | accepted |
 | ADR-0030 | Decision records versus current-state documents | accepted |
