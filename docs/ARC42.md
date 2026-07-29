@@ -206,40 +206,54 @@ Key elements:
 - templates/python/
 - templates/reviewer/
 
-### White Box packs/ (planned)
+### White Box integrations/
 
 Purpose:
-- Provide copy-ready anchor files for common tools.
+- Map the framework's six `ADR-0024` substrate capabilities onto one or more
+  platforms. Each binding is normative for projects using that substrate;
+  the framework itself runs on GitHub Issues and Projects.
 
-Planned elements:
-- packs/agents-md/
-- packs/claude/
-- packs/aider/
-- packs/agent-config/
+Key elements:
+- `integrations/README.md` — capability vocabulary and binding selection.
+- `integrations/github-issues-projects.md` — reference binding; six
+  capability mappings plus the substrate limitations table.
 
-### White Box integrations/ (planned)
+### White Box runbooks/
 
 Purpose:
-- Provide tool-specific guidance and precedence summaries.
+- Record operational procedures *as performed against a real substrate*.
+  Per `FS-0023`, a runbook is current-state evidence: it tells the next
+  operator what actually happened, including where the substrate diverged
+  from its binding.
 
-Planned elements:
-- integrations/spec-kit.md
-- integrations/spec-kit-plus.md
-- integrations/aicodeguide.md
-- integrations/tool-evaluation.md
+Key elements:
+- `runbooks/README.md` — status vocabulary (`current`/`stale`/`superseded`)
+  and the `RB-NNNN` convention.
+- `templates/core/runbook.md` — scaffold with the mandatory
+  **Deviations Observed** section.
+
+> The `packs/` building block was planned in the v2.0.0 cycle but never
+> built. Its entries here are removed; if a future `packs/` returns, it
+> should land via its own FS and gain its own subsection.
 
 ### White Box skills/
 
 Purpose:
-- Provide portable skill modules that encode the framework's knowledge into actionable guidance for agents.
+- Provide portable skill modules that encode the framework's knowledge
+  into actionable guidance for agents. Each skill is a self-contained
+  `SKILL.md` in the [Agent Skills](https://agentskills.io/specification) format;
+  see `skills/index.md` for the canonical catalog and source-document map.
 
-Key elements:
-- skills/index.md — canonical catalog of all skills
-- skills/role-aware-session/SKILL.md — session mode inference, role boundaries, safety gates
-- skills/document-lifecycle/SKILL.md — FS/PLAN/ADR lifecycle, templates, front matter hygiene
-- skills/git-gh-workflow/SKILL.md — branching, commits, PRs, multi-identity model, versioning
-- skills/framework-health-audit/SKILL.md — check:status, hygiene gate, full audit procedure
-- skills/testing-guide/SKILL.md — language-specific test patterns for Python, JS/TS, Bash
+Key elements (current set):
+- `skills/role-aware-session/` — session mode inference, role boundaries, safety gates.
+- `skills/document-lifecycle/` — FS/PLAN/ADR lifecycle, templates, front matter hygiene.
+- `skills/git-gh-workflow/` — branching, commits, PRs, attribution (`ADR-0018`/`ADR-0029`),
+  work-item stance (`FS-0018`), collaboration rounds (`FS-0019`/`FS-0021`).
+- `skills/framework-consumer-integration/` — host-repo integration patterns and pitfalls.
+- `skills/framework-health-audit/` — `check:status`, hygiene gate, full audit procedure.
+- `skills/testing-guide/` — language-specific test patterns for Python, JS/TS, Bash.
+- `skills/example-skill/` — placeholder directory; the format reference is
+  [agentskills.io/specification](https://agentskills.io/specification).
 
 ### White Box vendor/
 
@@ -363,15 +377,23 @@ Avoid:
 
 ## 8.3 Context Engineering
 
-See guidelines/context-engineering.md for patterns on:
-- Scope definition
-- Constraints
-- Success criteria
+Context engineering — what an agent is told and how — is governed by the
+role contract (`guidelines/ROLE_CONTRACT.md`, "Inputs Required" per role)
+and by the work-item layer (`FS-0018`): every governed action records its
+`agent-stance:` entry, so scope, constraints, and success criteria are
+visible in the activity record rather than scattered through chat history.
+The earlier cross-reference to `guidelines/context-engineering.md` pointed
+at a file that does not exist; the substance lives in `FS-0018` and in
+each role's "Inputs Required" / "Stop Conditions" sections.
 
 ## 8.4 Multi-Agent Coordination
 
-See guidelines/multi-agent-coordination.md for handoff protocol and
-decision logging.
+Multi-agent coordination is governed by `ADR-0013` (session coordination
+model), `ADR-0031` (structured multi-model collaboration), `FS-0019`
+(consensus rounds), and `FS-0021` (review boards). The collaborative
+templates live in `templates/collaboration/`. The earlier cross-reference
+to `guidelines/multi-agent-coordination.md` pointed at a file that does
+not exist; the substance lives in those ADRs and specs.
 
 ## 8.5 Evidence-Based Practices
 
@@ -383,51 +405,85 @@ Minimum bar for each guideline:
 
 # 9. Architecture Decisions
 
-ADRs live in docs/decisions/.
+ADRs live in `docs/decisions/`. The canonical machine-checkable index is
+[`docs/decisions/README.md`](./decisions/README.md) — it is regenerated
+from file front matter and is the source of truth for status, title, and
+ID. The list below is a categorized summary for human readers; if the two
+disagree, the README wins.
 
-Accepted ADRs:
-- ADR-0003: Mirror arc42-template as an upstream-tracking git submodule
-  - Status: accepted
-  - Source: docs/decisions/ADR-0003.md
+## Documentation origins and templates
 
-Accepted ADRs:
-- ADR-0003: Mirror arc42-template as an upstream-tracking git submodule
-  - Status: accepted
-  - Source: docs/decisions/ADR-0003.md
+| ID | Title |
+| --- | --- |
+| ADR-0000 | Use MADR and arc42 template as documentation origins |
+| ADR-0001 | Incorporate cross-tool portable skills as SKILL.md |
+| ADR-0002 | Roles reference skills via convention and skills index |
+| ADR-0008 | Adopt markdownlint for ADR Formatting Consistency |
+| ADR-0009 | Feature Specification Template Selection |
+| ADR-0010 | Use Custom Change Plan Template Instead of Open Source Alternative |
 
-- ADR-0004: AGENTS.md as Canonical Integration Surface
-  - Status: accepted
-  - Source: docs/decisions/ADR-0004.md
-  - Summary: AGENTS.md is the primary cross-tool integration surface with defined precedence hierarchy.
+## Integration and consumer surface
 
-- ADR-0005: Submodule-First Referencing Strategy
-  - Status: accepted
-  - Source: docs/decisions/ADR-0005.md
-  - Summary: Recommend submodule deployment as primary pattern; support copy-in and hybrid as valid alternatives.
+| ID | Title |
+| --- | --- |
+| ADR-0004 | AGENTS.md as Canonical Integration Surface |
+| ADR-0005 | Submodule-First Referencing Strategy |
+| ADR-0006 | Role-as-Skill-Card Format |
+| ADR-0007 | Adjacent-to-Spec-Kit Positioning |
+| ADR-0016 | Consumer conventions — local adaptations of the framework |
+| ADR-0017 | Framework vendor directory is internal; consumers must not reference nested submodules |
+| ADR-0024 | Platform-neutral core with shipped bindings |
+| ADR-0028 | Level-triggered reconciliation |
 
-- ADR-0006: Role-as-Skill-Card Format
-  - Status: accepted
-  - Source: docs/decisions/ADR-0006.md
-  - Summary: Use skill-card format (Purpose, Inputs, Outputs, Guardrails, Gates, Checks) for role contracts.
+## Roles, sessions, and non-overridable gates
 
-- ADR-0007: Adjacent-to-Spec-Kit Positioning
-  - Status: accepted
-  - Source: docs/decisions/ADR-0007.md
-  - Summary: Stay adjacent to Spec Kit (quality standards only, never workflow orchestration); never modify .specify/.
+| ID | Title |
+| --- | --- |
+| ADR-0012 | Introduce non-overridable gates ("super-gates") in ROLE_CONTRACT |
+| ADR-0013 | Multi-model session coordination model |
+| ADR-0014 | Background task governance |
+| ADR-0015 | Tool taxonomy and introduction process |
+| ADR-0022 | Autonomous and consensus are meta-modes, not session modes |
 
-- ADR-0008: Adopt markdownlint for ADR Formatting Consistency
-  - Status: accepted
-  - Source: docs/decisions/ADR-0008.md
-  - Summary: Use markdownlint with MADR-derived config to enforce consistent markdown formatting in ADRs via CI and optional local tooling.
+## Attribution, identity, and history
 
-- ADR-0009: Feature Specification Template Selection
-  - Status: accepted
-  - Source: docs/decisions/ADR-0009.md
-  - Summary: Keep current feature-spec.md template as v1.0 with versioned evolution strategy; position GitHub Spec Kit as complementary (orchestration) not competing (standards).
+| ID | Title |
+| --- | --- |
+| ADR-0011 | Adopt multi-identity GitHub model (human + agent-committer + agent-reviewer) |
+| ADR-0018 | Single-identity workflow with agent co-attribution |
+| ADR-0025 | Merge strategy preserves per-commit attribution |
+| ADR-0029 | Commit-author naming for multi-model agent frameworks |
+| ADR-0030 | Decision records versus current-state documents |
 
-Notes:
-- ADR-0000, ADR-0001, and ADR-0002 are not empty (they define skills and role/skill referencing conventions).
-- ADR lifecycle rules and status conventions are documented in docs/decisions/README.md.
+## Work-item layer and autonomous operation
+
+| ID | Title |
+| --- | --- |
+| ADR-0019 | Issue Type immutability and the autonomous gate |
+| ADR-0020 | The `question` label suppresses agent Issue actions |
+| ADR-0021 | Cron actor identity for unattended agents |
+
+## Collaboration modes
+
+| ID | Title |
+| --- | --- |
+| ADR-0023 | Collaboration integrity constraints |
+| ADR-0031 | Structured multi-model collaboration |
+
+## Approval and process gates
+
+| ID | Title |
+| --- | --- |
+| ADR-0026 | Approval is a recorded act |
+| ADR-0027 | PLAN self-approval within declared interfaces |
+
+ADR-0003 is the historical decision that the framework *would* mirror
+upstream as a submodule (`vendor/arc42-template/`). `ADR-0017`
+supersedes it on this point: `vendor/` is now framework-internal and
+consumers reference framework files or upstream URLs. ADR-0003 remains
+accepted because the upstream-tracking *intent* — keep the framework's
+structure in step with its sources — is real, but the mechanism moved
+to a different layer.
 
 # 10. Quality Requirements
 
