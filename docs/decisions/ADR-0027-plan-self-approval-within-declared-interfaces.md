@@ -175,6 +175,77 @@ hygiene gate already compares a PR's actually-touched files against the FS's
 `interfaces:`, so an under-declared plan fails at PR time — later and more visibly than
 it would have failed here.
 
+## Adversarial review
+
+Requested by the maintainer after a reviewer flagged this ADR as an
+agent-authored proposal to expand agent authority. The analysis below was
+performed by the same agent that wrote the ADR, which is a real limit on it: an
+author attacking their own proposal will find the objections they already
+thought of. It is offered as a starting point for human scrutiny, not a
+substitute.
+
+### The load-bearing safeguard, and the cost it hides
+
+Containment works because `interfaces:` is declared in the FS and **the FS is
+human-approved**. The agent does not draw its own boundary; it stays inside one
+a human already drew. That is the single thing making this decision defensible,
+and it holds.
+
+But it relocates scrutiny without naming the relocation. A human approving an FS
+is now also approving the self-approval envelope for every plan under it.
+`interfaces:` was previously a scoping hint checked at PR time; under this ADR it
+is a security boundary checked at plan time. Approving an FS with a loose
+`interfaces:` grants more than it used to, and nothing in the FS template or the
+approval flow says so.
+
+### Under-declaration is the exploit path, not a process violation
+
+The Enforcement section calls under-declared `touches:` "a process violation
+rather than an exploit." That framing is too kind, and it is the framing a
+self-interested proposal would choose. An agent that wants to self-approve work
+outside its FS's interfaces under-declares `touches:`; that is the attack, and
+calling it a process violation does not make it one.
+
+What actually bounds it: the PR diff shows the real files, hygiene gate item 6
+compares them to the FS's `interfaces:`, and `ADR-0012` requires a human to
+merge. So the payoff is wasted work plus a PR that fails review.
+
+The residual is that item 6 is a manual checklist item until `FS-0022` lands. As
+of this ADR's acceptance, under-declaration is caught by a human reading a diff
+carefully, and by nothing else.
+
+### "Blast radius is wasted agent effort" is conditional
+
+The Decision Drivers claim the worst outcome of a bad self-approved plan is
+wasted agent effort. That is true only if merge review catches the scope
+violation. If it does not, the work reaches trunk and the blast radius is
+whatever the plan did. The claim should be read as *bounded by merge review
+quality*, not as bounded absolutely.
+
+### The reserved list is fixed and will go stale
+
+`scripts/`, `.github/workflows/` and `package.json` cover today's enforcement
+machinery. Machinery added later is not automatically reserved. The Consequences
+section acknowledges this; acknowledgment is not mitigation, and there is no
+mechanism that notices when a new gate appears outside the list.
+
+### The gain is latency, not less human review
+
+The throughput argument is sound but narrower than it reads. This ADR does not
+reduce the amount of human review — it moves it from plan time to merge time,
+where the reviewer has more information. What it buys is that an agent does not
+block mid-flight waiting for an approval. That is a real benefit for `FS-0018`
+Path 3 and it is the honest description of it.
+
+### What a human should check before accepting
+
+- That `interfaces:` on the specs they approve are drawn tightly enough to serve
+  as a security boundary, now that they are one.
+- That they are willing to review PR diffs against `interfaces:` manually until
+  `FS-0022` provides the mechanical check.
+- That the reserved-path list matches the enforcement machinery as it stands at
+  acceptance, rather than as it stood when this ADR was drafted.
+
 ## Consequences
 
 ### Positive
