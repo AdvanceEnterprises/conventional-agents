@@ -58,6 +58,23 @@ caught the plan. Any relaxation of the PLAN gate has to close that hole explicit
 The question this ADR answers: **when may a change plan be approved without a human,
 and what must never be?**
 
+### A note on who is proposing this
+
+This ADR was drafted by an agent, and it proposes to expand the circumstances under
+which agents approve their own change plans. That is a conflict-of-interest shape
+regardless of how carefully the reasoning is constructed, and the reserved-path list
+below is exactly the kind of mitigation a self-interested proposal would include.
+
+The mitigation is real — `scripts/`, `.github/workflows/`, and `package.json` are
+reserved precisely so that an agent cannot self-approve a change to the check that
+would have caught it — but a reader should not treat its presence as evidence of good
+faith. It is evidence that the hazard was identified, nothing more.
+
+This ADR therefore warrants closer human scrutiny than its reasoning alone invites,
+and it takes effect only through an amendment to `guidelines/ROLE_CONTRACT.md` that is
+deliberately not included here. Approving this ADR does not enable self-approval; a
+separate, human-authored change to the role contract does.
+
 ## Decision Drivers
 
 - **The gate should target the risk, not proxy it.** The exposure is scope expansion

@@ -123,9 +123,21 @@ state.**
    states it. Other documents may reference that document; they may not restate the rule.
 2. **ADRs may quote, but do not own.** An ADR states the rule as decided, for legibility.
    It is not the place a reader looks up what the rule is today.
-3. **Same-change obligation.** An ADR that changes a rule MUST update the governing
-   current-state document in the same change. An ADR that changes a rule without updating
-   it is incomplete, and the document hygiene gate should treat it as such.
+3. **Same-change obligation, at acceptance.** An ADR that changes a rule names the
+   governing current-state document, and that document is updated **in the same change
+   that accepts the ADR** — not in the change that proposes it.
+
+   A proposed ADR has not changed anything. A current-state document that asserts its
+   rule is stating as fact something no human has approved, and a reader who trusts the
+   document without checking every cited ADR's status will follow a rule that is not in
+   force. That is the drift this ADR exists to prevent, arriving from the opposite
+   direction: not a stale document behind an accepted decision, but a premature one
+   ahead of an unaccepted one.
+
+   Where a proposal and its document update are authored together — which is often the
+   most efficient way to work — the document change is held with the ADR and lands when
+   it is accepted. An ADR merged as `proposed` under `ADR-0026`'s deferred approval
+   leaves the current-state document untouched until acceptance.
 4. **Supersession is for reversal, not revision.** Mark an ADR `superseded` when its
    decision is abandoned or replaced wholesale. A later ADR revising one rule within an
    earlier decision does not supersede it — both remain accurate records of what was
@@ -171,9 +183,10 @@ co-attribution", which both ADRs point to and which ADR-0029 updated in the same
 
 ### Negative
 
-- Rule 3 is an obligation with no automated enforcement today. An ADR can be merged
-  without its current-state update, and the failure is silent until someone follows stale
-  guidance. A `check-status.sh` extension could catch the common case — an ADR whose
+- Rule 3 is an obligation with no automated enforcement today. An ADR can be accepted
+  without its current-state update, and the failure is silent until someone follows
+  stale guidance. The inverse — a document asserting a proposed rule — is equally
+  silent and was the more common error in the branch that introduced this ADR. A `check-status.sh` extension could catch the common case — an ADR whose
   `Links` name a current-state document that the same change did not touch — but that is
   not built here.
 - Determining which document governs a rule requires judgment when a rule spans
@@ -192,9 +205,11 @@ co-attribution", which both ADRs point to and which ADR-0029 updated in the same
 
 ## Validation
 
-- **Signal:** for any rule changed by an ADR after acceptance of this one, the same
-  change updates a current-state document. Checkable by inspecting the diff of any
-  rule-changing ADR.
+- **Signal:** for any ADR accepted after this one, the change accepting it also updates
+  the current-state document it names. Checkable by inspecting the acceptance diff.
+- **Signal:** no current-state document asserts a rule whose only source is a
+  `proposed` ADR. Checkable by resolving each ADR reference in an exported document
+  against that ADR's status.
 - **Signal:** no ADR authored after this one restates a prior ADR in full for the purpose
   of superseding it in part.
 - **Signal:** `superseded` appears only on ADRs whose decision was abandoned or replaced

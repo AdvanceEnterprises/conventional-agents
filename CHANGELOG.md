@@ -156,17 +156,6 @@ For this project (a documentation/standards kit), semver follows the
 - Every document added in this cycle is `draft` or `proposed`. Nothing here is
   binding until approved.
 
-- `ADR-0017`: Framework vendor directory is internal; consumers must not
-  reference nested submodules.
-- `FS-0016`: Framework Internal Vendor Boundary feature spec.
-- `PLAN-0016`: Implementation plan for FS-0016.
-- `skills/framework-consumer-integration/SKILL.md`: a skill that guides agents
-  through integrating conventional-agents into a host repository, selecting the
-  right pattern, writing `AGENTS.md`, and avoiding common mistakes such as
-  nested vendor paths.
-- `test/FS-0016/vendor-boundary.bats`: asserts that no consumer-facing file
-  references `vendor/conventional-agents/vendor/...` paths.
-
 ## [2.0.0] - 2026-06-08
 
 ### Breaking Changes
