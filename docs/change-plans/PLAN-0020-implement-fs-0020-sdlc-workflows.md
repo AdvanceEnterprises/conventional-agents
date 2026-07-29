@@ -8,13 +8,21 @@ related_specs: [FS-0020]
 approved_by: "Joey Clark <taisden@tais-den.dev>"
 related_adrs: [ADR-0012, ADR-0013, ADR-0024, ADR-0026, ADR-0027, ADR-0030, ADR-0031]
 touches:
-  - workflows/sdlc-single-model.md
-  - workflows/sdlc-multi-model.md
-  - workflows/session-modes.md
-  - test/FS-0020/sdlc-workflows.bats
-  - README.md
-  - AGENTS.md
-  - INTEGRATION.md
+  - "workflows/sdlc-single-model.md"
+
+  - "workflows/sdlc-multi-model.md"
+
+  - "workflows/session-modes.md"
+
+  - "test/FS-0020/sdlc-workflows.bats"
+
+  - "README.md"
+
+  - "AGENTS.md"
+
+  - "INTEGRATION.md"
+
+  - "CHANGELOG.md"
 created: 2026-07-28
 updated: 2026-07-28
 

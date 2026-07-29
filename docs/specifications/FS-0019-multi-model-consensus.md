@@ -9,10 +9,17 @@ interfaces:
   - "docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md"
   - "guidelines/ROLE_CONTRACT.md"
   - "workflows/document-lifecycle.md"
+  - "workflows/git-and-gh-conventions.md"
   - "skills/git-gh-workflow/SKILL.md"
   - "config/consensus.yml (project-level configuration, opt-in)"
   - "docs/consensus/<FS-or-PLAN-id>/<gate>-<timestamp>.yml (consensus round artifact)"
+  - "templates/core/feature-spec.md"
+  - "templates/core/change-plan.md"
+  - "README.md"
+  - "INTEGRATION.md"
   - "docs/specifications/README.md"
+  - "test/FS-0019/consensus-schema.bats"
+  - "CHANGELOG.md"
 related_adrs:
   - ADR-0018
   - ADR-0022
