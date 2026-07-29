@@ -242,5 +242,5 @@ If validation fails:
 | ADR-0027 | PLAN self-approval within declared interfaces | proposed |
 | ADR-0028 | Level-triggered reconciliation | accepted |
 | ADR-0029 | Commit-author naming for multi-model agent frameworks | accepted |
-| ADR-0030 | Decision records versus current-state documents | proposed |
+| ADR-0030 | Decision records versus current-state documents | accepted |
 | ADR-0031 | Structured multi-model collaboration | accepted |
