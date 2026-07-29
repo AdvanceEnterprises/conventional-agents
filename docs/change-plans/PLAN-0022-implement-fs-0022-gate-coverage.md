@@ -89,7 +89,6 @@ verified by the two-PR manual check in §8.
 * `test/FS-0022/gate-coverage.bats` (new)
 * `docs/specifications/README.md` — index title regeneration (§5a)
 * `docs/change-plans/README.md` — index title regeneration (§5a)
-
 * `CONTRIBUTING.md` — lint remediation (§5a)
 * `INTEGRATION.md` — lint remediation, whitespace only (§5a)
 
@@ -156,13 +155,10 @@ front matter.
 requires. All three are written in this PR. Nothing remains for the
 implementer.
 
-**`ADR-0015` — resolved.** It was `accepted` without a Validation section,
-and adding one to an accepted ADR needed a human call rather than an
-implementer judgment. The maintainer directed it, and the section is written
-in this PR. It carries a note recording that it was added post-acceptance
-and that the decision, drivers, options and consequences are unchanged, so a
-future reader comparing the file against the append-only rule can see why it
-differs. Nothing remains for the implementer here.
+**`ADR-0015` — resolved.** Its Validation section is written in this PR.
+`ADR-0015` is `proposed`, so this was ordinary drafting; an earlier draft of
+this plan escalated it as an append-only problem on the mistaken belief that
+it was accepted.
 
 Its Validation §1 depends on this plan: "each executable in `scripts/` is
 registered in `package.json`, described in `scripts/README.md`, and traceable
