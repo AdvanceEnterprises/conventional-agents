@@ -25,7 +25,7 @@ identity), and `ADR-0012` (the merge gate).
 | 3 | Phase | Projects v2 built-in `Status` field | Native |
 | 4 | Parked state | `question` label | **Convention + detection** |
 | 5 | Append-only activity record | Issue comment timeline | **Partial** — see §5 |
-| 6 | Trigger source | Webhook events; Actions `schedule:` | Native |
+| 6 | Enumerability | `gh project item-list`, Issues API, GraphQL | Native |
 
 Three of six capabilities are not technically enforceable on GitHub. Section 7 states
 exactly what that means and what compensates. A binding that claimed otherwise would be
@@ -208,9 +208,14 @@ the two disagree, commits win.
 
 ---
 
-## 6. Trigger Source → Webhooks and Scheduled Actions
+## 6. Enumerability → Issues API, and Triggers → Webhooks and Scheduled Actions
 
-The core treats event-driven and scheduled invocation as peers. GitHub provides both.
+**Enumeration** is the conforming capability: `gh project item-list --format json`, the
+Issues REST API, and the GraphQL API all return work items and their field values on
+demand. A reconciler reads current state from any of them.
+
+**Triggers** invoke the reconciler. GitHub provides both shapes, and per `ADR-0028`
+they are not peers — the schedule carries correctness and events reduce latency.
 
 ### Event-driven
 
@@ -233,13 +238,22 @@ on:
     - cron: "0 6 * * *"
 ```
 
-GitHub Actions `schedule:` is the cron mechanism. Two properties matter and are easy to
-get wrong:
+GitHub Actions `schedule:` is the cron mechanism. Under `ADR-0028` this is the
+**correctness guarantee**, not a backstop — so its reliability characteristics are
+load-bearing rather than trivia:
 
 - Scheduled runs execute on the **default branch** only.
-- Delivery is best-effort. Runs can be delayed during high load, and schedules on
-  repositories with no activity for 60 days are disabled automatically. A cron-driven
-  gate must therefore be idempotent and must not assume it ran.
+- Delivery is best-effort. Runs can be delayed during high load.
+- **Schedules are disabled automatically after 60 days without repository activity.**
+
+That last one is the dangerous one. A quiet repository silently loses its
+reconciliation loop while continuing to look governed — no error, no alert, and the
+next drift goes uncorrected indefinitely. Consumers SHOULD monitor that the scheduled
+workflow is still running and treat its absence as an outage, not a delay.
+
+A reconciler must be idempotent and must not assume it ran. `ADR-0014` gives the
+mechanism: read the activity record, find your own prior entry for that transition,
+skip.
 
 An agent invoked by either path is unattended and declares `mode=autonomous`, under the
 actor identity `ADR-0021` requires. That identity is a distinct `user.email`, not the

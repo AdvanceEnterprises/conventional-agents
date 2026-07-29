@@ -210,10 +210,13 @@ not hypothetical, and its arrival triggers `ADR-0024`'s review checkpoint: if
 extracting it forces a change to the six core capabilities, the core was
 under-generalized.
 
-**Known risk area:** capability 6 (trigger source). Notion's event surface is shaped
-differently from GitHub's webhooks. Under level-triggered semantics this should cost
-latency rather than correctness — the substrate needs to be *enumerable*, not
-*event-emitting* — but that expectation is untested.
+**Risk area, now resolved at the framework layer:** capability 6 was "a trigger source
+capable of invoking an agent on work-item events or on a schedule", and Notion's event
+surface is shaped differently from GitHub's webhooks. `ADR-0028` amended the capability
+to **enumerability** — a substrate must be readable on demand; event notification is
+optional and never the sole trigger. Notion is plainly enumerable, so the risk is now
+that its *scheduler* is reliable enough to carry correctness, not that its events are
+rich enough. That remains untested.
 
 ---
 
