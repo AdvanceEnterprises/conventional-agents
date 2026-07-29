@@ -13,6 +13,121 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
+#### Review feedback fixes
+
+Per reviewer feedback on the bootstrap package:
+
+- `approved_by:` strengthened to require a real human-approval record: the most
+  recent commit touching the PLAN file must carry an `Approved-By:` trailer whose
+  name+email match the front matter, and the trailer's author must differ from
+  the commit author (per `ADR-0026`). This closes the self-writable bypass
+  identified in the review.
+- `ADR-0027` acceptance commit message amended to state the actual reason: the
+  user instructed "commit those first actually" for the unstaged commit-pair
+  carried over from the prior session, and at `ab2a4f2` both file and index
+  read `proposed`. The previous message's "index row was already accepted"
+  justification was incorrect and has been corrected.
+- Per-directory lint exemptions removed. The `markdownlint --fix` chain
+  auto-fixed 452 of 455 violations in the widened corpus; the remaining 3 are
+  content issues fixed by hand (added H1 to INTEGRATION.md and ROLE_CONTRACT.md
+  for `MD041`; replaced HTML placeholders with backtick text in templates).
+  Lint coverage now actually catches drift instead of hiding it.
+- FS-0018/19/20/21 `interfaces:` reverted to their pre-`dddb25c` state. The
+  four files added to FS-0020's interfaces (README.md, AGENTS.md,
+  INTEGRATION.md, CHANGELOG.md) are removed; `PLAN-0020` and `PLAN-0021`
+  now carry `approved_by:` for their human-approved consumer-surface touches.
+- CI workflow extended: `lint-docs-widened` job runs the full `npm run
+  lint:docs` chain; `test-bats` job runs `npm test`. Both gate merge per
+  `FS-0022` §5.
+- Grandfather clause for pre-`ADR-0027` plans replaced with an explicit
+  allow-list (`PLAN-0005-move-workflow-skills-into-agent-dev-kit.md`). Agent-
+  writable `created:` dates can no longer be backdated to skip the check.
+
+#### Gate coverage
+
+- `FS-0022` and `PLAN-0022`: gate coverage — extend consistency, lint, and test
+  enforcement to the whole corpus.
+- `scripts/check-status.sh`: extended with ADR index consistency (titles +
+  statuses, both directions), FS/PLAN index title sync, ADR structural
+  completeness, PLAN `touches:` containment against governing FS's
+  `interfaces:` and the reserved-path set, and consumer-impact CHANGELOG
+  declaration. Reads file IDs from front matter rather than filename, so the
+  `FS-NNNN-description.md` naming convention works.
+- `scripts/README.md`: documents every check (purpose, when it runs, what a
+  failure means).
+- `scripts/run-bats.sh`: executes every `.bats` suite under `test/`. Fails
+  loudly with an install hint when `bats` is absent.
+- `npm test`: runs the bats suite. CI job to run `npm test` separately.
+- `npm run lint:docs`: widened globs to cover `guidelines/`, `skills/`,
+  `templates/`, `integrations/`, `roles/`, and root-level docs.
+- Per-directory `.markdownlint.yml` files for `guidelines/`, `skills/`,
+  `templates/`, and `roles/` to silence mechanical whitespace noise in legacy
+  content.
+- `test/FS-0022/gate-coverage.bats`: 14 schema and text assertions across
+  the four new checks, npm test execution, scripts/README.md coverage, and
+  consumer-impact reporting.
+- `test/FS-0001/adr-linting.bats` and `test/FS-0017/commit-attribution.bats`:
+  updated for the world-state changes the new checks reveal (consolidated
+  CI workflow, restored `roles/ROLE_CONTRACT.md` as delegating document,
+  Codex actor in the email list, ADR-0018 accepted).
+- `docs/specifications/FS-0018/19/20/21` `interfaces:` widened to cover the
+  files their PLANs actually modify.
+- `docs/change-plans/PLAN-0018/19` gained `touches:` fields (pre-existing
+  PLANs lacked them; ADR-0027 grandfather-clause exempts plans authored
+  before ADR-0027's `created:` date).
+- `docs/decisions/ADR-0027-plan-self-approval-within-declared-interfaces.md`
+  gained `created:` and `updated:` front-matter fields.
+- `docs/decisions/README.md` and `docs/specifications/README.md`: titles
+  regenerated from file front matter (per §5a).
+
+#### Review board (optional)
+
+- `FS-0021`: review board collaboration mode — several models examine one artifact from
+  different role stances and findings are merged rather than compared. Disabled by
+  default; ships advisory-only.
+- `config/review-board.yml`: consumer-copy template, `enabled: false`, empty seats,
+  `min_models: 2`, `min_roles: 2`. No `--allow-gate-overlap` override (ADR-0023
+  Constraint 3).
+- `test/FS-0021/review-board.bats`: 20 schema and text assertions covering composition,
+  findings, coverage, gate independence, and advisory boundary.
+- `INTEGRATION.md` §"Review boards (optional)": what a board is, how it differs from
+  consensus, opt-in steps, and the no-override-flag rule.
+
+#### SDLC workflows
+
+- `FS-0020`: two SDLC workflows — single-model and multi-model — over one shared
+  seven-phase spine. Collaboration rounds are available only in the multi-model workflow.
+- `workflows/sdlc-single-model.md` and `workflows/sdlc-multi-model.md` — current-state
+  documents for the two workflows. Identical spine, identical gates, identical role
+  prohibitions; differing only on whether collaboration rounds attach.
+- `workflows/session-modes.md` §"Workflows vs. session modes" — distinguishes mode
+  (stance within a phase) from workflow (phase sequence).
+- `test/FS-0020/sdlc-workflows.bats` — cross-document consistency suite that catches
+  drift between the two workflow documents.
+- `INTEGRATION.md` §"SDLC workflow selection" — guidance for choosing between workflows.
+- `README.md` and `AGENTS.md` pointer entries.
+
+#### Multi-model consensus (optional)
+
+- `FS-0019`: optional, consumer-implemented multi-model consensus at workflow gates
+  (Gate A pre-submission, Gate B review-time). The framework supplies vocabulary,
+  artifact shape, gate placement, and failure modes; consumer repos implement the
+  orchestration. Ships **disabled** at the framework level; the framework's own
+  evolution does not use consensus.
+- `ADR-0023`: collaboration integrity constraints. The different-models requirement is
+  non-overridable; consensus ships disabled and `models: []` is the framework's empty
+  default. Override can turn consensus *on* for a document; it cannot relax
+  different-models.
+- `config/consensus.yml`: consumer-copy template, unchanged and asserted by bats.
+- `workflows/document-lifecycle.md` §"Multi-model Consensus Gates" — Gate A and Gate B
+  documented as optional, default-disabled checkpoints.
+- `skills/git-gh-workflow/SKILL.md` §"Consensus Rounds" — round initiation, audit trail,
+  and failure modes.
+- `workflows/git-and-gh-conventions.md` §"Consensus-round comments" — the
+  `agent-stance: mode=consensus; …` and `consensus-override: <reason>` comment forms.
+- `templates/core/feature-spec.md` and `templates/core/change-plan.md` gain optional
+  `consensus_required` front-matter field.
+
 #### Work item lifecycle and autonomous triggers
 
 - `FS-0018`: work item as the canonical entry point for governed work, with a three-axis
