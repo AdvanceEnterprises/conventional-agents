@@ -44,17 +44,15 @@ PARSING_HINTS:
 
 ## Plan Status
 
-- **Drafted as PLAN-0019** (`status: draft`), as part of the PR #71
-  bootstrap package. This is not a departure from
-  `workflows/document-lifecycle.md`, which places PLAN creation at
-  "initial creation" and constrains only approval — a PLAN may not
-  reach `approved` while its FS is `draft`.
-- Requires FS-0018 to be approved first, since the consensus gates
-  integrate with the work item lifecycle defined there. PLAN-0019 cannot
-  be approved until both FS-0019 and FS-0018 are approved; its
-  Readiness Check records both dependencies.
-- Open questions blocking PLAN drafting are listed in the
-  "Open Questions" section below.
+- **PLAN-0019 is `approved`**, approved in the same session as this FS.
+  It was drafted alongside this spec, which
+  `workflows/document-lifecycle.md` permits — that document places PLAN
+  creation at "initial creation" and constrains only approval.
+- Both of its dependencies are satisfied: FS-0019 and FS-0018 are
+  approved. The consensus gates integrate with the work item lifecycle
+  FS-0018 defines, so PLAN-0019 could not have been approved ahead of it.
+- Remaining open questions are listed in the "Open Questions" section
+  below. None block execution.
 
 ## Summary
 
