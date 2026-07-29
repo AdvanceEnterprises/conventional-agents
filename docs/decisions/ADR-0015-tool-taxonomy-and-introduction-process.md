@@ -9,6 +9,7 @@ related_specs:
   - FS-0010
   - FS-0013
   - FS-0014
+  - FS-0022
 superseded_by: null
 ---
 
@@ -121,6 +122,13 @@ it. "It lives under `skills/`" is not an exemption from governance gate requirem
 **Responsible role**: Implementer (Role 3) for writing and modifying gate scripts.
 Head Architect (Role 0) for proposing new gates via FS.
 
+**Reinforced by `ADR-0027`.** That ADR reserves `scripts/`, `.github/workflows/`, and
+`package.json` as paths a PLAN may never self-approve, for the reason given there: an
+agent that can self-approve a change to the check that would have caught it has
+defeated the check. The two rules meet at the same place from opposite directions —
+this ADR requires a spec before a gate is written, and ADR-0027 requires a human before
+a plan touching one is approved.
+
 ---
 
 ### Category 2: Productivity skills
@@ -199,6 +207,23 @@ ADR. Implementer (Role 3) for integrating platform tools into workflow documents
 
 ---
 
+### The taxonomy is not closed
+
+Three categories cover the tools this framework had when the taxonomy was written. At
+least one known class does not fit cleanly: **MCP servers**, which supply capabilities
+to an agent at runtime without being CI-invoked (Category 1), without living in
+`skills/` (Category 2), and without being a coordination primitive the framework
+decides (Category 3).
+
+That gap is recorded in `BACKLOG.md` rather than resolved here, because slotting a
+class in is cheaper once the workflows consuming it are settled. A reader should treat
+the three categories as covering what exists, not as an exhaustive partition of what
+could.
+
+When a tool does not fit, the correct response is to say so and propose a category —
+not to force it into the nearest one. Miscategorisation carries real consequences: a
+tool filed as Category 2 escapes the FS requirement that Category 1 imposes.
+
 ### Tool category summary
 
 | Category | Location | FS required | PLAN required | SKILL.md required | CI-enforced |
@@ -256,11 +281,16 @@ makes both muddier.
 
 ## Links
 
-- ADR-0001: Skills as portable markdown modules (established `SKILL.md` convention)
-- ADR-0002: Skills index (established `skills/index.md`)
-- ADR-0013: Multi-model session coordination (multi-session coordination is a platform
-  capability governed by ADR, per Category 3)
-- ADR-0014: Background task governance (background task spawning is a platform capability
-  governed by ADR, per Category 3)
+- ADR-0001: Cross-tool portable skills as SKILL.md (established the `SKILL.md`
+  convention Category 2 uses)
+- ADR-0002: Roles reference skills via convention and skills index (established
+  `skills/index.md`)
+- ADR-0013: Multi-model session coordination — a Category 3 platform capability
+- ADR-0014: Background task governance — a Category 3 platform capability
+- ADR-0027: PLAN self-approval — reserves the paths Category 1 tools live in
+- ADR-0030: Decision records versus current-state documents — `skills/` is a
+  current-state location, so a skill is edited in place rather than superseded
 - FS-0002: Move workflow skills into conventional-agents (productivity skill migration)
 - FS-0014: Six-role model (role assignments referenced in Category 1 and Category 2)
+- FS-0022: Gate coverage — the governing spec for the current round of Category 1 work,
+  including the `scripts/README.md` this ADR requires and which does not yet exist
