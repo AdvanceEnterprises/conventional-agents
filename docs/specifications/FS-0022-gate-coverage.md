@@ -9,6 +9,7 @@ interfaces:
   - "scripts/check-status.sh"
   - "scripts/README.md"
   - "scripts/check-current-state.sh"
+  - "scripts/run-bats.sh"
   - "package.json"
   - ".github/workflows/lint-docs.yml"
   - "docs/specifications/README.md"

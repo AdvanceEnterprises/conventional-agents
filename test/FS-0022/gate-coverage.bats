@@ -157,14 +157,40 @@ PLAN_EOF
 }
 
 @test "npm_test: missing bats fails loudly with install hint" {
-  # Simulate missing bats by running the script with a sanitized PATH that excludes bats.
-  run bash -c "PATH=/usr/bin:/bin bash '$NPM_TEST' 2>&1 || true"
-  # Should mention install hint if bats is actually absent; otherwise the test passes
-  # silently because bats IS installed in the test environment.
-  if ! command -v bats >/dev/null 2>&1; then
-    [ "$status" -ne 0 ]
-    echo "$output" | grep -F "bats"
-  fi
+  # Build a PATH that keeps the tools run-bats.sh needs (dirname, find) but drops
+  # every directory containing a bats binary.
+  #
+  # The previous version hardcoded PATH=/usr/bin:/bin. That excludes Homebrew's bats
+  # on macOS, so it passed locally — but it *includes* apt's /usr/bin/bats on Linux,
+  # so run-bats.sh found bats and ran every suite, including this one, recursively.
+  # CI hung until the runner was exhausted. Never assume a fixed path excludes a tool.
+  local clean_path="" d
+  local IFS=':'
+  for d in $PATH; do
+    [ -n "$d" ] || continue
+    [ -x "$d/bats" ] && continue
+    clean_path="${clean_path:+$clean_path:}$d"
+  done
+  unset IFS
+  [ -n "$clean_path" ]
+
+  # env -u RUN_BATS_ACTIVE: this test deliberately exercises run-bats.sh, so it opts
+  # out of the re-entrancy guard the script added after the incident above.
+  run env -u RUN_BATS_ACTIVE PATH="$clean_path" /bin/bash "$NPM_TEST"
+
+  # Unconditional. The previous version wrapped these in `if ! command -v bats`, so it
+  # asserted nothing whenever bats was installed -- which is always, in CI. A test that
+  # only checks things in the environment where it never runs is not a test.
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "not installed or not on PATH"
+  echo "$output" | grep -qF "bats-core"
+}
+
+@test "npm_test: run-bats.sh refuses to run recursively" {
+  # The guard that turns the fork bomb above into a clear error.
+  run env RUN_BATS_ACTIVE=1 /bin/bash "$NPM_TEST"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "invoked recursively"
 }
 
 # --- scripts/README.md --------------------------------------------------------
