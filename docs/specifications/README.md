@@ -89,21 +89,21 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 
 | ID | Title | Status |
 | --- | --- | --- |
-| FS-0001 | Markdownlint Integration | implemented |
-| FS-0002 | Move Workflow Skills into conventional-agents | approved |
-| FS-0003 | Git + GitHub CLI Conventions | implemented |
-| FS-0004 | Agent-Authored Commit/PR Commentary Policy | draft |
-| FS-0005 | Expand Docs Linting Coverage | implemented |
-| FS-0006 | JavaScript/TypeScript Guidelines | implemented |
-| FS-0007 | Versioning, Releases, and Packaging Guidance | implemented |
-| FS-0008 | Self-Versioning and Changelog | implemented |
-| FS-0009 | Vendor Upstream Specs | implemented |
-| FS-0010 | Process Compliance Gates and Document Lifecycle | implemented |
-| FS-0011 | Adopt GitHub Projects for Work Tracking | implemented |
-| FS-0012 | Renumber Feature Specs to Sequential IDs | implemented |
-| FS-0013 | Status Consistency Check | implemented |
-| FS-0014 | Role Definitions Overhaul | implemented |
-| FS-0015 | Role Selection and Session Modes | implemented |
+| FS-0001 | Markdownlint Integration for ADR Quality Gates | implemented |
+| FS-0002 | Move workflow skills into conventional-agents (dual-mode) | approved |
+| FS-0003 | Git + gh CLI conventions for the kit | implemented |
+| FS-0004 | Agent-authored commit + PR commentary policy (role-aware) | draft |
+| FS-0005 | Expand docs linting coverage to FS/PLAN/workflows | implemented |
+| FS-0006 | JavaScript/TypeScript guidelines for agentic development | implemented |
+| FS-0007 | Versioning, releases, and packaging guidance for agentic development | implemented |
+| FS-0008 | Apply versioning and changelog to conventional-agents itself | implemented |
+| FS-0009 | Vendor Upstream Specs (Conventional Commits, Keep a Changelog) | implemented |
+| FS-0010 | Process Compliance Gates — Spec-First Enforcement and Document Lifecycle | implemented |
+| FS-0011 | Adopt GitHub Projects for work tracking | implemented |
+| FS-0012 | Renumber feature specs to sequential IDs | implemented |
+| FS-0013 | Status consistency check for FS/PLAN documents | implemented |
+| FS-0014 | Role definitions overhaul — expand from 3 to 6 roles (Head Architect, Comms Lead) | implemented |
+| FS-0015 | Role selection and session modes | implemented |
 | FS-0016 | Framework Internal Vendor Boundary | implemented |
 | FS-0017 | Single-identity commit attribution with model, role, and session metadata | implemented |
 | FS-0018 | Work item lifecycle and autonomous triggers for governed work | approved |

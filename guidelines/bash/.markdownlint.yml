@@ -1,0 +1,10 @@
+default: true
+MD013: false  # line-length
+MD032: false  # blanks-around-lists
+MD031: false  # blanks-around-fences
+MD040: false  # fenced-code-language
+MD033: false  # no-inline-html
+MD024:
+  siblings_only: true
+MD022: false  # blanks-around-headings
+MD047: false  # single-trailing-newline

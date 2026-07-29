@@ -5,6 +5,25 @@ language: markdown
 status: approved
 related_specs: [FS-0019, FS-0018]
 related_adrs: [ADR-0023, ADR-0022, ADR-0018, ADR-0012]
+touches:
+  - "workflows/document-lifecycle.md"
+
+  - "workflows/git-and-gh-conventions.md"
+
+  - "skills/git-gh-workflow/SKILL.md"
+
+  - "templates/core/feature-spec.md"
+
+  - "templates/core/change-plan.md"
+
+  - "README.md"
+
+  - "INTEGRATION.md"
+
+  - "test/FS-0019/consensus-schema.bats"
+
+  - "CHANGELOG.md"
+
 created: 2026-07-27
 updated: 2026-07-27
 ---

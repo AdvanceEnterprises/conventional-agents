@@ -9,8 +9,15 @@
     "lint:adrs": "npx markdownlint-cli2 \"docs/decisions/ADR-*.md\"",
     "lint:specs": "npx markdownlint-cli2 \"docs/specifications/FS-*.md\"",
     "lint:plans": "npx markdownlint-cli2 \"docs/change-plans/PLAN-*.md\"",
-    "lint:workflows": "npx markdownlint-cli2 \"workflows/*.md\"", 
-    "lint:docs": "npm run -s lint:adrs && npm run -s lint:specs && npm run -s lint:plans && npm run -s lint:workflows",
-    "check:status": "bash scripts/check-status.sh"
+    "lint:workflows": "npx markdownlint-cli2 \"workflows/*.md\"",
+    "lint:guidelines": "npx markdownlint-cli2 \"guidelines/**/*.md\"",
+    "lint:skills": "npx markdownlint-cli2 \"skills/**/*.md\"",
+    "lint:templates": "npx markdownlint-cli2 \"templates/**/*.md\"",
+    "lint:integrations": "npx markdownlint-cli2 \"integrations/*.md\"",
+    "lint:roles": "npx markdownlint-cli2 \"roles/*.md\"",
+    "lint:roots": "npx markdownlint-cli2 \"AGENTS.md\" \"README.md\" \"INTEGRATION.md\" \"CONTRIBUTING.md\" \"CHANGELOG.md\"",
+    "lint:docs": "npm run -s lint:adrs && npm run -s lint:specs && npm run -s lint:plans && npm run -s lint:workflows && npm run -s lint:guidelines && npm run -s lint:skills && npm run -s lint:templates && npm run -s lint:integrations && npm run -s lint:roles && npm run -s lint:roots",
+    "check:status": "bash scripts/check-status.sh",
+    "test": "bash scripts/run-bats.sh"
   }
 }

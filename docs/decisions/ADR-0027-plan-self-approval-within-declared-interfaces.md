@@ -8,6 +8,8 @@ related_specs:
   - FS-0018
   - FS-0022
 superseded_by: null
+created: 2026-07-27
+updated: 2026-07-28
 ---
 
 # ADR-0027: PLAN self-approval within declared interfaces
