@@ -2,11 +2,12 @@
 
 This document captures core principles and conventions from the Google Developer Documentation Style Guide, plus added guidance for writing NumPy-style Python docstrings (numpydoc). It’s meant as a quick, practical reference.
 
-Primary source: Google Developer Documentation Style Guide: https://developers.google.com/style
+Primary source: Google Developer Documentation Style Guide: <https://developers.google.com/style>
 
 NumPy docstring source references:
-- numpydoc Style guide: https://numpydoc.readthedocs.io/en/latest/format.html
-- NumPy documentation how-to: https://numpy.org/doc/1.19/docs/howto_document.html
+
+- numpydoc Style guide: <https://numpydoc.readthedocs.io/en/latest/format.html>
+- NumPy documentation how-to: <https://numpy.org/doc/1.19/docs/howto_document.html>
 
 ---
 
@@ -17,6 +18,7 @@ NumPy docstring source references:
 - Guidelines are not laws. If a rule makes the doc worse, don’t follow it.
 
 Decision precedence:
+
 1) Project style  
 2) Google dev docs style  
 3) External references (dictionary/style manuals)
@@ -59,7 +61,7 @@ Decision precedence:
 ## 6. NumPy-style docstrings for Python (numpydoc)
 
 These rules apply when Codex writes or edits Python docstrings intended to follow the NumPy/SciPy ecosystem conventions. The goal is docstrings that render well with numpydoc and read well in terminals and editors.  
-Source: numpydoc format guide. https://numpydoc.readthedocs.io/en/latest/format.html
+Source: numpydoc format guide. <https://numpydoc.readthedocs.io/en/latest/format.html>
 
 ### 6.1 Overall shape (functions and methods)
 
@@ -77,7 +79,7 @@ Use this section order (common pattern):
 10. **Examples** (optional but valuable)
 
 Generators should use **Yields** instead of **Returns**.  
-Source: NumPy doc how-to. https://numpy.org/doc/1.19/docs/howto_document.html
+Source: NumPy doc how-to. <https://numpy.org/doc/1.19/docs/howto_document.html>
 
 ### 6.2 Short summary rules
 
@@ -101,6 +103,7 @@ name : type
 Description…
 
 Rules of thumb:
+
 - Use **4-space indentation** for description lines.
 - Types should be informative but not over-precise to the point of lying.
 - Include “optional” for optional parameters.
@@ -130,12 +133,12 @@ ndarray
 Description…
 
 Use **Yields** for generators.  
-Source: numpydoc format guide. https://numpydoc.readthedocs.io/en/latest/format.html
+Source: numpydoc format guide. <https://numpydoc.readthedocs.io/en/latest/format.html>
 
 ### 6.6 Other Parameters section
 
 Use **Other Parameters** to keep the main Parameters list focused when there are rarely-used keyword args. If you introduce `**kwargs`, document the relevant keywords there too.  
-Source example notes: https://numpydoc.readthedocs.io/en/latest/example.html
+Source example notes: <https://numpydoc.readthedocs.io/en/latest/example.html>
 
 Example:
 
@@ -171,6 +174,7 @@ Keep it curated, not a dumping ground.
 ### 6.9 Notes section
 
 Use Notes for:
+
 - algorithm details
 - performance caveats
 - numerical stability
@@ -205,17 +209,18 @@ y : float
 The Y coordinate.
 
 Properties that have their own docstrings can be listed by name alone.  
-Source: numpydoc class guidance. https://numpydoc.readthedocs.io/en/latest/format.html
+Source: numpydoc class guidance. <https://numpydoc.readthedocs.io/en/latest/format.html>
 
 ### 6.12 Method docstrings vs function docstrings
 
 If a method has an equivalent top-level function, put the detailed docs on the function and keep the method docstring brief, often just:
+
 - a short summary
 - a See Also pointing to the function
 - Returns or Yields (as appropriate)
 
 Do not include `self` in Parameters.  
-Source: NumPy doc how-to. https://numpy.org/doc/1.19/docs/howto_document.html
+Source: NumPy doc how-to. <https://numpy.org/doc/1.19/docs/howto_document.html>
 
 ### 6.13 What Codex should do when editing code
 

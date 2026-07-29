@@ -79,6 +79,7 @@ set -euo pipefail
 ```
 
 **Why:**
+
 * `-e`: Exit on any error (safer than ignoring failures)
 * `-u`: Exit if undefined variable is used (catch typos)
 * `-o pipefail`: Catch errors in pipelines (e.g., `cat file | grep X` fails if cat fails)
@@ -174,6 +175,7 @@ some_function() {
 ### Avoid common pitfalls
 
 **❌ Don't:**
+
 * Use `grep | wc -l` to count (use `grep -c` or conditional logic)
 * Use backticks (`` `command` ``); use `$(command)` instead
 * Assume `cd` succeeds; always check: `cd dir || error "Cannot cd to dir"`
@@ -182,6 +184,7 @@ some_function() {
 * Test with `-f` if the file might be a symlink (use `-e` or `-L`)
 
 **✅ Do:**
+
 * Use `[[ ]]` for conditionals (more flexible than `[ ]`)
 * Use `(( ))` for arithmetic
 * Quote command substitutions: `"$(command)"`

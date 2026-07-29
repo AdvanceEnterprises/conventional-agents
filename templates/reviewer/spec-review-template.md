@@ -13,18 +13,21 @@ PARSING_HINTS:
 -->
 
 # Spec Review: FS-_____
+
 - Status: draft/approved/etc
 - Is Success Criteria testable? yes/no
-- Any criteria ambiguous? <SC list>
+- Any criteria ambiguous? `SC list`
 - Non-Goals / Out of Scope clear? yes/no
 - Interfaces defined? yes/no
 
 ## Fix before approval
-1. <make criterion measurable>
-2. <clarify interface>
+
+1. `make criterion measurable`
+2. `clarify interface`
 
 ## Suggested improvements
-- <wording / edge case>
+
+- `wording / edge case`
 
 <!--
 PARSING_HINTS:
@@ -35,7 +38,8 @@ PARSING_HINTS:
 -->
 
 ## Security / Privacy Addendum (only if applicable)
-- Data handled: <what data types are touched>
+
+- Data handled: `what data types are touched`
 - Threats considered: authz bypass, injection, leakage, logging PII, secrets exposure
 - Tests validating security constraints: present/missing
-- Any new dependencies or permissions: <list>
+- Any new dependencies or permissions: `list`
