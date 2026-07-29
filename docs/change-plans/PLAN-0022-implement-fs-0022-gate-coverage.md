@@ -95,7 +95,7 @@ verified by the two-PR manual check in §8.
 * `docs/specifications/README.md` — index title regeneration (§5a)
 * `docs/change-plans/README.md` — index title regeneration (§5a)
 * `CONTRIBUTING.md` — lint remediation (§5a)
-* `INTEGRATION.md` — lint remediation, whitespace only (§5a)
+* `INTEGRATION.md` — lint remediation, fences and headings (§5a)
 
 Deliberately **not** listed: the seven documents that reference
 `roles/ROLE_CONTRACT.md`. They are correct as written and are fixed by the
@@ -141,8 +141,18 @@ estimated, by running markdownlint against each currently-unlinted surface:
 | `docs/decisions/README.md` | 2 |
 
 `INTEGRATION.md` is the whole problem: 86 MD010 (hard tabs), 44 MD032 (list
-spacing), 17 MD022 (heading spacing). Mechanical whitespace, no prose changes,
-and `markdownlint --fix` handles all three rule classes.
+spacing), 17 MD022 (heading spacing). An earlier draft of this section called
+that mechanical whitespace fixable by `markdownlint --fix`. It is not, and the
+claim was written before anyone opened the file. The document has never used
+code fences, so its shell commands and its embedded example `AGENTS.md` files
+parse as markdown — `# 1) Add submodule` is a heading, and so is the
+`# Agent Instructions` inside a `cat > AGENTS.md << 'EOF'` block. `--fix` makes
+it worse: it inserts blank lines into what were contiguous shell scripts.
+
+The remediation is to fence the code regions, promote the bare-prose section
+titles to real headings, and convert the tab-delimited pseudo-table under
+"Detailed precedence" to a markdown table. Prose is unchanged — verify by
+comparing token streams with markup stripped, not by eyeballing the diff.
 
 The exported directories being clean is the useful finding — widening coverage
 is nearly free everywhere except one file that has never been linted and shows
