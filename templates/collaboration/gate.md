@@ -146,9 +146,9 @@ RETURN EXACTLY THIS SHAPE
 
 STATUS: COMPLETE | INVALID
 VERDICT: PROCEED | CONDITIONAL | HALT     (omit unless STATUS is COMPLETE)
-RATIONALE: <one paragraph>
+RATIONALE: `one paragraph`
 ISSUES:                                    (required when CONDITIONAL or HALT)
-  - <specific, individually resolvable issue>
+  - `specific, individually resolvable issue`
 
 Do not add sections. Do not propose alternatives. Do not resolve anything
 you find.
@@ -158,19 +158,19 @@ you find.
 
 ```yaml
 gate:
-  round_id: <round-id>
-  evaluator: <model-id>          # MUST NOT appear in the round's participants
-  evaluated_at: <ISO-8601>
+  round_id: `round-id`
+  evaluator: `model-id`          # MUST NOT appear in the round's participants
+  evaluated_at: `ISO-8601`
   inputs:
-    synthesis: <path>
-    participants: [<path>]
+    synthesis: `path`
+    participants: [`path`]
   execution_status: COMPLETE | NOT_RUN | INVALID
   status_assigned_by: gate | operator
   verdict: PROCEED | CONDITIONAL | HALT     # only when execution_status is COMPLETE
-  rationale: <string>
+  rationale: `string`
   issues:                                    # required for CONDITIONAL and HALT
-    - <string>
-  cycle: <int>                               # escalate to human after 2
+    - `string`
+  cycle: `int`                               # escalate to human after 2
 ```
 
 Committed under `ADR-0018` as amended by `ADR-0029`: actor in

@@ -13,19 +13,23 @@ PARSING_HINTS:
 -->
 
 # Test Review Summary
+
 - Spec: FS-_____
 - Criterion coverage: complete/partial
 - Deterministic: yes/no
 - Too coupled to implementation: yes/no
 
 ## Coverage mapping
-- Missing SC tests: <SC list>
-- Extra tests not tied to SC: <list>
+
+- Missing SC tests: `SC list`
+- Extra tests not tied to SC: `list`
 
 ## Quality concerns
-- Uses real time/network/FS when avoidable: <details>
-- Poor assertions or weak signals: <details>
-- Flaky patterns (randomness, ordering, timing): <details>
+
+- Uses real time/network/FS when avoidable: `details`
+- Poor assertions or weak signals: `details`
+- Flaky patterns (randomness, ordering, timing): `details`
 
 ## Required changes
-1. <action>
+
+1. `action`

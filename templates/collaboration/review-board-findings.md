@@ -136,7 +136,7 @@ which two it did not.
 ## Artifact
 
 Per `FS-0021`, at
-`docs/review-boards/<artifact-id>/<placement>-<timestamp>.yml`, carrying
+`docs/review-boards/`artifact-id`/`placement`-`timestamp`.yml`, carrying
 `seats`, `coverage`, `findings`, and — on gated boards — `gate`.
 
 On a gated board the evaluator checks **the merge, not the artifact

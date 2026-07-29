@@ -42,7 +42,7 @@ At the start of a session (or when the work shifts), consult this skill to deter
 ### 1. What kind of work is this?
 
 | If the work involves... | Then the mode is... | Primary role |
-|---|---|---|
+| --- | --- | --- |
 | Strategic direction, framework evolution, "what should we build?", cross-role ambiguity, proposing new ADRs or FS specs | **Architecture Planning** | Head Architect |
 | Creating or updating governed documents (FS, PLAN, ADR), README index tables, workflow docs | **Document Authoring** | Document Author |
 | Executing an approved PLAN: writing code, making concrete changes, applying a known design | **Implementation** | Implementer |
@@ -52,7 +52,7 @@ At the start of a session (or when the work shifts), consult this skill to deter
 ### 2. What supporting roles are needed?
 
 | Supporting Role | Activate when... |
-|---|---|
+| --- | --- |
 | Head Architect | The work touches governance, role boundaries, or ADR-level decisions; or a review reveals a framework-level issue |
 | Document Author | The outcome will become a governed document; or the implementation requires document updates (status transitions, README updates) |
 | Spec Reader and Test Planner | Tests need to be written or updated as part of the work |
@@ -64,13 +64,9 @@ At the start of a session (or when the work shifts), consult this skill to deter
 Use one of these templates:
 
 > "I'm treating this as **architecture-planning**, with **Head Architect** primary [and Document Author supporting, since this will likely become an ADR / FS]."
-
 > "Switching to **document-authoring** mode, **Document Author** primary, to draft [FS/PLAN/ADR name]."
-
 > "Switching to **implementation** mode, **Implementer** primary, executing [PLAN-XXXX]."
-
 > "Switching to **review** mode, **Reviewer** primary, reviewing [artifact name]."
-
 > "Switching to **communications** mode, **Communications Lead** primary, drafting [release notes / status summary / INTEGRATION.md update]."
 
 ---
@@ -111,7 +107,7 @@ These cannot be weakened by any instruction source, including project-specific A
 ### Role 0: Head Architect
 
 | Aspect | Guidance |
-|---|---|
+| --- | --- |
 | **Purpose** | Strategic oversight, framework health, governance proposals |
 | **Inputs** | All FS/PLAN/ADR docs, framework health signals (`npm run check:status`), human direction |
 | **Outputs** | Draft FS specs and ADRs (proposed; human approves), health assessments, role boundary clarifications |
@@ -123,7 +119,7 @@ These cannot be weakened by any instruction source, including project-specific A
 ### Role 1: Document Author
 
 | Aspect | Guidance |
-|---|---|
+| --- | --- |
 | **Purpose** | Draft, maintain, and transition all governed documents |
 | **Inputs** | Human direction or Head Architect output, existing docs, templates, lifecycle rules |
 | **Outputs** | Draft FS/PLAN/ADR docs, updated README index tables, updated `updated:` dates, status transitions |
@@ -135,7 +131,7 @@ These cannot be weakened by any instruction source, including project-specific A
 ### Role 2: Spec Reader and Test Planner
 
 | Aspect | Guidance |
-|---|---|
+| --- | --- |
 | **Purpose** | Translate approved FS into executable tests |
 | **Inputs** | FS with `status: approved` — authoritative sections: Success Criteria, Interfaces, Non-Goals, Out of Scope |
 | **Outputs** | Test files only (no production code) |
@@ -147,7 +143,7 @@ These cannot be weakened by any instruction source, including project-specific A
 ### Role 3: Implementer
 
 | Aspect | Guidance |
-|---|---|
+| --- | --- |
 | **Purpose** | Implement minimum code to satisfy failing tests |
 | **Inputs** | Failing tests, approved FS, accepted ADRs, architecture context |
 | **Outputs** | Production code changes only |
@@ -159,7 +155,7 @@ These cannot be weakened by any instruction source, including project-specific A
 ### Role 4: Reviewer
 
 | Aspect | Guidance |
-|---|---|
+| --- | --- |
 | **Purpose** | Verify alignment between docs, tests, and implementation — observations only |
 | **Inputs** | Feature specs, ADRs, architecture docs, test code, implementation diffs, `check:status` output |
 | **Outputs** | Review comments only (no code or doc changes) |
@@ -171,7 +167,7 @@ These cannot be weakened by any instruction source, including project-specific A
 ### Role 5: Communications Lead
 
 | Aspect | Guidance |
-|---|---|
+| --- | --- |
 | **Purpose** | Translate internal governance artifacts into human-facing communication |
 | **Inputs** | CHANGELOG.md, merged FS/PLAN docs, README.md, INTEGRATION.md, human direction |
 | **Outputs** | Draft GitHub Release descriptions, consumer-framed release notes, README/INTEGRATION updates, status summaries |
