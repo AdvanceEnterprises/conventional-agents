@@ -31,6 +31,20 @@ if ! command -v bats >/dev/null 2>&1; then
   exit 1
 fi
 
+# Several suites call `rg` (ripgrep) directly, including with -U (multiline) and
+# -A (context), which have no clean POSIX equivalent. Check for it explicitly: a
+# missing rg previously surfaced as every assertion failing with "expected <file>
+# to contain pattern", naming files that plainly contained it, because the helper
+# swallowed the command-not-found error. Fail loudly instead.
+if ! command -v rg >/dev/null 2>&1; then
+  echo "ERROR: 'rg' (ripgrep) is not installed or not on PATH." >&2
+  echo "       Several suites call it directly. Without it, assertions fail with" >&2
+  echo "       misleading 'pattern not found' messages against files that match." >&2
+  echo "       On macOS: brew install ripgrep" >&2
+  echo "       On Debian/Ubuntu: apt-get install ripgrep" >&2
+  exit 1
+fi
+
 # Run every .bats file under test/. Subdirectories are intentional (FS-NNNN/*).
 failures=0
 total=0

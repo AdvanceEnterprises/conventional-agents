@@ -27,9 +27,26 @@ assert_files_equal() {
 assert_file_contains() {
   local path="$1"
   local pattern="$2"
-  # Use fixed-string matching so callers can pass patterns that include regex
-  # metacharacters (e.g., "ADR-*.md") without having to escape them.
-  if ! rg -F -n -- "$pattern" "$path" >/dev/null 2>&1; then
+  # A missing file is a different failure from a missing pattern, and saying so
+  # saves the reader from grepping a file that is not there.
+  #
+  # -r, not -f: callers pass process substitutions (`<(echo "$submodules")`), which
+  # are /dev/fd entries rather than regular files. Readability is the property that
+  # actually matters here.
+  if [[ ! -r "$path" ]]; then
+    echo "expected file to exist (checking for pattern: $pattern): $path"
+    return 1
+  fi
+  # grep -F, not rg. Fixed-string matching so callers can pass patterns containing
+  # regex metacharacters (e.g. "ADR-*.md") without escaping them — but via grep,
+  # which is POSIX and present everywhere.
+  #
+  # This used `rg -F -n -- ... >/dev/null 2>&1`. ripgrep is not installed on stock
+  # GitHub Actions runners, and the redirect swallowed the "command not found"
+  # error, so a missing binary was indistinguishable from a missing pattern. Every
+  # assertion in the suite failed on CI claiming files did not contain strings they
+  # plainly contained. Do not reintroduce a dependency on a non-POSIX tool here.
+  if ! grep -F -q -- "$pattern" "$path"; then
     echo "expected $path to contain pattern: $pattern"
     return 1
   fi
