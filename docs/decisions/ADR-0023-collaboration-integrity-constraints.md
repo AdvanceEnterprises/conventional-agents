@@ -1,7 +1,7 @@
 ---
 type: adr
 id: ADR-0023
-status: proposed
+status: accepted
 decision_scope: architecture
 reversible: yes
 related_specs:
@@ -14,7 +14,7 @@ superseded_by: null
 
 ## Status
 
-- Proposed
+- Accepted
 
 ## Context and Problem Statement
 

@@ -231,11 +231,11 @@ If validation fails:
 | ADR-0016 | Consumer conventions — local adaptations of the framework | accepted |
 | ADR-0017 | Framework vendor directory is internal; consumers must not reference nested submodules | accepted |
 | ADR-0018 | Single-identity workflow with agent co-attribution | accepted |
-| ADR-0019 | Issue Type immutability and the autonomous gate | proposed |
-| ADR-0020 | The `question` label suppresses agent Issue actions | proposed |
-| ADR-0021 | Cron actor identity for unattended agents | proposed |
+| ADR-0019 | Issue Type immutability and the autonomous gate | accepted |
+| ADR-0020 | The `question` label suppresses agent Issue actions | accepted |
+| ADR-0021 | Cron actor identity for unattended agents | accepted |
 | ADR-0022 | Autonomous and consensus are meta-modes, not session modes | accepted |
-| ADR-0023 | Collaboration integrity constraints | proposed |
+| ADR-0023 | Collaboration integrity constraints | accepted |
 | ADR-0024 | Platform-neutral core with shipped bindings | accepted |
 | ADR-0025 | Merge strategy preserves per-commit attribution | accepted |
 | ADR-0026 | Approval is a recorded act | accepted |
