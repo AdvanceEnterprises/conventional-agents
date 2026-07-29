@@ -11,6 +11,7 @@ touches:
   - scripts/check-status.sh
   - scripts/README.md
   - scripts/check-current-state.sh
+  - scripts/run-bats.sh
   - package.json
   - .github/workflows/lint-docs.yml
   - test/FS-0022/gate-coverage.bats

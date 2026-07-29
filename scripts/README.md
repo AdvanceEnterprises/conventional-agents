@@ -190,6 +190,16 @@ passing vacuously."
 - In CI as a separate job (see `lint-docs.yml`).
 - Pre-commit testing gate (when `bats` is installed locally).
 
+**Re-entrancy guard.** The script exports `RUN_BATS_ACTIVE` and refuses to run
+if it is already set. Without it, a suite that invokes this script forks without
+bound — each level re-runs every suite, including the one that invoked it. That
+is not hypothetical: a test exercising the missing-`bats` path sanitised `PATH`
+to `/usr/bin:/bin`, which excludes Homebrew's `bats` on macOS but *includes*
+apt's `/usr/bin/bats` on Linux. It passed locally and exhausted the CI runner.
+
+A test that deliberately exercises this script must opt out explicitly with
+`env -u RUN_BATS_ACTIVE`.
+
 **Install hints** (when `bats` is absent):
 
 - macOS: `brew install bats-core`
