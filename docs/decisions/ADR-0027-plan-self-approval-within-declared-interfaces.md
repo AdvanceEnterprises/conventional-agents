@@ -246,6 +246,28 @@ Path 3 and it is the honest description of it.
 - That the reserved-path list matches the enforcement machinery as it stands at
   acceptance, rather than as it stood when this ADR was drafted.
 
+### The relocation must be surfaced where specs are reviewed
+
+The finding above — that this ADR promotes `interfaces:` from a scoping hint to
+a security boundary — is currently documented only here. An ADR is not what
+someone reads while approving a spec, so a warning that lives only in this
+document will not reach the moment it matters.
+
+Two current-state documents must therefore change **in the same change that
+accepts this ADR**, per `ADR-0030` rule 3:
+
+- **`templates/core/feature-spec.md`** — `interfaces:` is presented as a bare
+  empty list. It needs a note stating that under this ADR the field bounds
+  which change plans may self-approve, so a loosely-drawn `interfaces:` widens
+  agent authority rather than merely describing scope.
+- **`templates/reviewer/spec-review-template.md`** — its checklist asks
+  "Interfaces defined? yes/no", which tests existence rather than tightness.
+  It needs to ask whether they are drawn narrowly enough to serve as an
+  approval boundary.
+
+Both are named in Links below so that `FS-0022`'s rule 3 check catches their
+omission if this ADR is accepted without them.
+
 ## Consequences
 
 ### Positive
@@ -310,5 +332,11 @@ Path 3 and it is the honest description of it.
 - FS-0022: Gate coverage — the governing spec for the `check-status.sh` check this
   ADR requires.
 - `templates/core/change-plan.md`: defines the `touches:` field.
+- `templates/core/feature-spec.md`: presents `interfaces:`, which this ADR turns
+  into an approval boundary. **Must be updated in the change that accepts this
+  ADR** (`ADR-0030` rule 3).
+- `templates/reviewer/spec-review-template.md`: its interfaces check tests
+  existence, not tightness. **Must be updated in the change that accepts this
+  ADR.**
 - `guidelines/ROLE_CONTRACT.md` §"Spec-first rule": requires amendment to admit
   self-approval as a valid route to `status: approved`.
