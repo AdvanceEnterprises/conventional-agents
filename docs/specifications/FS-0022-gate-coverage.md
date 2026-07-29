@@ -14,6 +14,7 @@ interfaces:
   - "docs/change-plans/README.md"
   - "docs/decisions/ADR-0013-multi-model-session-coordination.md"
   - "docs/decisions/ADR-0014-background-task-governance.md"
+  - "roles/ROLE_CONTRACT.md"
   - "test/FS-0022/gate-coverage.bats"
 related_adrs:
   - ADR-0008

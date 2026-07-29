@@ -16,6 +16,7 @@ touches:
   - docs/change-plans/README.md
   - docs/decisions/ADR-0013-multi-model-session-coordination.md
   - docs/decisions/ADR-0014-background-task-governance.md
+  - roles/ROLE_CONTRACT.md
 created: 2026-07-28
 updated: 2026-07-28
 
@@ -93,11 +94,12 @@ verified by the two-PR manual check in §8.
   Validation section (§5a)
 * `docs/decisions/ADR-0014-background-task-governance.md` — add Validation
   section (§5a)
+* `roles/ROLE_CONTRACT.md` (new) — delegating document (§5a)
 
-Deliberately **not** listed, because §5a escalates rather than modifies
-them: `docs/decisions/ADR-0015-*.md`, and the seven documents referencing
-`roles/ROLE_CONTRACT.md`. A plan that declared them in `touches:` would be
-claiming authority it is not exercising.
+Deliberately **not** listed: the seven documents that reference
+`roles/ROLE_CONTRACT.md`. They are correct as written and are fixed by the
+file existing, not by editing them. `ADR-0015` is also absent — its
+Validation section was written in this PR, not by this plan.
 
 ## 5. Implementation Steps (High-Level)
 
@@ -137,29 +139,43 @@ requires before acceptance.
 
 `ADR-0013` and `ADR-0014` are `proposed`; adding one is ordinary drafting.
 
-**`ADR-0015` is `accepted` and needs a human decision**, not an implementer
-judgment. The ADR README permits only Status updates and typo, link, or
-formatting fixes on an accepted ADR. Adding a required section is either a
-permitted compliance fix or a content change, and this plan does not decide
-which. Escalate. If it is a content change, the remedy is a new ADR
-superseding it, not an edit — and that is a materially larger piece of work
-than this plan carries. **Do not edit it and hope.** This PR already made
-that mistake once on this exact document.
+**`ADR-0015` — resolved.** It was `accepted` without a Validation section,
+and adding one to an accepted ADR needed a human call rather than an
+implementer judgment. The maintainer directed it, and the section is written
+in this PR. It carries a note recording that it was added post-acceptance
+and that the decision, drivers, options and consequences are unchanged, so a
+future reader comparing the file against the append-only rule can see why it
+differs. Nothing remains for the implementer here.
 
-**Dangling `roles/ROLE_CONTRACT.md` references — seven documents.**
-`PLAN-0017` deleted that file as a byte-identical duplicate of
-`guidelines/ROLE_CONTRACT.md` and left every reference standing.
+Its Validation §1 depends on this plan: "each executable in `scripts/` is
+registered in `package.json`, described in `scripts/README.md`, and traceable
+to an approved FS" is checkable only once `scripts/README.md` exists and the
+Category 1 check is written. §5 of this plan delivers both.
+
+**`roles/ROLE_CONTRACT.md` — restore the file, do not repoint the
+references.** `PLAN-0017` deleted it as a byte-identical duplicate of
+`guidelines/ROLE_CONTRACT.md`, leaving seven documents pointing at nothing —
 `INTEGRATION.md` alone names it eleven times, once as precedence level 2,
 "cannot be weakened."
 
-`roles/README.md` now describes `roles/` as a customization hook that
-"starts as an empty directory", so the deletion was intended and the
-references are the defect. Repointing them is not mechanical: `README.md`
-says `roles/ROLE_CONTRACT.md` "is the project-customizable copy. Start from
-the template in `guidelines/`", which under the current model is backwards.
-Each of the seven needs reading, and `INTEGRATION.md`'s precedence table
-needs a decision about what occupies level 2. **Escalate rather than
-find-and-replace.**
+The maintainer's direction: the structure `README.md` describes is the
+structure to support. `guidelines/ROLE_CONTRACT.md` is the framework
+template; `roles/ROLE_CONTRACT.md` is the project's contract, started from
+it. The seven references are correct and the missing file is the defect.
+
+**Restore it as a delegating document, not a copy.** A byte-identical
+duplicate is what PLAN-0017 correctly objected to, and reinstating one would
+also violate `ADR-0030` rule 1 — one current statement per rule. Instead
+`roles/ROLE_CONTRACT.md` states that this project adopts the framework
+contract unmodified, names `guidelines/ROLE_CONTRACT.md` as its source, and
+provides the section headings a host repo would extend. That satisfies the
+documented structure, keeps one statement of each rule, and gives consumers
+a worked example of their own `roles/ROLE_CONTRACT.md` rather than an empty
+directory and a paragraph about one.
+
+No reference changes. All seven resolve once the file exists, including
+`INTEGRATION.md`'s precedence level 2, which is then a real document that a
+host repo genuinely customizes.
 
 Documents in `docs/specifications/` and `docs/change-plans/` that reference
 the file historically — FS-0014, FS-0015, PLAN-0014, PLAN-0015, PLAN-0017 —
@@ -203,11 +219,14 @@ corpus being edited.
 
 * **The corpus is expected to fail on first run.** FS-0022 states this and
   §5a sizes it. Do not weaken a check to make the corpus pass.
-* **Two remediation items require escalation, not implementation**:
-  ADR-0015's missing Validation section, and the seven dangling
-  `roles/ROLE_CONTRACT.md` references. Both are judgment calls with
-  governance consequences. An implementer that resolves either
-  unilaterally has exceeded this plan.
+* Both items previously escalated are now resolved by maintainer direction:
+  ADR-0015's Validation section is written, and `roles/ROLE_CONTRACT.md` is
+  restored as a delegating document. Neither remains an open judgment call.
+* **`roles/ROLE_CONTRACT.md` must not become a copy.** The failure mode is
+  re-creating the byte-identical duplicate PLAN-0017 removed, which would
+  restore the drift risk and violate ADR-0030 rule 1. If it can be
+  meaningfully diffed against `guidelines/ROLE_CONTRACT.md` beyond its
+  delegation preamble and headings, it has gone wrong.
 * A per-directory `.markdownlint.yml` with `default: false` is
   indistinguishable from an accidental one. The lint job reports which
   directories are exempt so the set is visible in CI output.
