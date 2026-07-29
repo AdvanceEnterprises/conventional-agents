@@ -15,6 +15,8 @@ interfaces:
   - "CONTRIBUTING.md"
   - "INTEGRATION.md"
   - "test/FS-0022/gate-coverage.bats"
+  - "skills/framework-health-audit/SKILL.md"
+  - "skills/git-gh-workflow/SKILL.md"
 related_adrs:
   - ADR-0008
   - ADR-0015
@@ -24,7 +26,7 @@ supersedes: []
 requires: []
 tags: [quality-gates, ci, enforcement]
 created: 2026-07-28
-updated: 2026-07-28
+updated: 2026-07-29
 ---
 
 <!--

@@ -53,8 +53,35 @@ consumer-impact CHANGELOG entries.
 7. **Consumer-impact CHANGELOG entry.** An FS at `approved` or beyond whose
    `interfaces:` names an exported-surface path (`guidelines/`, `roles/`,
    `skills/`, `templates/`, `workflows/`, `integrations/`, `INTEGRATION.md`,
-   `AGENTS.md`) must have a `CHANGELOG.md` entry naming it. Presence is
-   checked; framing is a review judgment.
+   `AGENTS.md`, `runbooks/`) must have a `CHANGELOG.md` entry naming it.
+   Presence is checked; framing is a review judgment.
+8. **Referenced-path resolution** (`FS-0022` §1c). Every path a current-state
+   document names in backticks must resolve, relative to the repository root
+   or the naming document's own directory.
+
+   *Scope is deliberately narrower than the spec's literal wording, because a
+   literal reading fails on correct documents:*
+
+   - **Current-state documents only** — root `README`/`AGENTS`/`INTEGRATION`/
+     `CONTRIBUTING`, plus `guidelines/`, `roles/`, `skills/`, `templates/`,
+     `workflows/`, `integrations/`, `runbooks/`, `scripts/`. Decision records
+     (ADR, FS, PLAN) describe what was true when written and are append-only
+     after acceptance; checking them would force edits to satisfy a linter.
+     `BACKLOG.md` is excluded for the opposite reason — naming things that do
+     not exist yet is its purpose. `CHANGELOG.md` is a historical record.
+   - **Only tokens containing a directory separator.** A bare `tsconfig.json`
+     or `pnpm-lock.yaml` in a guideline names a file in the *reader's*
+     repository.
+   - Excluded per `FS-0022` §1c: `vendor/` (uninitialised submodule),
+     `docs/orchestration/` (preserved evidence), and paths an approved PLAN's
+     `touches:` declares as to-be-created.
+   - `REF_EXEMPT` in the script covers what none of the above can: a path the
+     framework tells a consumer to create in *their* repo is syntactically
+     identical to a reference to one of ours. Entries carry a reason; a bats
+     assertion fails if one does not.
+
+   A failure means a reader following the document looks for a file that is
+   not there. Fix the reference, not the check.
 
 **What it does NOT check.**
 

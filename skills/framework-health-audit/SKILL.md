@@ -18,10 +18,10 @@ Encodes the conventional-agents status consistency check, document hygiene gate,
 ## Source Documents
 
 - `scripts/check-status.sh` — the status consistency check script
-- `docs/specifications/FS-0013.md` — status consistency check spec
+- `docs/specifications/FS-0013-status-consistency-check.md` — status consistency check spec
 - `roles/ROLE_CONTRACT.md` — document hygiene gate (7-item checklist)
 - `workflows/document-lifecycle.md` — status transition rules
-- `docs/decisions/ADR-0012.md` — non-overridable safety gates
+- `docs/decisions/ADR-0012-non-overridable-gates.md` — non-overridable safety gates
 
 ## Purpose
 
