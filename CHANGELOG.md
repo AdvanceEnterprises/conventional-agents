@@ -29,9 +29,19 @@ Per reviewer feedback on the bootstrap package:
   justification was incorrect and has been corrected.
 - Per-directory lint exemptions removed. The `markdownlint --fix` chain
   auto-fixed 452 of 455 violations in the widened corpus; the remaining 3 are
-  content issues fixed by hand (added H1 to INTEGRATION.md and ROLE_CONTRACT.md
-  for `MD041`; replaced HTML placeholders with backtick text in templates).
+  content issues fixed by hand (added H1 to `roles/ROLE_CONTRACT.md` for
+  `MD041`; replaced HTML placeholders with backtick text in templates).
   Lint coverage now actually catches drift instead of hiding it.
+- `INTEGRATION.md` fenced and re-linted, closing the last lint exclusion. The
+  document had never used code fences, so its shell commands and its embedded
+  example `AGENTS.md` files were parsing as markdown headings — 165 violations
+  that `markdownlint --fix` could not fix and in fact made worse by splitting
+  contiguous shell scripts. Code regions are now fenced (`bash`, `text`,
+  `yaml`), the bare-prose section titles are real headings, and the
+  tab-delimited pseudo-table under "Detailed precedence" is a markdown table.
+  Prose is unchanged: 388 content lines before and after, verified by diffing
+  token streams with markup stripped. `lint:roots` no longer excludes it, and
+  all six root files lint clean with no rule exemptions.
 - FS-0018/19/20/21 `interfaces:` reverted to their pre-`dddb25c` state. The
   four files added to FS-0020's interfaces (README.md, AGENTS.md,
   INTEGRATION.md, CHANGELOG.md) are removed; `PLAN-0020` and `PLAN-0021`
