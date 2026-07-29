@@ -118,57 +118,6 @@ consensus is off, but it cannot relax the different-models requirement.
 - **Not a gate that bypasses `ADR-0012`.** A passing consensus round does not authorize a
   merge. Merging remains human-gated.
 
-## Review boards (optional, FS-0021)
-
-The review board is the second of the framework's two multi-model collaboration modes. It is
-defined by `FS-0021` and configured by a consumer-copy template at
-[`config/review-board.yml`](./config/review-board.yml). Like consensus, it ships
-**disabled** at the framework level and is unused by the framework's own evolution.
-
-A review board examines one artifact from **different role stances** and merges findings
-rather than comparing them for agreement. A board with seats all in the same role stance
-is a consensus round wearing the wrong name — see `ADR-0023` Constraint 1 and the
-`min_roles: 2` floor in the config template.
-
-### What a board is
-
-- A set of seats, each pairing a model identifier with a role stance from
-  `guidelines/ROLE_CONTRACT.md`.
-- At least two distinct models (`min_models: 2`).
-- At least two distinct role stances (`min_roles: 2`).
-- A **merged** findings set where disagreements are *preserved*, not averaged.
-
-### What a board is not
-
-- **Not a consensus round.** Consensus compares outputs for agreement; a board preserves
-  disagreement as information.
-- **Not a verdict.** A board does not approve, transition, or merge. A finding of severity
-  `blocking` is advisory — the Reviewer or primary dispositions it.
-- **Not a gate.** `ADR-0012`'s merge gate is independent. Boards may report that a change
-  looks ready; a human still merges it.
-
-### Opting in
-
-1. **Copy** `config/review-board.yml` from the framework into the consumer repo's
-   project root.
-2. **Set `review_board.enabled: true`**.
-3. **Configure `seats`** with at least two entries. Each entry pairs `model:` and `role:`.
-   Seats with the same model in different role stances do **not** satisfy the
-   different-models requirement — distinct models are required regardless of stance.
-4. **Wire** the consumer's machinery to invoke seats, merge findings, and write the
-   artifact at `docs/review-boards/<artifact-id>/<placement>-<timestamp>.yml`.
-
-The framework does not implement orchestration. The config template is read by the
-consumer's machinery, not by the framework.
-
-### Gate independence
-
-Per `ADR-0023` Constraint 3, a board's gate evaluator (when one is invoked) MUST NOT have
-filled a seat in that board. The config template does **not** include an override flag for
-this — there is no `--allow-gate-overlap` setting. When no independent evaluator is
-available, the board runs synthesis-only and records that, rather than seating an
-overlapping evaluator.
-
 ## SDLC workflow selection (FS-0020)
 
 The framework ships two SDLC workflows that traverse the same seven-phase spine:
