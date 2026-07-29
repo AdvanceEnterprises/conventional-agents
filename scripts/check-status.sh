@@ -570,6 +570,7 @@ EXPORTED_PREFIXES=(
   "templates/"
   "workflows/"
   "integrations/"
+  "runbooks/"
   "INTEGRATION.md"
   "AGENTS.md"
 )

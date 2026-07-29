@@ -44,6 +44,7 @@ the framework is recursive.
 | `templates/` | FS / ADR / PLAN / review scaffolds |
 | `workflows/` | Process docs usable in any repo |
 | `integrations/` | Substrate bindings — platform mappings per ADR-0024 |
+| `runbooks/` | Operational procedures recorded as performed per FS-0023 |
 | `INTEGRATION.md` | How to integrate and precedence rules |
 | `AGENTS.md` | Agent briefing surface for this repo |
 
