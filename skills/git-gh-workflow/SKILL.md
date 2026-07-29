@@ -73,12 +73,13 @@ The framework recommends three GitHub identities for projects that have
 separate human and agent operators:
 
 | Identity | Purpose |
-|---|---|
+| --- | --- |
 | **Human account** | Interactive ownership, administration, merging |
 | **Agent-committer account** | Opens PRs, authors code commits |
 | **Agent-reviewer account** | Authors reviews and comments |
 
 Rules:
+
 - PRs created by agents MUST be authored by the agent identity (not the human).
 - Commit signing ("Verified") is nice-to-have, not required.
 - Git commit author identity (`user.name` / `user.email`) and GitHub PR/review identity (`gh auth status`) are separate concepts.
@@ -155,7 +156,7 @@ forward-compatibility notes.
 ## Defaults
 
 | Setting | Value |
-|---|---|
+| --- | --- |
 | Default branch | `trunk` |
 | Canonical remote | `origin` |
 | Merge strategy | Squash-merge |
@@ -197,7 +198,7 @@ git pull --ff-only origin trunk
 Use these prefixes:
 
 | Prefix | Use |
-|---|---|
+| --- | --- |
 | `feat/` | User-visible or functional change |
 | `fix/` | Bug fix |
 | `docs/` | Documentation-only |
@@ -214,7 +215,7 @@ git switch -c feat/<short-slug>
 Use Conventional Commits (lite):
 
 | Type | Use |
-|---|---|
+| --- | --- |
 | `feat:` | New feature |
 | `fix:` | Bug fix |
 | `docs:` | Documentation |
@@ -226,7 +227,7 @@ Optional scope: `feat(api): ...`
 
 **Commit body (agents):** Include a useful body unless the change is truly trivial:
 
-```
+```text
 Why: intent / context
 What: high-level summary
 Risk: what could break
@@ -260,7 +261,7 @@ gh pr create --fill --draft
 
 **PR body template (agents):**
 
-```
+```text
 Summary:
 Context / Why:
 Changes:
@@ -287,7 +288,7 @@ git push --force-with-lease
 
 **PR update comment (agents):** After pushing follow-up commits (especially in response to review feedback), add a PR comment summarizing:
 
-```
+```text
 Addressed review feedback:
 - ✅ ITEM_1
 - ✅ ITEM_2
@@ -385,7 +386,7 @@ gh pr status
 ### Semantic Versioning by Project Type
 
 | Project Type | Major (breaking) | Minor (feature) | Patch (fix) |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | **Libraries** | Removing/renaming public exports, changing signatures | Adding new exports, optional params | Bug fixes, internal refactors |
 | **Services/APIs** | Removing endpoints, changing response shapes | Adding new endpoints, optional fields | Bug fixes, perf improvements |
 | **Doc/Standards Kits** | Removing/renaming exported files, changing vendored mount path | New guidelines, workflows, templates, skills | Typo fixes, clarifications |
@@ -400,7 +401,7 @@ Follow Keep a Changelog format (<https://keepachangelog.com>). This framework us
 Sections (use only those that apply per release):
 
 | Section | Use |
-|---|---|
+| --- | --- |
 | **Added** | New features or capabilities |
 | **Changed** | Changes to existing functionality |
 | **Deprecated** | Features that will be removed in a future release |
@@ -409,6 +410,7 @@ Sections (use only those that apply per release):
 | **Security** | Vulnerability fixes |
 
 **Ownership:**
+
 - Changelogs are **human-curated**, not auto-generated from commits.
 - Agents MAY append entries to the `[Unreleased]` section when explicitly instructed during feature work.
 - Humans review and finalize changelog entries as part of the release decision.
@@ -428,7 +430,7 @@ Sections (use only those that apply per release):
 ### Agent-Safe vs Human-Gated Actions
 
 | Action | Agent-safe? | Notes |
-|---|---|---|
+| --- | --- | --- |
 | Draft changelog entries | Yes (when instructed) | Append to `[Unreleased]` only |
 | Bump minor/patch version | Yes (when instructed) | Release-prep PRs only |
 | Bump major version | **No** | Requires human approval |
