@@ -11,6 +11,9 @@ interfaces:
   - "package.json"
   - ".github/workflows/lint-docs.yml"
   - "docs/specifications/README.md"
+  - "docs/change-plans/README.md"
+  - "docs/decisions/ADR-0013-multi-model-session-coordination.md"
+  - "docs/decisions/ADR-0014-background-task-governance.md"
   - "test/FS-0022/gate-coverage.bats"
 related_adrs:
   - ADR-0008
@@ -73,7 +76,11 @@ one.
 
 ## Goals
 
-- Extend `check-status.sh` to validate the ADR index against ADR files.
+- Extend `check-status.sh` to validate the ADR index against ADR files, and
+  to compare titles and statuses in the FS and PLAN indexes.
+- Check ADR structural completeness, including the Validation section
+  `docs/decisions/README.md` requires before acceptance.
+- Check that every path a governed document names actually resolves.
 - Implement `ADR-0027`'s PLAN self-approval check: `touches:` containment
   against the governing FS's `interfaces:`, plus the reserved-path set.
 - Implement `ADR-0030` rule 3 as a CI check: an ADR that changes a rule
@@ -126,6 +133,54 @@ status. The audit that motivated this spec resolved one column each way
 because the index had recorded a merge the files missed — that was a
 one-time reconciliation of historical drift, not a rule. Going forward the
 file is authoritative for both, and the index is generated from it.
+
+### 1a. FS and PLAN index consistency
+
+The same four assertions as §1, applied to `docs/specifications/README.md`
+and `docs/change-plans/README.md`. The existing check validates that rows
+exist; it does not compare titles or statuses.
+
+An audit during this spec's drafting found **15 of 22** FS index rows
+carrying titles that differ from their front matter. Unlike the ADR index,
+these are consistent abbreviations of real titles rather than fabrications
+— a lower-severity class, and one that only stays lower-severity while
+something checks it.
+
+### 1b. ADR structural completeness
+
+`docs/decisions/README.md` §2 requires an ADR to carry Context and Problem
+Statement, Considered Options, Decision Outcome, Consequences, and
+Validation before it may move to `accepted`. Nothing checks this.
+
+`ADR-0013`, `ADR-0014`, and `ADR-0015` have no Validation section.
+`ADR-0015` is `accepted` without one.
+
+The check verifies all five sections are present, and reports an ADR at
+`accepted` missing any of them as a distinct, higher-severity failure.
+
+### 1c. Referenced-path resolution
+
+Every path a governed document names in backticks — `.md`, `.sh`, `.yml`,
+`.json`, `.py`, `.bats` — must resolve, relative to the repository root or
+to the naming document's own directory.
+
+This catches the class of defect that motivated adding it. `PLAN-0017`
+deleted `roles/ROLE_CONTRACT.md` as a byte-identical duplicate of
+`guidelines/ROLE_CONTRACT.md` and did not remove the references. Seven
+documents still point at it, including `README.md`, `INTEGRATION.md`, and
+three skills — and `INTEGRATION.md` lists it eleven times, once as
+precedence level 2, "cannot be weakened." A consumer following the
+documented integration path looks for a file that is not there.
+
+Exclusions, which the check must honour rather than the corpus being
+edited to satisfy it:
+
+- `docs/orchestration/multi-model-pilot-001/` — preserved evidence whose
+  references are to the branch context it came from.
+- Paths a `touches:` field declares as *to be created* by an approved PLAN.
+- Uninitialised submodule contents. `vendor/madr/` is a submodule; its
+  files are absent until `git submodule update --init` and that is not
+  drift.
 
 ### 2. PLAN self-approval check (`ADR-0027`)
 
@@ -202,6 +257,31 @@ explanation of what it wanted is a gate people work around.
   non-zero.
 - Given an index row naming a file that does not exist, when the check
   runs, then it exits non-zero.
+
+**FS and PLAN indexes**:
+
+- Given an FS whose front-matter title differs from its index row, when
+  the check runs, then it exits non-zero naming the FS.
+- Given a PLAN with no index row, when the check runs, then it exits
+  non-zero.
+
+**ADR structure**:
+
+- Given an ADR missing any of the five required sections, when the check
+  runs, then it exits non-zero naming the ADR and the missing section.
+- Given an ADR at `accepted` missing a required section, when the check
+  runs, then the failure is reported at higher severity than the same
+  omission on a `proposed` ADR.
+
+**Referenced paths**:
+
+- Given a governed document naming a path that resolves neither from the
+  repository root nor from its own directory, when the check runs, then it
+  exits non-zero naming the document and the path.
+- Given a path under `docs/orchestration/multi-model-pilot-001/`, when the
+  check runs, then it is not reported.
+- Given a path declared in an approved PLAN's `touches:` and not yet
+  created, when the check runs, then it is not reported.
 
 **PLAN self-approval**:
 
