@@ -53,11 +53,15 @@ without reading twelve ADRs to find their Consequences sections.
 
 Remove each entry as its PLAN absorbs it.
 
-**These require their own FS before implementation.** `ADR-0015` — accepted — requires
-an approved FS and PLAN before any governance gate is written or modified, and
-`ADR-0027` reserves `scripts/`, `.github/workflows/`, and `package.json` as
-always-human-approval paths. The gate work below cannot be folded into PLAN-0018 or
-PLAN-0019 as incidental scope.
+**Governed by `FS-0022`.** `ADR-0015` requires an approved FS and PLAN before any
+governance gate is written or modified, and `ADR-0027` reserves `scripts/`,
+`.github/workflows/`, and `package.json` as always-human-approval paths — so this work
+could not be folded into PLAN-0018 or PLAN-0019 as incidental scope. `FS-0022` is that
+spec, and it extends `FS-0013` and `FS-0005` rather than starting fresh: both are
+`implemented`, and both describe purposes broader than what they actually cover.
+
+The entries below are retained as the audit that produced `FS-0022`. They are
+superseded by its Behavior section and should be removed once PLAN-0022 exists.
 
 ### Gate coverage — `scripts/check-status.sh`
 

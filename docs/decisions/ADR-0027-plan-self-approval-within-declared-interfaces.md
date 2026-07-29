@@ -6,6 +6,7 @@ decision_scope: workflow
 reversible: yes
 related_specs:
   - FS-0018
+  - FS-0022
 superseded_by: null
 ---
 
@@ -218,6 +219,8 @@ it would have failed here.
   agent-reachable on any substrate, which is why Option C was rejected.
 - FS-0018: Issue lifecycle and autonomous triggers — Path 3 is the workflow this ADR
   makes viable.
+- FS-0022: Gate coverage — the governing spec for the `check-status.sh` check this
+  ADR requires.
 - `templates/core/change-plan.md`: defines the `touches:` field.
 - `guidelines/ROLE_CONTRACT.md` §"Spec-first rule": requires amendment to admit
   self-approval as a valid route to `status: approved`.

@@ -85,6 +85,32 @@ The idea of tracking decisions via status (proposed, accepted, deprecated, super
   - Set `status: proposed`.
   - Open a PR that contains only the ADR (preferred), or the ADR plus minimal supporting context.
 
+### 1a. Decide whether the ADR needs a governing Feature Spec
+
+An ADR records a decision. Whether that decision also needs an FS depends on what it
+obliges someone to build.
+
+| The ADR implies | Needs a governing FS? |
+| --- | --- |
+| A convention, followed by people and agents | **No.** Update the current-state document that carries the rule (ADR-0030 rule 3) and the ADR is discharged. |
+| Code — a script, a CI job, a check, a generator | **Yes.** Write the FS before the code. |
+
+The second row is not optional style. `ADR-0015` requires an approved FS and PLAN
+before any governance gate is written or modified, and `ADR-0027` reserves `scripts/`,
+`.github/workflows/`, and `package.json` as always-human-approval paths. An ADR that
+decides a check should exist has not authorized anyone to write it.
+
+Worked examples from this repository:
+
+- `ADR-0025` chose rebase-merge. A convention. Updating
+  `workflows/git-and-gh-conventions.md` discharged it completely; no FS.
+- `ADR-0027` decided a plan self-approves when its `touches:` is contained. That
+  implies a check in `scripts/check-status.sh`. It needs a governing FS, and got one
+  in `FS-0022` — after the fact, which is the mistake this section exists to prevent.
+
+Populate `related_specs:` with the governing FS when there is one. An ADR implying
+code with an empty `related_specs:` is the shape of this error.
+
 ### 2. Move Proposed to Accepted
 
 An ADR can move to `accepted` when:
