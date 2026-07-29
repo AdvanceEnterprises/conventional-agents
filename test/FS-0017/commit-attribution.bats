@@ -7,11 +7,18 @@ setup() {
 }
 
 # Known actor emails for this repository. Update this list when adding
-# new actors or rotating aliases. See ADR-0018.
+# new actors or rotating aliases.
+#
+# The authoritative list is the actor table in
+# workflows/git-and-gh-conventions.md §"The convention" — the current-state
+# document for ADR-0018 as amended by ADR-0029. This array must stay in sync
+# with it; it drifted once already, failing a legitimate commit because an
+# actor documented there was missing here.
 ACTOR_EMAILS=(
   "taisden@tais-den.dev"
   "hermes-agent@tais-den.dev"
   "codex@tais-den.dev"
+  "claude-code@tais-den.dev"
   "ajoeofalltrades@users.noreply.github.com"
 )
 

@@ -305,6 +305,29 @@ standards and lost track of one. Its second-highest quality goal is Tool Neutral
 inventing — but only if the tracking is recorded. An adopted standard with no reference
 entry is the same class of gap as a rule with no ADR.
 
+### `INTEGRATION.md` has no code fences
+
+165 markdownlint violations, and they are **not** whitespace. The document has never
+used code fences, so its shell commands and example `AGENTS.md` contents are parsed as
+markdown: `# 1) Add submodule` is a heading, `# Agent Instructions` inside a
+`cat > AGENTS.md << 'EOF'` block is a heading, and so on. Running
+`markdownlint --fix` on it makes the document worse — it inserts blank lines between
+lines that were a contiguous shell script.
+
+`PLAN-0022` §5a characterised this as "mechanical whitespace, no prose changes,
+`markdownlint --fix` handles all three rule classes." That was wrong, and it was
+written before anyone opened the file.
+
+`INTEGRATION.md` is therefore excluded by name from `lint:roots` in `package.json`,
+with the reason recorded in `.markdownlint.yml`. Every other root file and every
+exported directory now lints clean against the original root config with **no rule
+exemptions at all**.
+
+**What closing it requires:** fence the shell blocks and the embedded example files.
+That is a content change to a consumer-facing document — deciding which blocks are
+code and which are prose — not a formatting pass, and it deserves its own change
+rather than riding along with a lint fix.
+
 ### `docs/ARC42.md` is stale
 
 - `status: Draft`, `last_updated: 2026-07-12`.
