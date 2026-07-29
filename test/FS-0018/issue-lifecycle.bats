@@ -27,9 +27,9 @@ ALLOWED_MODES=(
   "review-board"
 )
 
-@test "FS-0018 exists with draft status" {
+@test "FS-0018 exists with approved status" {
   assert_file_exists "$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md"
-  assert_file_contains "$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md" "status: draft"
+  assert_file_contains "$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md" "status: approved"
 }
 
 @test "FS-0018 declares three-axis work item schema" {
