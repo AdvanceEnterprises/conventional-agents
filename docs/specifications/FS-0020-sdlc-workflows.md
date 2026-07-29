@@ -45,9 +45,12 @@ PARSING_HINTS:
 
 ## Plan Status
 
-- No PLAN drafted. PLAN-0020 follows approval, per
-  `workflows/document-lifecycle.md`. The two workflow documents this spec
-  governs are authored during that plan's execution, not here.
+- **PLAN-0020 drafted** (`status: draft`). `workflows/document-lifecycle.md`
+  places PLAN creation at "initial creation" and constrains only its
+  *approval*: a PLAN may not reach `approved` while its FS is `draft`.
+  Drafting alongside is permitted.
+- The two workflow documents this spec governs are authored during
+  PLAN-0020's execution, not here.
 
 ## Summary
 

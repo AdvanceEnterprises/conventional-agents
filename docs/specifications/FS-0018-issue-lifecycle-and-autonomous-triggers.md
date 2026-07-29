@@ -47,9 +47,10 @@ PARSING_HINTS:
 ## Plan Status
 
 - **Drafted as PLAN-0018** (`status: draft`), as part of the PR #71
-  bootstrap package. This is a deliberate, one-time departure from
-  the usual ordering in `workflows/document-lifecycle.md`, where
-  PLANs are drafted after the FS is approved. PLAN-0018 cannot be
+  bootstrap package. This is not a departure from
+  `workflows/document-lifecycle.md`, which places PLAN creation at
+  "initial creation" and constrains only approval — a PLAN may not
+  reach `approved` while its FS is `draft`. PLAN-0018 cannot be
   approved until this FS is approved; its Readiness Check records
   that dependency.
 - **Cron identity precondition — resolved.** Path 3 (autonomous work
