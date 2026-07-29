@@ -81,6 +81,7 @@ one.
 - Check ADR structural completeness, including the Validation section
   `docs/decisions/README.md` requires before acceptance.
 - Check that every path a governed document names actually resolves.
+- Check that a spec touching exported surface has a CHANGELOG entry naming it.
 - Implement `ADR-0027`'s PLAN self-approval check: `touches:` containment
   against the governing FS's `interfaces:`, plus the reserved-path set.
 - Implement `ADR-0030` rule 3 as a CI check: an ADR that changes a rule
@@ -182,6 +183,23 @@ edited to satisfy it:
   files are absent until `git submodule update --init` and that is not
   drift.
 
+### 1d. Consumer-impact declaration
+
+`docs/specifications/README.md` requires a consumer-framed CHANGELOG entry for
+any spec whose `interfaces:` names an exported-surface path — `guidelines/`,
+`roles/`, `skills/`, `templates/`, `workflows/`, `integrations/`,
+`INTEGRATION.md`, or `AGENTS.md`.
+
+The derivable half is checkable and the framing half is not. The check
+verifies that a spec at `approved` or beyond whose `interfaces:` names an
+exported path has *some* CHANGELOG entry naming it. Whether that entry is
+written for a consumer or merely mentions the spec ID is a judgment a script
+cannot make, and the check must not pretend otherwise — it reports presence,
+and review judges framing.
+
+A check that claimed to verify framing would be worse than none, because it
+would license "ADR-0029 landed" as a passing entry.
+
 ### 2. PLAN self-approval check (`ADR-0027`)
 
 For any PLAN with `status: approved`:
@@ -282,6 +300,14 @@ explanation of what it wanted is a gate people work around.
   check runs, then it is not reported.
 - Given a path declared in an approved PLAN's `touches:` and not yet
   created, when the check runs, then it is not reported.
+
+**Consumer impact**:
+
+- Given a spec at `approved` or beyond whose `interfaces:` names an
+  exported-surface path, when the check runs and `CHANGELOG.md` contains no
+  entry naming that spec, then it exits non-zero.
+- Given a spec whose `interfaces:` names only internal paths, when the check
+  runs, then no consumer-impact failure is reported.
 
 **PLAN self-approval**:
 

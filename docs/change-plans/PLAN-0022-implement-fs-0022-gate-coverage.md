@@ -36,6 +36,8 @@ updated: 2026-07-28
 * Extend the same title/status comparison to the FS and PLAN indexes.
 * Check ADR structural completeness, including the Validation section.
 * Check that every path a governed document names resolves.
+* Check that a spec touching exported surface has a CHANGELOG entry naming
+  it — presence only; framing is a review judgment, not a script's.
 * **Remediate what the new checks find** — see §5a. FS-0022 defers this to
   PLAN work and this is that plan.
 * Add the PLAN self-approval check: `touches:` containment against the
@@ -76,6 +78,8 @@ updated: 2026-07-28
   * `test_npm_test__runs_all_suites`
   * `test_npm_test__missing_bats_fails_loudly`
   * `test_scripts_readme__documents_every_check`
+  * `test_consumer_impact__exported_interfaces_require_changelog_entry`
+  * `test_consumer_impact__internal_only_spec_not_flagged`
 
 Rule 3 (§3 of the spec) is CI-only and has no bats coverage; it is
 verified by the two-PR manual check in §8.
