@@ -225,8 +225,8 @@ If validation fails:
 | ADR-0010 | Use Custom Change Plan Template Instead of Open Source Alternative | accepted |
 | ADR-0011 | Adopt multi-identity GitHub model (human + agent-committer + agent-reviewer) | accepted |
 | ADR-0012 | Introduce non-overridable gates ("super-gates") in ROLE_CONTRACT | accepted |
-| ADR-0013 | Multi-model session coordination model | proposed |
-| ADR-0014 | Background task governance | proposed |
+| ADR-0013 | Multi-model session coordination model | accepted |
+| ADR-0014 | Background task governance | accepted |
 | ADR-0015 | Tool taxonomy and introduction process | proposed |
 | ADR-0016 | Consumer conventions — local adaptations of the framework | accepted |
 | ADR-0017 | Framework vendor directory is internal; consumers must not reference nested submodules | accepted |
