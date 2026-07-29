@@ -3,6 +3,7 @@ type: change-plan
 role: implementer
 language: markdown
 status: approved
+approved_by: "Joey Clark <taisden@tais-den.dev>"
 related_specs: [FS-0019, FS-0018]
 related_adrs: [ADR-0023, ADR-0022, ADR-0018, ADR-0012]
 touches:
