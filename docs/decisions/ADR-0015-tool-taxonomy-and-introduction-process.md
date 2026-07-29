@@ -122,13 +122,6 @@ it. "It lives under `skills/`" is not an exemption from governance gate requirem
 **Responsible role**: Implementer (Role 3) for writing and modifying gate scripts.
 Head Architect (Role 0) for proposing new gates via FS.
 
-**Reinforced by `ADR-0027`.** That ADR reserves `scripts/`, `.github/workflows/`, and
-`package.json` as paths a PLAN may never self-approve, for the reason given there: an
-agent that can self-approve a change to the check that would have caught it has
-defeated the check. The two rules meet at the same place from opposite directions —
-this ADR requires a spec before a gate is written, and ADR-0027 requires a human before
-a plan touching one is approved.
-
 ---
 
 ### Category 2: Productivity skills
@@ -206,23 +199,6 @@ invocation, web fetch).
 ADR. Implementer (Role 3) for integrating platform tools into workflow documents.
 
 ---
-
-### The taxonomy is not closed
-
-Three categories cover the tools this framework had when the taxonomy was written. At
-least one known class does not fit cleanly: **MCP servers**, which supply capabilities
-to an agent at runtime without being CI-invoked (Category 1), without living in
-`skills/` (Category 2), and without being a coordination primitive the framework
-decides (Category 3).
-
-That gap is recorded in `BACKLOG.md` rather than resolved here, because slotting a
-class in is cheaper once the workflows consuming it are settled. A reader should treat
-the three categories as covering what exists, not as an exhaustive partition of what
-could.
-
-When a tool does not fit, the correct response is to say so and propose a category —
-not to force it into the nearest one. Miscategorisation carries real consequences: a
-tool filed as Category 2 escapes the FS requirement that Category 1 imposes.
 
 ### Tool category summary
 

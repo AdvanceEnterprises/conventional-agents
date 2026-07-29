@@ -162,6 +162,11 @@ matching `ADR-0015`'s existing structure; determine whether an MCP server's auth
 is bounded by the session's role, by `ADR-0014`'s background-task rules, or by
 something new.
 
+Miscategorisation has a concrete cost, so the answer should not be "nearest fit": a
+tool filed as Category 2 escapes the approved-FS requirement Category 1 imposes.
+Whatever the answer, it needs a new ADR — `ADR-0015` is accepted and append-only, so
+the taxonomy cannot be widened by editing it.
+
 ### Model provider guidance
 
 A spec covering how models are selected for collaboration rounds, how
