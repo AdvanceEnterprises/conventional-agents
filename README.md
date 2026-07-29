@@ -154,8 +154,10 @@ See `skills/index.md` for the full catalog.
 
 Reusable scaffolds for common activities:
 
-- **Core**: feature specs, ADRs, architecture docs, change plans
+- **Core**: feature specs, ADRs, architecture docs, change plans, runbooks (`FS-0023`)
 - **Reviewer**: PR review, spec review, test review templates
+- **Collaboration**: contributor prompt, gate, consensus synthesis, and review-board
+  findings for the `consensus` and `review-board` meta-modes (`FS-0019`, `FS-0021`)
 - **Python Tests**: unit test, integration test, test configuration templates
 
 See `templates/` directory.
@@ -286,6 +288,7 @@ authoritative full specifications are available at the URLs below.
 - **Keep a Changelog** — [keepachangelog.com](https://keepachangelog.com/) (framework subset in `workflows/versioning-and-releases.md`)
 - **MADR** — [adr.github.io/madr](https://adr.github.io/madr/) (template adapted in `templates/core/adr-full-madr.md`)
 - **arc42** — [arc42.org](https://arc42.org/) (structure adapted in `docs/ARC42.md`)
+- **Agent Skills** — [agentskills.io/specification](https://agentskills.io/specification) (format adopted for every `skills/*/SKILL.md`; framework profile differs from the spec at `version`/`author`/`platforms` field placement — see BACKLOG)
 
 Recommended reading:
 
@@ -297,4 +300,4 @@ MIT License. See [LICENSE](./LICENSE) for details.
 
 ---
 
-**Framework Version:** 2.1.0 | **Last Updated:** 2026-07-27
+**Framework Version:** 2.1.0 | **Last Updated:** 2026-07-29
