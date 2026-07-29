@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0021
-status: draft
+status: approved
 title: Review board collaboration mode
 owner: ajoeofalltrades
 test_required: true
@@ -37,11 +37,11 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Approved
 
 ## Plan Status
 
-- **PLAN-0021 drafted** (`status: draft`). `workflows/document-lifecycle.md`
+- **PLAN-0021 is `approved`**, approved in the same session as this FS. `workflows/document-lifecycle.md`
   places PLAN creation at "initial creation" and constrains only its
   *approval*: a PLAN may not reach `approved` while its FS is `draft`.
 
