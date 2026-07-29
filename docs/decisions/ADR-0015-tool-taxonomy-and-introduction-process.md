@@ -255,6 +255,46 @@ makes both muddier.
   scripts, shell scripts, and Node scripts are all valid as long as they meet the
   category's interface requirements.
 
+## Validation
+
+Added after acceptance at the maintainer's direction, to satisfy
+`docs/decisions/README.md` §2's requirement that every ADR carry a Validation
+section. The decision, drivers, options and consequences above are unchanged.
+
+We will consider this decision successful if:
+
+1. **Every Category 1 tool satisfies its introduction requirements.** Each
+   executable in `scripts/` is registered as a named script in `package.json`,
+   described in `scripts/README.md`, and traceable to an approved FS. Checkable
+   directly; `FS-0022` specifies the check.
+2. **The location invariant holds.** No executable invoked by CI as a blocking
+   check lives outside `scripts/`, and none is wrapped in a way that hides its
+   status as a governance gate. Verifiable by reading the workflow files against
+   the directory.
+3. **Every Category 2 skill is discoverable.** Each directory under `skills/`
+   contains a `SKILL.md` and appears in `skills/index.md`, with the index row
+   matching the skill's stated purpose.
+4. **Category boundaries are declared, not inferred.** A tool introduced after
+   acceptance names its category in the FS or PR that introduces it. A tool whose
+   category has to be worked out by a reader was introduced without this ADR
+   being applied.
+5. **Graduation is governed.** A skill promoted into CI as a blocking check
+   acquires an approved FS and PLAN for that promotion, rather than arriving as a
+   workflow edit.
+
+**Review checkpoint:** when a tool is proposed that fits none of the three
+categories. MCP servers are the known instance — CI-invoking nothing, living
+outside `skills/`, and not a coordination primitive the framework decides. That
+case is recorded in `BACKLOG.md` and needs a new ADR, since this one is accepted
+and the taxonomy cannot be widened by editing it.
+
+**Failure condition:** if tools are observed filed as Category 2 that meet
+Category 1's definition, the taxonomy is being used to escape the approved-FS
+requirement rather than to describe the tool. Miscategorisation is not cosmetic:
+Category 2 imposes no FS gate, so a governance gate filed as a skill is a check
+that entered CI without architectural review. Treat any instance as a governance
+incident rather than a filing error.
+
 ## Links
 
 - ADR-0001: Cross-tool portable skills as SKILL.md (established the `SKILL.md`
