@@ -61,5 +61,6 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0017 | Single-identity commit attribution with model, role, and session metadata | implemented |
 | FS-0018 | Work item lifecycle and autonomous triggers for governed work | draft |
 | FS-0019 | Multi-model consensus at workflow gates (optional consumer feature) | draft |
+| FS-0020 | SDLC workflows — single-model and multi-model | draft |
 | FS-0021 | Review board collaboration mode | draft |
 | FS-0022 | Gate coverage — extend consistency, lint, and test enforcement to the whole corpus | draft |

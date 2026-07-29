@@ -241,7 +241,8 @@ documented rather than assumed.
 - **Signal:** `integrations/github-issues-projects.md` maps all six core capabilities,
   with no capability marked deferred or planned.
 - **Signal:** specifications built on this core reference capabilities rather than
-  platform mechanisms. FS-0021 satisfies this; FS-0020 is pending.
+  platform mechanisms. FS-0020 and FS-0021 both satisfy this — neither contains a
+  platform noun.
 - **Review checkpoint:** when a second binding is first proposed. If extracting it
   requires changing core capabilities, the core was under-generalized and this ADR's
   ordering rule needs revisiting.
