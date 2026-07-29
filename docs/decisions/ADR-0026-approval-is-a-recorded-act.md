@@ -1,7 +1,7 @@
 ---
 type: adr
 id: ADR-0026
-status: proposed
+status: accepted
 decision_scope: workflow
 reversible: yes
 related_specs:
@@ -13,7 +13,7 @@ superseded_by: null
 
 ## Status
 
-- Proposed
+- Accepted
 
 ## Context and Problem Statement
 
@@ -139,6 +139,40 @@ malformed.
 - The agent's own assessment that the work is ready.
 
 If an agent is unsure whether an approval was given, it has not been given. Ask.
+
+### Approved is provisional until merged
+
+A status set before merge describes **intent for trunk**, not fact about it. Trunk is
+the shared state; a branch is a proposal about what that state should become.
+
+So an `approved` spec or an `accepted` ADR on an unmerged branch is provisional. The
+approval is real — a human performed it and the record proves it — but it takes full
+force when the branch merges, and until then the document is treated as a draft by
+anyone outside that branch.
+
+This applies to every status, not only acceptance:
+
+- An `approved` FS on an unmerged branch does not authorize implementation against
+  trunk. It authorizes implementation on that branch.
+- An `accepted` ADR on an unmerged branch is not yet a binding constraint on other
+  work. It becomes one at merge.
+- An `implemented` PLAN on an unmerged branch has implemented nothing that anyone else
+  can see.
+
+**Why this is the right reading rather than a concession.** The alternative is that a
+branch can make a decision binding on trunk without anything reaching trunk, which
+would let one session constrain another through work nobody has seen. Merge is already
+the human-gated moment (`ADR-0012`); making it also the moment status acquires force
+keeps a single gate rather than two.
+
+**Practical consequence for current-state documents.** `ADR-0030` rule 3 requires an
+exported document to be updated in the change that accepts the ADR. On a branch, that
+update is provisional on the same terms as the acceptance — both land together and both
+become real at merge. A branch that accepts an ADR and updates its governing document in
+one change is correct; the pair is simply not yet in force.
+
+An agent reading a document **on trunk** may trust its status. An agent working on a
+branch must know it is on one.
 
 ### Deferred approval
 
