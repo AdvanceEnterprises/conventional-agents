@@ -118,45 +118,6 @@ consensus is off, but it cannot relax the different-models requirement.
 - **Not a gate that bypasses `ADR-0012`.** A passing consensus round does not authorize a
   merge. Merging remains human-gated.
 
-## SDLC workflow selection (FS-0020)
-
-The framework ships two SDLC workflows that traverse the same seven-phase spine:
-
-- [`workflows/sdlc-single-model.md`](./workflows/sdlc-single-model.md) — single model
-  occupying every role in turn. No collaboration rounds available.
-- [`workflows/sdlc-multi-model.md`](./workflows/sdlc-multi-model.md) — different models
-  in different roles, handing off through artifacts. Collaboration rounds attach at
-  gates.
-
-### Choosing a workflow
-
-| If the project has... | Choose... |
-| --- | --- |
-| One model available or affordable | single-model |
-| One model with no plan to scale to two | single-model |
-| Two or more models available AND collaboration rounds wanted at one or more gates | multi-model |
-| Reviews benefit from diverse role stances (Reviewer + Head Architect + Implementer) | multi-model |
-
-The framework does not require any specific number of models. A project that *could* run
-multi-model but chooses not to may run single-model; a project that runs multi-model but
-finds one model unreachable mid-work item degrades to single-model for that item and
-records the degradation.
-
-### What the workflow choice does NOT change
-
-- The seven phases and their order.
-- The human-held gates (FS approval, merge, draft-not-implementable).
-- The role definitions or their prohibitions.
-- The autonomous gate (`ADR-0019`) — Type-keyed regardless of workflow.
-- The merge gate (`ADR-0012`) — human-only regardless of workflow.
-
-What it does change:
-
-- Whether collaboration rounds can attach at gates.
-- Whether artifact handoff is needed across sessions.
-- Whether `touches:` is the concurrency contract across work items (multi-model) or
-  irrelevant (single-model).
-
 ## Consumer Issue Configuration (Work Item Lifecycle, FS-0018)
 
 Consumer repos adopting `conventional-agents` configure their work-tracking substrate to match

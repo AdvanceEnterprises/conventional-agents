@@ -6,6 +6,87 @@ It is part of the conventional-agents exported surface and applies to any projec
 
 ---
 
+## Work Items (the entry point)
+
+A **work item** is the canonical entry point for any governed piece of work. It exists before any FS, PLAN, or ADR, and it carries the brief that downstream documents refine. Its three-axis schema, its origination paths, and its autonomous gate are defined in `FS-0018` and ratified by `ADR-0019`, `ADR-0020`, `ADR-0021`, and `ADR-0022`. The rules below are the lifecycle summary; the spec is the source of truth.
+
+Per `ADR-0024`, the framework does not name a substrate platform. A binding under `integrations/` maps these rules onto one. The reference binding is `integrations/github-issues-projects.md`.
+
+### Three-axis schema
+
+Every work item carries exactly three classification axes.
+
+**Axis 1 — Type (single-valued).** Exactly one of:
+
+| Type | Gate | Requires FS? |
+| --- | --- | --- |
+| `feature` | Highest — requires FS + PLAN | Yes |
+| `bug` | Medium — FS required if the fix involves design | Conditional |
+| `task` | Lowest — operational, administrative, hygiene | No |
+
+When in doubt, choose the higher-severity Type. Type is **human-mutable only** (`ADR-0019`). An agent that believes the Type is wrong posts an activity-record entry proposing the correct Type and the reason, in the agent-stance format below; the human edits the Type.
+
+**Axis 2 — Label (multi-valued).** Six labels classify content and workflow position. They may be applied by any actor, with the rule that every transition by an agent is preceded by an agent-stance entry:
+
+- `enhancement` — new feature or request, casual description; typically human-applied at work-item opening.
+- `bug` — defect report; human- or autonomous-applied (Path 3 of `FS-0018`).
+- `documentation` — documentation-only change; often paired with Type `task`.
+- `spec` — the work item carries the spec for the work (or references an FS file).
+- `plan` — the work item carries the change plan (or references a PLAN file).
+- `question` — clarification request. The work item is parked, awaiting human response. While this label is set, the agent MUST NOT perform any work-item transitions (label, phase, or comment) except to remove `question` itself when the human's response resolves it. Ratified by `ADR-0020`.
+
+**Axis 3 — Phase (single-valued).** Exactly one of: `Backlog`, `Approved`, `In Progress`, `In Review`, `Done`. Phase is distinct from any open/closed state the substrate exposes; the binding states how the two are reconciled.
+
+### Origination paths
+
+There are three, each with a documented trigger, first actor, and first action (`FS-0018` §"Origination Paths"):
+
+1. **Human opens a work item with the `enhancement` label.** First actor is an autonomous agent assuming Head Architect role. The agent's first action proposes Type `feature` and label `spec` via an agent-stance entry, transitioning phase → Approved. The Type change itself requires a human.
+2. **Head Architect conversation concludes.** First actor is a hybrid-session agent. The agent creates the work item with Type `feature`, label `spec`, and phase Approved, body carrying the Head Architect's summary.
+3. **Autonomous agent creates a work item from drift** (cron tick, detection run, scheduled scan). First actor is an unattended agent under the `ADR-0021` actor identity. First artifact is Type `bug` or `task`.
+
+### Agent stance on activity records
+
+Every work-item action by an agent (label change, phase change, comment) MUST be preceded by an activity-record entry in the documented stance format:
+
+```text
+agent-stance: mode=<mode>; role=<role>; model=<model>; session=<session-name>; rationale=<one-line reason>
+```
+
+Where `<mode>` is one of the five session modes from `workflows/session-modes.md`, or one of the meta-modes `autonomous`, `consensus`, or `review-board` per `ADR-0022`. `<role>` is a primary role from `guidelines/ROLE_CONTRACT.md`. The value must come from the enumerated set; non-enumerated values are invalid.
+
+This is the autonomous-equivalent of the role-transition phrase required by `ROLE_CONTRACT` §"Role and session transparency" for interactive sessions. For commits produced as part of the action, the commit's `Agent-Attribution:` trailer remains the durable record.
+
+### Autonomous gate (Type-keyed)
+
+An agent operating without a human present (scheduled, triggered, or delegated) MUST NOT transition a work item's phase past the Type-determined checkpoint without explicit human approval (`ADR-0019`). Type-keyed checkpoints:
+
+- Type `feature` — phase may not advance past Approved without human approval.
+- Type `bug` — phase may not advance past Approved without human approval of the proposed fix.
+- Type `task` — phase may not advance past In Progress without human approval.
+
+A work item whose Type is unset has not been classified, and the gate treats it at the most restrictive setting. This gate composes with `ADR-0012`'s merge gate: even within an authorized phase range, the agent MUST NOT execute the merge action. Per `ADR-0024`, the merge gate is the only rule in this section a substrate can technically enforce; the rest are conduct rules backed by detection and audit.
+
+### Audit trail
+
+Every agent transition is attributable per `ADR-0018` as amended by `ADR-0029` — commit-author identity, `Co-authored-by:` trailer for hybrid sessions, `Agent-Attribution:` trailer, and the activity-record stance entry above. The activity timeline is therefore a record of role transitions, with each entry traceable to a specific model + role + session combination, subject to the retractability limits noted above.
+
+---
+## Multi-model Consensus Gates (FS-0019, optional)
+
+Two consensus gates integrate with the lifecycle above as **optional, consumer-implemented checkpoints** defined in `FS-0019`. They are documented here so consumers see how the gates attach to the FS/PLAN/ADR status state machine; consumers on the same substrate as this repository configure them via `config/consensus.yml`, and consumers on other substrates author the equivalent per their platform.
+
+These gates are **disabled by default** at the framework level (`ADR-0023` Constraint 2) and **must not be described as configurable** away — the different-models requirement is non-overridable. Consumers opt in explicitly.
+
+- **Gate A — Pre-submission (Draft → Approved).** Before an FS or PLAN transitions to `approved` (or `in-progress`/`implemented` in single-PR flows), a consensus round runs on the draft. Each participant is invoked independently; outputs are semantically compared against a configured threshold. Pass advances the lifecycle; fail applies the configured `failure_mode` (`hard_block`, `soft_flag`, or `escalation`).
+- **Gate B — Review-time (In Review → Done).** When a PR opens, a consensus round runs on the PR diff against the governing FS. Same shape as Gate A.
+
+The two gates share configuration and artifact shape. Per-gate opt-in is independent. Per-document override (`consensus_required: true|false` on an FS or PLAN) can turn consensus on for a high-stakes document when project-level consensus is off, but it cannot relax the different-models requirement. The framework ships `config/consensus.yml` as a consumer-copy template with `enabled: false` and an empty `models: []` list; consumers copy it into their project root and customize.
+
+Rounds emit a persisted artifact at `docs/consensus/<FS-or-PLAN-id>/<gate>-<timestamp>.yml`, per `FS-0019` §"Audit Trail". The artifact records participants, role mode, threshold, the coverage record (per `ADR-0031`), the agreement check, and — for gated rounds — the gate evaluator's execution status and verdict. The presence of a `gate:` block is conditional: when no independent evaluator is available the round is **synthesis-only** and the block is omitted entirely.
+
+The autonomous gate (`ADR-0019`) and the consensus gate are independent. An unattended agent on a project with consensus enabled still cannot bypass human approval of the Type-keyed checkpoint. The merge gate (`ADR-0012`) is also independent: a passing consensus round does not authorize a merge.
+
 ## Feature Specs (FS)
 
 | Status | Meaning | Who transitions | When |
