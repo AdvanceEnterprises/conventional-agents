@@ -10,13 +10,14 @@ This document is the canonical source for how conventional-agents integrates wit
 ## Table of Contents
 
 1. Quick Start
-2. Precedence Rules
-3. Integration Patterns
-4. Tool-Specific Integration
-5. Multi-Agent Coordination
-6. Troubleshooting
-7. Best Practices
-8. Migration Guides
+2. Consumer Issue Configuration (Work Item Lifecycle, FS-0018)
+3. Precedence Rules
+4. Integration Patterns
+5. Tool-Specific Integration
+6. Multi-Agent Coordination
+7. Troubleshooting
+8. Best Practices
+9. Migration Guides
 
 ⸻
 

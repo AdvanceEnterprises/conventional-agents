@@ -42,6 +42,12 @@ Per reviewer feedback on the bootstrap package:
   Prose is unchanged: 388 content lines before and after, verified by diffing
   token streams with markup stripped. `lint:roots` no longer excludes it, and
   all six root files lint clean with no rule exemptions.
+- `INTEGRATION.md` table of contents now lists "Consumer Issue Configuration
+  (Work Item Lifecycle, FS-0018)", renumbering the entries after it to 3–9.
+  `FS-0018` added that section without a ToC row; the omission was invisible
+  while the ToC was tab-indented prose and became obvious once it rendered as
+  a list. The ToC and the document's nine `##` sections now correspond
+  one-to-one, and nothing in the document cross-references section numbers.
 - FS-0018/19/20/21 `interfaces:` reverted to their pre-`dddb25c` state. The
   four files added to FS-0020's interfaces (README.md, AGENTS.md,
   INTEGRATION.md, CHANGELOG.md) are removed; `PLAN-0020` and `PLAN-0021`
