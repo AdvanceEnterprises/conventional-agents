@@ -4,7 +4,8 @@ id: ADR-0030
 status: proposed
 decision_scope: architecture
 reversible: yes
-related_specs: []
+related_specs:
+  - FS-0022
 superseded_by: null
 ---
 
@@ -216,3 +217,4 @@ co-attribution", which both ADRs point to and which ADR-0029 updated in the same
   this ADR is compatible with.
 - `guidelines/ROLE_CONTRACT.md` §"Conflict Resolution Rules" — the precedence order this
   ADR leaves unchanged.
+- FS-0022: Gate coverage — the governing spec for rule 3's CI enforcement.
