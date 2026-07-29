@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0018
-status: draft
+status: approved
 title: Work item lifecycle and autonomous triggers for governed work
 owner: ajoeofalltrades
 test_required: true
@@ -42,17 +42,14 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Approved
 
 ## Plan Status
 
-- **Drafted as PLAN-0018** (`status: draft`), as part of the PR #71
-  bootstrap package. This is not a departure from
-  `workflows/document-lifecycle.md`, which places PLAN creation at
-  "initial creation" and constrains only approval — a PLAN may not
-  reach `approved` while its FS is `draft`. PLAN-0018 cannot be
-  approved until this FS is approved; its Readiness Check records
-  that dependency.
+- **PLAN-0018 is `approved`**, approved in the same session as this FS.
+  It was drafted alongside this spec, which
+  `workflows/document-lifecycle.md` permits — that document places PLAN
+  creation at "initial creation" and constrains only approval.
 - **Cron identity precondition — resolved.** Path 3 (autonomous work
   item creation) was blocked on the unattended-actor identity
   question. `ADR-0021` resolves it: unattended actors carry a distinct

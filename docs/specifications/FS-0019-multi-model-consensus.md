@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0019
-status: draft
+status: approved
 title: Multi-model consensus at workflow gates (optional consumer feature)
 owner: ajoeofalltrades
 test_required: true
@@ -40,7 +40,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Approved
 
 ## Plan Status
 
