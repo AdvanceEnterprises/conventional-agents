@@ -42,8 +42,8 @@ write code, this one asks whether a spec obliges someone downstream to change.
 
 **The answer is derivable, not declared.** A spec is consumer-affecting when its
 `interfaces:` names any path in the exported surface — `guidelines/`, `roles/`,
-`skills/`, `templates/`, `workflows/`, `integrations/`, `INTEGRATION.md`, or
-`AGENTS.md`. Those are the paths host repositories vendor. No new front-matter field:
+`skills/`, `templates/`, `workflows/`, `integrations/`, `runbooks/`, `INTEGRATION.md`,
+or `AGENTS.md`. Those are the paths host repositories vendor. No new front-matter field:
 `interfaces:` already declares the surface area a spec may touch, and this reads it.
 
 | The spec's `interfaces:` name | Requires |
@@ -111,3 +111,4 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0020 | SDLC workflows — single-model and multi-model | approved |
 | FS-0021 | Review board collaboration mode | approved |
 | FS-0022 | Gate coverage — extend consistency, lint, and test enforcement to the whole corpus | approved |
+| FS-0023 | Runbook document type — operational procedures recorded as performed | approved |

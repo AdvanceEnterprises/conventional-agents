@@ -57,6 +57,7 @@ This repo contains no application code. Quality is documentation-centric.
 | `templates/` | `docs/ARC42.md` |
 | `workflows/` | `BACKLOG.md` |
 | `integrations/` | `package.json` |
+| `runbooks/` | `scripts/` |
 | `INTEGRATION.md` | `CHANGELOG.md` |
 | `AGENTS.md` | `test/` |
 

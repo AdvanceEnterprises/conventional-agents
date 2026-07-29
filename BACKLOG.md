@@ -26,21 +26,38 @@ runs on GitHub Issues and Projects, and `integrations/github-issues-projects.md`
 describes the substrate binding — but the binding is documentation, not
 configuration. Nothing described in it has been provisioned.
 
-**What closing it requires:**
+**This is two phases, not one.** The Setup Checklist's ninth item — "Webhook endpoint
+or Actions workflows subscribed to the §6 events" — writes new files under
+`.github/workflows/`, which is in `ADR-0027`'s reserved path set, and `ADR-0015`
+requires an approved FS and PLAN before any governance gate is written. A session that
+starts at checklist item 1 and works down will hit that gate partway through with
+provisioning already done and no authorization to continue. Sequence it deliberately.
 
-- Work through the binding's Setup Checklist against the live repository: the
-  `Issue Type` single-select field, the label vocabulary, auto-add, the unattended
-  actor identity and its token, branch protection, trigger handlers, per-work-item
-  concurrency serialization, and `Issue Type` change alerting.
-- Write a runbook documenting the process as performed, not as imagined. Deviations
-  between the binding and what GitHub actually permits are findings, and belong back
-  in the binding.
-- Repository merge settings must be switched to rebase-merge per `ADR-0025`. This is
-  operator work; it is not reachable from an agent session.
+**Phase 1 — operator provisioning. No FS required.**
 
-**Why this order:** it is the first end-to-end test of the work item lifecycle
-(`FS-0018`), and it produces the runbook that consuming projects copy. It also
-exercises the binding as a real conformance checklist rather than a hypothetical one.
+- Work the binding's Setup Checklist against the live repository: the `Issue Type`
+  single-select field, the label vocabulary, auto-add, the unattended actor identity
+  and its token, branch protection, per-work-item concurrency serialization, and
+  `Issue Type` change alerting.
+- Switch repository merge settings to rebase-merge per `ADR-0025`. Operator work; not
+  reachable from an agent session.
+- Write `RB-0001` as you go, per `FS-0023` and `templates/core/runbook.md`. Record the
+  procedure **as performed, not as imagined** — the Deviations Observed section is the
+  deliverable that matters, because it is what corrects the binding.
+
+**Phase 2 — trigger handlers. Needs its own FS and PLAN.**
+
+- Write the FS from Phase 1's findings, not ahead of them. The binding's §6 already
+  documents that scheduled workflows are disabled after 60 days of repository
+  inactivity and that delivery is best-effort; what the webhook payloads and Projects
+  v2 field APIs actually provide is not knowable until Phase 1 is done.
+- Its `interfaces:` will name `.github/workflows/`, so the PLAN cannot self-approve and
+  needs an `Approved-By:` trailer per `ADR-0026`.
+
+**Why this order:** Phase 1 is the first end-to-end test of the work item lifecycle
+(`FS-0018`) and produces the runbook that consuming projects copy. Phase 2 is
+implementation informed by it. Writing Phase 2's spec first would be specifying against
+an imagined substrate, which is the failure the runbook type exists to prevent.
 
 ---
 
@@ -232,6 +249,31 @@ Verified by grepping `docs/decisions/` for "exported surface": only `ADR-0016`,
 
 `ADR-0030` depends on this split to assign document families their jobs, and
 currently cites `README.md`/`AGENTS.md` as the only sources.
+
+### The exported surface is enumerated in five places with no source of truth
+
+Distinct from the entry above, which is about the split lacking a *decision record*.
+This is about the *list* being restated five times:
+
+| Location | Form |
+| --- | --- |
+| `README.md` | "Exported surface" table |
+| `AGENTS.md` | Two-column surface table |
+| `docs/specifications/README.md` | Prose list in the consumer-impact rule |
+| `scripts/check-status.sh` | `EXPORTED_PREFIXES` array |
+| `package.json` + `.github/workflows/lint-docs.yml` | Lint globs and CI path triggers |
+
+Adding `runbooks/` in `FS-0023` required editing all five. Four of five would have
+produced a directory that is exported for anyone reading `README.md` and invisible to
+the consumer-impact gate — a spec could then change it without ever triggering the
+CHANGELOG requirement. `test/FS-0023/runbook-convention.bats` asserts the five agree,
+which detects the drift but does not remove the ability to create it.
+
+**What closing it requires:** one source of truth the other four derive from or are
+checked against. Because that changes `scripts/check-status.sh` and `package.json` —
+both reserved paths — it needs its own FS and PLAN. It is the same class of defect as
+the ADR index that carried eleven fabricated titles: a list maintained by hand in more
+than one place will diverge, and this repository has already paid for that lesson once.
 
 ### The Agent Skills format is an unnamed upstream dependency
 
