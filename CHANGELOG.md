@@ -46,6 +46,19 @@ For this project (a documentation/standards kit), semver follows the
   nowhere to go. If you have tooling that reads `status:` from change plans, it can now
   encounter this value.
 
+#### ADR-0030 rule 3 is now enforced in CI (`FS-0022` §3)
+
+- New `scripts/check-current-state.sh`, run by a `current-state-update` job on pull
+  requests. When an ADR becomes `accepted`, at least one of the current-state documents
+  its `## Links` name — under `workflows/`, `guidelines/`, `skills/`, `templates/`,
+  `integrations/`, or `runbooks/` — must be modified in the same change. If you vendor
+  this framework and run its CI, an ADR that changes a rule without updating the
+  document carrying that rule will now fail the build.
+- Scope is **acceptance**, not every edit: the check keys on the diff adding a
+  `status: accepted` line, so typo fixes and status-preserving edits do not trigger it.
+- The rule itself is unchanged. `ADR-0030` has required this since it was accepted;
+  only the enforcement is new.
+
 #### Broken references in two skills fixed (`FS-0022` §1c)
 
 - `skills/framework-health-audit/SKILL.md` and `skills/git-gh-workflow/SKILL.md` pointed
