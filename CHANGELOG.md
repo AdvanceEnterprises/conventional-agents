@@ -13,27 +13,6 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
-#### Multi-model consensus (optional)
-
-- `FS-0019`: optional, consumer-implemented multi-model consensus at workflow gates
-  (Gate A pre-submission, Gate B review-time). The framework supplies vocabulary,
-  artifact shape, gate placement, and failure modes; consumer repos implement the
-  orchestration. Ships **disabled** at the framework level; the framework's own
-  evolution does not use consensus.
-- `ADR-0023`: collaboration integrity constraints. The different-models requirement is
-  non-overridable; consensus ships disabled and `models: []` is the framework's empty
-  default. Override can turn consensus *on* for a document; it cannot relax
-  different-models.
-- `config/consensus.yml`: consumer-copy template, unchanged and asserted by bats.
-- `workflows/document-lifecycle.md` §"Multi-model Consensus Gates" — Gate A and Gate B
-  documented as optional, default-disabled checkpoints.
-- `skills/git-gh-workflow/SKILL.md` §"Consensus Rounds" — round initiation, audit trail,
-  and failure modes.
-- `workflows/git-and-gh-conventions.md` §"Consensus-round comments" — the
-  `agent-stance: mode=consensus; …` and `consensus-override: <reason>` comment forms.
-- `templates/core/feature-spec.md` and `templates/core/change-plan.md` gain optional
-  `consensus_required` front-matter field.
-
 #### Work item lifecycle and autonomous triggers
 
 - `FS-0018`: work item as the canonical entry point for governed work, with a three-axis
