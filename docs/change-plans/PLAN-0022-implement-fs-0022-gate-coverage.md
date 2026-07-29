@@ -3,7 +3,7 @@
 type: change-plan
 role: implementer
 language: bash
-status: draft
+status: approved
 related_specs: [FS-0022]
 related_adrs: [ADR-0008, ADR-0015, ADR-0027, ADR-0030]
 touches:
@@ -159,10 +159,10 @@ front matter.
 requires. All three are written in this PR. Nothing remains for the
 implementer.
 
-**`ADR-0015` — resolved.** Its Validation section is written in this PR.
-`ADR-0015` is `proposed`, so this was ordinary drafting; an earlier draft of
-this plan escalated it as an append-only problem on the mistaken belief that
-it was accepted.
+**`ADR-0015` — resolved.** Its Validation section was written in this PR while
+the ADR was still `proposed`, which is ordinary drafting; it has since been
+accepted. An earlier draft of this plan escalated it as an append-only problem
+on the mistaken belief that it was already accepted at the time.
 
 Its Validation §1 depends on this plan: "each executable in `scripts/` is
 registered in `package.json`, described in `scripts/README.md`, and traceable
@@ -298,9 +298,9 @@ corpus being edited.
 
 ## 10. Readiness Check
 
-* [ ] FS-0022 is approved
+* [x] FS-0022 is approved
 * [x] Tests are clearly defined — §3, one per success criterion
 * [x] Scope is minimal and explicit
 * [x] No architectural changes implied
-* [ ] **Human approval required.** Every path in `touches:` is reserved
+* [x] **Human approval given.** Every path in `touches:` is reserved
       under ADR-0027; this PLAN cannot self-approve.
