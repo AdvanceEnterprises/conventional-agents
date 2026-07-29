@@ -51,7 +51,7 @@ The *first* entry in a PLAN's `related_specs:` list is its **primary governing s
 The script enforces:
 
 | Condition | Check |
-|---|---|
+| --- | --- |
 | PLAN is `implemented` | Its primary FS must also be `implemented` |
 | FS is `implemented` | At least one PLAN listing it as primary must also be `implemented` |
 
@@ -70,7 +70,7 @@ README table format:
 ### Common Violations and Fixes
 
 | Violation | Likely Cause | Fix |
-|---|---|---|
+| --- | --- | --- |
 | `PLAN-XXXX is 'implemented' but its primary spec FS-XXXX is '<status>'` | PLAN was marked implemented but FS was not updated | Set FS to `implemented` |
 | `FS-XXXX is 'implemented' but no PLAN with it as primary spec is also 'implemented'` | FS was marked implemented but no PLAN was updated | Set the governing PLAN to `implemented` |
 | `FS-XXXX has no row in README.md` | Document was added but README index was not updated | Add a row to the README |
@@ -80,7 +80,7 @@ README table format:
 ### Exit Codes
 
 | Exit Code | Meaning |
-|---|---|
+| --- | --- |
 | 0 | All checks passed |
 | 1 | One or more violations found (printed to stdout) |
 
@@ -95,6 +95,7 @@ Before marking any PR as ready for review, verify all 7 items:
 All FS and PLAN documents referenced by this PR have accurate `status:` values.
 
 Valid transitions:
+
 - FS: `draft → approved → in-progress → implemented → deprecated`
 - PLAN: `draft → approved → in-progress → implemented`
 - ADR: `proposed → accepted → deprecated → superseded`
@@ -116,7 +117,7 @@ For release-prep PRs, also update the framework version in `README.md` and `pack
 ### 5. Cross-References Are Complete
 
 | Document | Field | What to reference |
-|---|---|---|
+| --- | --- | --- |
 | FS | `related_adrs` | ADRs that informed the spec |
 | PLAN | `related_specs` | Governing FS(s) |
 | ADR | `related_specs` | Specs that implement the decision |
@@ -185,7 +186,7 @@ Produce a summary with:
 ## Quick Reference: Common Fixes
 
 | Situation | Action |
-|---|---|
+| --- | --- |
 | FS is `implemented` but PLAN is `approved` | Set PLAN to `implemented` |
 | PLAN is `implemented` but FS is `approved` | Set FS to `implemented` |
 | README missing a document row | Add the row with correct ID, title, and status |

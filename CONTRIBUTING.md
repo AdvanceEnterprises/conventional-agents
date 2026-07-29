@@ -44,7 +44,7 @@ Before submitting a PR, open an issue describing:
 
 Example:
 
-```
+```text
 Title: Clarify Bash quoting rules for variables with spaces
 
 Description:
@@ -52,7 +52,7 @@ The current BASH_STYLE_GUIDE.md section on quoting is ambiguous.
 We found that omitting quotes causes failures in 15% of scripts handling filenames.
 Proposed: Add explicit rule: "Always quote variables unless you specifically need word-splitting."
 Evidence: Tested on 100+ scripts in deploy-ducky; all failures resolved with quotes.
-```
+```text
 
 ### 2. Get Feedback
 
@@ -71,7 +71,9 @@ Once aligned on approach:
 2. Create a branch: `git checkout -b fix/issue-name`
 3. Make focused changes (one issue per PR)
 4. Include rationale in commit messages:
-   ```
+
+   ```text
+
    Update BASH_STYLE_GUIDE: Always quote variables
 
    Evidence: Analysis of 100+ deploy-ducky scripts shows 15% failure rate
@@ -79,7 +81,9 @@ Once aligned on approach:
    failures to 0% while maintaining backwards compatibility.
 
    Fixes #123
-   ```
+
+   ```text
+
 5. Push and open a PR
 
 ### 4. Review and Merge
@@ -97,7 +101,7 @@ PRs will be reviewed for:
 
 Located in `guidelines/[language]/`:
 
-```
+```text
 guidelines/
 ├── ROLE_CONTRACT.md          # LLM agent responsibilities
 ├── bash/
@@ -112,7 +116,7 @@ guidelines/
     ├── PYTHON_STYLE_GUIDE.md
     ├── PYTHON_TESTING_GUIDE.md
     └── PYTHON_IMPLEMENTATION_GUIDE.md
-```
+```text
 
 When adding a new language:
 
@@ -125,12 +129,12 @@ When adding a new language:
 
 Located in `templates/[type]/`:
 
-```
+```text
 templates/
 ├── core/                      # Core development documents
 ├── reviewer/                  # Review templates
 └── python/tests/              # Language-specific test templates
-```
+```text
 
 When adding a new template:
 

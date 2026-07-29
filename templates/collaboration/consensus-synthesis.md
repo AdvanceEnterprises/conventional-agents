@@ -112,7 +112,7 @@ say why. That is a legitimate outcome; concealing it is not.
 ## Artifact
 
 Per `FS-0019`, the round artifact at
-`docs/consensus/<FS-or-PLAN-id>/<gate>-<timestamp>.yml` carries the
+`docs/consensus/`FS-or-PLAN-id`/`gate`-`timestamp`.yml` carries the
 `coverage`, `agreement_check`, and — on gated rounds — `gate` blocks. The
 `agreement_check.produced_by` field names the synthesizing model, which is
 **not** an evaluator. On gated rounds the evaluator is a separate model

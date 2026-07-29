@@ -61,12 +61,13 @@ If these conflict, stop and escalate to a human.
 If a Success Criterion is ambiguous, incomplete, or untestable:
 
 | Language | Pattern |
-|---|---|
+| --- | --- |
 | Python | `@pytest.mark.xfail(reason="Spec unclear: FS-XXXX SC-N")` with `raise NotImplementedError` |
 | JavaScript/TypeScript | `it.todo("SC-N: spec is ambiguous, needs clarification (see FS-XXXX SC-N)")` |
 | Bash | `skip "Spec does not define ..."` with descriptive reason |
 
 Rules:
+
 - Always reference the spec ID and SC number.
 - Do NOT attempt to infer intended behavior.
 - This pattern forces clarification in the spec.
@@ -76,6 +77,7 @@ Rules:
 Each test file SHOULD include metadata at the top:
 
 **Python (pytest):**
+
 ```python
 """
 ---
@@ -89,6 +91,7 @@ scope: unit | integration
 ```
 
 **JavaScript/TypeScript (Vitest/Jest):**
+
 ```javascript
 /**
  * @module test
@@ -104,6 +107,7 @@ scope: unit | integration
 ```
 
 **Bash (bats):**
+
 ```bash
 #!/usr/bin/env bats
 #
@@ -132,6 +136,7 @@ scope: unit | integration
 ### Approved Test Patterns
 
 **Parametrized test:**
+
 ```python
 import pytest
 
@@ -150,6 +155,7 @@ def test_sc_3__<short_behavior_name>(subject, input_value, expected):
 ```
 
 **Ambiguity handling:**
+
 ```python
 import pytest
 
@@ -161,6 +167,7 @@ def test_sc_2__ambiguous(subject):
 ```
 
 **Integration test:**
+
 ```python
 import pytest
 
@@ -177,12 +184,14 @@ def test_sc_1__<behavior>():
 **Primary objective:** Make the next failing test pass with the smallest, safest code change.
 
 **Authoritative inputs (in priority order):**
+
 1. Failing pytest tests and their assertions
 2. Approved Feature Specs (`status: approved`)
 3. Accepted ADRs (`status: accepted`)
 4. Architecture context
 
 **Code shape guidelines:**
+
 - Prefer pure functions where possible.
 - Keep I/O at the edges.
 - Avoid direct use of current time, randomness, env vars, filesystem, network — isolate behind injectable interfaces.
@@ -190,12 +199,14 @@ def test_sc_1__<behavior>():
 - Use type hints on public functions and module boundaries.
 
 **Error handling defaults:**
+
 - Invalid arguments: `ValueError`, `TypeError`
 - Missing/malformed data: explicit validation + `ValueError`
 - Operational failures: `RuntimeError` or domain-specific exception
 - Do not swallow exceptions. Do not use bare `except Exception`.
 
 **Implementation checklist:**
+
 - [ ] Confirm the relevant Feature Spec is approved
 - [ ] Identify the failing test(s) and mapped Success Criteria
 - [ ] Identify ADR constraints that apply
@@ -216,6 +227,7 @@ def test_sc_1__<behavior>():
 ### Approved Test Patterns
 
 **Unit test with spec mapping:**
+
 ```typescript
 import { describe, it, expect } from "vitest";
 
@@ -232,6 +244,7 @@ describe("parseInput", () => {
 ```
 
 **Table-driven (parametrized) test:**
+
 ```typescript
 import { describe, it, expect } from "vitest";
 
@@ -249,6 +262,7 @@ describe("slugify", () => {
 ```
 
 **Ambiguity handling:**
+
 ```typescript
 describe("featureX", () => {
   // SC-4: Spec unclear — escalate before implementing
@@ -261,6 +275,7 @@ describe("featureX", () => {
 **Primary objective:** Make the next failing test pass with the smallest, safest code change.
 
 **Authoritative inputs (in priority order):**
+
 1. Failing tests and their assertions
 2. Approved Feature Specs (`status: approved`)
 3. Accepted ADRs (`status: accepted`)
@@ -269,6 +284,7 @@ describe("featureX", () => {
 **Module system:** Always check `package.json` `"type"` field before writing `import` or `require`. Do not mix ESM and CJS.
 
 **Code shape guidelines:**
+
 - Prefer pure functions where possible.
 - Keep I/O at the edges (network, filesystem, database).
 - Avoid non-deterministic values: `Date.now()`, `Math.random()`, `crypto.randomUUID()`, `process.env`.
@@ -277,24 +293,28 @@ describe("featureX", () => {
 - Use `Promise.all()` for concurrent independent operations.
 
 **Error handling defaults:**
+
 - Invalid arguments: throw `TypeError` or `RangeError`
 - Malformed data: explicit validation + custom error or `Error`
 - Throw `Error` instances (or subclasses), never strings or plain objects.
 - Do not swallow errors silently.
 
 **TypeScript-specific:**
+
 - Use `"strict": true` in `tsconfig.json` for new projects.
 - Avoid `any`. Prefer `unknown` and narrow with type guards.
 - Prefer discriminated unions over loose union types.
 - Prefer type guards and discriminated unions over `as` assertions.
 
 **Common pitfalls:**
+
 - ESM/CJS confusion — always check `package.json` `"type"` field.
 - `this` binding — arrow functions for callbacks to avoid `this` confusion.
 - Implicit type coercion — always use `===`/`!==`.
 - `$` in filenames — single-quote filenames containing `$` in shell commands.
 
 **Implementation checklist:**
+
 - [ ] Confirm the relevant Feature Spec is approved
 - [ ] Identify the failing test(s) and mapped Success Criteria
 - [ ] Identify ADR constraints that apply
@@ -318,6 +338,7 @@ describe("featureX", () => {
 ### Approved Test Patterns
 
 **Unit test (bats):**
+
 ```bash
 #!/usr/bin/env bats
 #
@@ -346,6 +367,7 @@ source "ops/scripts/<script>"
 ```
 
 **Parametrized test (bats loop):**
+
 ```bash
 @test "validate pod name - valid names" {
     local valid_names=("app-dev" "myapp-test" "xyz-prod")
@@ -358,6 +380,7 @@ source "ops/scripts/<script>"
 ```
 
 **Ambiguity handling:**
+
 ```bash
 # Test: Ambiguous criterion from FS-XXXX (SC-5)
 @test "XFAIL: Spec unclear on retry behavior - FS-XXXX SC-5" {
@@ -366,6 +389,7 @@ source "ops/scripts/<script>"
 ```
 
 **Integration test (shell script):**
+
 ```bash
 #!/usr/bin/env bash
 # Integration tests for <feature>
@@ -407,18 +431,21 @@ echo "All integration tests passed"
 **Primary objective:** Make the next failing test pass with the smallest, safest script change.
 
 **Strict mode is mandatory:**
+
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
 ```
 
 **Authoritative inputs (in priority order):**
+
 1. Failing shell tests (bats, bash-unit, or integration tests)
 2. Approved Feature Specs (`status: approved`)
 3. Accepted ADRs (`status: accepted`)
 4. Architecture context
 
 **Code shape guidelines:**
+
 - Prefer pure functions (no side effects) where possible.
 - Pass data in via arguments, return via stdout or exit codes.
 - Keep I/O (files, network, commands) at the edges.
@@ -429,6 +456,7 @@ set -euo pipefail
 - Use `$(command)` over backticks.
 
 **Error handling defaults:**
+
 - Usage errors: Exit with code 1, print error message to stderr.
 - Missing commands: Exit early with clear message (check with `command -v`).
 - Missing files: Exit with error before attempting to read.
@@ -436,6 +464,7 @@ set -euo pipefail
 - Never use bare `|| true` except for specific, documented cases.
 
 **Common pitfalls to avoid:**
+
 - Using `grep | wc -l` to count (use `grep -c` or conditional logic).
 - Using backticks (use `$(command)` instead).
 - Assuming `cd` succeeds (always check: `cd dir || error "..."`).
@@ -443,6 +472,7 @@ set -euo pipefail
 - Parsing CSV/JSON with grep/sed.
 
 **Implementation checklist:**
+
 - [ ] Confirm the relevant Feature Spec is approved
 - [ ] Identify the failing test(s) and mapped Success Criteria
 - [ ] Identify ADR constraints that apply

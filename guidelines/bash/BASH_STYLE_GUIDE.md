@@ -3,6 +3,7 @@
 This document provides guidance for writing clear, maintainable Bash scripts with consistent style and documentation. It emphasizes clarity over brevity and follows shell best practices.
 
 **Decision precedence:**
+
 1. Project style
 2. Guidelines in this document
 3. Community conventions (Google Shell Style, shellcheck recommendations)

@@ -111,10 +111,12 @@ See INTEGRATION.md
 ```
 
 Pros:
+
 - No submodule setup.
 - Works with tools that ignore `vendor/`.
 
 Cons:
+
 - Drift risk.
 - Updates require manual re-copy.
 

@@ -53,7 +53,7 @@ Each bash test file (bats or shell-based) SHOULD include a header with:
 # spec_id: FS-XXXX
 # scope: unit | integration
 # ---
-```
+```text
 
 Agents MUST:
 
@@ -109,7 +109,7 @@ Example mapping:
     # Cleanup
     podman pod rm test-pod || true
 }
-```
+```text
 
 ### Ambiguity handling
 
@@ -120,7 +120,7 @@ If a Success Criterion is ambiguous, incomplete, or untestable:
 @test "XFAIL: Spec unclear on retry behavior - FS-XXXX SC-5" {
     skip "Spec does not define retry count or backoff strategy"
 }
-```
+```text
 
 Rules:
 
@@ -160,7 +160,7 @@ source "ops/scripts/pod-up"
     run error "test message" 2>&1
     [[ "$output" == *"ERROR: test message"* ]]
 }
-```
+```text
 
 ### Parametrized test pattern (bats)
 
@@ -182,7 +182,7 @@ Use bats parametrization for multiple test cases:
     run check_port_available 65536
     [ "$status" -ne 0 ]
 }
-```
+```text
 
 Or use a loop with test data:
 
@@ -195,7 +195,7 @@ Or use a loop with test data:
         [ "$status" -eq 0 ] || fail "Failed for: $name"
     done
 }
-```
+```text
 
 ### Integration test pattern (shell script)
 
@@ -245,7 +245,7 @@ test_pod_creation
 # ... other tests ...
 
 echo "All integration tests passed"
-```
+```text
 
 ---
 
@@ -272,7 +272,7 @@ teardown() {
 @test "test that needs setup" {
     [ -d "$TEST_TMP_DIR" ]
 }
-```
+```text
 
 ### Fixtures and test data
 
@@ -290,7 +290,7 @@ EOF
     [ "$status" -eq 0 ]
     [[ "$output" == *"APP_NAME=testapp"* ]]
 }
-```
+```text
 
 ### Mocking and isolation
 
@@ -314,7 +314,7 @@ For tests that need to avoid real operations:
     # (or test the migration logic separately from pod logic)
     ...
 }
-```
+```text
 
 ---
 
@@ -342,7 +342,7 @@ For tests that need to avoid real operations:
 
 # Assertions with messages
 [ "$actual" = "$expected" ] || fail "Expected $expected, got $actual"
-```
+```text
 
 ### Clear test names
 
@@ -356,7 +356,7 @@ For tests that need to avoid real operations:
 @test "test pod" { ... }
 @test "function works" { ... }
 @test "input handling" { ... }
-```
+```text
 
 ---
 
@@ -402,7 +402,7 @@ ops/scripts/pod-up || { echo "pod-up failed"; exit 1; }
 podman pod exists "$TEST_APP_NAME-$ENV" || { echo "Pod not created"; exit 1; }
 
 echo "✓ Integration test passed"
-```
+```text
 
 ---
 
@@ -441,7 +441,7 @@ pod_name=""
     run podman pod exists "$pod_name"
     [ "$status" -eq 0 ]
 }
-```
+```text
 
 **Fix**: Use setup/teardown, not shared state
 
@@ -453,7 +453,7 @@ pod_name=""
     sleep 5  # Non-deterministic
     ls -lt /backups | head -1
 }
-```
+```text
 
 **Fix**: Mock time or use fixed test data
 
@@ -466,7 +466,7 @@ pod_name=""
     [ ... test ... ]
     podman pod rm test-pod
 }
-```
+```text
 
 **Fix**: Use `trap` to guarantee cleanup
 
@@ -482,7 +482,7 @@ pod_name=""
     run podman pod create "$test_pod"
     [ "$status" -eq 0 ]
 }
-```
+```text
 
 ---
 
@@ -490,7 +490,7 @@ pod_name=""
 
 ### File organization
 
-```
+```text
 tests/
 ├── unit/
 │   ├── test_pod_up.bats          # Unit tests for pod-up functions
@@ -498,21 +498,23 @@ tests/
 └── integration/
     ├── test_pod_lifecycle.sh     # Full pod start/stop cycle
     └── test_backup_restore.sh    # Backup and restore workflow
-```
+```text
 
 ### Test naming
 
 **Bats format:**
-```
+
+```text
 @test "pod-up exits with code 0 on success" { ... }
 @test "pod-up exits with code 1 if pod exists" { ... }
-```
+```text
 
 **Shell format:**
+
 ```bash
 test_pod_up_creates_pod() { ... }
 test_pod_up_fails_if_exists() { ... }
-```
+```text
 
 ---
 
@@ -525,6 +527,7 @@ If writing a test requires guessing behavior, stop.
 The test suite is executable documentation of what the script should do. Treat it with the same care as specifications.
 
 Tests should:
+
 * Be readable
 * Be maintainable
 * Be trustworthy
