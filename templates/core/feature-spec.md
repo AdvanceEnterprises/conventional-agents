@@ -9,6 +9,7 @@ interfaces: []
 related_adrs: []
 supersedes: []
 requires: []
+# consensus_required: true    # optional per-document override for FS-0019 (off by default)
 tags: []
 created: `YYYY-MM-DD`
 updated: `YYYY-MM-DD`

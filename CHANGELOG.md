@@ -13,20 +13,6 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
-#### SDLC workflows
-
-- `FS-0020`: two SDLC workflows — single-model and multi-model — over one shared
-  seven-phase spine. Collaboration rounds are available only in the multi-model workflow.
-- `workflows/sdlc-single-model.md` and `workflows/sdlc-multi-model.md` — current-state
-  documents for the two workflows. Identical spine, identical gates, identical role
-  prohibitions; differing only on whether collaboration rounds attach.
-- `workflows/session-modes.md` §"Workflows vs. session modes" — distinguishes mode
-  (stance within a phase) from workflow (phase sequence).
-- `test/FS-0020/sdlc-workflows.bats` — cross-document consistency suite that catches
-  drift between the two workflow documents.
-- `INTEGRATION.md` §"SDLC workflow selection" — guidance for choosing between workflows.
-- `README.md` and `AGENTS.md` pointer entries.
-
 #### Multi-model consensus (optional)
 
 - `FS-0019`: optional, consumer-implemented multi-model consensus at workflow gates

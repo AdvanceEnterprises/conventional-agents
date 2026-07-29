@@ -119,22 +119,6 @@ Consumer repos that opt in implement their own orchestration; see
 [`INTEGRATION.md`](./INTEGRATION.md) §"Multi-model consensus (optional)" and the
 configuration template for shape. Consensus rounds are advisory at the gate they attach to
 — the human merge gate (`ADR-0012`) is unchanged.
-
-### SDLC workflows
-
-Two named SDLC workflows traverse the same seven-phase spine from brief to merge:
-
-- **Single-model, multi-role** — one model occupies every role in turn. Collaboration
-  rounds are unavailable; this is a capability limit (`ADR-0023` Constraint 1), not a
-  configuration one.
-- **Multi-model, multi-role** — different models occupy different roles, handing off
-  through artifacts and the work item's activity record. Collaboration rounds
-  (consensus, review board) attach at gates as opt-in checkpoints.
-
-Both share the same three human-held gates (FS approval, merge, draft-not-implementable)
-per `ADR-0012` and `ADR-0026`. They differ only on whether collaboration is available.
-See [`workflows/sdlc-single-model.md`](./workflows/sdlc-single-model.md) and
-[`workflows/sdlc-multi-model.md`](./workflows/sdlc-multi-model.md).
 ### Process Gates
 
 The framework enforces correctness through layered gates:
