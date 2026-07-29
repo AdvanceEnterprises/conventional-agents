@@ -13,6 +13,63 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
+#### Platform neutrality and substrate bindings
+
+- `ADR-0024`: platform-neutral core with shipped bindings. The framework names
+  six substrate *capabilities*; a binding maps them onto one platform. Bindings
+  are written first and in full, and the neutral core is extracted from them —
+  never forecast ahead of one.
+- `integrations/` as exported surface, with `integrations/README.md` as the
+  current statement of the six capabilities and
+  `integrations/github-issues-projects.md` as the reference binding.
+- `ADR-0028`: level-triggered reconciliation. A scheduled reconciler is the
+  correctness guarantee; events are a latency optimization. A substrate must be
+  *enumerable*; event notification is optional and never the sole trigger.
+
+#### Collaboration modes
+
+- `ADR-0031`: structured multi-model collaboration. Three artifacts per round —
+  contributor outputs to a declared contract, a synthesis preserving
+  disagreement, and on gated rounds a verdict from an evaluator outside the
+  participant set.
+- `FS-0021`: the review board, where several models examine one artifact from
+  *different role stances* and findings are merged rather than compared.
+- `templates/collaboration/`: contributor prompt, gate, consensus synthesis, and
+  review-board findings templates.
+- `review-board` as a third meta-mode alongside `autonomous` and `consensus`.
+- `docs/orchestration/multi-model-pilot-001/`: preserved evidence from a
+  multi-model run this work was extracted from — four contributors, two
+  transports, 54 claims, three gate rounds.
+
+#### Workflows and approval
+
+- `FS-0020`: two SDLC workflows — single-model and multi-model — over one shared
+  seven-phase spine. Collaboration rounds are available only in the multi-model
+  workflow.
+- `ADR-0026`: approval is a recorded act. Merge approval remains the default,
+  joined by recorded approval (in-session, carrying an `Approved-By:` trailer)
+  and deferred approval.
+- `ADR-0027`: a change plan may self-approve when its `touches:` falls inside
+  the governing spec's `interfaces:` and touches no reserved path.
+- `touches:` field on the change-plan template, declaring the paths a plan will
+  modify.
+
+#### Governance and attribution
+
+- `ADR-0030`: decision records versus current-state documents. ADRs record why a
+  rule is what it is; exported documents state what it is, and an ADR changing a
+  rule must update the governing document in the same change.
+- `ADR-0025`: rebase-merge as the default, so per-commit attribution survives to
+  trunk.
+- `ADR-0029`: `user.name` carries the model, `user.email` carries the actor.
+- `FS-0022` and `PLAN-0022`: gate coverage — ADR index validation, `touches:`
+  containment, referenced-path resolution, widened lint coverage, and CI
+  execution of the `bats` suites, which currently run nowhere.
+- `BACKLOG.md`: deferred work, known gaps, and the enforcement obligations this
+  release leaves for its PLANs.
+
+#### Framework-internal vendor boundary (prior cycle)
+
 - `ADR-0017`: Framework vendor directory is internal; consumers must not
   reference nested submodules.
 - `FS-0016`: Framework Internal Vendor Boundary feature spec.
@@ -25,6 +82,36 @@ For this project (a documentation/standards kit), semver follows the
   references `vendor/conventional-agents/vendor/...` paths.
 
 ### Changed
+
+- **ADR-0001 through ADR-0010 are now `accepted`.** Their files carried
+  `proposed` while the index recorded `accepted`; the index was correct and the
+  files were never updated after merge.
+- **The ADR index was substantially inaccurate.** Eleven of thirteen early rows
+  named decisions that exist in no ADR file. All 30 rows are now generated from
+  their files.
+- `ADR-0013` revised: attribution reconciled to `ADR-0018`/`ADR-0029`, artifact
+  scope unified with `touches:`, session declarations made durable, and Mode 2
+  identified as the same shape as an `ADR-0031` collaboration round.
+- `ADR-0014` scoped to tasks spawned by a session. A scheduled or trigger-fired
+  session is a primary in its own right with no human watching, not a parentless
+  background task.
+- `ADR-0015` gained the Validation section its own process requires.
+- `ADR-0022` gained `review-board`; the mode vocabulary is now eight values.
+- `ADR-0023` extended from consensus to both collaboration modes, and gained the
+  constraint that a gate evaluator may not have participated in the round it
+  evaluates.
+- `FS-0018` restated in capability vocabulary — work item, Type, Phase — with
+  platform mechanics moved to the binding.
+- `FS-0019` corrected: a Mixture-of-Agents aggregator is the synthesizing
+  primary and never the gate; a coverage record now prevents partial coverage
+  being read as agreement; gate execution status is separate from verdict.
+- `workflows/git-and-gh-conventions.md`, `workflows/document-lifecycle.md`,
+  `workflows/session-modes.md`, and `skills/git-gh-workflow/SKILL.md` updated to
+  match the decisions above.
+- `README.md` and `AGENTS.md`: surface tables now list `integrations/` and
+  `BACKLOG.md`.
+
+#### Framework-internal vendor boundary (prior cycle)
 
 - **Framework vendor directory is now internal** (ADR-0017). Consumers must not
   reference nested vendor paths such as `vendor/conventional-agents/vendor/...`.
@@ -57,6 +144,27 @@ For this project (a documentation/standards kit), semver follows the
 - `docs/instances/` directory and `IDEA.md` (relocated to
   `Tais-Den/tais-den-conventions` per ADR-0016).
 - `docs/implementation-plans/` legacy directory.
+
+### Notes for release
+
+- **A version decision is required and is not made here.** Several changes are
+  contract-affecting for consumers: the attribution convention (`ADR-0029`), the
+  substrate capability model (`ADR-0024`, `ADR-0028`), and the approval
+  mechanism (`ADR-0026`). Whether that is a minor or major bump is a human call
+  per `guidelines/ROLE_CONTRACT.md`.
+- Every document added in this cycle is `draft` or `proposed`. Nothing here is
+  binding until approved.
+
+- `ADR-0017`: Framework vendor directory is internal; consumers must not
+  reference nested submodules.
+- `FS-0016`: Framework Internal Vendor Boundary feature spec.
+- `PLAN-0016`: Implementation plan for FS-0016.
+- `skills/framework-consumer-integration/SKILL.md`: a skill that guides agents
+  through integrating conventional-agents into a host repository, selecting the
+  right pattern, writing `AGENTS.md`, and avoiding common mistakes such as
+  nested vendor paths.
+- `test/FS-0016/vendor-boundary.bats`: asserts that no consumer-facing file
+  references `vendor/conventional-agents/vendor/...` paths.
 
 ## [2.0.0] - 2026-06-08
 
