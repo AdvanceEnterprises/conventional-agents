@@ -188,9 +188,17 @@ guidelines that do not exist.
 `docs/ARC42.md` records the removal, but the ADR's status does not.
 
 **Approved-but-never-implemented work is publicly visible.** `FS-0002`/`PLAN-0005` are
-`approved` and unimplemented; `FS-0004`/`PLAN-0002` are `draft` with an open PR (#60).
-A public repository advertising approved work that never shipped needs a disposition —
-implement, deprecate, or say why it is parked.
+**resolved** — deprecated on 2026-07-29 with the verification recorded in `FS-0002`'s
+Status section. `FS-0004`/`PLAN-0002` remain `draft` with an open PR (#60) and still
+need a disposition.
+
+The `FS-0002` case is worth reading before publication, because it is the shape of the
+problem rather than one instance of it: an `approved` spec sat for five months while a
+different set of skills was built and shipped past it, and nothing detected the
+divergence. Together with `FS-0022` §1c that is two `approved` documents whose success
+criteria were never delivered. A status-versus-reality check — does an `approved` or
+`implemented` document's declared output actually exist? — would have caught both, and
+is better value than fixing either by hand.
 
 ### Tier 4 — Community health and contribution
 

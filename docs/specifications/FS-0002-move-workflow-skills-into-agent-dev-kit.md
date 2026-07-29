@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0002
-status: approved
+status: deprecated
 title: Move workflow skills into conventional-agents (dual-mode)
 owner: ajoeofalltrades
 test_required: true
@@ -11,7 +11,7 @@ supersedes: []
 requires: [ADR-0001, ADR-0002]
 tags: [skills, tooling, docs, python]
 created: 2026-02-05
-updated: 2026-02-05
+updated: 2026-07-29
 approved: 2026-02-05
 ---
 
@@ -29,7 +29,39 @@ PARSING_HINTS:
 
 ## Status
 
-Approved
+Deprecated (2026-07-29). Never implemented; superseded in practice, not by another spec.
+
+**What was verified.** None of the ten named skills (`adrgen`, `specgen`,
+`changeplangen`, `stubgen`, `instructionlint`, `skillindex`, `prreview`, `specreview`,
+`testreview`, `newskill`) exist, and none has ever existed on any branch in this
+repository's history. No Python helper script was ever committed; the only tracked
+`.py` files are Python *templates* under `templates/python/tests/`, unrelated to this
+spec. `skills/index.md` exists but names none of the ten.
+
+**What happened instead.** On 2026-07-12, five months after this spec was approved,
+commit `b9511d7` added five *different* skills — `document-lifecycle`,
+`framework-health-audit`, `git-gh-workflow`, `role-aware-session`, `testing-guide` —
+all documentation modules, no generators, no scripts. This spec was not referenced,
+amended, or superseded at the time. The only commits that have touched it since
+approval are two mechanical rename sweeps (`15901e1`, `87ccc3d`).
+
+**Why deprecate rather than implement.** Two independent reasons:
+
+1. **The source no longer exists.** Both this spec and `PLAN-0005` locate the skills in
+   "this OpenClaw workspace under `skill-src/`" — external to this repository. There is
+   no vendored copy and no other trace; `skill-src`, `OpenClaw`, and `ClawHub` appear
+   in exactly three tracked files, all of them governance documents describing this
+   work. The spec describes relocating files that are no longer reachable.
+2. **`PLAN-0005` cannot be executed under current rules.** Its §4 says the file list
+   "will be finalized during implementation" — precisely the unbounded scope `ADR-0027`
+   was written to forbid. It would have to be rewritten, not resumed.
+
+**What is worth keeping.** The dual-mode path resolution requirement (§Success Criteria
+2) is a genuinely good idea and is not recorded anywhere else: a helper script should
+resolve templates from `./templates/...` when run inside the framework and from
+`./vendor/conventional-agents/templates/...` when run from a host repo. Any future
+spec that ships executable tooling should restate it. Deprecating this document does
+not retire that constraint; it retires the plan to move ten specific files.
 
 ## Summary
 
