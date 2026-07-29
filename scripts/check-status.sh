@@ -394,13 +394,23 @@ for plan_file in "$PLAN_DIR"/PLAN-*.md; do
     *) continue ;;
   esac
 
-  # Grandfather clause: plans created before ADR-0027 are exempt from the touches: check.
-  # ADR-0027 introduced the rule; plans authored earlier don't carry touches: front matter.
-  plan_created=$(get_field "$plan_file" "created")
-  adr0027_created=$(get_field "$ADR_DIR/ADR-0027-plan-self-approval-within-declared-interfaces.md" "created")
-  if [ -n "$plan_created" ] && [ -n "$adr0027_created" ] && [ "$plan_created" \< "$adr0027_created" ]; then
-    continue
-  fi
+  # Grandfather clause: an explicit allow-list of plans that predate ADR-0027.
+  #
+  # This was previously a comparison of the plan's `created:` date against ADR-0027's.
+  # That is a backdating bypass: `created:` is agent-writable front matter, so any plan
+  # could exempt itself by claiming an earlier date. An explicit list cannot be extended
+  # from inside a plan file.
+  #
+  # Add an entry only when a real historical approval needs grandfathering, and say why.
+  case "$plan_name" in
+    PLAN-0001-*|PLAN-0002-*|PLAN-0003-*|PLAN-0004-*|PLAN-0005-*|PLAN-0006-*|\
+    PLAN-0007-*|PLAN-0008-*|PLAN-0009-*|PLAN-0010-*|PLAN-0011-*|PLAN-0012-*|\
+    PLAN-0013-*|PLAN-0014-*|PLAN-0015-*|PLAN-0016-*|PLAN-0017-*)
+      # Approved before ADR-0027 existed; these carry no touches: field because the
+      # rule did not exist when they were written.
+      continue
+      ;;
+  esac
 
   # The PLAN must have a touches: field — absence is a violation.
   touches_lines=$(get_list_field "$plan_file" "touches")
@@ -433,7 +443,51 @@ for plan_file in "$PLAN_DIR"/PLAN-*.md; do
   done < <(get_related_specs "$plan_file")
 
   # Read human approval evidence from front matter (per ADR-0026/0027).
+  #
+  # The front-matter value alone proves nothing — it is agent-writable, so any plan
+  # could self-approve by asserting a string. It must be corroborated by an actual
+  # approval record in git: the most recent commit touching this plan file must carry
+  # an `Approved-By:` trailer whose email matches the front matter, and that email must
+  # differ from the commit's own author. ADR-0026: "a commit whose Approved-By: matches
+  # its own author email is malformed."
+  #
+  # "Most recent" is deliberate. If a plan is edited after approval, the approval no
+  # longer covers its current content and must be renewed.
   plan_approved_by=$(get_field "$plan_file" "approved_by")
+  approval_ok=""
+  approval_note=""
+  if [ -n "$plan_approved_by" ]; then
+    fm_email=$(printf '%s' "$plan_approved_by" | sed -nE 's/.*<([^>]+)>.*/\1/p')
+    if [ -n "$fm_email" ]; then
+      approving_sha=$(git -C "$REPO_ROOT" log -n 1 \
+          --format='%H%x09%ae%x09%(trailers:key=Approved-By,valueonly,separator=%x20)' \
+          -- "$plan_file" 2>/dev/null |
+        awk -F'\t' -v want="$fm_email" '
+          NF >= 3 {
+            sha = $1; author = tolower($2); trailer = $3
+            if (match(trailer, /<[^>]+>/)) {
+              email = tolower(substr(trailer, RSTART + 1, RLENGTH - 2))
+              if (email == tolower(want) && author != email) print sha
+            }
+          }')
+      if [ -n "$approving_sha" ]; then
+        # An approval covers the touches: set that existed when it was given. If the
+        # working tree's touches: differs, the approval does not extend to the change —
+        # otherwise an agent could add a reserved path after approval and ride the old
+        # record. Compare the two sets rather than trusting the trailer alone.
+        rel_path=${plan_file#"$REPO_ROOT"/}
+        approved_touches=$(git -C "$REPO_ROOT" show "$approving_sha:$rel_path" 2>/dev/null |
+          awk '/^touches:/{f=1;next} f&&/^[a-z_]+:/{exit} f&&/^[[:space:]]*- /{gsub(/^[[:space:]]*- *|"/,"");print}' |
+          sort)
+        current_touches=$(get_list_field "$plan_file" "touches" | sed 's/^[[:space:]]*//; s/"//g' | sort)
+        if [ "$approved_touches" = "$current_touches" ]; then
+          approval_ok="ok"
+        else
+          approval_note="touches: has changed since the approving commit ($approving_sha); the approval does not cover it"
+        fi
+      fi
+    fi
+  fi
 
   # Check each touch against interfaces: union and reserved set.
   while IFS= read -r touch; do
@@ -446,10 +500,18 @@ for plan_file in "$PLAN_DIR"/PLAN-*.md; do
       esac
     done
     if [ -n "$reserved_match" ]; then
-      if [ -n "$plan_approved_by" ]; then
+      if [ "$approval_ok" = "ok" ]; then
         continue
       fi
       echo "ERROR: $plan_name touches: '$touch' is in ADR-0027's reserved-path set ('$reserved_match') — requires human approval."
+      if [ -n "$plan_approved_by" ]; then
+        if [ -n "$approval_note" ]; then
+          echo "       approved_by: '$plan_approved_by' is set, but $approval_note."
+        else
+          echo "       approved_by: '$plan_approved_by' is set, but the most recent commit touching this"
+          echo "       plan carries no matching Approved-By: trailer from a different author (ADR-0026)."
+        fi
+      fi
       errors=$((errors+1))
       continue
     fi
@@ -469,10 +531,18 @@ for plan_file in "$PLAN_DIR"/PLAN-*.md; do
     done
     unset IFS
     if [ "$matched" -eq 0 ]; then
-      if [ -n "$plan_approved_by" ]; then
+      if [ "$approval_ok" = "ok" ]; then
         continue
       fi
       echo "ERROR: $plan_name touches: '$touch' is outside its governing FS's interfaces: union — requires human approval."
+      if [ -n "$plan_approved_by" ]; then
+        if [ -n "$approval_note" ]; then
+          echo "       approved_by: '$plan_approved_by' is set, but $approval_note."
+        else
+          echo "       approved_by: '$plan_approved_by' is set, but the most recent commit touching this"
+          echo "       plan carries no matching Approved-By: trailer from a different author (ADR-0026)."
+        fi
+      fi
       errors=$((errors+1))
     fi
   done <<< "$touches_lines"
