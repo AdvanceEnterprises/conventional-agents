@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0022
-status: draft
+status: approved
 title: Gate coverage — extend consistency, lint, and test enforcement to the whole corpus
 owner: ajoeofalltrades
 test_required: true
@@ -41,11 +41,11 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Approved
 
 ## Plan Status
 
-- **PLAN-0022 drafted** (`status: draft`). `workflows/document-lifecycle.md`
+- **PLAN-0022 is `approved`**, approved in the same session as this FS. `workflows/document-lifecycle.md`
   places PLAN creation at "initial creation" and constrains only its
   *approval*: a PLAN may not reach `approved` while its FS is `draft`.
 

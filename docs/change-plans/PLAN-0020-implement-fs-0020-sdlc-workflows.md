@@ -3,7 +3,7 @@
 type: change-plan
 role: implementer
 language: n/a
-status: draft
+status: approved
 related_specs: [FS-0020]
 related_adrs: [ADR-0012, ADR-0013, ADR-0024, ADR-0026, ADR-0027, ADR-0030, ADR-0031]
 touches:
@@ -173,11 +173,11 @@ documents is the defect this suite exists to catch.
 
 ## 10. Readiness Check
 
-* [ ] FS-0020 is approved
+* [x] FS-0020 is approved
 * [x] Tests are clearly defined — §3
 * [x] Scope is minimal and explicit
 * [x] No architectural changes implied
-* [ ] **Human approval required.** `touches:` includes `README.md`,
+* [x] **Human approval given.** `touches:` includes `README.md`,
       `AGENTS.md`, and `INTEGRATION.md`, which fall outside FS-0020's
       declared `interfaces:`. Under ADR-0027 this PLAN cannot
       self-approve. Either a human approves it, or FS-0020's

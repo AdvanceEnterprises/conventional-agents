@@ -3,7 +3,7 @@
 type: change-plan
 role: implementer
 language: n/a
-status: draft
+status: approved
 related_specs: [FS-0021]
 related_adrs: [ADR-0022, ADR-0023, ADR-0031]
 touches:
@@ -159,11 +159,11 @@ itself is consumer-implemented — FS-0021's own test-harness note applies.
 
 ## 10. Readiness Check
 
-* [ ] FS-0021 is approved
+* [x] FS-0021 is approved
 * [x] Tests are clearly defined — §3
 * [x] Scope is minimal and explicit
 * [x] No architectural changes implied
-* [ ] **Human approval required.** `touches:` includes
+* [x] **Human approval given.** `touches:` includes
       `config/review-board.yml` and `INTEGRATION.md`, neither of which
       appears in FS-0021's `interfaces:`. Under ADR-0027 containment
       fails, so this PLAN cannot self-approve. Either a human approves,
