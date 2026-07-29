@@ -143,6 +143,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0          # suites invoke check-status.sh; see check-status job
+          # Check out the real branch head, not GitHub's synthetic merge commit.
+          # On pull_request, GitHub fabricates a "Merge <head> into <base>" commit
+          # authored by the repository owner's GitHub-registered email. FS-0017's
+          # commit-attribution suite inspects author emails and correctly rejected
+          # it as an unknown actor — it is a commit nobody wrote, and asserting
+          # against it tests GitHub rather than this repository.
+          # Empty on push events, where checkout falls back to its default.
+          ref: ${{ github.event.pull_request.head.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
