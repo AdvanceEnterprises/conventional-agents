@@ -607,6 +607,94 @@ while [ $i -lt ${#fs_ids[@]} ]; do
   fi
 done
 
+# --- rule 8: referenced-path resolution (FS-0022 §1c) ------------------------
+#
+# Every path a current-state document names in backticks must resolve, relative to the
+# repository root or to the naming document's own directory.
+#
+# Two scoping decisions the spec left open, both resolved narrower than a literal
+# reading, because a literal reading produces false failures:
+#
+# 1. Current-state documents only. Decision records (ADR, FS, PLAN) describe what was
+#    true when they were written. `ADR-0006` naming three role files that were later
+#    renamed is history, not drift, and those documents are append-only after
+#    acceptance — checking them would force edits to satisfy a linter. `ADR-0030`
+#    rule 3 assigns current-state documents the job of carrying present truth, so they
+#    are the ones that must resolve. `BACKLOG.md` is excluded for the opposite reason:
+#    naming things that do not exist yet is its entire purpose. `CHANGELOG.md` is a
+#    historical record.
+#
+# 2. Only tokens containing a directory separator. A bare `tsconfig.json`,
+#    `pnpm-lock.yaml`, or `CLAUDE.md` in a guideline names a file in the *reader's*
+#    repository, not this one. Requiring a separator is the cheapest rule that
+#    separates "asserting a location here" from "naming a file you will have".
+#
+# REF_EXEMPT covers the case rule 2 does not: a path-like reference to a file this
+# framework instructs a consumer to create in *their* repo is indistinguishable from a
+# reference to one of ours. There is no syntax that separates them, so they are listed
+# explicitly with reasons rather than the corpus being edited to satisfy the check
+# (FS-0022 §1c is explicit that exclusions are the check's job).
+
+REF_EXEMPT=(
+  # "<naming document>:<referenced path>  # reason"
+  "README.md:roles/session-modes.md"                      # consumer creates this
+  "workflows/session-modes.md:roles/session-modes.md"     # consumer creates this
+  "roles/README.md:docs/governance/role-contract.md"      # prefixed "in your own repo"
+)
+
+ref_exempt() {
+  local pair="$1:$2" e
+  for e in "${REF_EXEMPT[@]}"; do
+    [ "${e%%#*}" = "$pair" ] && return 0
+    [ "$e" = "$pair" ] && return 0
+  done
+  return 1
+}
+
+# Paths an approved PLAN declares it will create are not yet expected to exist.
+collect_planned_paths() {
+  local plan_file st
+  for plan_file in "$PLAN_DIR"/PLAN-*.md; do
+    [ -f "$plan_file" ] || continue
+    st=$(get_field "$plan_file" "status")
+    if [ "$st" = "approved" ] || [ "$st" = "in-progress" ]; then
+      get_list_field "$plan_file" "touches"
+    fi
+  done
+}
+planned_paths=$(collect_planned_paths | sed 's/^[[:space:]]*//; s/"//g' | sort -u)
+
+while IFS= read -r doc; do
+  [ -f "$REPO_ROOT/$doc" ] || continue
+  case "$doc" in
+    README.md|AGENTS.md|INTEGRATION.md|CONTRIBUTING.md) ;;
+    guidelines/*|roles/*|skills/*|templates/*|workflows/*|integrations/*|runbooks/*|scripts/*) ;;
+    *) continue ;;
+  esac
+  doc_dir=$(dirname "$doc")
+  while IFS= read -r ref; do
+    [ -z "$ref" ] && continue
+    case "$ref" in
+      */*) ;;                              # path-like only
+      *) continue ;;
+    esac
+    case "$ref" in
+      *NNNN*|*XXXX*|*'<'*) continue ;;     # template placeholders
+      vendor/*) continue ;;                # uninitialised submodule (FS-0022 §1c)
+      docs/orchestration/*) continue ;;    # preserved evidence (FS-0022 §1c)
+    esac
+    # Consumers reference framework files through vendor/conventional-agents/.
+    bare=${ref#vendor/conventional-agents/}
+    [ -e "$REPO_ROOT/$ref" ] && continue
+    [ -e "$REPO_ROOT/$bare" ] && continue
+    [ "$doc_dir" != "." ] && [ -e "$REPO_ROOT/$doc_dir/$ref" ] && continue
+    printf '%s\n' "$planned_paths" | grep -qxF "$ref" && continue
+    ref_exempt "$doc" "$ref" && continue
+    echo "ERROR: $doc references '$ref', which does not resolve (FS-0022 §1c)."
+    errors=$((errors+1))
+  done < <(grep -oE '`[A-Za-z0-9_./@-]+\.(md|sh|yml|yaml|json|py|bats)`' "$REPO_ROOT/$doc" 2>/dev/null | tr -d '`' | sort -u)
+done < <(git -C "$REPO_ROOT" ls-files '*.md')
+
 # --- result ------------------------------------------------------------------
 
 if [ "$errors" -gt 0 ]; then
