@@ -79,6 +79,10 @@ get_list_field() {
       if (val != "") print val
       next
     }
+    # A blank line inside a block list does not end the field. Without this the
+    # parser stopped at the first blank separator and returned one entry, which
+    # silently reduced the touches: containment check to its first path.
+    n==1 && in_field && /^[[:space:]]*$/{next}
     n==1 && in_field && !/^  /{in_field=0}
   ' "$file"
 }
@@ -492,6 +496,12 @@ for plan_file in "$PLAN_DIR"/PLAN-*.md; do
   # Check each touch against interfaces: union and reserved set.
   while IFS= read -r touch; do
     [ -z "$touch" ] && continue
+    # CHANGELOG.md is exempt from containment. Document hygiene gate item 4 obliges
+    # every user-visible change to add an entry, so every plan touches it. Listing it
+    # in every FS's interfaces: would be noise, and leaving it unlisted creates steady
+    # pressure to widen interfaces for a file that is a framework-wide obligation
+    # rather than any one spec's surface. It is not a reserved path.
+    [ "$touch" = "CHANGELOG.md" ] && continue
     # Reserved path check first.
     reserved_match=""
     for r in "${RESERVED_PATHS[@]}"; do

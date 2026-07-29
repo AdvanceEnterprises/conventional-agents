@@ -15,11 +15,8 @@ interfaces:
   - "docs/consensus/<FS-or-PLAN-id>/<gate>-<timestamp>.yml (consensus round artifact)"
   - "templates/core/feature-spec.md"
   - "templates/core/change-plan.md"
-  - "README.md"
-  - "INTEGRATION.md"
   - "docs/specifications/README.md"
   - "test/FS-0019/consensus-schema.bats"
-  - "CHANGELOG.md"
 related_adrs:
   - ADR-0018
   - ADR-0022

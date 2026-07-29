@@ -12,12 +12,8 @@ interfaces:
   - "guidelines/ROLE_CONTRACT.md"
   - "skills/git-gh-workflow/SKILL.md"
   - "integrations/github-issues-projects.md"
-  - "AGENTS.md"
-  - "README.md"
-  - "INTEGRATION.md"
   - "docs/specifications/README.md"
   - "docs/change-plans/README.md"
-  - "CHANGELOG.md"
   - "test/FS-0018/issue-lifecycle.bats"
 related_adrs:
   - ADR-0012
