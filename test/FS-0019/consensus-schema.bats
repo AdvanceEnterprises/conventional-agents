@@ -6,9 +6,9 @@ setup() {
   REPO_ROOT="$(repo_root)"
 }
 
-@test "FS-0019 exists with draft status" {
+@test "FS-0019 exists with approved status" {
   assert_file_exists "$REPO_ROOT/docs/specifications/FS-0019-multi-model-consensus.md"
-  assert_file_contains "$REPO_ROOT/docs/specifications/FS-0019-multi-model-consensus.md" "status: draft"
+  assert_file_contains "$REPO_ROOT/docs/specifications/FS-0019-multi-model-consensus.md" "status: approved"
 }
 
 @test "FS-0019 declares consensus disabled by default" {
