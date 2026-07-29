@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
-# Validates FS↔PLAN status pairing and README index table sync.
+# Validates FS/PLAN/ADR status pairings, README index table sync, ADR structural
+# completeness, PLAN touches: containment, and consumer-impact CHANGELOG entries.
 # Exits non-zero and prints one error per violation.
 # Bash 3.2+ compatible (no associative arrays).
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 FS_DIR="$REPO_ROOT/docs/specifications"
 PLAN_DIR="$REPO_ROOT/docs/change-plans"
+ADR_DIR="$REPO_ROOT/docs/decisions"
 FS_README="$FS_DIR/README.md"
 PLAN_README="$PLAN_DIR/README.md"
+ADR_README="$ADR_DIR/README.md"
+CHANGELOG="$REPO_ROOT/CHANGELOG.md"
 
 errors=0
 
@@ -32,7 +36,6 @@ get_related_specs() {
     /^---/{n++; if(n==2) exit; next}
     n==1 && /^related_specs:/{
       in_field=1
-      # handle inline: related_specs: [FS-0001, FS-0002]
       if ($0 ~ /\[/) {
         gsub(/^related_specs:[[:space:]]*\[/, "")
         gsub(/\]/, "")
@@ -52,8 +55,35 @@ get_related_specs() {
   ' "$file"
 }
 
-# Look up FS status from pre-built parallel arrays (via function call).
-# We store as repeated-lookup from files since bash 3.2 lacks assoc arrays.
+# Extract values from a multi-line YAML list field — generic, for interfaces: and touches:.
+get_list_field() {
+  local file="$1" field="$2"
+  awk -v field="$field" '
+    /^---/{n++; if(n==2) exit; next}
+    n==1 && $0 ~ "^"field":"{
+      in_field=1
+      if ($0 ~ /\[/) {
+        line=$0
+        gsub("^"field":[[:space:]]*\\[", "", line)
+        gsub("\\]", "", line)
+        gsub(/ /, "", line)
+        n2=split(line, parts, ",")
+        for (i=1; i<=n2; i++) { if (parts[i] != "") print parts[i] }
+        in_field=0
+      }
+      next
+    }
+    n==1 && in_field && /^  - /{
+      val=$0; gsub(/^  - /, "", val); gsub(/^[[:space:]]+|[[:space:]]+$/, "", val)
+      gsub(/^"/, "", val); gsub(/"$/, "", val)
+      if (val != "") print val
+      next
+    }
+    n==1 && in_field && !/^  /{in_field=0}
+  ' "$file"
+}
+
+# Get FS status (helper used by FS↔PLAN rule a).
 get_fs_status_for() {
   local target="$1"
   local i=0
@@ -71,25 +101,24 @@ get_fs_status_for() {
 
 fs_ids=()
 fs_statuses=()
+fs_titles=()
+fs_paths=()
 
 for fs_file in "$FS_DIR"/FS-*.md; do
   [ -f "$fs_file" ] || continue
   id=$(get_field "$fs_file" "id")
   status=$(get_field "$fs_file" "status")
+  title=$(get_field "$fs_file" "title")
   [ -z "$id" ] && continue
   fs_ids+=("$id")
   fs_statuses+=("$status")
+  fs_titles+=("$title")
+  fs_paths+=("$fs_file")
 done
 
 # --- rule 1: FS↔PLAN status pairing -----------------------------------------
-# Only the FIRST entry in related_specs is the primary governing spec.
-# Secondary entries are dependencies, not governance relationships.
-# Rules:
-#   a) If PLAN=implemented, its primary FS must also be implemented.
-#   b) If FS=implemented, at least one PLAN listing it as primary must be implemented.
 
-# Build a map of primary-fs → list-of-plan-files for the reverse check.
-primary_fs_list=()   # parallel to primary_plan_list
+primary_fs_list=()
 primary_plan_list=()
 
 for plan_file in "$PLAN_DIR"/PLAN-*.md; do
@@ -97,14 +126,12 @@ for plan_file in "$PLAN_DIR"/PLAN-*.md; do
   plan_name=$(basename "$plan_file")
   plan_status=$(get_field "$plan_file" "status")
 
-  # Get the first (primary) related_spec.
   primary_fs=$(get_related_specs "$plan_file" | head -1 | tr -d '[:space:]')
   [ -z "$primary_fs" ] && continue
 
   primary_fs_list+=("$primary_fs")
   primary_plan_list+=("$plan_name:$plan_status")
 
-  # Rule a: if PLAN=implemented, primary FS must be implemented.
   if [ "$plan_status" = "implemented" ]; then
     fs_status=$(get_fs_status_for "$primary_fs")
     if [ -z "$fs_status" ]; then
@@ -117,7 +144,6 @@ for plan_file in "$PLAN_DIR"/PLAN-*.md; do
   fi
 done
 
-# Rule b: if FS=implemented, at least one PLAN with it as primary must be implemented.
 i=0
 while [ $i -lt ${#fs_ids[@]} ]; do
   fs_id="${fs_ids[$i]}"
@@ -155,7 +181,6 @@ check_readme_sync() {
     [ -f "$doc_file" ] || continue
     doc_name=$(basename "$doc_file")
 
-    # Extract ID: prefer front matter id:, fall back to filename.
     doc_id=$(get_field "$doc_file" "id")
     if [ -z "$doc_id" ]; then
       doc_id=$(echo "$doc_name" | grep -oE "${prefix}-[0-9]+" | head -1)
@@ -165,8 +190,6 @@ check_readme_sync() {
     front_status=$(get_field "$doc_file" "status")
     [ -z "$front_status" ] && continue
 
-    # Find status in README table row for this doc_id.
-    # Table format: | ID | Title | status |  (trailing pipe optional)
     readme_row=$(grep "^| ${doc_id} " "$readme" | head -1)
     if [ -z "$readme_row" ]; then
       echo "ERROR: $doc_id has no row in $(basename "$readme") — README index is missing an entry."
@@ -174,7 +197,7 @@ check_readme_sync() {
       continue
     fi
 
-    # Extract the last non-empty column value.
+    # Extract the last non-empty column value (status).
     readme_status=$(echo "$readme_row" | awk -F'|' '{
       for (i=NF; i>1; i--) {
         val=$i; gsub(/^[[:space:]]+|[[:space:]]+$/, "", val)
@@ -191,6 +214,361 @@ check_readme_sync() {
 
 check_readme_sync "$FS_README"   "$FS_DIR"   "FS"
 check_readme_sync "$PLAN_README" "$PLAN_DIR" "PLAN"
+
+# --- rule 3: ADR index consistency (FS-0022 §1) ------------------------------
+
+# Build set of ADR files.
+adr_ids=()
+for adr_file in "$ADR_DIR"/ADR-*.md; do
+  [ -f "$adr_file" ] || continue
+  adr_id=$(get_field "$adr_file" "id")
+  [ -z "$adr_id" ] && continue
+  adr_ids+=("$adr_id")
+done
+
+# Every ADR file should have a row in the ADR README, and the row's title/status must match.
+for adr_file in "$ADR_DIR"/ADR-*.md; do
+  [ -f "$adr_file" ] || continue
+  adr_id=$(get_field "$adr_file" "id")
+  [ -z "$adr_id" ] && continue
+
+  # Extract H1: "# ADR-NNNN: <title>"
+  h1_title=$(awk '/^# ADR-[0-9]+:/{
+    sub(/^# ADR-[0-9]+:[[:space:]]*/, "", $0)
+    print
+    exit
+  }' "$adr_file")
+  front_status=$(get_field "$adr_file" "status")
+
+  row=$(grep "^| ${adr_id} " "$ADR_README" | head -1)
+  if [ -z "$row" ]; then
+    echo "ERROR: $adr_id has no row in docs/decisions/README.md — ADR index is missing an entry."
+    errors=$((errors+1))
+    continue
+  fi
+
+  # Extract title column (col 2) and status (last non-empty).
+  readme_title=$(echo "$row" | awk -F'|' '{
+    val=$3; gsub(/^[[:space:]]+|[[:space:]]+$/, "", val); print val
+  }')
+  readme_status=$(echo "$row" | awk -F'|' '{
+    for (i=NF; i>1; i--) {
+      val=$i; gsub(/^[[:space:]]+|[[:space:]]+$/, "", val)
+      if (val != "") { print val; exit }
+    }
+  }')
+
+  if [ "$readme_title" != "$h1_title" ]; then
+    echo "ERROR: $adr_id H1 title '$h1_title' but README shows '$readme_title'."
+    errors=$((errors+1))
+  fi
+
+  if [ "$readme_status" != "$front_status" ]; then
+    echo "ERROR: $adr_id front matter status='$front_status' but README shows '$readme_status'."
+    errors=$((errors+1))
+  fi
+done
+
+# Every ADR index row should correspond to a file that exists.
+# Match by front matter id:, not by filename — some ADR files have descriptive suffixes
+# (ADR-0011-adopt-multi-identity-github-model-...).
+if [ -f "$ADR_README" ]; then
+  while IFS= read -r row; do
+    row_id=$(echo "$row" | awk -F'|' '/^| ADR-[0-9]+ /{gsub(/^ +| +$/, "", $2); print $2}')
+    [ -z "$row_id" ] && continue
+    found=0
+    for adr_file in "$ADR_DIR"/ADR-*.md; do
+      [ -f "$adr_file" ] || continue
+      file_id=$(get_field "$adr_file" "id")
+      if [ "$file_id" = "$row_id" ]; then
+        found=1
+        break
+      fi
+    done
+    if [ "$found" -eq 0 ]; then
+      echo "ERROR: ADR index row references $row_id but no matching ADR file (by id:) exists in $ADR_DIR."
+      errors=$((errors+1))
+    fi
+  done < <(grep "^| ADR-" "$ADR_README")
+fi
+
+# --- rule 4: FS/PLAN index title sync (FS-0022 §1a) -------------------------
+
+# For each FS row in docs/specifications/README.md, the title column should match the front
+# matter title field. Likewise for PLAN.
+check_index_titles() {
+  local readme="$1" doc_dir="$2" prefix="$3"
+
+  while IFS= read -r row; do
+    row_id=$(echo "$row" | awk -F'|' -v pfx="$prefix" '/^| '"$prefix"'-[0-9]+ /{
+      gsub(/^ +| +$/, "", $2); print $2
+    }')
+    [ -z "$row_id" ] && continue
+
+    doc_file="$doc_dir/${row_id}.md"
+    [ -f "$doc_file" ] || continue
+
+    front_title=$(get_field "$doc_file" "title")
+    readme_title=$(echo "$row" | awk -F'|' '{
+      val=$3; gsub(/^[[:space:]]+|[[:space:]]+$/, "", val); print val
+    }')
+
+    if [ "$front_title" != "$readme_title" ]; then
+      echo "ERROR: $row_id front matter title '$front_title' but README shows '$readme_title'."
+      errors=$((errors+1))
+    fi
+  done < <(grep "^| ${prefix}-" "$readme")
+}
+
+check_index_titles "$FS_README"   "$FS_DIR"   "FS"
+check_index_titles "$PLAN_README" "$PLAN_DIR" "PLAN"
+
+# --- rule 5: ADR structural completeness (FS-0022 §1b) ----------------------
+
+# Required sections per docs/decisions/README.md §2:
+#   "Context and Problem Statement", "Considered Options",
+#   "Decision Outcome", "Consequences", "Validation"
+# An ADR at `accepted` missing any of these is a higher-severity failure than the same
+# omission on a `proposed` ADR.
+
+REQUIRED_ADR_SECTIONS=(
+  "## Context and Problem Statement"
+  "## Considered Options"
+  "## Decision Outcome"
+  "## Consequences"
+)
+
+for adr_file in "$ADR_DIR"/ADR-*.md; do
+  [ -f "$adr_file" ] || continue
+  adr_id=$(get_field "$adr_file" "id")
+  [ -z "$adr_id" ] && continue
+  adr_status=$(get_field "$adr_file" "status")
+  [ -z "$adr_status" ] && continue
+
+  # Validation section is required only at accepted (per the spec); flag absent at any status
+  # but report higher severity at accepted.
+  has_validation=$(grep -c "^## Validation" "$adr_file" 2>/dev/null || true)
+  if [ -z "$has_validation" ] || [ "$has_validation" = "0" ]; then
+    if [ "$adr_status" = "accepted" ]; then
+      echo "ERROR: $adr_id (accepted) is missing required section: ## Validation"
+      errors=$((errors+1))
+    else
+      echo "WARN: $adr_id ($adr_status) is missing section: ## Validation (required before acceptance)"
+    fi
+  fi
+
+  # Other sections required at accepted.
+  if [ "$adr_status" = "accepted" ]; then
+    for sec in "${REQUIRED_ADR_SECTIONS[@]}"; do
+      if ! grep -qF "$sec" "$adr_file"; then
+        echo "ERROR: $adr_id (accepted) is missing required section: $sec"
+        errors=$((errors+1))
+      fi
+    done
+  fi
+done
+
+# --- rule 6: PLAN touches: containment (FS-0022 §2 / ADR-0027) --------------
+
+# Reserved paths: paths in touches: that always require human approval regardless of FS's
+# interfaces: field. Per ADR-0027.
+RESERVED_PATHS=(
+  "docs/decisions/"
+  "guidelines/ROLE_CONTRACT.md"
+  "scripts/"
+  ".github/workflows/"
+  "package.json"
+)
+
+for plan_file in "$PLAN_DIR"/PLAN-*.md; do
+  [ -f "$plan_file" ] || continue
+  plan_name=$(basename "$plan_file")
+  plan_status=$(get_field "$plan_file" "status")
+  # Check applies to plans at approved or in-progress status — plans seeking (self-)
+  # approval now. Implemented plans landed under whatever rule was in force at the time;
+  # retroactively failing them would surface historical drift that the plan's §5a did not
+  # scope to fix. Per ADR-0027, the rule governs *future* self-approval; historical
+  # approval is grandfathered.
+  case "$plan_status" in
+    approved|in-progress) ;;
+    *) continue ;;
+  esac
+
+  # Grandfather clause: a small allow-list of pre-ADR-0027 plans exempts them from the
+  # touches: check. Per the reviewer, an agent-writable created: date is a backdating
+  # bypass; an explicit name list is not. Add to this list only when a real historical
+  # approval needs grandfathering.
+  case "$plan_name" in
+    PLAN-0005-move-workflow-skills-into-agent-dev-kit.md)
+      # Plan-0005 was approved on 2026-02-05, before ADR-0027. It does not carry a
+      # touches: field because the rule did not exist at the time.
+      continue
+      ;;
+  esac
+
+  # The PLAN must have a touches: field — absence is a violation.
+  touches_lines=$(get_list_field "$plan_file" "touches")
+  if [ -z "$touches_lines" ]; then
+    echo "ERROR: $plan_name has no touches: field — ADR-0027 requires one."
+    errors=$((errors+1))
+    continue
+  fi
+
+  # Compute the union of interfaces: for the PLAN's related_specs. Prefix with "|" so
+  # that the grep below can match every entry exactly (including the first).
+  primary_fs=$(get_related_specs "$plan_file" | head -1 | tr -d '[:space:]')
+  [ -z "$primary_fs" ] && continue
+
+  interfaces_union="|"
+  while IFS= read -r fs_id; do
+    [ -z "$fs_id" ] && continue
+    # Match by front matter id, not by filename — FS files have descriptive suffixes
+    # (FS-0018-issue-lifecycle-and-autonomous-triggers.md).
+    fs_file=""
+    for candidate in "$FS_DIR"/${fs_id}*.md; do
+      [ -f "$candidate" ] || continue
+      [ "$(get_field "$candidate" "id")" = "$fs_id" ] && fs_file="$candidate" && break
+    done
+    [ -z "$fs_file" ] && continue
+    while IFS= read -r iface; do
+      [ -z "$iface" ] && continue
+      interfaces_union="${interfaces_union}${iface}|"
+    done < <(get_list_field "$fs_file" "interfaces")
+  done < <(get_related_specs "$plan_file")
+
+  # Read human approval evidence from front matter (per ADR-0026/0027). The
+  # front-matter value alone is insufficient — an agent can write any string. We
+  # require the value to match a real human-approval record: the most recent commit
+  # touching this PLAN file must carry an `Approved-By:` trailer whose name+email
+  # match the front matter, and the trailer's author must differ from the commit
+  # author (per ADR-0026: "a commit whose Approved-By: matches its own author email
+  # is malformed"). If the front-matter value is empty, no provenance is required
+  # and the touches: check runs as normal.
+  plan_approved_by=$(get_field "$plan_file" "approved_by")
+  provenance_ok=""
+  if [ -n "$plan_approved_by" ]; then
+    # Parse front-matter value into name + email. Format: "Name <email>".
+    fm_name=$(echo "$plan_approved_by" | sed -nE 's/^(.*) <[^>]+>$/\1/p' | sed 's/[[:space:]]*$//')
+    fm_email=$(echo "$plan_approved_by" | sed -nE 's/.*<([^>]+)>.*/\1/p')
+    if [ -n "$fm_name" ] && [ -n "$fm_email" ]; then
+      provenance_ok=$(cd "$REPO_ROOT" && git log -n 1 --format='%H%x09%ae%x09%(trailers:key=Approved-By,valueonly,separator=%x20)' -- "docs/change-plans/$plan_name" 2>/dev/null | awk -F'\t' -v fm_name="$fm_name" -v fm_email="$fm_email" '
+        NF == 3 {
+          sha = $1; author_email = $2; trailer = $3
+          if (trailer == "") exit 0
+          n = split(trailer, parts, "<")
+          name = parts[1]; gsub(/[[:space:]]+$/, "", name)
+          email = ""
+          if (length(parts) > 1) { email = parts[2]; sub(/>$/, "", email) }
+          if (tolower(email) == tolower(fm_email) && name == fm_name && tolower(author_email) != tolower(fm_email)) {
+            print "ok"
+          } else {
+            print "mismatch:sha=" sha " author=" author_email " trailer_name=" name " trailer_email=" email " fm_name=" fm_name " fm_email=" fm_email
+          }
+          exit 0
+        }
+        { exit 0 }
+      ' 2>/dev/null)
+    else
+      provenance_ok="format_error"
+    fi
+  fi
+
+  # Check each touch against interfaces: union and reserved set.
+  while IFS= read -r touch; do
+    [ -z "$touch" ] && continue
+    # Reserved path check first.
+    reserved_match=""
+    for r in "${RESERVED_PATHS[@]}"; do
+      case "$touch" in
+        "$r"*) reserved_match="$r" ;;
+      esac
+    done
+    if [ -n "$reserved_match" ]; then
+      if [ "$provenance_ok" = "ok" ]; then
+        continue
+      fi
+      echo "ERROR: $plan_name touches: '$touch' is in ADR-0027's reserved-path set ('$reserved_match') — requires human approval."
+      if [ -n "$plan_approved_by" ] && [ "$provenance_ok" != "ok" ]; then
+        echo "       (front-matter approved_by: '$plan_approved_by' is set but no matching Approved-By: trailer found in git history, or trailer author matches commit author — per ADR-0026)"
+      fi
+      errors=$((errors+1))
+      continue
+    fi
+    # Interfaces: containment check. Exact match first.
+    if echo "$interfaces_union" | grep -qF "|$touch|"; then
+      continue
+    fi
+    # Coarse match: touch is a sub-path of an interface (interfaces are directory roots
+    # in spirit; the spec lists files but consumers may treat them as prefixes).
+    matched=0
+    IFS='|'
+    for iface in $interfaces_union; do
+      [ -z "$iface" ] && continue
+      case "$touch" in
+        "$iface"*) matched=1 ;;
+      esac
+    done
+    unset IFS
+    if [ "$matched" -eq 0 ]; then
+      if [ "$provenance_ok" = "ok" ]; then
+        continue
+      fi
+      echo "ERROR: $plan_name touches: '$touch' is outside its governing FS's interfaces: union — requires human approval."
+      if [ -n "$plan_approved_by" ] && [ "$provenance_ok" != "ok" ]; then
+        echo "       (front-matter approved_by: '$plan_approved_by' is set but no matching Approved-By: trailer found in git history, or trailer author matches commit author — per ADR-0026)"
+      fi
+      errors=$((errors+1))
+    fi
+  done <<< "$touches_lines"
+done
+
+# --- rule 7: consumer-impact declaration (FS-0022 §1d) ----------------------
+
+# An FS at approved or beyond whose interfaces: names an exported-surface path must have a
+# CHANGELOG entry naming it. The check verifies presence only; framing is a review judgment.
+
+EXPORTED_PREFIXES=(
+  "guidelines/"
+  "roles/"
+  "skills/"
+  "templates/"
+  "workflows/"
+  "integrations/"
+  "INTEGRATION.md"
+  "AGENTS.md"
+)
+
+i=0
+while [ $i -lt ${#fs_ids[@]} ]; do
+  fs_id="${fs_ids[$i]}"
+  fs_status="${fs_statuses[$i]}"
+  i=$((i+1))
+
+  case "$fs_status" in
+    approved|in-progress|implemented) ;;
+    *) continue ;;
+  esac
+
+  fs_file="$FS_DIR/${fs_id}.md"
+  [ -f "$fs_file" ] || continue
+
+  has_exported=0
+  while IFS= read -r iface; do
+    [ -z "$iface" ] && continue
+    for p in "${EXPORTED_PREFIXES[@]}"; do
+      case "$iface" in
+        "$p"*) has_exported=1 ;;
+      esac
+    done
+  done < <(get_list_field "$fs_file" "interfaces")
+
+  [ "$has_exported" -eq 0 ] && continue
+
+  if ! grep -q "$fs_id" "$CHANGELOG"; then
+    echo "ERROR: $fs_id (status=$fs_status) has exported-surface interfaces but no CHANGELOG entry naming it — consumer-framed entry required."
+    errors=$((errors+1))
+  fi
+done
 
 # --- result ------------------------------------------------------------------
 
