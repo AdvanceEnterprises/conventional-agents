@@ -13,43 +13,6 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
-#### Gate coverage
-
-- `FS-0022` and `PLAN-0022`: gate coverage — extend consistency, lint, and test
-  enforcement to the whole corpus.
-- `scripts/check-status.sh`: extended with ADR index consistency (titles +
-  statuses, both directions), FS/PLAN index title sync, ADR structural
-  completeness, PLAN `touches:` containment against governing FS's
-  `interfaces:` and the reserved-path set, and consumer-impact CHANGELOG
-  declaration. Reads file IDs from front matter rather than filename, so the
-  `FS-NNNN-description.md` naming convention works.
-- `scripts/README.md`: documents every check (purpose, when it runs, what a
-  failure means).
-- `scripts/run-bats.sh`: executes every `.bats` suite under `test/`. Fails
-  loudly with an install hint when `bats` is absent.
-- `npm test`: runs the bats suite. CI job to run `npm test` separately.
-- `npm run lint:docs`: widened globs to cover `guidelines/`, `skills/`,
-  `templates/`, `integrations/`, `roles/`, and root-level docs.
-- Per-directory `.markdownlint.yml` files for `guidelines/`, `skills/`,
-  `templates/`, and `roles/` to silence mechanical whitespace noise in legacy
-  content.
-- `test/FS-0022/gate-coverage.bats`: 14 schema and text assertions across
-  the four new checks, npm test execution, scripts/README.md coverage, and
-  consumer-impact reporting.
-- `test/FS-0001/adr-linting.bats` and `test/FS-0017/commit-attribution.bats`:
-  updated for the world-state changes the new checks reveal (consolidated
-  CI workflow, restored `roles/ROLE_CONTRACT.md` as delegating document,
-  Codex actor in the email list, ADR-0018 accepted).
-- `docs/specifications/FS-0018/19/20/21` `interfaces:` widened to cover the
-  files their PLANs actually modify.
-- `docs/change-plans/PLAN-0018/19` gained `touches:` fields (pre-existing
-  PLANs lacked them; ADR-0027 grandfather-clause exempts plans authored
-  before ADR-0027's `created:` date).
-- `docs/decisions/ADR-0027-plan-self-approval-within-declared-interfaces.md`
-  gained `created:` and `updated:` front-matter fields.
-- `docs/decisions/README.md` and `docs/specifications/README.md`: titles
-  regenerated from file front matter (per §5a).
-
 #### Review board (optional)
 
 - `FS-0021`: review board collaboration mode — several models examine one artifact from
