@@ -197,6 +197,25 @@ than inferring.
 
 ---
 
+## Workflows vs. session modes
+
+Session modes describe the role stance an agent adopts *within* a phase. The SDLC
+workflows at `workflows/sdlc-single-model.md` and `workflows/sdlc-multi-model.md` describe
+the phase sequence the agent traverses. The two are different axes:
+
+- **Session mode** answers *what role stance is this agent holding now?*
+- **SDLC workflow** answers *what phase of the spine is this session executing?*
+
+A session in `mode=implementation` may be at any phase from 2 through 6 of either
+workflow; the phase comes from the work item and its governing FS/PLAN, not from the mode.
+A meta-mode (`autonomous`, `consensus`, `review-board`) is orthogonal to the phase
+sequence — it describes execution context, not phase position. `ADR-0022` makes the
+distinction explicit.
+
+When a session declares its mode, it is also implicitly declaring its leading role per
+the Mode 1 mapping in `ADR-0013`. The receiving phase's leading role is the work item's
+current phase's role, which the workflow documents fix.
+
 ## Adding Modes (Project-Level Customization)
 
 These five modes cover the dominant patterns across most agentic project types. If your
