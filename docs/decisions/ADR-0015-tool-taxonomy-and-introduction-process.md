@@ -1,7 +1,7 @@
 ---
 type: adr
 id: ADR-0015
-status: proposed
+status: accepted
 decision_scope: architecture
 reversible: yes
 related_specs:
@@ -17,7 +17,7 @@ superseded_by: null
 
 ## Status
 
-- Proposed
+- Accepted
 
 ## Context and Problem Statement
 
@@ -281,9 +281,9 @@ makes both muddier.
 
 ## Validation
 
-Added while this ADR is `proposed`, to satisfy `docs/decisions/README.md` §2's
+Added while this ADR was `proposed`, satisfying `docs/decisions/README.md` §2's
 requirement that every ADR carry a Validation section before it may move to
-`accepted`.
+`accepted`. The ADR was accepted after this section existed, not before.
 
 We will consider this decision successful if:
 
