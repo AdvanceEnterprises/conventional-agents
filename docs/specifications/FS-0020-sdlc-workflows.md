@@ -10,12 +10,8 @@ interfaces:
   - "workflows/sdlc-multi-model.md"
   - "workflows/session-modes.md"
   - "guidelines/ROLE_CONTRACT.md"
-  - "README.md"
-  - "AGENTS.md"
-  - "INTEGRATION.md"
   - "docs/specifications/README.md"
   - "test/FS-0020/sdlc-workflows.bats"
-  - "CHANGELOG.md"
 related_adrs:
   - ADR-0012
   - ADR-0013

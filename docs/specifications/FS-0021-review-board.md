@@ -10,10 +10,8 @@ interfaces:
   - "guidelines/ROLE_CONTRACT.md"
   - "templates/collaboration/review-board-findings.md"
   - "config/review-board.yml"
-  - "INTEGRATION.md"
   - "docs/specifications/README.md"
   - "test/FS-0021/review-board.bats"
-  - "CHANGELOG.md"
 related_adrs:
   - ADR-0022
   - ADR-0023
