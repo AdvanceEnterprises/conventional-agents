@@ -37,12 +37,23 @@ into workflow orchestration as a high-impact risk whose stated mitigation is to 
 non-goals and document deviations via ADRs." ADR-0007 chose "stay strictly adjacent —
 standards only, never orchestration" for the same reason.
 
-None of those sources settles the question by precedence. ARC42 is itself `status:
-Draft`, and ADR-0007 is `status: proposed` — the README index listing it as accepted is
-one of eleven inaccurate entries in that table. So this is not an accepted constraint
-overruling a draft spec; it is two draft-level sources pointing one way, a third
-drafting itself the other way, and nothing adjudicating. That is precisely the situation
-an ADR exists to resolve.
+ADR-0007 is `accepted` and therefore binding at precedence level 1. ARC42 is
+`status: Draft` and sits at level 3. FS-0018 is a *draft* spec and reaches no
+precedence level at all until approved.
+
+So the ordering is not in doubt: an accepted ADR and the architecture document both
+point away from making a platform the substrate, and a draft spec is drafting itself
+toward it. What is missing is not adjudication between equals — it is a decision
+recording that the constraint was read, that the spec's direction was noticed to
+conflict with it, and what follows. An FS that quietly assumes past a level-1 ADR is
+the undocumented deviation ARC42 §11 names as the risk, whoever wrote it and however
+reasonable it looked.
+
+*(An earlier revision of this section described ADR-0007 as `proposed`. That was read
+from an index entry later found to be one of eleven inaccurate rows, and corrected when
+ADR-0001 through ADR-0010 were reconciled with their files. The correction strengthens
+this ADR's case rather than weakening it: Option A does not merely sit badly against a
+proposal, it contradicts a binding constraint.)*
 
 There is a second force, pulling the other way, and it is not weaker. ARC42 §8.2
 requires quality gates to be checkable rather than aspirational, and no test can be
@@ -64,8 +75,9 @@ own GitHub usage remains honestly documented?**
 
 ## Decision Drivers
 
-- **Stated constraints deserve an explicit override, not a silent one.** Tool Neutrality
-  and ADR-0007 point one way; a new spec may overrule them, but only by saying so.
+- **Binding constraints deserve an explicit reckoning, not a silent one.** ADR-0007 is
+  accepted and Tool Neutrality is a stated architecture goal; a spec heading the other
+  way must say so and say why, not assume past them.
 - **Abstraction must be extracted, not imagined.** Guidance derived from a working
   implementation is testable; guidance written ahead of one becomes `packs/`.
 - **The framework's own substrate should be documented, not hidden.** This repo uses
@@ -258,8 +270,9 @@ documented rather than assumed.
 ## Links
 
 - ADR-0007: Adjacent-to-Spec-Kit positioning — quality standards, never orchestration.
-- ADR-0007: Adjacent-to-Spec-Kit positioning — standards only, never orchestration
-  (`proposed`; cited for its reasoning, not as a binding constraint).
+- ADR-0007: Adjacent-to-Spec-Kit positioning — standards only, never orchestration.
+  `accepted`, and therefore binding: Option A contradicts it rather than merely
+  sitting badly against it.
 - ADR-0016: Consumer conventions as local adaptations of the framework.
 - ADR-0028: Level-triggered reconciliation — amends capability 6.
 - `integrations/README.md`: the current-state statement of the six capabilities.
