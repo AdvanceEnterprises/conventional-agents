@@ -89,18 +89,40 @@ consumer-impact CHANGELOG entries.
   governing current-state document in the same change). This requires the
   change set, so it lives in `check-current-state.sh` and runs in CI only —
   see below, and the `current-state-update` job in `lint-docs.yml`.
-- **Convention-only rules** (`ADR-0019`, `ADR-0020`, `ADR-0026`,
-  `ADR-0013`'s artifact boundaries). Detection or discipline, not
-  enforcement, per `FS-0022` §Non-Goals.
+- **Convention-only rules.** Detection or discipline, not enforcement, per
+  `FS-0022` §Non-Goals. Each is unenforced **by decision, not by omission** —
+  the reason is recorded here so nobody files the absence as a bug and tries
+  to close it:
+
+  | Rule | Source | Why it is not enforced |
+  | --- | --- | --- |
+  | Parallel primaries must not touch the same artifact | `ADR-0013` | Relies on discipline; no tooling proposed |
+  | Primary/contributor designation | `ADR-0013` | Undeclared sessions can both act as primary |
+  | Work item Type is human-mutable only | `ADR-0019` | No substrate offers per-field ACLs (`ADR-0024`) |
+  | Parked-state suppression | `ADR-0020` | No substrate offers per-label permissions |
+  | Bootstrap merge must be declared in advance | `ADR-0026` | Nothing prevents a PR description claiming it after the fact |
+
+  The first four are substrate limitations, not gaps in this script. Closing
+  them requires a platform that offers controls no current substrate does —
+  which is why `ADR-0024`'s bindings state per capability whether a mechanism
+  *enforces* or merely makes violations *attributable*.
+
 - **Lint coverage.** See `npm run lint:docs`.
 
 **Failure.** One error per violation. Exit code 1 on any failure. Run
 `npm run check:status` and resolve every reported violation before
 committing.
 
-**Performance.** ~5s on a clean tree. The script spawns `awk` per PLAN per
+**Performance.** ~7s on a clean tree. The script spawns `awk` per PLAN per
 `interfaces:` row and `grep -F` per ADR; this is acceptable for CI. A future
 optimization could cache file reads in bash arrays.
+
+Note for anyone extending it: the referenced-path check originally forked a
+`grep` per referenced path, which took the script past 8s and pushed
+`npm test` — which invokes it once per assertion that runs the gate — beyond
+two minutes. It now matches against a newline-delimited string with `case`,
+which forks nothing. Bash 3.2 is the macOS system bash and has no associative
+arrays, so that is the available substitute for a set lookup.
 
 ---
 
