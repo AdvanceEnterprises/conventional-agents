@@ -108,6 +108,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history required. The ADR-0026 approval-provenance check reads
+          # `git log` for the Approved-By: trailer on the commit that last touched
+          # each PLAN, and `git show <sha>:<plan>` to compare the approved touches:
+          # set against the current one. A shallow clone has neither, so every
+          # approval lookup fails and every reserved path reports unapproved.
+          fetch-depth: 0
       - name: Check FS/PLAN status consistency
         run: bash scripts/check-status.sh
 
@@ -134,6 +141,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # suites invoke check-status.sh; see check-status job
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
