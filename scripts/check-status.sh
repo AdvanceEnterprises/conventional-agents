@@ -366,11 +366,15 @@ check_index_titles "$PLAN_README" "$PLAN_DIR" "PLAN" "no"
 # An ADR at `accepted` missing any of these is a higher-severity failure than the same
 # omission on a `proposed` ADR.
 
+# Bare section names. The heading level is deliberately not pinned: MADR 4.0 — which
+# docs/decisions/README.md adopts as the baseline — puts Consequences at H3 nested
+# under "## Decision Outcome", while the others sit at H2. Requiring H2 for all of
+# them would fail six correctly-structured ADRs in this repository.
 REQUIRED_ADR_SECTIONS=(
-  "## Context and Problem Statement"
-  "## Considered Options"
-  "## Decision Outcome"
-  "## Consequences"
+  "Context and Problem Statement"
+  "Considered Options"
+  "Decision Outcome"
+  "Consequences"
 )
 
 for adr_file in "$ADR_DIR"/ADR-*.md; do
@@ -382,7 +386,9 @@ for adr_file in "$ADR_DIR"/ADR-*.md; do
 
   # Validation section is required only at accepted (per the spec); flag absent at any status
   # but report higher severity at accepted.
-  has_validation=$(grep -c "^## Validation" "$adr_file" 2>/dev/null || true)
+  # Anchored to a whole heading line. An unanchored match accepts "## Validation-old",
+  # a "### Validation" subheading, or the words appearing in prose.
+  has_validation=$(grep -cE "^#{2,3} Validation[[:space:]]*$" "$adr_file" 2>/dev/null || true)
   if [ -z "$has_validation" ] || [ "$has_validation" = "0" ]; then
     if [ "$adr_status" = "accepted" ]; then
       echo "ERROR: $adr_id (accepted) is missing required section: ## Validation"
@@ -395,8 +401,12 @@ for adr_file in "$ADR_DIR"/ADR-*.md; do
   # Other sections required at accepted.
   if [ "$adr_status" = "accepted" ]; then
     for sec in "${REQUIRED_ADR_SECTIONS[@]}"; do
-      if ! grep -qF "$sec" "$adr_file"; then
-        echo "ERROR: $adr_id (accepted) is missing required section: $sec"
+      # grep -qF was unanchored, so "## Consequences-renamed" satisfied the
+      # "## Consequences" requirement, as would a "### Consequences" subheading or a
+      # mention in prose. Renaming a required section left the check passing.
+      # Section names contain no regex metacharacters; anchor to the whole line.
+      if ! grep -qE "^#{2,3} ${sec}[[:space:]]*$" "$adr_file"; then
+        echo "ERROR: $adr_id (accepted) is missing required section: ## $sec"
         errors=$((errors+1))
       fi
     done
