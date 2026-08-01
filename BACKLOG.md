@@ -334,6 +334,22 @@ Verified by grepping `docs/decisions/` for "exported surface": only `ADR-0016`,
 `ADR-0030` depends on this split to assign document families their jobs, and
 currently cites `README.md`/`AGENTS.md` as the only sources.
 
+### `ADR-0027`'s reserved-path list is static and nothing detects staleness
+
+Raised in review of PR #71. `RESERVED_PATHS` in `scripts/check-status.sh` names
+`docs/decisions/`, `guidelines/ROLE_CONTRACT.md`, `scripts/`, `.github/workflows/`,
+and `package.json` — the paths a PLAN may never self-approve. `ADR-0027` acknowledges
+the list will need extending as enforcement machinery grows, but nothing detects when
+it has fallen behind.
+
+The failure is quiet and in the permissive direction: new CI or gate machinery added
+outside those paths becomes agent-self-approvable, and the only signal is that nobody
+noticed. Same shape as the exported-surface duplication below, and as the two checks
+that shipped dead in this PR — a hand-maintained list with no drift detection.
+
+Worth pairing with that entry: both are "a list the gates depend on, maintained by
+hand, with no gate on the list itself."
+
 ### The exported surface is enumerated in five places with no source of truth
 
 Distinct from the entry above, which is about the split lacking a *decision record*.

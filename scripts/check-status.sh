@@ -87,6 +87,25 @@ get_list_field() {
   ' "$file"
 }
 
+# Resolve a governed document by its ID, tolerating descriptive filename suffixes.
+#
+#   FS-0018 -> docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md
+#   ADR-0006 -> docs/decisions/ADR-0006.md
+#
+# Rules 4 and 7 previously built "$dir/$id.md" directly. Every FS and PLAN in this
+# repository carries a suffix, so that path never resolved, and both checks hit their
+# `[ -f ] || continue` and skipped every document. They passed while enforcing nothing.
+# Constructing a filename from an ID is the wrong direction; resolve it instead.
+resolve_doc_by_id() {
+  local doc_dir="$1" doc_id="$2" f
+  for f in "$doc_dir/$doc_id".md "$doc_dir/$doc_id"-*.md; do
+    [ -f "$f" ] || continue
+    printf '%s\n' "$f"
+    return 0
+  done
+  return 1
+}
+
 # Get FS status (helper used by FS↔PLAN rule a).
 get_fs_status_for() {
   local target="$1"
@@ -300,8 +319,15 @@ fi
 
 # For each FS row in docs/specifications/README.md, the title column should match the front
 # matter title field. Likewise for PLAN.
+# $4 = "yes" to compare titles, "no" for row-resolution only.
+#
+# PLANs carry no `title:` front-matter field — none of the 23 in this repository has
+# one, and templates/core/change-plan.md does not define one. Comparing a PLAN's
+# front matter title to its README row therefore compares the empty string to real
+# text and reports every plan as drifted. FS-0022 §1a's Success Criteria ask for
+# title drift on FS and *row existence* on PLAN, which is what this implements.
 check_index_titles() {
-  local readme="$1" doc_dir="$2" prefix="$3"
+  local readme="$1" doc_dir="$2" prefix="$3" compare_titles="$4"
 
   while IFS= read -r row; do
     row_id=$(echo "$row" | awk -F'|' -v pfx="$prefix" '/^| '"$prefix"'-[0-9]+ /{
@@ -309,8 +335,13 @@ check_index_titles() {
     }')
     [ -z "$row_id" ] && continue
 
-    doc_file="$doc_dir/${row_id}.md"
-    [ -f "$doc_file" ] || continue
+    if ! doc_file=$(resolve_doc_by_id "$doc_dir" "$row_id"); then
+      echo "ERROR: $row_id has a row in $(basename "$readme") but no matching file in $doc_dir."
+      errors=$((errors+1))
+      continue
+    fi
+
+    [ "$compare_titles" = "yes" ] || continue
 
     front_title=$(get_field "$doc_file" "title")
     readme_title=$(echo "$row" | awk -F'|' '{
@@ -324,8 +355,8 @@ check_index_titles() {
   done < <(grep "^| ${prefix}-" "$readme")
 }
 
-check_index_titles "$FS_README"   "$FS_DIR"   "FS"
-check_index_titles "$PLAN_README" "$PLAN_DIR" "PLAN"
+check_index_titles "$FS_README"   "$FS_DIR"   "FS"   "yes"
+check_index_titles "$PLAN_README" "$PLAN_DIR" "PLAN" "no"
 
 # --- rule 5: ADR structural completeness (FS-0022 §1b) ----------------------
 
@@ -579,6 +610,9 @@ i=0
 while [ $i -lt ${#fs_ids[@]} ]; do
   fs_id="${fs_ids[$i]}"
   fs_status="${fs_statuses[$i]}"
+  # The FS index built fs_paths from the real files; use it rather than rebuilding a
+  # filename from the ID, which never resolved for suffixed names.
+  fs_file="${fs_paths[$i]}"
   i=$((i+1))
 
   case "$fs_status" in
@@ -586,7 +620,6 @@ while [ $i -lt ${#fs_ids[@]} ]; do
     *) continue ;;
   esac
 
-  fs_file="$FS_DIR/${fs_id}.md"
   [ -f "$fs_file" ] || continue
 
   has_exported=0
