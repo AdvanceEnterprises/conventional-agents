@@ -58,6 +58,18 @@ new surface should expect to read its governing ADR before integrating.
   nowhere to go. If you have tooling that reads `status:` from change plans, it can now
   encounter this value.
 
+#### `CONTRIBUTING.md`: how to test a governance gate
+
+- New "Changing a Governance Gate" section. The rule is that a gate's test must break
+  the thing the gate protects and confirm the gate notices — not that the check runs,
+  and not that some file contains some string. Four gates in this repository shipped
+  enforcing nothing and every one passed its own test suite; the section names them and
+  gives the shape of a test that would have caught them.
+- Includes the CI-portability traps that cost the most here: a shallow clone with no git
+  history, a `PATH` that excluded a tool on one platform and included it on another, and
+  a missing dependency whose "command not found" was swallowed by a redirect and read as
+  a failed assertion.
+
 #### Three gate checks were silently enforcing nothing — fixed
 
 - **ADR structural completeness** matched required sections with an unanchored
