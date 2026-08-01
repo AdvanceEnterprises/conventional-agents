@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0018
-status: approved
+status: implemented
 title: Work item lifecycle and autonomous triggers for governed work
 owner: ajoeofalltrades
 test_required: true
@@ -27,7 +27,7 @@ supersedes: []
 requires: []
 tags: [workflow, triggers, agent-orchestration, work-items]
 created: 2026-07-27
-updated: 2026-07-28
+updated: 2026-08-01
 ---
 
 <!--

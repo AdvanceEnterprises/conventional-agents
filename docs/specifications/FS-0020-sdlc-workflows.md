@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0020
-status: approved
+status: implemented
 title: SDLC workflows — single-model and multi-model
 owner: ajoeofalltrades
 test_required: true
@@ -24,7 +24,7 @@ requires:
   - FS-0018
 tags: [workflow, sdlc, roles, multi-model]
 created: 2026-07-28
-updated: 2026-07-28
+updated: 2026-08-01
 ---
 
 <!--
