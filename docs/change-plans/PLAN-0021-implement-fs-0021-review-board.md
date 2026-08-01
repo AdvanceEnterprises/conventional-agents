@@ -3,7 +3,7 @@
 type: change-plan
 role: implementer
 language: n/a
-status: approved
+status: implemented
 related_specs: [FS-0021]
 approved_by: "Joey Clark <taisden@tais-den.dev>"
 related_adrs: [ADR-0022, ADR-0023, ADR-0031]
@@ -18,7 +18,7 @@ touches:
 
   - "CHANGELOG.md"
 created: 2026-07-28
-updated: 2026-07-28
+updated: 2026-08-01
 
 ---
 

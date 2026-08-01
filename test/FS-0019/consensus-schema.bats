@@ -8,7 +8,9 @@ setup() {
 
 @test "FS-0019 exists with approved status" {
   assert_file_exists "$REPO_ROOT/docs/specifications/FS-0019-multi-model-consensus.md"
-  assert_file_contains "$REPO_ROOT/docs/specifications/FS-0019-multi-model-consensus.md" "status: approved"
+  # Binding, not a pinned status — see the note in test/FS-0018/issue-lifecycle.bats.
+  grep -qE "^status: (approved|in-progress|implemented)$" \
+    "$REPO_ROOT/docs/specifications/FS-0019-multi-model-consensus.md"
 }
 
 @test "FS-0019 declares consensus disabled by default" {

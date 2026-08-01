@@ -17,7 +17,7 @@ Entries are removed when the work lands or is explicitly abandoned.
 
 ---
 
-## Next after this PR
+## Next
 
 ### Implement the GitHub guidance on this repository, and write the runbook
 
@@ -58,6 +58,44 @@ provisioning already done and no authorization to continue. Sequence it delibera
 (`FS-0018`) and produces the runbook that consuming projects copy. Phase 2 is
 implementation informed by it. Writing Phase 2's spec first would be specifying against
 an imagined substrate, which is the failure the runbook type exists to prevent.
+
+### Consumers are pinned to a pre-rename version and a vendor path that no longer matches
+
+Verified against the Tais-Den org on 2026-08-01, by inspection only — nothing in those
+repositories was modified.
+
+| Repo | Submodule URL | Vendor path | Pinned |
+| --- | --- | --- | --- |
+| `agentic-bootstrap-constitution` | `agentic-dev-kit` | `vendor/agent-dev-kit` | 2026-02-08 |
+| `deploy-ducky` | `agentic-dev-kit` | `vendor/agentic-dev-kit` | 2026-02-16 (v1.2.0) |
+| `feral-fleet` | `agentic-dev-kit` | `vendor/agent-dev-kit` | 2026-02-16 (v1.2.0) |
+| `pack-protocol` | `agentic-dev-kit` | `vendor/agentic-dev-kit` | 2026-02-16 (v1.2.0) |
+| `tais-den-conventions` | `conventional-agents` | `vendor/conventional-agents` | current |
+
+Four consumers point at the pre-`v2.0.0` repository name and at two vendor paths,
+neither of which is the `vendor/conventional-agents` every document here specifies.
+GitHub's rename redirect is the only reason their submodules still resolve. They are
+running against a three-role contract with no session modes, work items, or
+multi-model workflow.
+
+**The exported surface held, which is the useful finding.** All eight framework paths
+`deploy-ducky` references still exist on trunk. Migration is mechanical — rename the
+path, bump the pointer, update references — plus absorbing content growth. This is
+evidence the exported/internal split works, not evidence against it.
+
+**Two things this exposes:**
+
+- **No consumer registry here.** The rename broke four consumers and no gate could
+  catch it: the consumer-impact check reads only this repository's `CHANGELOG.md`. A
+  registry exists as `pack-protocol/config/repos.yml` — outside the framework, and
+  itself still naming `agentic-dev-kit`.
+- **No upgrade path.** `INTEGRATION.md`'s Migration Guides cover "no standards →
+  framework" and "copy-in → submodule". Nothing covers version-to-version, and there
+  is no stated support or breaking-change policy.
+
+`agentic-bootstrap-constitution` compounds it: a GitHub *template* repository pinned to
+February, so every repo generated from it inherits the stale integration. Fixing it is
+the only one of the five that prevents future drift rather than repairing past drift.
 
 ---
 
@@ -213,8 +251,9 @@ is not mechanically checkable; scoping it to declared paths would have caught `F
 - **Version and tags disagree.** `package.json` is `2.1.0`; the only tag in the
   repository is `v2.0.0`; `CHANGELOG.md` `[Unreleased]` holds the whole of this PR.
   Cut a release per `workflows/versioning-and-releases.md` before or with publication.
-- **Close PRs #62, #63, #64** — already recorded below, but they should not be the
-  first thing a visitor sees.
+- **Open PRs and issues** — PRs #62–#64 and issues #28–#49 are now closed. PR #60
+  (`FS-0004`/`PLAN-0002`, role-aware commentary policy) is still open and still needs a
+  disposition before publication.
 - **The exported surface is enumerated five times** — recorded below; a public API
   surface maintained by hand in five places will diverge, and now with witnesses.
 - **The Agent Skills format is an unnamed upstream dependency** — recorded below.
@@ -267,6 +306,14 @@ Miscategorisation has a concrete cost, so the answer should not be "nearest fit"
 tool filed as Category 2 escapes the approved-FS requirement Category 1 imposes.
 Whatever the answer, it needs a new ADR — `ADR-0015` is accepted and append-only, so
 the taxonomy cannot be widened by editing it.
+
+### `render_contributor_prompt.py` and a Python toolchain
+
+Carried by the now-closed PRs #62–#64. Real code with a real bats suite, never
+extracted. Adopting it means deciding its category under `ADR-0015` and introducing a
+Python toolchain to a repository that has none — `templates/python/` ships Python
+guidance, but nothing here executes Python. Evaluate on its own merits rather than
+inheriting it because it happened to ride along with the orchestration pilot.
 
 ### Model provider guidance
 
@@ -333,6 +380,22 @@ Verified by grepping `docs/decisions/` for "exported surface": only `ADR-0016`,
 
 `ADR-0030` depends on this split to assign document families their jobs, and
 currently cites `README.md`/`AGENTS.md` as the only sources.
+
+### Nothing detects "merged but never marked implemented"
+
+`FS-0018`–`FS-0023` and `PLAN-0018`–`PLAN-0023` merged on 2026-07-29 and sat at
+`approved` until the `v2.1.0` release was cut three days later.
+`workflows/document-lifecycle.md` places the transition in the completing PR;
+`PLAN-0022` §5 step 9 said so explicitly. It did not happen, and `check:status`
+stayed green throughout — rule 1 only fires on documents already marked
+`implemented`, so an unmarked one is invisible to it.
+
+The detectable signal is a document whose governing PR has merged while its status is
+still `approved`. That needs the merge state, so it belongs with
+`check-current-state.sh` in CI rather than in `check-status.sh`.
+
+Fifth fail-open in the same family: the gate reports success because the condition it
+tests never becomes true, not because the repository is correct.
 
 ### `ADR-0027`'s reserved-path list is static and nothing detects staleness
 
@@ -472,26 +535,6 @@ once: coverage is opt-in by enumeration, so new surfaces are unguarded by defaul
 ---
 
 ## Cleanup
-
-### Close PRs #62, #63, #64
-
-Cumulative branches (#62 → #63 → #64) carrying the multi-model orchestration pilot.
-Their useful content is extracted in the current PR — into `FS-0019`'s amendments and
-`FS-0021` — so the branches can be closed unmerged once that work lands. Closing them
-is a GitHub action, not a change to this repository.
-
-**Not extracted, still undecided:** `scripts/render_contributor_prompt.py` with its
-bats suite, and the `pyproject.toml` those branches add. Real code with real tests,
-but adopting it means deciding its category under `ADR-0015` and introducing a Python
-toolchain to a repository that currently has none. Evaluate on its own merits rather
-than inheriting it with the rest.
-
-### Stale work-tracking issues
-
-GitHub issues #28–#49 are backfilled FS/PLAN tracking issues, all OPEN while their
-documents are `implemented` on trunk. Several still name the pre-2.0 project
-`agentic-dev-kit`. They contradict the framework's own status-consistency principle
-and should be closed or reconciled.
 
 ### `.mailmap` for author grouping
 

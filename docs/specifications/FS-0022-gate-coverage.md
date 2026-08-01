@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0022
-status: approved
+status: implemented
 title: Gate coverage — extend consistency, lint, and test enforcement to the whole corpus
 owner: ajoeofalltrades
 test_required: true
@@ -29,7 +29,7 @@ supersedes: []
 requires: []
 tags: [quality-gates, ci, enforcement]
 created: 2026-07-28
-updated: 2026-07-29
+updated: 2026-08-01
 ---
 
 <!--

@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0023
-status: approved
+status: implemented
 title: Runbook document type — operational procedures recorded as performed
 owner: ajoeofalltrades
 test_required: true
@@ -24,7 +24,7 @@ supersedes: []
 requires: []
 tags: [documentation, operations, runbooks, exported-surface]
 created: 2026-07-29
-updated: 2026-07-29
+updated: 2026-08-01
 ---
 
 <!--

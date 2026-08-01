@@ -3,7 +3,7 @@
 type: change-plan
 role: implementer
 language: markdown
-status: approved
+status: implemented
 related_specs: [FS-0023]
 approved_by: "Joey Clark <taisden@tais-den.dev>"
 related_adrs: [ADR-0024, ADR-0027, ADR-0030]
@@ -19,7 +19,7 @@ touches:
   - .github/workflows/lint-docs.yml
   - test/FS-0023/runbook-convention.bats
 created: 2026-07-29
-updated: 2026-07-29
+updated: 2026-08-01
 
 ---
 

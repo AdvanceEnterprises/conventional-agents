@@ -106,9 +106,9 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0015 | Role selection and session modes | implemented |
 | FS-0016 | Framework Internal Vendor Boundary | implemented |
 | FS-0017 | Single-identity commit attribution with model, role, and session metadata | implemented |
-| FS-0018 | Work item lifecycle and autonomous triggers for governed work | approved |
-| FS-0019 | Multi-model consensus at workflow gates (optional consumer feature) | approved |
-| FS-0020 | SDLC workflows — single-model and multi-model | approved |
-| FS-0021 | Review board collaboration mode | approved |
-| FS-0022 | Gate coverage — extend consistency, lint, and test enforcement to the whole corpus | approved |
-| FS-0023 | Runbook document type — operational procedures recorded as performed | approved |
+| FS-0018 | Work item lifecycle and autonomous triggers for governed work | implemented |
+| FS-0019 | Multi-model consensus at workflow gates (optional consumer feature) | implemented |
+| FS-0020 | SDLC workflows — single-model and multi-model | implemented |
+| FS-0021 | Review board collaboration mode | implemented |
+| FS-0022 | Gate coverage — extend consistency, lint, and test enforcement to the whole corpus | implemented |
+| FS-0023 | Runbook document type — operational procedures recorded as performed | implemented |
