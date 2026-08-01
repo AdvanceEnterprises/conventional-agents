@@ -36,9 +36,20 @@ consumer-impact CHANGELOG entries.
    `docs/decisions/README.md`, and the row's H1 title and front-matter
    status match the file. The file is authoritative for both. Rows for
    deleted ADRs are flagged.
-4. **FS and PLAN index title sync.** The title column in `README.md` matches
-   the file's front-matter `title:` field. Abbreviated titles drift silently
-   without this check.
+4. **FS index title sync, and FS/PLAN row resolution.** Every `FS-`/`PLAN-` row
+   in the directory `README.md` must resolve to a real file; a row naming no
+   file is an orphan and fails. For FS, the row's title column must also match
+   the file's front-matter `title:`.
+
+   PLAN rows are resolved but **not** title-compared: plans carry no `title:`
+   field, and `templates/core/change-plan.md` defines none, so comparing would
+   report all of them as drifted.
+
+   Both this check and check 7 previously built `"$dir/$id.md"` directly. Every
+   FS and PLAN here carries a descriptive suffix, so that path never resolved and
+   both checks skipped every document — passing while enforcing nothing. They
+   resolve by ID now (`resolve_doc_by_id`), which tolerates bare and suffixed
+   filenames alike.
 5. **ADR structural completeness.** An `accepted` ADR must contain
    `## Context and Problem Statement`, `## Considered Options`,
    `## Decision Outcome`, `## Consequences`, and `## Validation`. Missing

@@ -58,6 +58,24 @@ new surface should expect to read its governing ADR before integrating.
   nowhere to go. If you have tooling that reads `status:` from change plans, it can now
   encounter this value.
 
+#### Two gate checks were silently enforcing nothing — fixed
+
+- `npm run check:status`'s **FS/PLAN index title sync** and **consumer-impact CHANGELOG**
+  checks both resolved a document as `<dir>/<ID>.md`. Every spec and plan in this
+  repository carries a descriptive suffix (`FS-0018-issue-lifecycle-….md`), so neither
+  path ever resolved and both checks skipped every document while reporting success.
+  If you vendor this framework and rely on either check, **they were not protecting
+  you.** Both now resolve by ID and tolerate bare or suffixed filenames.
+- The consumer-impact rule — an FS naming exported-surface paths must have a CHANGELOG
+  entry — is therefore enforced for the first time. If you have specs at `approved` or
+  beyond whose `interfaces:` name `guidelines/`, `roles/`, `skills/`, `templates/`,
+  `workflows/`, `integrations/`, `runbooks/`, `INTEGRATION.md`, or `AGENTS.md`, expect
+  new failures until each has an entry naming it.
+- PLAN rows are resolved but no longer title-compared: change plans carry no `title:`
+  field, so the comparison reported every plan as drifted.
+- An index row naming a file that does not exist is now reported as an orphan rather
+  than skipped.
+
 #### ADR-0030 rule 3 is now enforced in CI (`FS-0022` §3)
 
 - New `scripts/check-current-state.sh`, run by a `current-state-update` job on pull

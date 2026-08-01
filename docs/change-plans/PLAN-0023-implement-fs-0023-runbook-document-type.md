@@ -103,6 +103,13 @@ than interface changes: `docs/specifications/README.md` and
   names `runbooks/`, `README.md`, and `AGENTS.md` — all exported. Once `runbooks/`
   enters `EXPORTED_PREFIXES`, `check-status.sh` requires a CHANGELOG entry naming
   `FS-0023`. That entry is part of this change, not a follow-up.
+
+  **This was untrue when written.** The consumer-impact check resolved
+  `"$FS_DIR/$fs_id.md"`, which does not exist for suffixed filenames, so it skipped
+  every spec and fired on none. Adding `runbooks/` to `EXPORTED_PREFIXES` changed
+  nothing. The CHANGELOG entry was written because the plan said to, not because a
+  gate demanded it — which is exactly the difference this PR claims to remove.
+  The check was repaired after review; the statement above is now accurate.
 * **`.github/workflows/lint-docs.yml` path triggers are `pull_request`-scoped to
   `trunk`.** Adding `runbooks/**/*.md` does not retroactively trigger CI on branches
   already open. Not a defect; worth knowing when the first runbook lands.
