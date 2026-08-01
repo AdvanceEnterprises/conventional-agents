@@ -179,9 +179,27 @@ it.
 `docs/decisions/README.md`'s 12 MD060 errors are already fixed in this PR. Its
 remaining 2 MD036 are pre-existing and trivial.
 
-**FS index titles — 15 of 22 rows.** Abbreviated rather than fabricated,
+**FS index titles — 15 of 22 rows** (see the correction below). Abbreviated rather than fabricated,
 unlike the ADR index this PR already corrected. Regenerate every row from
 front matter.
+
+**Correction — checks 4 and 7 shipped dead.** Found in review of this PR, not by
+a gate. Both built `"$dir/$id.md"` from a document ID. Every FS and PLAN in this
+repository carries a descriptive suffix, so neither path ever resolved, both hit
+their `[ -f ] || continue`, and both skipped every document while reporting
+success. Demonstrated by mutation: replacing an FS title in the index with
+"COMPLETELY WRONG TITLE", and stripping every `FS-0023` mention from
+`CHANGELOG.md`, each left `check-status.sh` passing.
+
+So the FS index title remediation above was never gate-verified, and the
+consumer-impact rule enforced nothing for the whole life of this PR. Both now
+resolve by ID. Three mutation tests cover them, replacing an assertion that only
+checked `CHANGELOG.md` contained the string `FS-0018` without ever invoking the
+check.
+
+The general shape, for the third time in this plan: a check that fails open reads
+as a check that passes. `get_list_field` stopping at the first blank line, the
+approval-provenance bypasses, and now this.
 
 **ADR structural completeness — resolved.** `ADR-0013`, `ADR-0014`, and
 `ADR-0015` all lacked the Validation section `docs/decisions/README.md` §2

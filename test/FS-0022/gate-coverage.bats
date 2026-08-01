@@ -200,7 +200,7 @@ PLAN_EOF
   # Every check in check-status.sh must have an entry.
   for term in "FS↔PLAN status pairing" \
               "ADR index consistency" \
-              "FS and PLAN index title sync" \
+              "FS index title sync" \
               "ADR structural completeness" \
               "PLAN \`touches:\` containment" \
               "Consumer-impact CHANGELOG"; do
@@ -216,8 +216,61 @@ PLAN_EOF
 # --- consumer impact ----------------------------------------------------------
 
 @test "consumer_impact: exported interfaces require changelog entry" {
-  # FS-0018 names integrations/ in interfaces:. It must have a CHANGELOG entry.
-  assert_file_contains "$CHANGELOG" "FS-0018"
+  # This asserted only that CHANGELOG.md contained the string "FS-0018" — it never
+  # invoked the check. It passed for two years' worth of commits while the check it
+  # named was resolving "$FS_DIR/FS-0018.md", a path that does not exist for suffixed
+  # filenames, and skipping every spec. Mutate and assert the failure instead.
+  local backup
+  backup=$(mktemp)
+  cp "$CHANGELOG" "$backup"
+  sed -i.bak 's/FS-0023/FS-XXXX/g' "$CHANGELOG"
+  rm -f "${CHANGELOG}.bak"
+  run bash "$CHECK"
+  cp "$backup" "$CHANGELOG"; rm -f "$backup"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "FS-0023"
+  echo "$output" | grep -qF "no CHANGELOG entry naming it"
+}
+
+@test "index_titles: FS title drift is detected" {
+  # Rule 4 built "$doc_dir/$row_id.md" and skipped every row whose file carries a
+  # descriptive suffix — i.e. all of them. It passed while enforcing nothing.
+  local backup
+  backup=$(mktemp)
+  cp "$FS_README" "$backup"
+  sed -i.bak 's/^| FS-0023 | [^|]*|/| FS-0023 | COMPLETELY WRONG TITLE |/' "$FS_README"
+  rm -f "${FS_README}.bak"
+  run bash "$CHECK"
+  cp "$backup" "$FS_README"; rm -f "$backup"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "FS-0023 front matter title"
+}
+
+@test "index_titles: an orphan README row is detected" {
+  local backup
+  backup=$(mktemp)
+  cp "$PLAN_README" "$backup"
+  echo "| PLAN-9999 | Nonexistent plan | FS-0001 | approved |" >> "$PLAN_README"
+  run bash "$CHECK"
+  cp "$backup" "$PLAN_README"; rm -f "$backup"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "PLAN-9999 has a row"
+}
+
+@test "index_titles: PLAN rows are not title-compared" {
+  # PLANs carry no title: field (templates/core/change-plan.md defines none). Comparing
+  # them reports all 23 as drifted. Guard the scoping decision, not just the behaviour.
+  run bash "$CHECK"
+  ! echo "$output" | grep -qE "PLAN-[0-9]+ front matter title"
+}
+
+@test "resolve_doc_by_id: resolves both bare and suffixed filenames" {
+  run bash -c "source '$CHECK' >/dev/null 2>&1; true"
+  # ADR-0006.md is bare; FS-0023-*.md is suffixed. Both must resolve.
+  [ -f "$REPO_ROOT/docs/decisions/ADR-0006.md" ]
+  local suffixed
+  suffixed=$(ls "$REPO_ROOT/docs/specifications/FS-0023"-*.md 2>/dev/null | head -1)
+  [ -n "$suffixed" ]
 }
 
 @test "consumer_impact: internal-only spec is not flagged" {
