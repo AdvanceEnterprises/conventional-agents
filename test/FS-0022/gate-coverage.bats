@@ -426,3 +426,36 @@ PLAN_EOF
   assert_file_contains "$ci" "check-current-state.sh"
   assert_file_contains "$ci" "fetch-depth: 0"
 }
+
+# --- ADR structural completeness anchoring (FS-0022 §1b) ----------------------
+
+@test "adr_structure: a renamed required section is detected" {
+  # grep -qF was unanchored, so "## Consequences-renamed" satisfied the
+  # "## Consequences" requirement. Renaming a required section left the check green.
+  local adr="$REPO_ROOT/docs/decisions/ADR-0031-structured-multi-model-collaboration.md"
+  [ -f "$adr" ] || skip "ADR-0031 filename changed"
+  local backup
+  backup=$(mktemp)
+  cp "$adr" "$backup"
+  sed -i.bak -E 's/^(#{2,3}) Consequences$/\1 Consequences-renamed/' "$adr"
+  rm -f "${adr}.bak"
+  run bash "$CHECK"
+  cp "$backup" "$adr"; rm -f "$backup"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "missing required section"
+}
+
+@test "adr_structure: MADR's H3-nested Consequences is accepted" {
+  # MADR 4.0 puts Consequences at H3 under "## Decision Outcome"; six accepted ADRs
+  # here follow that. Pinning the requirement to H2 would fail all six. This guards
+  # the accommodation, not just the rejection.
+  local nested=0 f
+  for f in "$REPO_ROOT"/docs/decisions/ADR-*.md; do
+    if grep -qE '^### Consequences[[:space:]]*$' "$f" && ! grep -qE '^## Consequences[[:space:]]*$' "$f"; then
+      nested=$((nested+1))
+    fi
+  done
+  [ "$nested" -gt 0 ]          # the situation this guards actually exists
+  run bash "$CHECK"
+  ! echo "$output" | grep -qF "missing required section: ## Consequences"
+}

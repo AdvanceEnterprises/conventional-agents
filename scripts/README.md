@@ -51,10 +51,18 @@ consumer-impact CHANGELOG entries.
    resolve by ID now (`resolve_doc_by_id`), which tolerates bare and suffixed
    filenames alike.
 5. **ADR structural completeness.** An `accepted` ADR must contain
-   `## Context and Problem Statement`, `## Considered Options`,
-   `## Decision Outcome`, `## Consequences`, and `## Validation`. Missing
-   any of these is an `accepted`-severity failure; missing `## Validation`
-   on a `proposed` ADR is a warning.
+   Context and Problem Statement, Considered Options, Decision Outcome,
+   Consequences, and Validation. Missing any is an `accepted`-severity
+   failure; a missing Validation on a `proposed` ADR is a warning.
+
+   Matching is a **whole heading line at H2 or H3**. Both halves matter:
+   the previous `grep -qF` was unanchored, so `## Consequences-renamed`
+   satisfied the Consequences requirement, as would a mention in prose —
+   renaming a required section left the check green. But pinning it to H2
+   fails six correctly-structured ADRs here, because MADR 4.0 nests
+   `### Consequences` under `## Decision Outcome` and
+   `docs/decisions/README.md` adopts MADR as the baseline. Anchor to the
+   line; do not pin the level.
 6. **PLAN `touches:` containment** (ADR-0027). For an `approved` PLAN, every
    path in `touches:` must fall within the union of its governing FS's
    `interfaces:`, AND must not match the reserved-path set

@@ -58,7 +58,17 @@ new surface should expect to read its governing ADR before integrating.
   nowhere to go. If you have tooling that reads `status:` from change plans, it can now
   encounter this value.
 
-#### Two gate checks were silently enforcing nothing — fixed
+#### Three gate checks were silently enforcing nothing — fixed
+
+- **ADR structural completeness** matched required sections with an unanchored
+  fixed-string search, so `## Consequences-renamed` satisfied the `## Consequences`
+  requirement — as would a `### Consequences` subheading elsewhere in the file, or the
+  words appearing in prose. Renaming or demoting a required section left the check
+  green. It now matches a whole heading line at H2 or H3. The H3 allowance is
+  deliberate: MADR 4.0 nests `### Consequences` under `## Decision Outcome`, and
+  requiring H2 would fail correctly-structured ADRs.
+
+#### Two more gate checks were silently enforcing nothing — fixed
 
 - `npm run check:status`'s **FS/PLAN index title sync** and **consumer-impact CHANGELOG**
   checks both resolved a document as `<dir>/<ID>.md`. Every spec and plan in this
