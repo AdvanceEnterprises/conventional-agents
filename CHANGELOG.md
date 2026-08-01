@@ -13,7 +13,12 @@ For this project (a documentation/standards kit), semver follows the
 
 Nothing yet.
 
-## [2.1.0] - 2026-07-29
+## [2.1.0] - 2026-08-01
+
+> Released 2026-08-01. `FS-0018`–`FS-0023` and `PLAN-0018`–`PLAN-0023` moved to
+> `implemented` when this release was cut; they were left at `approved` when the
+> work merged, which `workflows/document-lifecycle.md` places in the completing PR.
+> Nothing detects "merged but never marked" — recorded in `BACKLOG.md`.
 
 This release carries the work-item layer (FS-0018), the multi-model collaboration
 framework (FS-0019, FS-0021, ADR-0031), the platform-neutral substrate model

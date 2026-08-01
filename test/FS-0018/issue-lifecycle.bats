@@ -29,7 +29,12 @@ ALLOWED_MODES=(
 
 @test "FS-0018 exists with approved status" {
   assert_file_exists "$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md"
-  assert_file_contains "$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md" "status: approved"
+  # Assert the spec is *binding*, not that it sits at one exact status. Pinning
+  # "approved" made this fail the moment FS-0018 advanced to "implemented" — a test
+  # that breaks on every legitimate lifecycle transition is a maintenance tax, not a
+  # guard. draft and deprecated are the statuses that would matter here.
+  grep -qE "^status: (approved|in-progress|implemented)$" \
+    "$REPO_ROOT/docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md"
 }
 
 @test "FS-0018 declares three-axis work item schema" {

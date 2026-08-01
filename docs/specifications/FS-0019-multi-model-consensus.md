@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0019
-status: approved
+status: implemented
 title: Multi-model consensus at workflow gates (optional consumer feature)
 owner: ajoeofalltrades
 test_required: true
@@ -27,7 +27,7 @@ requires:
   - FS-0018
 tags: [consensus, multi-model, workflow-gates, optional-feature]
 created: 2026-07-27
-updated: 2026-07-28
+updated: 2026-08-01
 ---
 
 <!--

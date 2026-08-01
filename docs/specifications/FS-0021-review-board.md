@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0021
-status: approved
+status: implemented
 title: Review board collaboration mode
 owner: ajoeofalltrades
 test_required: true
@@ -21,7 +21,7 @@ requires:
   - FS-0018
 tags: [collaboration, multi-model, review, optional-feature]
 created: 2026-07-28
-updated: 2026-07-28
+updated: 2026-08-01
 ---
 
 <!--
