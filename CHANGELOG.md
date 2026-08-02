@@ -11,7 +11,24 @@ For this project (a documentation/standards kit), semver follows the
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+#### Template and instance repository forms (`ADR-0032`, proposed)
+
+- **`INTEGRATION.md` gains a "Template and instance repositories" section.** If you run
+  more than one repository against this framework, it gives you a test for which content
+  belongs where: *would a second adopter's copy have to change it?* Yes → instance
+  (hostnames, IPs, secrets, board IDs, absolute paths); no → template (roles, scripts,
+  contracts, scaffolds).
+- The rule is **a template repository carries no instance data; an instance repository
+  owes no one a template.** The second half is the point — declaring a repo an instance
+  explicitly frees it from any obligation to generalize, so you do not pay the cost of
+  extracting a reusable form before a second instance exists to justify it.
+- Recommends putting placeholders **in filenames** (`APP_NAME-ENV-app.container`,
+  `*.env.example`) so instance data cannot be added without visibly renaming the file.
+- `ADR-0032` is `proposed`, and the guidance is a convention — nothing enforces it and
+  no existing repository is required to change. The table of contents renumbers: the new
+  section is 5, and everything after it shifts by one.
 
 ## [2.1.0] - 2026-08-01
 
