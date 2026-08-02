@@ -405,6 +405,25 @@ Verified by grepping `docs/decisions/` for "exported surface": only `ADR-0016`,
 `ADR-0030` depends on this split to assign document families their jobs, and
 currently cites `README.md`/`AGENTS.md` as the only sources.
 
+### Nothing compares a document's front-matter status to its own body
+
+`check-status.sh` validates front-matter `status:` against the README index. It never
+reads the document's own `## Status` section. Those drifted apart the moment
+`FS-0018`–`FS-0023` were transitioned to `implemented`: front matter said
+`implemented`, the body still said "Approved", and every FS still claimed its PLAN was
+`approved`. Six documents, and the gate was green throughout.
+
+Introduced by the very change that closed the v2.1.0 era, and found by reading rather
+than by any check — which is the point.
+
+Detecting it is cheap and local: the `## Status` bullet, and any bolded claim of the
+form *PLAN-NNNN is `status`*, should agree with front matter.
+
+The subtlety worth preserving is that a status word in prose is not always a status
+*claim*. `FS-0020`'s stage table has a row whose precondition reads *FS is approved;
+PLAN is approved* — that describes when test authoring may begin, not the state of any
+particular document. A naive find-and-replace over status words corrupts it.
+
 ### Nothing detects that an open PR has become an empty diff
 
 `PR #60` (revise `FS-0004`/`PLAN-0002`) sat open from 2026-06-08 until 2026-08-01

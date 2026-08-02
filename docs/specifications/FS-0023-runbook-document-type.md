@@ -41,11 +41,11 @@ PARSING_HINTS:
 
 ## Status
 
-- Approved
+- Implemented
 
 ## Plan Status
 
-- **PLAN-0023 is `approved`**, approved in the same session as this FS.
+- **PLAN-0023 is `implemented`.** approved in the same session as this FS.
 
 ## Summary
 
