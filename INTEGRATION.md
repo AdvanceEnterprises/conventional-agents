@@ -13,11 +13,12 @@ This document is the canonical source for how conventional-agents integrates wit
 2. Consumer Issue Configuration (Work Item Lifecycle, FS-0018)
 3. Precedence Rules
 4. Integration Patterns
-5. Tool-Specific Integration
-6. Multi-Agent Coordination
-7. Troubleshooting
-8. Best Practices
-9. Migration Guides
+5. Template and instance repositories
+6. Tool-Specific Integration
+7. Multi-Agent Coordination
+8. Troubleshooting
+9. Best Practices
+10. Migration Guides
 
 ⸻
 
@@ -345,6 +346,75 @@ Rules:
 
 For more details, see ADR-0016: Consumer conventions and ADR-0017: Framework
 vendor directory is internal.
+
+⸻
+
+## Template and instance repositories
+
+Every repository holds two kinds of content, and mixing them is expensive in ways that
+only surface later.
+
+- **Template content** is reusable — roles, playbooks, scripts, contracts, guidelines,
+  scaffolds. Anything a second adopter could take unchanged.
+- **Instance content** describes one deployment — hostnames, IP addresses, secrets,
+  project and board identifiers, absolute paths, real service definitions, records of
+  what is actually running.
+
+### The rule (ADR-0032)
+
+> **A template repository carries no instance data. An instance repository owes no one a
+> template.**
+
+Both halves matter. The first is the constraint; the second is the permission that makes
+it affordable. Without it, every repository inherits an obligation to generalize, and you
+pay the cost of a split before you have a second instance to justify it.
+
+Declare which form a repository is, in its `README.md`. A repository that cannot say
+which it is has not made the decision yet.
+
+### The test
+
+For any file, ask: **would a second adopter's copy have to change it?**
+
+| Answer | Form | Examples |
+| --- | --- | --- |
+| Yes | instance | hostnames, IPs, secrets, board and project IDs, absolute paths, real host and service definitions |
+| No | template | roles, playbooks, scripts, contracts, guidelines, scaffolds, examples, tests |
+
+The test applies to the *file*. A template repository failing it on any file has instance
+data to relocate.
+
+### Naming placeholders
+
+In a template repository, put placeholders **in the filename**, in caps:
+
+```text
+ops/quadlet/APP_NAME-ENV-app.container
+ops/env/prod.env.example
+services/examples/single-container.yml
+```
+
+This does real work. `APP_NAME-ENV-app.container` cannot be mistaken for a real service
+definition, and a reviewer does not have to open it to know. Instance data cannot be
+added without renaming the file, which is a visible act in review.
+
+### When a template repository accumulates instance data
+
+Move it to your consumer-conventions repository (Pattern 4 above). Keep an `*.example`
+form in the template documenting the structure with placeholder values.
+
+Do **not** resolve it the other way by reclassifying the template as an instance. That
+uses the rule to justify what it exists to prevent.
+
+### Extraction is deferred, not owed
+
+An instance repository is never obliged to produce a template. Extract one when a second
+instance actually exists — not before. Generalizing from a single case means guessing at
+what varies, and the guess is usually wrong.
+
+The cost of deferring is bounded by how modular the underlying format already is.
+Ansible roles and shell scripts extract cheaply. A monolithic configuration does not,
+and no convention fixes that.
 
 ⸻
 
