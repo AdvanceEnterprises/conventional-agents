@@ -38,11 +38,11 @@ PARSING_HINTS:
 
 ## Status
 
-- Approved
+- Implemented
 
 ## Plan Status
 
-- **PLAN-0021 is `approved`**, approved in the same session as this FS. `workflows/document-lifecycle.md`
+- **PLAN-0021 is `implemented`.** approved in the same session as this FS. `workflows/document-lifecycle.md`
   places PLAN creation at "initial creation" and constrains only its
   *approval*: a PLAN may not reach `approved` while its FS is `draft`.
 
