@@ -116,20 +116,14 @@ This is not Anthropic's project. The MIT text itself is fine; the holder line is
 scaffolding artifact that nobody has read since it was generated. Publishing with
 another party's copyright notice is the single highest-consequence item in this file.
 
-**`config/project.yml` ships one organization's private infrastructure.** It hardcodes
-the Tais-Den GitHub Project number, project ID, board URL, and every field and option
-ID:
+**`config/project.yml` — resolved.** It hardcoded one organization's GitHub Project
+number, project ID, board URL, and every field and option ID, inside an artifact
+consumers vendor. Relocated to `tais-den-conventions` per `ADR-0032`;
+`config/project.example.yml` documents the structure with placeholders.
 
-```text
-project.id: "PVT_kwDOD3aO3M4BQcYf"
-project.url: "https://github.com/orgs/Tais-Den/projects/2"
-```
-
-These are not credentials, but they are deployment config for one org sitting in a
-framework that consumers vendor — and they contradict `ADR-0024`'s platform-neutral
-core directly. A consumer vendoring the framework gets a pointer to a board they cannot
-read. Decide whether `config/` is exported at all; if it is, it needs to ship as an
-example with the real values held outside the repository.
+The remaining `config/` files stay: `consensus.yml` and `review-board.yml` are
+consumer-copy templates that ship `enabled: false`, not configuration this framework
+runs on. `config/` is now pure template.
 
 **Decide the disposition of personal and organizational identifiers.** Present in
 tracked files: `Tais-Den` (28 files), `Hermes` (23), `ajoeofalltrades` (14),
@@ -404,6 +398,29 @@ Verified by grepping `docs/decisions/` for "exported surface": only `ADR-0016`,
 
 `ADR-0030` depends on this split to assign document families their jobs, and
 currently cites `README.md`/`AGENTS.md` as the only sources.
+
+### Two checks disagree on what a current-state document is
+
+`check-status.sh` rule 8 (referenced-path resolution) and `check-current-state.sh`
+(`ADR-0030` rule 3) both need the notion of "a current-state document", and they define
+it differently:
+
+| Check | Covers |
+| --- | --- |
+| rule 8 | `README.md`, `AGENTS.md`, `INTEGRATION.md`, `CONTRIBUTING.md`, plus `guidelines/`, `roles/`, `skills/`, `templates/`, `workflows/`, `integrations/`, `runbooks/`, `scripts/` |
+| rule 3 | `workflows/`, `guidelines/`, `skills/`, `templates/`, `integrations/`, `runbooks/` only |
+
+Rule 3 omits `roles/`, `scripts/`, and all four root documents. So an ADR that changes a
+rule carried by `INTEGRATION.md` or `roles/ROLE_CONTRACT.md` and updates neither is not
+caught, while the same paths are checked for dangling references by rule 8.
+
+Concrete instance: `ADR-0032` carries its rule in `INTEGRATION.md`. Accepting it should
+have obliged that update under rule 3. It did not, because `INTEGRATION.md` is outside
+rule 3's regex — the update happened only because it was written deliberately.
+
+Neither list is obviously wrong; they were written months apart for different purposes.
+What is wrong is that the definition lives in two places and drifts. Same shape as the
+exported-surface duplication below, and the fix is the same: one definition both read.
 
 ### Nothing compares a document's front-matter status to its own body
 

@@ -19,9 +19,15 @@ treats documents as the primary interface between humans and agents:
 
 ## Project Board
 
-Work tracking: [conventional-agents Development](https://github.com/orgs/Tais-Den/projects/2)
+Board metadata is **instance data** and does not live here. Per `ADR-0032`, this
+repository is a template and carries none: the structure agents expect is
+documented in [`config/project.example.yml`](./config/project.example.yml), and
+the real values for an organization belong in that organization's own conventions
+repository (`ADR-0016`).
 
-Board configuration: [`config/project.yml`](./config/project.yml)
+`config/consensus.yml` and `config/review-board.yml` stay — both are
+consumer-copy templates that ship disabled, not configuration this framework
+runs on.
 
 ## What's Included
 

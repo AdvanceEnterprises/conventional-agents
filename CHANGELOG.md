@@ -11,6 +11,21 @@ For this project (a documentation/standards kit), semver follows the
 
 ## [Unreleased]
 
+### Changed
+
+#### `config/project.yml` removed — board metadata is instance data
+
+- **If you copied `config/project.yml`, it is gone.** It held one organization's
+  GitHub Project number, project ID, board URL, and every field and option ID — values
+  no other adopter could use. `config/project.example.yml` replaces it, documenting the
+  same structure with placeholders.
+- Put your real values in your own conventions repository (`ADR-0016`), not at this
+  path. `gh project view <number> --owner <org> --format json` produces the IDs.
+- `config/consensus.yml` and `config/review-board.yml` are **unaffected**. Both are
+  consumer-copy templates that ship `enabled: false`; they are template content and
+  stay. `config/` is now pure template.
+- `ADR-0032` moves `proposed` → `accepted`, since this change acts on it.
+
 ### Added
 
 #### Template and instance repository forms (`ADR-0032`, proposed)

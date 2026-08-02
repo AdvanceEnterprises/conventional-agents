@@ -1,0 +1,37 @@
+# GitHub Project board metadata — EXAMPLE.
+#
+# This is a template file. It documents the structure agents expect when
+# reading board metadata programmatically via the `gh project` CLI.
+#
+# Per ADR-0032, this repository is a template and carries no instance data.
+# The real values for a given organization live in that organization's own
+# conventions repository (ADR-0016), not here. Copy this file there and fill
+# it in; do not fill it in at this path.
+#
+# Every value below is a placeholder. `gh project view <number> --owner <org>
+# --format json` will produce the real IDs for your board.
+
+project:
+  number: PROJECT_NUMBER              # e.g. 2
+  id: "PROJECT_NODE_ID"               # e.g. PVT_kw...
+  url: "https://github.com/orgs/ORG_NAME/projects/PROJECT_NUMBER"
+  title: "PROJECT_TITLE"
+  owner: "ORG_NAME"
+
+fields:
+  status:
+    id: "STATUS_FIELD_ID"             # e.g. PVTSSF_lA...
+    options:
+      backlog: "OPTION_ID"
+      approved: "OPTION_ID"
+      in_progress: "OPTION_ID"
+      in_review: "OPTION_ID"
+      done: "OPTION_ID"
+
+  doc_type:
+    id: "DOC_TYPE_FIELD_ID"
+    options:
+      fs: "OPTION_ID"
+      plan: "OPTION_ID"
+      task: "OPTION_ID"
+      bug: "OPTION_ID"
