@@ -240,6 +240,30 @@ is not mechanically checkable; scoping it to declared paths would have caught `F
   `FS-0018` defines a three-axis work-item schema, and issue templates are how `Type`
   gets set correctly at creation rather than corrected afterward. This is the natural
   output of the GitHub provisioning work.
+
+  **Settle `FS-0004` here rather than separately.** It is `draft` on trunk and defines
+  per-role PR body templates for Roles 0, 1, 2, 3 and 5, commit-body guidance with a
+  trivial-change exception, and a PR update comment section. Its problem statement
+  still holds: `workflows/git-and-gh-conventions.md` has exactly one
+  `#### PR body template (agents)` and one `### Commit bodies (agents)` — the
+  one-size template the spec exists to replace. Nothing was implemented.
+
+  Doing it *with* the PR-template work rather than before it avoids writing two
+  answers to one question: GitHub-native `PULL_REQUEST_TEMPLATE` is a delivery
+  mechanism `FS-0004` predates and does not consider.
+
+  Three things to fix in the spec when it is picked up, none fatal:
+
+  - `related_adrs` cites `ADR-0011` (multi-identity) as operative. `ADR-0018` and
+    `ADR-0029` superseded it as the working convention; `ADR-0011` is now the
+    forward-compatibility path.
+  - `ADR-0029`'s `Agent-Attribution:` trailer already carries `role=` on every commit,
+    so role is machine-readable without a template. The templates should complement
+    that rather than restate it.
+  - The five templates predate the meta-modes. `FS-0019` and `FS-0021` shipped
+    `templates/collaboration/consensus-synthesis.md` and `review-board-findings.md`,
+    which are PR-adjacent artifacts for `consensus` and `review-board`. A PR opened
+    from either has a shape none of the five covers.
 - **`CONTRIBUTING.md` is written for the internal loop.** It needs an outside-
   contributor path: what a first-time contributor may change without an FS, how the
   role model applies to someone who is not running an agent session, and what happens
@@ -380,6 +404,21 @@ Verified by grepping `docs/decisions/` for "exported surface": only `ADR-0016`,
 
 `ADR-0030` depends on this split to assign document families their jobs, and
 currently cites `README.md`/`AGENTS.md` as the only sources.
+
+### Nothing detects that an open PR has become an empty diff
+
+`PR #60` (revise `FS-0004`/`PLAN-0002`) sat open from 2026-06-08 until 2026-08-01
+containing **no delta**. Both its files were byte-identical to trunk: the revision had
+landed through other commits during the `v2.1.0` era — `3bec778`, `24da040`, and
+`a5facd2` (#61) — while the PR carrying the same change stayed open.
+
+Nobody noticed because nothing looks. GitHub reported `mergeable: UNKNOWN`, having no
+reason to compute a merge for an empty diff, and that is the only signal there was.
+
+Cheap to detect: for each open PR, compare its head tree against the merge base for the
+files it claims to touch. An empty diff means the work landed elsewhere and the PR is
+bookkeeping. Related to the entry below — both are cases where the repository is in a
+state no gate has an opinion about.
 
 ### Nothing detects "merged but never marked implemented"
 
