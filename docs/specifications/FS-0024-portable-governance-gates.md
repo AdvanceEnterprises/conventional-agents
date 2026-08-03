@@ -49,11 +49,12 @@ PARSING_HINTS:
 
 ## Plan Status
 
-- **Drafted as PLAN-0024** (`status: draft`), alongside this spec.
-  `workflows/document-lifecycle.md` places PLAN drafting after FS approval; this
-  pairing is the same one-time-per-package departure `FS-0018`/`FS-0019` and
-  `FS-0020`–`FS-0023` used, for the same reason — the spec and its implementation
-  strategy were reasoned about together and splitting them would not change either.
+- **Drafted as PLAN-0024** (`status: draft`), alongside this spec. This is not a
+  departure: `workflows/document-lifecycle.md` places PLAN *creation* at "initial
+  creation" and constrains only PLAN *approval* to come after the governing FS has
+  been reviewed. `FS-0018`'s own Plan Status section states the same rule the same
+  way. The spec and its implementation strategy were reasoned about together, which
+  the lifecycle document permits without qualification.
 - PLAN-0024 cannot be approved until this FS is approved, and — because every path it
   touches is reserved under `ADR-0027` (`scripts/`, `package.json`) — cannot
   self-approve regardless. It requires human approval by construction.
