@@ -245,3 +245,4 @@ If validation fails:
 | ADR-0030 | Decision records versus current-state documents | accepted |
 | ADR-0031 | Structured multi-model collaboration | accepted |
 | ADR-0032 | Template and instance repository forms | proposed |
+| ADR-0033 | Governance gate target resolution and configuration | proposed |
