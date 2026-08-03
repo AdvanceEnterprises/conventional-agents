@@ -258,6 +258,37 @@ Note that `git shortlog` without `-e` groups by model and fragments across
 model versions. Use `git shortlog -e` to group by actor, or add a
 `.mailmap`.
 
+### Verify identity against the current session, not inherited state
+
+A `user.name` left over from a previous session is more dangerous than an
+unset one. An unset identity falls back to a hostname-derived placeholder
+that is obviously wrong; a stale value from a different model is
+well-formed, plausible, and passes any check that only confirms the field
+is non-empty.
+
+This is not hypothetical: a Sonnet 5 session inherited `user.name = "Opus
+5"` from a prior session's leftover `git config`, and independently wrote
+`model=anthropic/claude-opus-5` into an `Agent-Attribution:` trailer — the
+agent had its own correct identity available in its own system context the
+entire time and simply never checked the configured value against it.
+
+Before the first commit in a session, compare the configured `user.name` —
+and any value about to be written into an `Agent-Attribution: model=`
+field — against what you actually are, as stated in your own current
+system context. Do not treat "the field is set" as "the field is
+correct," and do not copy a value from a prior commit's trailer, a prior
+session's `git config`, or your own memory of an earlier session. If you
+cannot state your own model identity with confidence, that is a reason to
+say so rather than to guess and commit anyway.
+
+This is convention-level, not enforced — no check can verify that a
+self-report is honest, the same limitation `ADR-0024` documents for
+work-item Type and parked-state suppression. What this buys is that the
+failure is *checkable*: a wrong model in an `Agent-Attribution:` trailer is
+a mistake a human auditing the session can catch by comparing the trailer
+against the session record, provided the agent looked at its own identity
+at all rather than inheriting whatever was already there.
+
 ### Per-commit override (recommended for one-off agent sessions)
 
 When authoring a single commit as an agent, override the identity inline

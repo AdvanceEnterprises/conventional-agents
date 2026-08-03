@@ -30,6 +30,19 @@ For this project (a documentation/standards kit), semver follows the
   no existing repository is required to change. The table of contents renumbers: the new
   section is 5, and everything after it shifts by one.
 
+#### Stronger identity verification for the single-identity workflow (`ADR-0018`, `ADR-0029`)
+
+- **`workflows/git-and-gh-conventions.md` and `skills/git-gh-workflow/SKILL.md` now
+  tell an agent to verify its commit identity against its own current model, not just
+  that the fields are set.** Previously "verify `user.name`/`user.email` before
+  committing" only caught an unset identity — a `user.name` left over from a
+  *different* model in a prior session is well-formed and passes that check trivially.
+  If you run agent sessions across multiple models in the same working tree, this
+  closes a real misattribution path: a later session silently inheriting an earlier
+  session's identity in its commit history and `Agent-Attribution:` trailers.
+- Convention-level, not enforced — no check can verify a self-report is honest. What
+  changes is what "verify" means in the checklist, not a new gate.
+
 ## [2.1.0] - 2026-08-01
 
 > Released 2026-08-01. `FS-0018`–`FS-0023` and `PLAN-0018`–`PLAN-0023` moved to
