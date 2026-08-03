@@ -45,6 +45,7 @@ the framework is recursive.
 | `workflows/` | Process docs usable in any repo |
 | `integrations/` | Substrate bindings — platform mappings per ADR-0024 |
 | `runbooks/` | Operational procedures recorded as performed per FS-0023 |
+| `scripts/` | Governance gate scripts — vendored copies check the repository that invokes them, not this one, per FS-0024 |
 | `INTEGRATION.md` | How to integrate and precedence rules |
 | `AGENTS.md` | Agent briefing surface for this repo |
 

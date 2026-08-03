@@ -1,0 +1,56 @@
+# config/gates.example.yml — Governance gate configuration (FS-0024, ADR-0033)
+#
+# *** THIS IS A CONSUMER-COPY TEMPLATE, NOT FRAMEWORK CONFIGURATION ***
+# The conventional-agents framework does not ship a populated config/gates.yml
+# for its own use — its own scripts/check-status.sh detects when it is checking
+# itself and uses its own hardcoded values in that case. This file exists for
+# everyone else. See docs/decisions/ADR-0033-governance-gate-target-resolution-
+# and-configuration.md for the full reasoning.
+#
+# Copy this file to config/gates.yml IN YOUR OWN REPOSITORY ROOT — not inside
+# vendor/conventional-agents/ — and fill in values for your own repository.
+# The vendored scripts/check-status.sh reads config/gates.yml relative to your
+# repository root; it does not read this example file, and it does not read
+# anything inside the vendored tree.
+#
+# Schema is flat: no nested keys, only top-level list fields. Each entry is a
+# repository-relative path or path prefix, same form as this framework's own
+# `interfaces:` and `touches:` front-matter fields.
+
+# Paths that always require human approval when a change plan's `touches:`
+# names them, regardless of what the governing spec's `interfaces:` allows.
+# Per ADR-0027's reasoning: these are the paths that constrain agents, or that
+# enforce those constraints — self-approving a change to either dissolves the
+# constraint.
+#
+# LEAVE THIS UNSET (or omit the file entirely) until you have decided your own
+# reserved set. Self-approval routing refuses to certify any plan while it is
+# unset — an unconfigured reserved set is not the same as an empty one, and
+# treating it as empty would silently allow anything to self-approve.
+#
+# An EXPLICIT empty list (reserved_paths: []) is a real, honored choice: it
+# means you have decided your repository has nothing that needs this
+# protection. That is different from not having decided yet.
+reserved_paths: []
+
+# Paths a downstream consumer of YOUR repository would reference, if you in
+# turn vendor your own governance out to others (ADR-0032 template form). A
+# spec whose interfaces: names one of these requires a consumer-framed
+# CHANGELOG entry when it reaches approved.
+#
+# Leave this empty (or omit the file) if your repository has no exported
+# surface of its own — the common case, and the correct answer for a pure
+# instance-form repository (ADR-0032) that nobody vendors. The check skips
+# this rule explicitly rather than silently passing; that is the intended,
+# safe default. This is a documentation reminder, not a safety gate, so —
+# unlike reserved_paths above — leaving it unset does not block anything.
+exported_prefixes: []
+
+# <naming-document>:<referenced-path> pairs exempted from the referenced-path
+# resolution check — a path your own documents name that you instruct readers
+# to create in THEIR repository, not yours, and which is therefore
+# syntactically indistinguishable from a dangling reference to your own repo.
+# Format matches scripts/check-status.sh's own REF_EXEMPT array. Most
+# repositories need none of these; start empty and add entries only when the
+# check flags a reference you can confirm is this shape.
+ref_exempt: []

@@ -30,7 +30,12 @@
 
 set -uo pipefail
 
-REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+# Already caller-relative, not script-relative — this script never had the
+# defect FS-0024/ADR-0033 fixes in the other two. CA_TARGET_REPO is added here
+# only for symmetry: a caller should not need to know that this one script
+# already happened to resolve correctly and so doesn't honor the override the
+# other two do.
+REPO_ROOT="${CA_TARGET_REPO:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
 BASE_REF=${1:-origin/trunk}
 
 # Current-state directories per ADR-0030. `runbooks/` was added by FS-0023, after
