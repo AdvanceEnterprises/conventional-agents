@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0024
-status: approved
+status: implemented
 title: Portable governance gates — vendored checks target the host repository, not the framework
 owner: ajoeofalltrades
 test_required: true
@@ -45,21 +45,18 @@ PARSING_HINTS:
 
 ## Status
 
-- Approved
+- Implemented
 
 ## Plan Status
 
-- **Drafted as PLAN-0024** (`status: draft`), alongside this spec. This is not a
-  departure: `workflows/document-lifecycle.md` places PLAN *creation* at "initial
-  creation" and constrains only PLAN *approval* to come after the governing FS has
-  been reviewed. `FS-0018`'s own Plan Status section states the same rule the same
-  way. The spec and its implementation strategy were reasoned about together, which
-  the lifecycle document permits without qualification.
-- **This FS is approved.** `ADR-0033` is accepted. `PLAN-0024` is approved by
-  recorded approval (`ADR-0026`) — every path it touches is reserved under
-  `ADR-0027` (`scripts/`), so it could not have self-approved regardless. Both gates
-  cleared in the same change that begins implementation.
-- No open questions block approval.
+- **PLAN-0024 is `implemented`.** Approved by recorded approval (`ADR-0026`) in the
+  same session as this FS — every path it touches is reserved under `ADR-0027`
+  (`scripts/`), so it could not have self-approved regardless. `ADR-0033` is
+  accepted. Drafting the PLAN alongside this spec was not a departure:
+  `workflows/document-lifecycle.md` places PLAN *creation* at "initial creation" and
+  constrains only PLAN *approval* to come after the governing FS has been reviewed;
+  `FS-0018`'s own Plan Status section states the same rule the same way.
+- No open questions remained.
 
 ## Summary
 

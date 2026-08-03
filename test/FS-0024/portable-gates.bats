@@ -1,0 +1,399 @@
+#!/usr/bin/env bats
+# FS-0024 / ADR-0033 — portable governance gates.
+#
+# Every fixture-based test below builds a scratch host repository under
+# BATS_TEST_TMPDIR (bats-provided, auto-cleaned per test) and vendors this
+# repository's own scripts/ at vendor/conventional-agents via a symlink to
+# REPO_ROOT. This is not a real git submodule, but it produces the same
+# resolution shape a submodule would: the host's working directory has its own
+# .git and never crosses into the symlinked target, so `git rev-parse
+# --show-toplevel` resolves to the host, exactly as it would for a real
+# submodule. Verified empirically before writing these tests (see PLAN-0024).
+
+load "../FS-0001/helpers.bash"
+
+setup() {
+  REPO_ROOT="$(repo_root)"
+  CHECK="$REPO_ROOT/scripts/check-status.sh"
+  RUN_BATS="$REPO_ROOT/scripts/run-bats.sh"
+  CURRENT_STATE="$REPO_ROOT/scripts/check-current-state.sh"
+  SCRIPTS_README="$REPO_ROOT/scripts/README.md"
+}
+
+# --- fixture helpers ----------------------------------------------------------
+
+# A scratch host repository with the minimal governed-document structure and
+# this repository vendored at vendor/conventional-agents.
+build_scratch_host() {
+  local host="$1"
+  mkdir -p "$host/docs/specifications" "$host/docs/change-plans" \
+    "$host/docs/decisions" "$host/vendor"
+  ( cd "$host" && git init -q )
+  printf '# Specs\n\n| ID | Title | Status |\n| --- | --- | --- |\n' \
+    > "$host/docs/specifications/README.md"
+  printf '# Plans\n\n| ID | Title | Related Spec | Status |\n| --- | --- | --- | --- |\n' \
+    > "$host/docs/change-plans/README.md"
+  printf '# Decisions\n\n| ID | Title | Status |\n| --- | --- | --- |\n' \
+    > "$host/docs/decisions/README.md"
+  ln -sfn "$REPO_ROOT" "$host/vendor/conventional-agents"
+}
+
+# A deliberately broken spec: status implemented, no governing PLAN, no
+# README index row. This is the exact reproduction from ADR-0033's Context
+# section.
+write_broken_spec() {
+  local host="$1"
+  cat > "$host/docs/specifications/FS-9001-scratch-defect.md" <<'EOF'
+---
+type: feature-spec
+id: FS-9001
+status: implemented
+title: Scratch defect
+owner: test
+---
+EOF
+}
+
+# --- target resolution ---------------------------------------------------------
+
+@test "target_resolution: the pre-FS-0024 formula does not resolve to the host root" {
+  # Positive control, per CONTRIBUTING.md's standard: prove the failure mode is
+  # real before proving the fix addresses it. This reproduces the exact
+  # pre-change formula (dirname "$0"-based) inline against the fixture's own
+  # invocation shape, without depending on git history or a checked-out old
+  # revision of the script.
+  local host="$BATS_TEST_TMPDIR/host"
+  build_scratch_host "$host"
+
+  local pre_fix_target
+  pre_fix_target=$(cd "$host" && cd "$(dirname "vendor/conventional-agents/scripts/check-status.sh")/.." && pwd)
+
+  [ "$pre_fix_target" != "$host" ]
+}
+
+@test "target_resolution: vendored check-status.sh detects host drift the pre-fix formula would have missed" {
+  local host="$BATS_TEST_TMPDIR/host"
+  build_scratch_host "$host"
+  write_broken_spec "$host"
+
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "FS-9001"
+  ! echo "$output" | grep -qF "All status checks passed."
+}
+
+@test "target_resolution: resolution holds from a subdirectory of the host, not only its root" {
+  local host="$BATS_TEST_TMPDIR/host"
+  build_scratch_host "$host"
+  write_broken_spec "$host"
+  mkdir -p "$host/some/nested/dir"
+
+  run bash -c "cd '$host/some/nested/dir' && bash ../../../vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "FS-9001"
+}
+
+@test "target_resolution: CA_TARGET_REPO overrides both the caller's cwd and the script's location" {
+  local target="$BATS_TEST_TMPDIR/target"
+  local elsewhere="$BATS_TEST_TMPDIR/elsewhere"
+  build_scratch_host "$target"
+  write_broken_spec "$target"
+  mkdir -p "$elsewhere"
+
+  run bash -c "cd '$elsewhere' && CA_TARGET_REPO='$target' bash '$CHECK'"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "FS-9001"
+}
+
+@test "target_resolution: this repository's own invocation is unaffected" {
+  # npm run check:status shape: cwd already at the repository being checked,
+  # no override. Must still exit zero on this repository's own (clean) trunk.
+  run bash -c "cd '$REPO_ROOT' && bash scripts/check-status.sh"
+  [ "$status" -eq 0 ]
+  echo "$output" | grep -qF "All status checks passed."
+}
+
+# --- self-check detection -------------------------------------------------------
+
+@test "self_check: framework checking itself uses its own hardcoded reserved paths" {
+  # No config/gates.yml exists anywhere in this repository (by design — see
+  # ADR-0033). If self-check detection were broken, rule 6 would demand one
+  # and fail closed on this repository's own approved-with-reserved-touches
+  # plans. It does not.
+  run bash -c "cd '$REPO_ROOT' && bash scripts/check-status.sh"
+  [ "$status" -eq 0 ]
+  ! echo "$output" | grep -qF "cannot be certified for self-approval"
+}
+
+@test "self_check: a vendored copy does not fall back to this repository's hardcoded values" {
+  # A host repository with no config/gates.yml, and a plan touching a path
+  # that IS reserved in this repository's own hardcoded set (scripts/) but
+  # is not this host's declared interfaces. If the vendored copy silently
+  # used this repository's own hardcoded RESERVED_PATHS, the touch would be
+  # flagged as reserved rather than as unconfigured — the wrong error.
+  local host="$BATS_TEST_TMPDIR/host"
+  build_scratch_host "$host"
+  cat > "$host/docs/specifications/FS-1-test.md" <<'EOF'
+---
+type: feature-spec
+id: FS-1
+status: approved
+title: Test
+owner: test
+interfaces:
+  - "src/"
+---
+EOF
+  printf '| FS-1 | Test | approved |\n' >> "$host/docs/specifications/README.md"
+  cat > "$host/docs/change-plans/PLAN-1-test.md" <<'EOF'
+---
+type: change-plan
+role: implementer
+status: approved
+related_specs: [FS-1]
+touches:
+  - scripts/deploy.sh
+---
+EOF
+  printf '| PLAN-1 | Test | FS-1 | approved |\n' >> "$host/docs/change-plans/README.md"
+
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "cannot be certified for self-approval"
+  echo "$output" | grep -qF "reserved_paths"
+  ! echo "$output" | grep -qF "is in ADR-0027's reserved-path set"
+}
+
+# --- fail-closed configuration (rule 6) ------------------------------------------
+
+# Shared fixture for the rule-6 tests: a host with one FS (interfaces: ci/)
+# and one PLAN (touches: ci/deploy.sh) at approved with no human-approval
+# evidence.
+build_rule6_fixture() {
+  local host="$1"
+  build_scratch_host "$host"
+  cat > "$host/docs/specifications/FS-1-test.md" <<'EOF'
+---
+type: feature-spec
+id: FS-1
+status: approved
+title: Test
+owner: test
+interfaces:
+  - "ci/"
+---
+EOF
+  printf '| FS-1 | Test | approved |\n' >> "$host/docs/specifications/README.md"
+  cat > "$host/docs/change-plans/PLAN-1-test.md" <<'EOF'
+---
+type: change-plan
+role: implementer
+status: approved
+related_specs: [FS-1]
+touches:
+  - ci/deploy.sh
+---
+EOF
+  printf '| PLAN-1 | Test | FS-1 | approved |\n' >> "$host/docs/change-plans/README.md"
+}
+
+@test "rule6: no config/gates.yml at all refuses to certify self-approval" {
+  local host="$BATS_TEST_TMPDIR/host"
+  build_rule6_fixture "$host"
+
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "cannot be certified for self-approval"
+  echo "$output" | grep -qF "reserved_paths"
+  echo "$output" | grep -qF "PLAN-1-test.md"
+}
+
+@test "rule6: config/gates.yml present but missing the reserved_paths key also refuses" {
+  local host="$BATS_TEST_TMPDIR/host"
+  build_rule6_fixture "$host"
+  mkdir -p "$host/config"
+  printf 'exported_prefixes: []\n' > "$host/config/gates.yml"
+
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "cannot be certified for self-approval"
+}
+
+@test "rule6: explicit reserved_paths: [] is honored — plan self-approves via interfaces containment" {
+  local host="$BATS_TEST_TMPDIR/host"
+  build_rule6_fixture "$host"
+  mkdir -p "$host/config"
+  printf 'reserved_paths: []\n' > "$host/config/gates.yml"
+
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -eq 0 ]
+  ! echo "$output" | grep -qF "cannot be certified for self-approval"
+  ! echo "$output" | grep -qF "requires human approval"
+}
+
+@test "rule6: a configured reserved path is enforced exactly as the hardcoded set is for self-check" {
+  local host="$BATS_TEST_TMPDIR/host"
+  build_rule6_fixture "$host"
+  mkdir -p "$host/config"
+  printf 'reserved_paths:\n  - "ci/"\n' > "$host/config/gates.yml"
+
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "ci/deploy.sh"
+  echo "$output" | grep -qF "reserved-path set"
+  ! echo "$output" | grep -qF "cannot be certified for self-approval"
+}
+
+# --- skip-explicit configuration (rule 7) ----------------------------------------
+
+build_rule7_fixture() {
+  local host="$1"
+  build_scratch_host "$host"
+  printf '# Changelog\n\n## Unreleased\n' > "$host/CHANGELOG.md"
+  cat > "$host/docs/specifications/FS-1-test.md" <<'EOF'
+---
+type: feature-spec
+id: FS-1
+status: approved
+title: Test
+owner: test
+interfaces:
+  - "public/"
+---
+EOF
+  printf '| FS-1 | Test | approved |\n' >> "$host/docs/specifications/README.md"
+}
+
+@test "rule7: no config/gates.yml skips visibly, distinct from a clean pass" {
+  local host="$BATS_TEST_TMPDIR/host"
+  build_rule7_fixture "$host"
+
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -eq 0 ]
+  echo "$output" | grep -qF "SKIP: rule 7"
+  echo "$output" | grep -qF "no exported_prefixes configured"
+}
+
+@test "rule7: explicit exported_prefixes: [] also skips, same as absent" {
+  local host="$BATS_TEST_TMPDIR/host"
+  build_rule7_fixture "$host"
+  mkdir -p "$host/config"
+  printf 'exported_prefixes: []\n' > "$host/config/gates.yml"
+
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -eq 0 ]
+  echo "$output" | grep -qF "SKIP: rule 7"
+}
+
+@test "rule7: a configured exported prefix is enforced — missing CHANGELOG entry fails" {
+  local host="$BATS_TEST_TMPDIR/host"
+  build_rule7_fixture "$host"
+  mkdir -p "$host/config"
+  printf 'exported_prefixes:\n  - "public/"\n' > "$host/config/gates.yml"
+
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "FS-1"
+  echo "$output" | grep -qF "no CHANGELOG entry naming it"
+  ! echo "$output" | grep -qF "SKIP: rule 7"
+}
+
+@test "rule7: a configured exported prefix with a matching CHANGELOG entry passes" {
+  local host="$BATS_TEST_TMPDIR/host"
+  build_rule7_fixture "$host"
+  mkdir -p "$host/config"
+  printf 'exported_prefixes:\n  - "public/"\n' > "$host/config/gates.yml"
+  printf '\n- FS-1 ships a thing.\n' >> "$host/CHANGELOG.md"
+
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -eq 0 ]
+  ! echo "$output" | grep -qF "no CHANGELOG entry"
+}
+
+# --- absent config produces no stderr noise --------------------------------------
+
+@test "no_config: an entirely absent config/gates.yml produces no awk 'can't open file' noise" {
+  local host="$BATS_TEST_TMPDIR/host"
+  build_scratch_host "$host"
+
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  ! echo "$output" | grep -qF "can't open file"
+  ! echo "$output" | grep -qi "no such file or directory"
+}
+
+# --- scripts/ reclassification --------------------------------------------------
+
+@test "reclassification: README.md exported-surface table lists scripts/" {
+  assert_file_contains "$REPO_ROOT/README.md" "\`scripts/\`"
+}
+
+@test "reclassification: AGENTS.md exported-surface column lists scripts/" {
+  local table
+  table=$(awk '/Exported Surface vs Internal Governance/{f=1} f{print} f&&/^###/&&!/Exported Surface/{if(c++>0) exit}' "$REPO_ROOT/AGENTS.md")
+  echo "$table" | grep -qF '`scripts/`'
+}
+
+@test "reclassification: check-status.sh self-check EXPORTED_PREFIXES includes scripts/" {
+  local block
+  block=$(awk '/^EXPORTED_PREFIXES=\(/{f=1;next} f&&/^\)/{exit} f' "$CHECK")
+  echo "$block" | grep -qF '"scripts/"'
+}
+
+@test "reclassification: docs/specifications/README.md exported-surface list names scripts/" {
+  assert_file_contains "$REPO_ROOT/docs/specifications/README.md" "\`scripts/\`"
+}
+
+# --- documentation ---------------------------------------------------------------
+
+@test "docs: scripts/README.md documents CA_TARGET_REPO" {
+  assert_file_contains "$SCRIPTS_README" "CA_TARGET_REPO"
+}
+
+@test "docs: scripts/README.md documents the FRAMEWORK_HOME self-check comparison" {
+  assert_file_contains "$SCRIPTS_README" "FRAMEWORK_HOME"
+}
+
+@test "docs: scripts/README.md documents config/gates.yml and where it is sourced from" {
+  assert_file_contains "$SCRIPTS_README" "config/gates.yml"
+  assert_file_contains "$SCRIPTS_README" "config/gates.example.yml"
+  assert_file_contains "$SCRIPTS_README" "never a path inside"
+}
+
+@test "docs: scripts/README.md states which of rules 6/7 fails closed and which skips, and why" {
+  assert_file_contains "$SCRIPTS_README" "cannot self-approve anything"
+  assert_file_contains "$SCRIPTS_README" "does not fail closed"
+}
+
+@test "docs: config/gates.example.yml exists and carries the consumer-copy template header" {
+  assert_file_exists "$REPO_ROOT/config/gates.example.yml"
+  assert_file_contains "$REPO_ROOT/config/gates.example.yml" "THIS IS A CONSUMER-COPY TEMPLATE"
+}
+
+@test "docs: config/gates.example.yml is never referenced as if it were read directly by the scripts" {
+  # The scripts read config/gates.yml (the consumer's own copy), never the
+  # .example file. A stray reference to reading the example directly would be
+  # a real bug in the documentation.
+  ! grep -q 'GATES_CONFIG=.*\.example\.yml' "$CHECK"
+}
+
+# --- check-current-state.sh and run-bats.sh accept the same override -------------
+
+@test "check_current_state: accepts CA_TARGET_REPO and it is documented as symmetry, not a fix" {
+  assert_file_contains "$CURRENT_STATE" "CA_TARGET_REPO"
+}
+
+@test "check_current_state: default (no override) behavior is unchanged — still resolves via git rev-parse" {
+  assert_file_contains "$CURRENT_STATE" "git rev-parse --show-toplevel"
+}
+
+@test "run_bats: REPO_ROOT resolution no longer uses dirname \"\$0\"" {
+  ! grep -q 'REPO_ROOT="\$(cd "\$(dirname "\$0")/\.\." && pwd)"' "$RUN_BATS"
+  assert_file_contains "$RUN_BATS" "CA_TARGET_REPO"
+}
+
+@test "check_status: REPO_ROOT resolution no longer uses dirname \"\$0\" as the target" {
+  # FRAMEWORK_HOME is allowed to keep the old formula — it is now a
+  # self-locator, not a target-resolver. REPO_ROOT itself must not.
+  ! grep -qE '^REPO_ROOT="\$\(cd "\$\(dirname "\$0"\)/\.\." && pwd\)"' "$CHECK"
+  assert_file_contains "$CHECK" "git rev-parse --show-toplevel"
+}

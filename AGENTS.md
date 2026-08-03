@@ -57,9 +57,10 @@ This repo contains no application code. Quality is documentation-centric.
 | `templates/` | `docs/ARC42.md` |
 | `workflows/` | `BACKLOG.md` |
 | `integrations/` | `package.json` |
-| `runbooks/` | `scripts/` |
-| `INTEGRATION.md` | `CHANGELOG.md` |
-| `AGENTS.md` | `test/` |
+| `runbooks/` | `CHANGELOG.md` |
+| `scripts/` (`FS-0024`: vendored copies check the invoking repository, not this one) | `test/` |
+| `INTEGRATION.md` | |
+| `AGENTS.md` | |
 
 The framework `vendor/` directory is framework-internal. Only `vendor/madr/`
 remains as operational infrastructure for ADR linting. Do not reference

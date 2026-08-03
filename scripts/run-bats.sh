@@ -4,7 +4,14 @@
 # has nothing to run otherwise.
 set -e
 
-REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+# Per FS-0024/ADR-0033: the git repository containing the caller's working
+# directory, not the script's own location — so a vendored copy runs the host's
+# own test/ suites, not this repository's. `npm test` and every CI job invoke this
+# with their working directory already at the repository they mean to run, so
+# resolution is unchanged for every invocation this repository makes of itself.
+# CA_TARGET_REPO overrides both, for a caller whose working directory is not
+# inside the repository it means to run.
+REPO_ROOT="${CA_TARGET_REPO:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
 
 # Re-entrancy guard. This script runs every suite under test/, and a suite that
 # invokes it again forks without bound — each level re-runs every suite, including

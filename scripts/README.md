@@ -10,6 +10,45 @@ gate people work around. This file is the contract.
 
 ---
 
+## Running these scripts against a vendored (host) repository
+
+Per `FS-0024`/`ADR-0033`: each script resolves the repository it checks from the
+**caller's working directory** (`git rev-parse --show-toplevel`), not from the
+script's own on-disk location. `npm run check:status`, `npm test`, every job in
+`.github/workflows/lint-docs.yml`, and every bats suite that invokes a script
+directly already run with their working directory at the repository they mean to
+check, so this framework's own invocations are unaffected. A host repository
+vendoring this framework as a git submodule and running
+`bash vendor/conventional-agents/scripts/check-status.sh` from its own root — or
+any subdirectory of it — gets **its own** documents checked, not this
+framework's. Set `CA_TARGET_REPO` to override the resolved target explicitly, for
+a caller whose working directory is not inside the repository it means to check.
+
+`check-status.sh` additionally distinguishes **this framework checking itself**
+from **a vendored copy checking a host**, by comparing the resolved target
+against the script's own physical location (`FRAMEWORK_HOME`, the old
+`dirname "$0"`-based computation, kept for exactly this). When they're equal —
+every invocation this repository makes of its own scripts — rules 6 and 7 below
+use this repository's own hardcoded `RESERVED_PATHS`/`EXPORTED_PREFIXES`,
+unchanged from before `FS-0024`. When they differ, both rules instead read
+`config/gates.yml` **at the host's own repository root** — never a path inside
+`vendor/`. Copy `config/gates.example.yml` there and fill it in; see rules 6 and
+7 below for what happens if you don't, and why the two behave differently when
+you haven't.
+
+This repository does not create a populated `config/gates.yml` for itself.
+`RESERVED_PATHS` and `EXPORTED_PREFIXES` remain hardcoded in `check-status.sh`
+for the self-check case. Per `ADR-0032`, a template repository carries no
+instance data, and this repository's own reserved paths and exported surface
+are exactly that — facts a second adopter's copy would have to change. The
+self-check path exists so this repository need not create that file.
+
+`check-current-state.sh` never had the resolution defect — see its own section
+below — but accepts `CA_TARGET_REPO` too, for symmetry: a caller should not need
+to know that one of the three scripts already happened to get it right.
+
+---
+
 ## check-status.sh
 
 `npm run check:status` runs `bash scripts/check-status.sh`.
@@ -65,15 +104,44 @@ consumer-impact CHANGELOG entries.
    line; do not pin the level.
 6. **PLAN `touches:` containment** (ADR-0027). For an `approved` PLAN, every
    path in `touches:` must fall within the union of its governing FS's
-   `interfaces:`, AND must not match the reserved-path set
+   `interfaces:`, AND must not match the reserved-path set. Checking this
+   repository against itself, that set is
    (`docs/decisions/`, `guidelines/ROLE_CONTRACT.md`, `scripts/`,
-   `.github/workflows/`, `package.json`). A PLAN with no `touches:` field
-   fails this check; absence is not an empty declaration.
+   `.github/workflows/`, `package.json`); checking a vendored copy against a
+   host repository, it is `reserved_paths` from the host's own
+   `config/gates.yml` — see "Running these scripts against a vendored (host)
+   repository" above. A PLAN with no `touches:` field fails this check;
+   absence is not an empty declaration.
+
+   **A host repository with no `config/gates.yml`, or one missing the
+   `reserved_paths` key, cannot self-approve anything.** The check refuses to
+   certify any PLAN evaluated under this rule and exits non-zero, naming
+   `reserved_paths` as unconfigured, rather than silently treating an
+   unconfigured reserved set as an empty one — the fail-open direction is
+   exactly the pattern the rest of this file catalogues four prior instances
+   of. An **explicit** `reserved_paths: []` is different from an absent one:
+   it is a real, honored declaration that this repository has nothing needing
+   the protection, and the check evaluates self-approval against `interfaces:`
+   containment alone in that case.
 7. **Consumer-impact CHANGELOG entry.** An FS at `approved` or beyond whose
-   `interfaces:` names an exported-surface path (`guidelines/`, `roles/`,
-   `skills/`, `templates/`, `workflows/`, `integrations/`, `INTEGRATION.md`,
-   `AGENTS.md`, `runbooks/`) must have a `CHANGELOG.md` entry naming it.
-   Presence is checked; framing is a review judgment.
+   `interfaces:` names an exported-surface path must have a `CHANGELOG.md`
+   entry naming it. Presence is checked; framing is a review judgment.
+   Checking this repository against itself, the exported-surface set is
+   `guidelines/`, `roles/`, `skills/`, `templates/`, `workflows/`,
+   `integrations/`, `runbooks/`, `scripts/`, `INTEGRATION.md`, `AGENTS.md`;
+   checking a vendored copy against a host repository, it is
+   `exported_prefixes` from the host's own `config/gates.yml`.
+
+   **Unlike rule 6, an unconfigured or explicitly empty `exported_prefixes`
+   does not fail closed.** This is a documentation reminder, not a safety
+   gate — the worst outcome of getting it wrong is a missed CHANGELOG entry,
+   not a self-approved unsafe change. The check prints an explicit `SKIP:`
+   line and exits zero (assuming no other failure), distinguishable in its
+   output from having run the rule and found nothing to flag. This is also
+   the correct, permanent state for a repository with no exported surface at
+   all — a pure instance-form repository per `ADR-0032` that nobody vendors,
+   the concrete case this rule's design was checked against
+   (`feral-fleet`).
 8. **Referenced-path resolution** (`FS-0022` §1c). Every path a current-state
    document names in backticks must resolve, relative to the repository root
    or the naming document's own directory.

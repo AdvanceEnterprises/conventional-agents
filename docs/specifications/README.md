@@ -42,13 +42,19 @@ write code, this one asks whether a spec obliges someone downstream to change.
 
 **The answer is derivable, not declared.** A spec is consumer-affecting when its
 `interfaces:` names any path in the exported surface — `guidelines/`, `roles/`,
-`skills/`, `templates/`, `workflows/`, `integrations/`, `runbooks/`, `INTEGRATION.md`,
-or `AGENTS.md`. Those are the paths host repositories vendor. No new front-matter field:
-`interfaces:` already declares the surface area a spec may touch, and this reads it.
+`skills/`, `templates/`, `workflows/`, `integrations/`, `runbooks/`, `scripts/`,
+`INTEGRATION.md`, or `AGENTS.md`. Those are the paths host repositories vendor. No new
+front-matter field: `interfaces:` already declares the surface area a spec may touch,
+and this reads it.
+
+`scripts/` joined this list with `FS-0024`: before it, a vendored copy of these gates
+checked the framework's own repository regardless of which repository invoked it, so
+nothing about them was consumer-affecting in the sense this section means. After it,
+a change to `scripts/` can change what a host repository's own gates do.
 
 | The spec's `interfaces:` name | Requires |
 | --- | --- |
-| Internal governance only — `docs/`, `scripts/`, `package.json`, `test/`, CI | Nothing beyond the ordinary CHANGELOG entry |
+| Internal governance only — `docs/`, `package.json`, `test/`, CI | Nothing beyond the ordinary CHANGELOG entry |
 | Any exported-surface path | A **consumer-framed** CHANGELOG entry in the PR that implements it |
 
 **Consumer-framed** is the operative word, and it is `guidelines/ROLE_CONTRACT.md`
@@ -112,4 +118,4 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0021 | Review board collaboration mode | implemented |
 | FS-0022 | Gate coverage — extend consistency, lint, and test enforcement to the whole corpus | implemented |
 | FS-0023 | Runbook document type — operational procedures recorded as performed | implemented |
-| FS-0024 | Portable governance gates — vendored checks target the host repository, not the framework | approved |
+| FS-0024 | Portable governance gates — vendored checks target the host repository, not the framework | implemented |

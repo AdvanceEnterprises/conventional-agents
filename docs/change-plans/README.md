@@ -55,4 +55,4 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | PLAN-0021 | Implement FS-0021 Review board | FS-0021 | implemented |
 | PLAN-0022 | Implement FS-0022 Gate coverage | FS-0022 | implemented |
 | PLAN-0023 | Implement FS-0023 Runbook document type | FS-0023 | implemented |
-| PLAN-0024 | Implement FS-0024 Portable governance gates | FS-0024 | approved |
+| PLAN-0024 | Implement FS-0024 Portable governance gates | FS-0024 | implemented |
