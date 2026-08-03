@@ -131,6 +131,10 @@ core directly. A consumer vendoring the framework gets a pointer to a board they
 read. Decide whether `config/` is exported at all; if it is, it needs to ship as an
 example with the real values held outside the repository.
 
+**Resolved in this PR — `config/project.yml` deleted, `config/project.example.yml`
+created with placeholder values. Real board metadata now lives in
+`pack-protocol/config/boards/conventional-agents.yml`.**
+
 **Decide the disposition of personal and organizational identifiers.** Present in
 tracked files: `Tais-Den` (28 files), `Hermes` (23), `ajoeofalltrades` (14),
 `taisden@tais-den.dev` (12). **Not all of these should be removed** — `owner:` fields

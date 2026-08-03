@@ -309,7 +309,7 @@ your-repo/
 ├── CLAUDE.md (optional)
 └── vendor/
     ├── conventional-agents/        # Framework
-    └── tais-den-conventions/     # Consumer/org conventions
+    └── <your-org>-conventions/     # Consumer/org conventions
 ```
 
 AGENTS.md:
@@ -322,8 +322,8 @@ AGENTS.md:
 - vendor/conventional-agents/workflows/session-modes.md
 
 ## Consumer Conventions
-- vendor/tais-den-conventions/README.md
-- vendor/tais-den-conventions/ADR-0001-notion-github-boundary.md
+- vendor/<your-org>-conventions/README.md
+- vendor/<your-org>-conventions/ADR-0001-notion-github-boundary.md
 
 ## Project-Specific Rules
 (Add your project-specific context here)
@@ -640,7 +640,7 @@ Solutions:
 
 Symptoms:
 
-- `vendor/tais-den-conventions/` is empty or missing
+- `vendor/<your-org>-conventions/` is empty or missing
 - Agent cannot find org-specific ADRs
 
 Diagnosis:

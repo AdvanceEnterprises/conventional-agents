@@ -19,9 +19,12 @@ treats documents as the primary interface between humans and agents:
 
 ## Project Board
 
-Work tracking: [conventional-agents Development](https://github.com/orgs/Tais-Den/projects/2)
+Work tracking for the conventional-agents project uses a GitHub Project board.
+Board metadata (IDs, fields, options) is maintained outside this repository at
+[`pack-protocol/config/boards/conventional-agents.yml`](https://github.com/Tais-Den/pack-protocol/blob/trunk/config/boards/conventional-agents.yml).
 
-Board configuration: [`config/project.yml`](./config/project.yml)
+For your own project, copy [`config/project.example.yml`](./config/project.example.yml)
+to `config/project.yml` and fill in your board's values.
 
 ## What's Included
 
@@ -201,17 +204,17 @@ If your organization has its own conventions repo (see `ADR-0016`), vendor it
 as a sibling submodule:
 
 ```bash
-git submodule add https://github.com/Tais-Den/tais-den-conventions.git vendor/tais-den-conventions
-git add .gitmodules vendor/tais-den-conventions
-git commit -m "chore: add tais-den-conventions"
+git submodule add https://github.com/<your-org>/<your-org>-conventions.git vendor/<your-org>-conventions
+git add .gitmodules vendor/<your-org>-conventions
+git commit -m "chore: add <your-org>-conventions"
 ```
 
 Then add a `Consumer Conventions` section to your `AGENTS.md`:
 
 ```text
 ## Consumer Conventions
-- vendor/tais-den-conventions/README.md
-- vendor/tais-den-conventions/ADR-0001-notion-github-boundary.md
+- vendor/<your-org>-conventions/README.md
+- vendor/<your-org>-conventions/ADR-0001-notion-github-boundary.md
 ```
 
 ### Update to Latest

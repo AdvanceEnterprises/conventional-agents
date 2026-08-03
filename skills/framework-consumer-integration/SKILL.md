@@ -28,7 +28,7 @@ projects that already consume the framework keep their integration healthy.
 
 - Adding conventional-agents to a new host repo
 - Auditing or fixing an existing integration
-- Adding a consumer conventions repo (e.g., `tais-den-conventions`)
+- Adding a consumer conventions repo (e.g., `<your-org>-conventions`)
 - Reviewing a host project's AGENTS.md
 - Troubleshooting submodule or precedence problems
 
@@ -143,10 +143,10 @@ conventions (tool boundaries, identity mappings, planning surface rules).
 ```bash
 cd /path/to/host-repo
 git submodule add https://github.com/Tais-Den/conventional-agents.git vendor/conventional-agents
-git submodule add https://github.com/Tais-Den/tais-den-conventions.git vendor/tais-den-conventions
+git submodule add https://github.com/<your-org>/<your-org>-conventions.git vendor/<your-org>-conventions
 git submodule update --init
-git add .gitmodules vendor/conventional-agents vendor/tais-den-conventions
-git commit -m "chore: add conventional-agents and tais-den-conventions foundation layers"
+git add .gitmodules vendor/conventional-agents vendor/<your-org>-conventions
+git commit -m "chore: add conventional-agents and <your-org>-conventions foundation layers"
 ```
 
 Create `AGENTS.md`:
@@ -158,13 +158,13 @@ Create `AGENTS.md`:
 - vendor/conventional-agents/guidelines/ROLE_CONTRACT.md
 - vendor/conventional-agents/INTEGRATION.md
 - vendor/conventional-agents/workflows/session-modes.md
-- vendor/tais-den-conventions/README.md
+- vendor/<your-org>-conventions/README.md
 
 ## Universal Gates
 - vendor/conventional-agents/roles/ROLE_CONTRACT.md
 
 ## Consumer Conventions
-- vendor/tais-den-conventions/ADR-0001-notion-github-boundary.md
+- vendor/<your-org>-conventions/ADR-0001-notion-github-boundary.md
 
 ## Project-Specific Rules
 (Add host-repo context here)

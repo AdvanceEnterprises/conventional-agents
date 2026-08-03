@@ -839,6 +839,8 @@ REF_EXEMPT=(
   "workflows/session-modes.md:roles/session-modes.md"     # consumer creates this
   "roles/README.md:docs/governance/role-contract.md"      # prefixed "in your own repo"
   "scripts/README.md:config/gates.yml"                    # host repo creates this (FS-0024)
+  "README.md:config/project.yml"                          # prescriptive — reader copies example to this path
+  "README.md:pack-protocol/config/boards/conventional-agents.yml"  # external URL, not a local path
 )
 
 if ! is_self_check; then
