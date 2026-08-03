@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0024
-status: draft
+status: approved
 title: Portable governance gates — vendored checks target the host repository, not the framework
 owner: ajoeofalltrades
 test_required: true
@@ -45,7 +45,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Approved
 
 ## Plan Status
 
@@ -55,13 +55,10 @@ PARSING_HINTS:
   been reviewed. `FS-0018`'s own Plan Status section states the same rule the same
   way. The spec and its implementation strategy were reasoned about together, which
   the lifecycle document permits without qualification.
-- PLAN-0024 cannot be approved until this FS is approved, and — because every path it
-  touches is reserved under `ADR-0027` (`scripts/`, `package.json`) — cannot
-  self-approve regardless. It requires human approval by construction.
-- `ADR-0033` must also be accepted before implementation begins. Per
-  `docs/decisions/README.md` §1a, this FS is the governing spec an ADR implying code
-  requires, and per `ADR-0015`, no governance gate may be written or modified without
-  an approved FS and PLAN. Both gates must clear before PLAN-0024 executes.
+- **This FS is approved.** `ADR-0033` is accepted. `PLAN-0024` is approved by
+  recorded approval (`ADR-0026`) — every path it touches is reserved under
+  `ADR-0027` (`scripts/`), so it could not have self-approved regardless. Both gates
+  cleared in the same change that begins implementation.
 - No open questions block approval.
 
 ## Summary
