@@ -11,7 +11,20 @@ set -e
 # resolution is unchanged for every invocation this repository makes of itself.
 # CA_TARGET_REPO overrides both, for a caller whose working directory is not
 # inside the repository it means to run.
-REPO_ROOT="${CA_TARGET_REPO:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+#
+# Canonicalized via `cd ... && pwd`, not used as-is — `find "$REPO_ROOT/test" ...`
+# below would otherwise resolve a relative CA_TARGET_REPO against whatever the
+# caller's working directory is, not against the target. A CA_TARGET_REPO that
+# isn't a real directory fails loudly rather than silently falling back.
+if [ -n "${CA_TARGET_REPO:-}" ]; then
+  REPO_ROOT="$(cd "$CA_TARGET_REPO" 2>/dev/null && pwd)"
+  if [ -z "$REPO_ROOT" ]; then
+    echo "ERROR: CA_TARGET_REPO='$CA_TARGET_REPO' is not a directory." >&2
+    exit 1
+  fi
+else
+  REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+fi
 
 # Re-entrancy guard. This script runs every suite under test/, and a suite that
 # invokes it again forks without bound — each level re-runs every suite, including
