@@ -3,8 +3,9 @@
 type: change-plan
 role: implementer
 language: bash
-status: draft
+status: approved
 related_specs: [FS-0024]
+approved_by: "Joey Clark <taisden@tais-den.dev>"
 related_adrs: [ADR-0012, ADR-0015, ADR-0019, ADR-0027, ADR-0030, ADR-0032, ADR-0033]
 touches:
   - scripts/check-status.sh
@@ -357,13 +358,15 @@ same way).
 
 ## 10. Readiness Check
 
-* [ ] FS-0024 is approved
-* [ ] ADR-0033 is accepted
+* [x] FS-0024 is approved
+* [x] ADR-0033 is accepted
 * [x] Tests are clearly defined — §3, one per Success Criterion, each shaped to
       mutate-and-assert per `CONTRIBUTING.md`
 * [x] Scope is minimal and explicit — ten files, two new
-* [ ] **Human approval required.** Every path in `touches:` includes `scripts/`,
-      which is reserved under `ADR-0027`. This PLAN cannot self-approve.
+* [x] **Human approval given.** Every path in `touches:` includes `scripts/`,
+      reserved under `ADR-0027`; this PLAN could not self-approve. Recorded per
+      `ADR-0026` — see `approved_by:` above and the commit carrying the matching
+      `Approved-By:` trailer.
 
 ## Declaration
 
