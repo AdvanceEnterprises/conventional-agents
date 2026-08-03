@@ -30,6 +30,25 @@ For this project (a documentation/standards kit), semver follows the
   no existing repository is required to change. The table of contents renumbers: the new
   section is 5, and everything after it shifts by one.
 
+### Changed
+
+#### Instance data removed from the exported surface
+
+- **`config/project.yml` deleted.** It held one organization's GitHub Project board
+  metadata (IDs, URLs, field options). Replaced by `config/project.example.yml` with
+  placeholder values, following the house style of `config/gates.example.yml`. If you
+  vendored this file, copy the example and fill in your own board's values. The real
+  board metadata for the conventional-agents project now lives in
+  `pack-protocol/config/boards/conventional-agents.yml`.
+- **`README.md`, `INTEGRATION.md`, and `skills/framework-consumer-integration/SKILL.md`
+  no longer hardcode `Tais-Den/tais-den-conventions` or `vendor/tais-den-conventions/`**
+  in copy-paste instructions. The Quick Start, Pattern 4, and the integration skill now
+  use `<your-org>-conventions` / `vendor/<your-org>-conventions/` placeholders. If you
+  previously followed these instructions literally, your submodule URL and vendor path
+  will need updating — replace `<your-org>` with your actual organization name.
+- **`README.md` Project Board section** now points to `config/project.example.yml` and
+  `pack-protocol` instead of the deleted `config/project.yml`.
+
 #### Stronger identity verification for the single-identity workflow (`ADR-0018`, `ADR-0029`)
 
 - **`workflows/git-and-gh-conventions.md` and `skills/git-gh-workflow/SKILL.md` now
