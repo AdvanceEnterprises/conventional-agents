@@ -18,6 +18,7 @@ touches:
   - docs/specifications/README.md
   - CHANGELOG.md
   - test/FS-0024/portable-gates.bats
+  - BACKLOG.md
 created: 2026-08-02
 updated: 2026-08-02
 

@@ -23,15 +23,19 @@
 # enforce those constraints — self-approving a change to either dissolves the
 # constraint.
 #
-# LEAVE THIS UNSET (or omit the file entirely) until you have decided your own
-# reserved set. Self-approval routing refuses to certify any plan while it is
-# unset — an unconfigured reserved set is not the same as an empty one, and
-# treating it as empty would silently allow anything to self-approve.
+# LEFT COMMENTED OUT ON PURPOSE. Self-approval routing refuses to certify any
+# plan while this key is absent — an unconfigured reserved set is not the same
+# as an empty one, and treating it as empty would silently allow anything to
+# self-approve. A copy of this file with the key still commented out preserves
+# that fail-closed default; do not uncomment it with an empty value "to make
+# the check pass" without first deciding your actual reserved set.
 #
-# An EXPLICIT empty list (reserved_paths: []) is a real, honored choice: it
-# means you have decided your repository has nothing that needs this
-# protection. That is different from not having decided yet.
-reserved_paths: []
+# An EXPLICIT empty list is a real, honored choice, different from not having
+# decided yet: it means you have decided your repository has nothing that
+# needs this protection. To make that choice, uncomment the line below —
+# either as `reserved_paths: []`, or with your actual paths listed.
+#
+# reserved_paths: []
 
 # Paths a downstream consumer of YOUR repository would reference, if you in
 # turn vendor your own governance out to others (ADR-0032 template form). A
