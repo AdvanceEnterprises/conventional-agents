@@ -43,6 +43,26 @@ For this project (a documentation/standards kit), semver follows the
 - Convention-level, not enforced — no check can verify a self-report is honest. What
   changes is what "verify" means in the checklist, not a new gate.
 
+#### Vendored governance gates now check your repository, not the framework's (`FS-0024`, `ADR-0033`)
+
+- **If you vendor this framework and run `check-status.sh` or `run-bats.sh` from
+  `vendor/conventional-agents/scripts/`, they now check *your* documents.** Previously
+  both scripts resolved their target from their own on-disk location, so a vendored
+  copy silently checked the framework's own (clean) `docs/` instead of yours, and
+  reported success regardless of what your repository actually contained.
+  `check-current-state.sh` was never affected.
+- **Self-approval routing (`ADR-0027`) and the consumer-impact CHANGELOG reminder now
+  require your own `config/gates.yml`, copied from the shipped
+  `config/gates.example.yml`.** Without it: self-approval routing refuses to certify
+  any plan and exits non-zero — a safety-relevant check does not silently default to
+  "nothing is reserved." The CHANGELOG reminder instead skips explicitly and exits
+  zero — the correct behavior if your repository has no exported surface at all
+  (`ADR-0032` instance form).
+- `scripts/` is now documented exported surface in `README.md` and `AGENTS.md`,
+  correcting a prior classification that said the opposite while assuming the same
+  thing this change makes true: that consumers run these scripts.
+- See `scripts/README.md` for the full mechanism and `ADR-0033` for the reasoning.
+
 ## [2.1.0] - 2026-08-01
 
 > Released 2026-08-01. `FS-0018`–`FS-0023` and `PLAN-0018`–`PLAN-0023` moved to
