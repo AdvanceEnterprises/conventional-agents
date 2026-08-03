@@ -142,10 +142,17 @@ Known actor emails: `claude-code@tais-den.dev`, `hermes-agent@tais-den.dev`,
 `taisden@tais-den.dev`.
 
 Verify both fields with `git config --get user.name` and
-`git config --get user.email` before any commit in a fresh session. An
-unset identity is the common failure — git will fall back to a
-hostname-derived value and write a meaningless author into the audit
-trail. If either is wrong or unset, use the per-commit override form
+`git config --get user.email` before any commit in a fresh session — and
+verify them against what you actually are, not merely that they are set.
+An unset identity is the common, obvious failure: git falls back to a
+hostname-derived value that is visibly meaningless. A *stale* identity is
+the dangerous one: a `user.name` left over from a previous session's
+different model is well-formed and plausible, and passes a check that
+only confirms the field is non-empty. Compare the configured `user.name`
+— and any `model=` value about to be written into an `Agent-Attribution:`
+trailer — against your own model identity as stated in your current
+system context, not against inherited config or a prior commit's trailer.
+If either is wrong, stale, or unset, use the per-commit override form
 above.
 
 See `workflows/git-and-gh-conventions.md` for the full convention and
