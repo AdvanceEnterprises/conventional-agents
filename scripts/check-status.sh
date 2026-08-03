@@ -4,7 +4,34 @@
 # Exits non-zero and prints one error per violation.
 # Bash 3.2+ compatible (no associative arrays).
 
-REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+# FRAMEWORK_HOME is where this script physically lives — the old (pre-FS-0024)
+# REPO_ROOT computation, kept under a new name for exactly what it is good at:
+# locating the script's own copy of itself. It was never wrong as a self-locator;
+# it was wrong as a target-resolver, because every caller outside this repository
+# invokes a vendored copy whose own location is never the repository being checked.
+FRAMEWORK_HOME="$(cd "$(dirname "$0")/.." && pwd)"
+
+# REPO_ROOT is what this run checks — the git repository containing the caller's
+# working directory, per FS-0024/ADR-0033. `npm run check:status`, every CI job in
+# lint-docs.yml, and every bats suite that invokes this script all already run with
+# their working directory at the repository they mean to check, so this resolves
+# identically to the old computation for every invocation this repository makes of
+# itself. A vendored copy invoked from a host repository's root now resolves to the
+# host's root instead of the submodule's, because the host's working directory
+# never crosses into the submodule boundary. CA_TARGET_REPO overrides both, for a
+# caller whose working directory is not inside the repository it means to check.
+REPO_ROOT="${CA_TARGET_REPO:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+# True when this run is the framework checking itself — every invocation this
+# repository makes of its own scripts, including its own CI and its own bats
+# suites. False when a vendored copy is checking a host repository. Rules 6 and 7
+# below use this to decide whether to use this repository's own hardcoded
+# RESERVED_PATHS/EXPORTED_PREFIXES or to require the host's own config/gates.yml —
+# see ADR-0033 for why this repository does not ship a populated config/gates.yml
+# for its own use (it would be instance data inside a template repository, per
+# ADR-0032).
+is_self_check() { [ "$REPO_ROOT" = "$FRAMEWORK_HOME" ]; }
+
 FS_DIR="$REPO_ROOT/docs/specifications"
 PLAN_DIR="$REPO_ROOT/docs/change-plans"
 ADR_DIR="$REPO_ROOT/docs/decisions"
@@ -12,6 +39,7 @@ FS_README="$FS_DIR/README.md"
 PLAN_README="$PLAN_DIR/README.md"
 ADR_README="$ADR_DIR/README.md"
 CHANGELOG="$REPO_ROOT/CHANGELOG.md"
+GATES_CONFIG="$REPO_ROOT/config/gates.yml"
 
 errors=0
 
@@ -85,6 +113,51 @@ get_list_field() {
     n==1 && in_field && /^[[:space:]]*$/{next}
     n==1 && in_field && !/^  /{in_field=0}
   ' "$file"
+}
+
+# Same shape as get_list_field, for a plain YAML file with no `---` front-matter
+# delimiters — config/gates.yml, per FS-0024/ADR-0033. Consumer-owned; never a path
+# inside the vendored tree.
+get_flat_list_field() {
+  local file="$1" field="$2"
+  # An absent file (the common case: no config/gates.yml at all) is not an awk
+  # error to surface — it is "nothing configured", handled by the caller. Without
+  # this, awk prints "can't open file" to stderr for every unconfigured field on
+  # every run against a host with no config/gates.yml, noise indistinguishable
+  # from a real problem.
+  [ -f "$file" ] || return 0
+  awk -v field="$field" '
+    $0 ~ "^"field":"{
+      in_field=1
+      if ($0 ~ /\[/) {
+        line=$0
+        gsub("^"field":[[:space:]]*\\[", "", line)
+        gsub("\\]", "", line)
+        gsub(/ /, "", line)
+        n2=split(line, parts, ",")
+        for (i=1; i<=n2; i++) { if (parts[i] != "") print parts[i] }
+        in_field=0
+      }
+      next
+    }
+    in_field && /^  - /{
+      val=$0; gsub(/^  - /, "", val); gsub(/^[[:space:]]+|[[:space:]]+$/, "", val)
+      gsub(/^"/, "", val); gsub(/"$/, "", val)
+      if (val != "") print val
+      next
+    }
+    in_field && /^[[:space:]]*$/{next}
+    in_field && !/^  /{in_field=0}
+  ' "$file"
+}
+
+# True when $1 (a plain YAML file) exists and contains a top-level "$2:" key at
+# all — distinct from get_flat_list_field returning no lines, which is also what
+# an explicit "$2: []" produces. Callers need to tell "not configured" from
+# "configured as empty" apart; this is how.
+has_flat_field() {
+  local file="$1" field="$2"
+  [ -f "$file" ] && grep -qE "^${field}:" "$file"
 }
 
 # Resolve a governed document by its ID, tolerating descriptive filename suffixes.
@@ -417,6 +490,13 @@ done
 
 # Reserved paths: paths in touches: that always require human approval regardless of FS's
 # interfaces: field. Per ADR-0027.
+#
+# This repository's own reserved set, hardcoded, used only for self-check —
+# creating a real config/gates.yml here, populated with this repository's own
+# structural facts, would itself be instance data inside a template repository
+# (ADR-0032's own test: a second adopter's copy would have to change every one of
+# these paths). A vendored copy checking a host repository overrides this from
+# the host's own config/gates.yml instead, below; see FS-0024/ADR-0033.
 RESERVED_PATHS=(
   "docs/decisions/"
   "guidelines/ROLE_CONTRACT.md"
@@ -424,6 +504,20 @@ RESERVED_PATHS=(
   ".github/workflows/"
   "package.json"
 )
+
+RESERVED_PATHS_CONFIGURED=1
+if ! is_self_check; then
+  RESERVED_PATHS=()
+  if has_flat_field "$GATES_CONFIG" "reserved_paths"; then
+    while IFS= read -r rp; do
+      [ -n "$rp" ] && RESERVED_PATHS+=("$rp")
+    done < <(get_flat_list_field "$GATES_CONFIG" "reserved_paths")
+  else
+    # Absent file or absent key — genuinely unconfigured, not "configured empty".
+    # Fail closed per plan below rather than silently treating nothing as reserved.
+    RESERVED_PATHS_CONFIGURED=0
+  fi
+fi
 
 for plan_file in "$PLAN_DIR"/PLAN-*.md; do
   [ -f "$plan_file" ] || continue
@@ -534,6 +628,21 @@ for plan_file in "$PLAN_DIR"/PLAN-*.md; do
     fi
   fi
 
+  # Fail closed: a vendored check with no reserved_paths configured cannot safely
+  # certify this plan as self-approved, and must not silently treat an unconfigured
+  # reserved set as an empty one. Per FS-0024/ADR-0033 — the ADR-0019 "an agent must
+  # not lower its own gate" principle, applied to unconfigured self-approval routing.
+  # Does not apply to a plan a human has already approved (approval_ok=ok): nothing
+  # here needed the reserved set to reach that determination.
+  if [ "$RESERVED_PATHS_CONFIGURED" -eq 0 ] && [ "$approval_ok" != "ok" ]; then
+    echo "ERROR: $plan_name cannot be certified for self-approval — 'reserved_paths' is"
+    echo "       not configured in $GATES_CONFIG (missing file or missing key)."
+    echo "       Copy config/gates.example.yml to config/gates.yml in this repository's"
+    echo "       root and set reserved_paths (an empty list is a valid, explicit choice)."
+    errors=$((errors+1))
+    continue
+  fi
+
   # Check each touch against interfaces: union and reserved set.
   while IFS= read -r touch; do
     [ -z "$touch" ] && continue
@@ -603,6 +712,12 @@ done
 
 # An FS at approved or beyond whose interfaces: names an exported-surface path must have a
 # CHANGELOG entry naming it. The check verifies presence only; framing is a review judgment.
+#
+# Unlike rule 6, an unconfigured or empty exported_prefixes does not fail closed — it
+# skips, visibly. This is not a safety gate: the worst outcome of getting it wrong is a
+# missed documentation courtesy, and a repository with genuinely no exported surface
+# (ADR-0032 instance form — the concrete case is this framework's own consumer
+# `feral-fleet`) has nothing for this rule to check. See FS-0024/ADR-0033.
 
 EXPORTED_PREFIXES=(
   "guidelines/"
@@ -612,43 +727,57 @@ EXPORTED_PREFIXES=(
   "workflows/"
   "integrations/"
   "runbooks/"
+  "scripts/"
   "INTEGRATION.md"
   "AGENTS.md"
 )
 
-i=0
-while [ $i -lt ${#fs_ids[@]} ]; do
-  fs_id="${fs_ids[$i]}"
-  fs_status="${fs_statuses[$i]}"
-  # The FS index built fs_paths from the real files; use it rather than rebuilding a
-  # filename from the ID, which never resolved for suffixed names.
-  fs_file="${fs_paths[$i]}"
-  i=$((i+1))
+if ! is_self_check; then
+  EXPORTED_PREFIXES=()
+  while IFS= read -r ep; do
+    [ -n "$ep" ] && EXPORTED_PREFIXES+=("$ep")
+  done < <(get_flat_list_field "$GATES_CONFIG" "exported_prefixes")
+fi
 
-  case "$fs_status" in
-    approved|in-progress|implemented) ;;
-    *) continue ;;
-  esac
+if [ "${#EXPORTED_PREFIXES[@]}" -eq 0 ]; then
+  echo "SKIP: rule 7 (consumer-impact CHANGELOG) — no exported_prefixes configured in"
+  echo "      $GATES_CONFIG. Treated as this repository asserting it has no exported"
+  echo "      surface (ADR-0032 instance form). If that is wrong, configure it."
+else
+  i=0
+  while [ $i -lt ${#fs_ids[@]} ]; do
+    fs_id="${fs_ids[$i]}"
+    fs_status="${fs_statuses[$i]}"
+    # The FS index built fs_paths from the real files; use it rather than rebuilding a
+    # filename from the ID, which never resolved for suffixed names.
+    fs_file="${fs_paths[$i]}"
+    i=$((i+1))
 
-  [ -f "$fs_file" ] || continue
+    case "$fs_status" in
+      approved|in-progress|implemented) ;;
+      *) continue ;;
+    esac
 
-  has_exported=0
-  while IFS= read -r iface; do
-    [ -z "$iface" ] && continue
-    for p in "${EXPORTED_PREFIXES[@]}"; do
-      case "$iface" in
-        "$p"*) has_exported=1 ;;
-      esac
-    done
-  done < <(get_list_field "$fs_file" "interfaces")
+    [ -f "$fs_file" ] || continue
 
-  [ "$has_exported" -eq 0 ] && continue
+    has_exported=0
+    while IFS= read -r iface; do
+      [ -z "$iface" ] && continue
+      for p in "${EXPORTED_PREFIXES[@]}"; do
+        case "$iface" in
+          "$p"*) has_exported=1 ;;
+        esac
+      done
+    done < <(get_list_field "$fs_file" "interfaces")
 
-  if ! grep -q "$fs_id" "$CHANGELOG"; then
-    echo "ERROR: $fs_id (status=$fs_status) has exported-surface interfaces but no CHANGELOG entry naming it — consumer-framed entry required."
-    errors=$((errors+1))
-  fi
-done
+    [ "$has_exported" -eq 0 ] && continue
+
+    if ! grep -q "$fs_id" "$CHANGELOG"; then
+      echo "ERROR: $fs_id (status=$fs_status) has exported-surface interfaces but no CHANGELOG entry naming it — consumer-framed entry required."
+      errors=$((errors+1))
+    fi
+  done
+fi
 
 # --- rule 8: referenced-path resolution (FS-0022 §1c) ------------------------
 #
@@ -678,12 +807,26 @@ done
 # explicitly with reasons rather than the corpus being edited to satisfy the check
 # (FS-0022 §1c is explicit that exclusions are the check's job).
 
+# This repository's own exemptions, used only for self-check — each names a
+# specific sentence in a specific document here, per FS-0024/ADR-0033's
+# classification of REF_EXEMPT as per-repository. A vendored copy sources the
+# host's own list from config/gates.yml's ref_exempt field instead — entries
+# there carry no inline reason (config is not a place for prose), unlike this
+# array, which documents its own reasoning for maintainers reading the script.
 REF_EXEMPT=(
   # "<naming document>:<referenced path>  # reason"
   "README.md:roles/session-modes.md"                      # consumer creates this
   "workflows/session-modes.md:roles/session-modes.md"     # consumer creates this
   "roles/README.md:docs/governance/role-contract.md"      # prefixed "in your own repo"
+  "scripts/README.md:config/gates.yml"                    # host repo creates this (FS-0024)
 )
+
+if ! is_self_check; then
+  REF_EXEMPT=()
+  while IFS= read -r rx; do
+    [ -n "$rx" ] && REF_EXEMPT+=("$rx")
+  done < <(get_flat_list_field "$GATES_CONFIG" "ref_exempt")
+fi
 
 ref_exempt() {
   local pair="$1:$2" e
