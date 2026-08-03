@@ -20,7 +20,23 @@ FRAMEWORK_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 # host's root instead of the submodule's, because the host's working directory
 # never crosses into the submodule boundary. CA_TARGET_REPO overrides both, for a
 # caller whose working directory is not inside the repository it means to check.
-REPO_ROOT="${CA_TARGET_REPO:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+#
+# CA_TARGET_REPO is canonicalized via `cd ... && pwd`, not used as-is: every path
+# built from REPO_ROOT below is a direct concatenation ($REPO_ROOT/docs/...), and a
+# relative CA_TARGET_REPO would make every one of them relative to whatever the
+# caller's working directory happens to be at the moment each is evaluated —
+# fragile, and wrong the instant anything in this script changed directories. A
+# CA_TARGET_REPO that is not a real directory is a caller error, not something to
+# paper over by falling back to git rev-parse — it fails loudly instead.
+if [ -n "${CA_TARGET_REPO:-}" ]; then
+  REPO_ROOT="$(cd "$CA_TARGET_REPO" 2>/dev/null && pwd)"
+  if [ -z "$REPO_ROOT" ]; then
+    echo "ERROR: CA_TARGET_REPO='$CA_TARGET_REPO' is not a directory." >&2
+    exit 1
+  fi
+else
+  REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+fi
 
 # True when this run is the framework checking itself — every invocation this
 # repository makes of its own scripts, including its own CI and its own bats
@@ -135,7 +151,11 @@ get_flat_list_field() {
         gsub("\\]", "", line)
         gsub(/ /, "", line)
         n2=split(line, parts, ",")
-        for (i=1; i<=n2; i++) { if (parts[i] != "") print parts[i] }
+        for (i=1; i<=n2; i++) {
+          p = parts[i]
+          gsub(/^"/, "", p); gsub(/"$/, "", p)
+          if (p != "") print p
+        }
         in_field=0
       }
       next

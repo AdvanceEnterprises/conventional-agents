@@ -35,7 +35,20 @@ set -uo pipefail
 # only for symmetry: a caller should not need to know that this one script
 # already happened to resolve correctly and so doesn't honor the override the
 # other two do.
-REPO_ROOT="${CA_TARGET_REPO:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+#
+# Canonicalized via `cd ... && pwd`, not used as-is — the `git -C "$REPO_ROOT"`
+# calls below would otherwise depend on the caller's working directory whenever
+# CA_TARGET_REPO is relative. A CA_TARGET_REPO that isn't a real directory fails
+# loudly rather than silently falling back.
+if [ -n "${CA_TARGET_REPO:-}" ]; then
+  REPO_ROOT="$(cd "$CA_TARGET_REPO" 2>/dev/null && pwd)"
+  if [ -z "$REPO_ROOT" ]; then
+    echo "ERROR: CA_TARGET_REPO='$CA_TARGET_REPO' is not a directory." >&2
+    exit 1
+  fi
+else
+  REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+fi
 BASE_REF=${1:-origin/trunk}
 
 # Current-state directories per ADR-0030. `runbooks/` was added by FS-0023, after

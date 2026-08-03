@@ -590,6 +590,26 @@ index drifted to eleven wrong titles and nine wrong statuses undetected. Both ar
 tracked for the PLAN work rather than here, but they share a root cause worth naming
 once: coverage is opt-in by enumeration, so new surfaces are unguarded by default.
 
+### `get_list_field`'s inline-list branch does not strip quotes
+
+Found in Copilot's review of `#77` (`FS-0024`), against the new sibling function
+`get_flat_list_field` it copied the shape from. Both parse `field: [a, b]` the same
+way: split on comma, print each part — but only the multiline-block branch
+(a `- "value"` line) strips surrounding quotes; the inline branch does not. A field
+written as `interfaces: ["guidelines/", "skills/"]` would emit `"guidelines/"` and
+`"skills/"` with the quotes still attached, which then fails to match anything by
+prefix.
+
+Fixed in `get_flat_list_field` as part of `#77`, because that function's config is
+consumer-authored and inline lists are a plausible way to write one. Not fixed in
+`get_list_field` itself: every `interfaces:`, `related_specs:`, and `touches:`
+field in this repository's own corpus is written in block-list form, so the bug is
+latent here, not live — and `get_list_field` is shared, load-bearing parsing logic
+outside `FS-0024`'s declared `touches:`. Fixing it needs its own small PLAN (the
+fix itself is mechanical — mirror the quote-strip into the inline branch — but
+`ADR-0027`'s containment check still requires a governing FS's `interfaces:` to
+cover whatever touches it, and `get_list_field` lives in a reserved path).
+
 ---
 
 ## Cleanup

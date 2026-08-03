@@ -105,6 +105,29 @@ EOF
   echo "$output" | grep -qF "FS-9001"
 }
 
+@test "target_resolution: a relative CA_TARGET_REPO is canonicalized, not used as-is" {
+  # Found in Copilot's review of #77: an uncanonicalized relative CA_TARGET_REPO
+  # would make every $REPO_ROOT/... path below relative to the caller's cwd, not
+  # the target. This host is at $BATS_TEST_TMPDIR/host; the override is passed as
+  # a relative path from a sibling directory.
+  local host="$BATS_TEST_TMPDIR/host"
+  local elsewhere="$BATS_TEST_TMPDIR/elsewhere"
+  build_scratch_host "$host"
+  write_broken_spec "$host"
+  mkdir -p "$elsewhere"
+
+  run bash -c "cd '$elsewhere' && CA_TARGET_REPO='../host' bash '$CHECK'"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "FS-9001"
+}
+
+@test "target_resolution: a CA_TARGET_REPO that is not a real directory fails loudly" {
+  run bash -c "CA_TARGET_REPO='$BATS_TEST_TMPDIR/does-not-exist' bash '$CHECK'"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "CA_TARGET_REPO"
+  echo "$output" | grep -qF "is not a directory"
+}
+
 @test "target_resolution: this repository's own invocation is unaffected" {
   # npm run check:status shape: cwd already at the repository being checked,
   # no override. Must still exit zero on this repository's own (clean) trunk.
@@ -244,6 +267,22 @@ EOF
   ! echo "$output" | grep -qF "cannot be certified for self-approval"
 }
 
+@test "rule6: an inline-list reserved_paths (with quotes) is enforced, not silently ignored" {
+  # Found in Copilot's review of #77: get_flat_list_field's inline-list branch did
+  # not strip quotes, so `reserved_paths: ["ci/"]` emitted the literal string
+  # '"ci/"' (quotes included), which never matched a bare touched path by prefix —
+  # the reserved path silently stopped being reserved.
+  local host="$BATS_TEST_TMPDIR/host"
+  build_rule6_fixture "$host"
+  mkdir -p "$host/config"
+  printf 'reserved_paths: ["ci/"]\n' > "$host/config/gates.yml"
+
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "ci/deploy.sh"
+  echo "$output" | grep -qF "reserved-path set"
+}
+
 # --- skip-explicit configuration (rule 7) ----------------------------------------
 
 build_rule7_fixture() {
@@ -362,6 +401,26 @@ EOF
 @test "docs: scripts/README.md states which of rules 6/7 fails closed and which skips, and why" {
   assert_file_contains "$SCRIPTS_README" "cannot self-approve anything"
   assert_file_contains "$SCRIPTS_README" "does not fail closed"
+}
+
+@test "docs: config/gates.example.yml does not set reserved_paths live — a straight copy stays fail-closed" {
+  # Found in Copilot's review of #77: the template set reserved_paths: [] live,
+  # which a straight `cp` would turn into an explicit (honored) empty reserved
+  # set — the least safe configuration — contradicting its own comment telling
+  # readers to leave it unset. The key must be commented out by default.
+  ! grep -qE '^reserved_paths:' "$REPO_ROOT/config/gates.example.yml"
+  assert_file_contains "$REPO_ROOT/config/gates.example.yml" "# reserved_paths: []"
+}
+
+@test "rule6: a straight copy of config/gates.example.yml preserves fail-closed behavior" {
+  local host="$BATS_TEST_TMPDIR/host"
+  build_rule6_fixture "$host"
+  mkdir -p "$host/config"
+  cp "$REPO_ROOT/config/gates.example.yml" "$host/config/gates.yml"
+
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "cannot be certified for self-approval"
 }
 
 @test "docs: config/gates.example.yml exists and carries the consumer-copy template header" {
