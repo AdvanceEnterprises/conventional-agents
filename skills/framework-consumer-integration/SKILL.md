@@ -143,9 +143,9 @@ conventions (tool boundaries, identity mappings, planning surface rules).
 ```bash
 cd /path/to/host-repo
 git submodule add https://github.com/Tais-Den/conventional-agents.git vendor/conventional-agents
-git submodule add https://github.com/<your-org>/<your-org>-conventions.git vendor/<your-org>-conventions
+git submodule add "https://github.com/<your-org>/<your-org>-conventions.git" "vendor/<your-org>-conventions"
 git submodule update --init
-git add .gitmodules vendor/conventional-agents vendor/<your-org>-conventions
+git add .gitmodules vendor/conventional-agents "vendor/<your-org>-conventions"
 git commit -m "chore: add conventional-agents and <your-org>-conventions foundation layers"
 ```
 
