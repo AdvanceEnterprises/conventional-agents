@@ -204,8 +204,8 @@ If your organization has its own conventions repo (see `ADR-0016`), vendor it
 as a sibling submodule:
 
 ```bash
-git submodule add https://github.com/<your-org>/<your-org>-conventions.git vendor/<your-org>-conventions
-git add .gitmodules vendor/<your-org>-conventions
+git submodule add "https://github.com/<your-org>/<your-org>-conventions.git" "vendor/<your-org>-conventions"
+git add .gitmodules "vendor/<your-org>-conventions"
 git commit -m "chore: add <your-org>-conventions"
 ```
 

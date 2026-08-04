@@ -16,7 +16,7 @@
 project:
   number: <your-project-number>
   id: "<your-project-id>"
-  url: "https://github.com/orgs/<your-org>/projects/<number>"
+  url: "https://github.com/orgs/<your-org>/projects/<your-project-number>"
   title: "<your-project-title>"
   owner: "<your-org>"
 

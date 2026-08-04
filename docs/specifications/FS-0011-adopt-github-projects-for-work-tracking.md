@@ -8,7 +8,7 @@ test_required: false
 interfaces:
   - GitHub Projects (UI + API)
   - gh CLI
-  - config/project.yml
+  - config/project.example.yml
 related_adrs: []
 supersedes: []
 requires: []
@@ -45,7 +45,7 @@ Adopt GitHub Projects (v2) for tracking work in the conventional-agents reposito
 - Backfill GitHub Issues for all existing FS and PLAN documents (including completed ones) for historical traceability.
 - Add a "Doc Type" custom field (FS, PLAN, Task, Bug) for filtering.
 - Enable auto-add so new issues automatically appear on the board.
-- Document the board ID/URL and field metadata in `config/project.yml`.
+- Document the board ID/URL and field metadata in `config/project.example.yml` (copy to `config/project.yml` in your own repository).
 - Reference the board in `README.md`.
 - Keep FS/PLAN/ADR markdown files as the authoritative governance artifacts; the board is a dashboard layer.
 
@@ -70,7 +70,7 @@ Adopt GitHub Projects (v2) for tracking work in the conventional-agents reposito
 - Type: CLI
   - Details: `gh project list`, `gh project item-list`, `gh project item-create`, `gh project item-edit`, `gh project field-list`.
 - Type: Config
-  - Details: `config/project.yml` documenting board number, URL, field IDs, and column option IDs.
+  - Details: `config/project.example.yml` documenting board number, URL, field IDs, and column option IDs (copy to `config/project.yml` in your own repository).
 
 ## Success Criteria
 
@@ -93,7 +93,7 @@ Each bullet MUST be objectively testable.
 
 **Configuration:**
 
-- Given `config/project.yml` exists, when read, then it contains the project number, URL, field IDs for Status and Doc Type, and option IDs for each column/doc-type value.
+- Given `config/project.example.yml` exists, when read, then it contains the project number, URL, field IDs for Status and Doc Type, and option IDs for each column/doc-type value (as a template; copy to `config/project.yml` in your own repository).
 
 **Documentation:**
 
@@ -127,7 +127,7 @@ Each bullet MUST be objectively testable.
 4. Create labels (`spec`, `plan`) in the repo if they don't exist.
 5. Backfill issues for all existing FS and PLAN documents.
 6. Add all issues to the board with correct Status and Doc Type.
-7. Create `config/project.yml` with board metadata.
+7. Create `config/project.example.yml` with board metadata (template; copy to `config/project.yml` in your own repository).
 8. Update `README.md` with board reference.
 9. Validate via `gh project item-list`.
 
