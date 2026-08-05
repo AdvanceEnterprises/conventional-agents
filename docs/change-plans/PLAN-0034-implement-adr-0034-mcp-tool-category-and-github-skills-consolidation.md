@@ -42,7 +42,7 @@ No new tests. The existing `npm run lint:docs` and `npm run check:status` gates 
 ## 4. Files to Be Modified
 
 | Phase | Files | Action |
-|---|---|---|
+| --- | --- | --- |
 | 0 | `README.md` | Add Agent Skills to "Upstream References" |
 | 1 | `skills/gh-governed-doc-tracking/SKILL.md` | Create (port from Hermes) |
 | 1 | `skills/gh-stacked-prs/SKILL.md` | Create (port from Hermes) |
@@ -148,7 +148,7 @@ No implementation in this PR. Sequencing:
 ## 7. Risks and Edge Cases
 
 | Risk | Mitigation |
-|---|---|
+| --- | --- |
 | Skill size creep beyond 500 lines | Use `references/` subdirectories for overflow (per Agent Skills spec) |
 | Consumer references to deprecated `git-gh-workflow` | File stays in place; deprecation notice redirects to sub-skills |
 | MCP authority model untested against real server | Review checkpoint in ADR-0034 Validation section |
