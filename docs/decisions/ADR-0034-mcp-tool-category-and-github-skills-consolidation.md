@@ -160,8 +160,9 @@ installation or configuration.
 - No FS required to adopt an existing MCP server whose declared capabilities
   are within the consumer's existing authority baseline.
 - If the framework ships a recommended MCP server configuration (e.g., a
-  `config/mcp-servers.yml` example), that configuration is Category 2
-  (productivity skill) and follows the same introduction rules.
+  `config/mcp-servers.yml` example), that configuration is a Category 4
+  artifact and follows the same lightweight introduction rules as a
+  productivity skill (no FS required, documented in `integrations/`).
 - If an MCP server's capabilities would expand the framework's governance
   surface (e.g., modifying Issue statuses, approving PLANs, writing to reserved
   paths), its adoption requires an approved FS and PLAN — the same as a new

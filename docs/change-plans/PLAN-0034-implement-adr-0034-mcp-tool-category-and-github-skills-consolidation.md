@@ -7,6 +7,21 @@ consensus_required: false
 related_specs: []
 related_adrs:
   - ADR-0034
+touches:
+  - README.md
+  - docs/decisions/README.md
+  - docs/change-plans/README.md
+  - docs/decisions/ADR-0034-*.md
+  - docs/change-plans/PLAN-0034-*.md
+  - skills/git-branch-and-commit/SKILL.md
+  - skills/gh-pr-workflow/SKILL.md
+  - skills/gh-code-review/SKILL.md
+  - skills/gh-issues/SKILL.md
+  - skills/gh-remote-verification/SKILL.md
+  - skills/gh-governed-doc-tracking/SKILL.md
+  - skills/gh-stacked-prs/SKILL.md
+  - skills/git-gh-workflow/SKILL.md
+  - skills/index.md
 created: 2026-08-05
 updated: 2026-08-05
 ---
@@ -56,6 +71,7 @@ No new tests. The existing `npm run lint:docs` and `npm run check:status` gates 
 | 2 | `skills/index.md` | Add entries, mark `git-gh-workflow` deprecated |
 | 3 | `docs/decisions/ADR-0034-*.md` | Delivered in this PR |
 | 3 | `docs/decisions/README.md` | Add ADR-0034 row (delivered in this PR) |
+| 3 | `docs/change-plans/README.md` | Add PLAN-0034 row (delivered in this PR) |
 | 4 | (none) | Deferred — see §9 |
 
 ## 5. Implementation Steps
