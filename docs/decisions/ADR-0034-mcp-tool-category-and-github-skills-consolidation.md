@@ -4,8 +4,11 @@ id: ADR-0034
 status: proposed
 decision_scope: architecture
 reversible: yes
-related_specs: []
+related_specs:
+  - FS-0018
 superseded_by: null
+created: 2026-08-05
+updated: 2026-08-05
 ---
 
 # ADR-0034: MCP tool category and GitHub skills consolidation
@@ -129,15 +132,17 @@ single PLAN sequences the work across both tracks.
 
 A new Category 4 is added to the taxonomy defined in `ADR-0015`:
 
-**Category 4: Protocol-based external capabilities (MCP servers)**
+#### Category 4: Protocol-based external capabilities (MCP servers)
 
-**Definition**: External processes that agents invoke through the Model Context
+##### Definition
+
+External processes that agents invoke through the Model Context
 Protocol (or an equivalent capability-declaration protocol). MCP servers are
 not distributed with the framework, are not assumed present in the runtime
 environment, and are introduced by the framework or consumer through explicit
 installation or configuration.
 
-**Characteristics**:
+##### Characteristics
 
 - Live outside the framework's directory tree (installed by the consumer or
   runtime).
@@ -150,7 +155,7 @@ installation or configuration.
   MUST be treated as a background task under `ADR-0014` and MUST declare its
   authority scope in a form the session's role model can evaluate.
 
-**Introduction requirements**:
+##### Introduction requirements
 
 - No FS required to adopt an existing MCP server whose declared capabilities
   are within the consumer's existing authority baseline.
@@ -164,7 +169,7 @@ installation or configuration.
 - The framework's own MCP server configuration (if any) MUST be documented in
   `integrations/` following the `ADR-0024` binding pattern.
 
-**Authority model**:
+##### Authority model
 
 An MCP server's authority is bounded by the **intersection** of:
 
@@ -178,7 +183,9 @@ write access to the file system does not thereby gain the right to modify
 governed documents during a Review session — the session role's prohibition on
 modification (Role 4, Reviewer) is the tighter bound.
 
-**Responsible role**: Head Architect (Role 0) for proposing adoption of an MCP
+##### Responsible role
+
+Head Architect (Role 0) for proposing adoption of an MCP
 server whose capabilities affect governance. Implementer (Role 3) for
 configuring and integrating an MCP server whose capabilities are within the
 existing authority baseline.
