@@ -1,10 +1,11 @@
 ---
 type: feature-spec
 id: FS-0004
-status: draft
+status: implemented
 title: Agent-authored commit + PR commentary policy (role-aware)
 owner: Tai
 test_required: false
+updated: 2026-08-24
 interfaces:
   - workflows/git-and-gh-conventions.md (update PR body template and commit body guidance)
 related_adrs:
@@ -37,7 +38,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Implemented (superseded in practice by FS-0018/FS-0019 — agent-stance and role-aware commentary conventions now live in `workflows/git-and-gh-conventions.md`)
 
 ## Summary
 
