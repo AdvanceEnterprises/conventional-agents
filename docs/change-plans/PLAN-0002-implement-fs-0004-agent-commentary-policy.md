@@ -2,14 +2,14 @@
 type: change-plan
 role: implementer
 language: markdown
-status: draft
+status: implemented
 related_specs:
   - FS-0004
 related_adrs:
   - ADR-0011
   - ADR-0012
 created: 2026-02-07
-updated: 2026-06-08
+updated: 2026-08-24
 ---
 
 # PLAN-0002: Implement FS-0004 — Agent commentary policy (role-aware)
