@@ -584,6 +584,7 @@ Per reviewer feedback on the bootstrap package:
 
 ### Fixed
 
+- FS-0004 / PLAN-0002 status flip from `draft` to `implemented` — superseded in practice by FS-0018/FS-0019 (agent-stance and role-aware commentary conventions now live in `workflows/git-and-gh-conventions.md`). Frontmatter and body Status sections updated, README indexes synced. Closes #82.
 - ADR-0004 precedence wording corrected (was "highest-numbered wins", now "lowest-numbered/highest-priority wins").
 - `INTEGRATION.md` directory tree corrected (showed `conventional-agents/` instead of `conventional-agents/` for vendored path).
 
