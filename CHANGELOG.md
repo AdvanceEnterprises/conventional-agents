@@ -82,6 +82,10 @@ For this project (a documentation/standards kit), semver follows the
   thing this change makes true: that consumers run these scripts.
 - See `scripts/README.md` for the full mechanism and `ADR-0033` for the reasoning.
 
+### Fixed
+
+- FS-0004 / PLAN-0002 status flip from `draft` to `implemented` — superseded in practice by FS-0018/FS-0019 (agent-stance and role-aware commentary conventions now live in `workflows/git-and-gh-conventions.md`). Frontmatter and body Status sections updated, README indexes synced. Closes #82.
+
 ## [2.1.0] - 2026-08-01
 
 > Released 2026-08-01. `FS-0018`–`FS-0023` and `PLAN-0018`–`PLAN-0023` moved to
@@ -584,7 +588,6 @@ Per reviewer feedback on the bootstrap package:
 
 ### Fixed
 
-- FS-0004 / PLAN-0002 status flip from `draft` to `implemented` — superseded in practice by FS-0018/FS-0019 (agent-stance and role-aware commentary conventions now live in `workflows/git-and-gh-conventions.md`). Frontmatter and body Status sections updated, README indexes synced. Closes #82.
 - ADR-0004 precedence wording corrected (was "highest-numbered wins", now "lowest-numbered/highest-priority wins").
 - `INTEGRATION.md` directory tree corrected (showed `conventional-agents/` instead of `conventional-agents/` for vendored path).
 
