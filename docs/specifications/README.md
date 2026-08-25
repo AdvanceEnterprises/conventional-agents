@@ -98,7 +98,7 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0001 | Markdownlint Integration for ADR Quality Gates | implemented |
 | FS-0002 | Move workflow skills into conventional-agents (dual-mode) | deprecated |
 | FS-0003 | Git + gh CLI conventions for the kit | implemented |
-| FS-0004 | Agent-authored commit + PR commentary policy (role-aware) | implemented |
+| FS-0004 | Agent-authored commit + PR commentary policy (role-aware) | deprecated |
 | FS-0005 | Expand docs linting coverage to FS/PLAN/workflows | implemented |
 | FS-0006 | JavaScript/TypeScript guidelines for agentic development | implemented |
 | FS-0007 | Versioning, releases, and packaging guidance for agentic development | implemented |
