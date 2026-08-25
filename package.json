@@ -15,9 +15,10 @@
     "lint:templates": "npx markdownlint-cli2 \"templates/**/*.md\"",
     "lint:integrations": "npx markdownlint-cli2 \"integrations/*.md\"",
     "lint:roles": "npx markdownlint-cli2 \"roles/*.md\"",
-  "lint:runbooks": "npx markdownlint-cli2 \"runbooks/**/*.md\"",
+    "lint:runbooks": "npx markdownlint-cli2 \"runbooks/**/*.md\"",
     "lint:roots": "npx markdownlint-cli2 \"*.md\"",
     "lint:docs": "npm run -s lint:adrs && npm run -s lint:specs && npm run -s lint:plans && npm run -s lint:workflows && npm run -s lint:guidelines && npm run -s lint:skills && npm run -s lint:templates && npm run -s lint:integrations && npm run -s lint:roles && npm run -s lint:runbooks && npm run -s lint:roots",
+    "new:adr": "bash scripts/new-adr.sh",
     "check:status": "bash scripts/check-status.sh",
     "test": "bash scripts/run-bats.sh"
   }
