@@ -2,7 +2,7 @@
 type: change-plan
 role: implementer
 language: markdown
-status: implemented
+status: deprecated
 related_specs:
   - FS-0004
 related_adrs:
