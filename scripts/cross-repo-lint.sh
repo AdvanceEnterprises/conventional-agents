@@ -3,59 +3,104 @@
 #
 # Checks:
 #   1. Agent-Attribution trailer format (FS-0017) across recent commits
-#   2. FS/PLAN numbering uniqueness across repos (no collisions)
-#   3. README index consistency (all doc files referenced)
+#   2. README index consistency (all doc files referenced)
+#   3. FS/PLAN numbering validity within each repo (no duplicate IDs)
+#
+# Bash 3.2+ compatible (no associative arrays).
 #
 # Usage:
-#   ./scripts/cross-repo-lint.sh
+#   ./scripts/cross-repo-lint.sh                    # heuristic repo discovery
 #   CA_REPO_DIRS="/path/to/ca:/path/to/ff:/path/to/pp" ./scripts/cross-repo-lint.sh
+#   CA_TARGET_REPO="/path/to/ca" ./scripts/cross-repo-lint.sh   # single repo
 #
 # Environment:
-#   CA_REPO_DIRS  — colon-separated list of repo roots (defaults to heuristics)
-#   STRICT_TOOLS  — set to 1 to fail on missing tools (default: 0)
-#   COMMIT_RANGE  — git log range for attribution check (default: origin/trunk~20..origin/trunk)
+#   CA_REPO_DIRS     — colon-separated list of repo roots (defaults to heuristics)
+#   CA_TARGET_REPO   — single repo path override (takes precedence over CA_REPO_DIRS)
+#   STRICT_TOOLS     — set to 1 to fail on missing tools (default: 0)
+#   COMMIT_RANGE     — git log range for attribution check (default: origin/trunk~20..origin/trunk)
 set -euo pipefail
 
 FRAMEWORK_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 STRICT_TOOLS="${STRICT_TOOLS:-0}"
-COMMIT_RANGE="${COMMIT_RANGE:-origin/trunk~20..origin/trunk}"
+COMMIT_RANGE="${COMMIT_RANGE:-}"
 DIED=false
 
 err() { echo "FAIL: $*" >&2; DIED=true; }
+info() { echo "  $*"; }
+
+# ── tool check ────────────────────────────────────────────────────────────────
+for _tool in git grep sed awk basename; do
+  if ! command -v "$_tool" >/dev/null 2>&1; then
+    echo "ERROR: required tool '$_tool' not found" >&2
+    exit 1
+  fi
+done
 
 # ── locate repos ─────────────────────────────────────────────────────────────
-if [ -n "${CA_REPO_DIRS:-}" ]; then
-  IFS=':' read -ra REPOS <<< "$CA_REPO_DIRS"
+REPOS=()
+if [ -n "${CA_TARGET_REPO:-}" ]; then
+  [ -d "$CA_TARGET_REPO/.git" ] && REPOS=("$CA_TARGET_REPO")
+elif [ -n "${CA_REPO_DIRS:-}" ]; then
+  IFS=':' read -ra _repos <<< "$CA_REPO_DIRS"
+  for _r in "${_repos[@]}"; do
+    [ -d "$_r/.git" ] && REPOS+=("$_r")
+  done
 else
   # Heuristic: walk up from $FRAMEWORK_HOME to find sibling repos
   PARENT="$(cd "$FRAMEWORK_HOME/.." && pwd)"
-  REPOS=()
-  for name in conventional-agents feral-fleet pack-protocol; do
-    dir="$PARENT/$name"
-    [ -d "$dir/.git" ] && REPOS+=("$dir")
+  for _name in conventional-agents feral-fleet pack-protocol; do
+    _dir="$PARENT/$_name"
+    [ -d "$_dir/.git" ] && REPOS+=("$_dir")
   done
   if [ ${#REPOS[@]} -eq 0 ]; then
     # Fallback: try known absolute paths
-    for dir in \
+    for _dir in \
       "$HOME/Developer/projects/conventional-agents" \
       "$HOME/Developer/projects/feral-fleet" \
       "$HOME/Developer/projects/pack-protocol"; do
-      [ -d "$dir/.git" ] && REPOS+=("$dir")
+      [ -d "$_dir/.git" ] && REPOS+=("$_dir")
     done
   fi
 fi
 
 if [ ${#REPOS[@]} -eq 0 ]; then
-  echo "ERROR: Could not locate any Tais-Den repos. Set CA_REPO_DIRS." >&2
+  echo "ERROR: Could not locate any Tais-Den repos. Set CA_REPO_DIRS or CA_TARGET_REPO." >&2
   exit 1
 fi
 
-echo "==> cross-repo-lint: ${#REPOS[@]} repos = $(echo "${REPOS[@]}" | sed 's|.*/||g')"
+# Print repo names using basename
+_repo_names=""
+for _r in "${REPOS[@]}"; do
+  [ -n "$_repo_names" ] && _repo_names="$_repo_names, "
+  _repo_names="$_repo_names$(basename "$_r")"
+done
+echo "==> cross-repo-lint: ${#REPOS[@]} repos = $_repo_names"
 echo ""
+
+# ── helper: resolve default branch ───────────────────────────────────────────
+_resolve_default_branch() {
+  local repo="$1"
+  local result
+  # origin/HEAD symbolic-ref returns e.g. "refs/remotes/origin/trunk"; strip to bare name
+  result="$(git -C "$repo" symbolic-ref refs/remotes/origin/HEAD 2>/dev/null)" || result=""
+  result="${result##refs/remotes/origin/}"
+  if [ -z "$result" ]; then
+    # Try common branch names
+    for _try in trunk main master; do
+      if git -C "$repo" rev-parse --verify "origin/$_try" >/dev/null 2>&1; then
+        result="$_try"
+        break
+      fi
+    done
+  fi
+  echo "${result:-trunk}"
+}
 
 # ── check 1: Agent-Attribution format ───────────────────────────────────────
 echo "─── check 1: Agent-Attribution trailer format (FS-0017) ───"
 ATTRIBUTION_RE='^Agent-Attribution:[[:space:]]*actor=[^;]+;[[:space:]]*model=[^;]+;[[:space:]]*role=[^;]+;[[:space:]]*session=[^;]+$'
+# Known agent emails that must carry an Agent-Attribution trailer
+AGENT_EMAILS='hermes-agent@tais-den.dev hermes-cron@tais-den.dev hermes@tais-den.dev codex-cron@tais-den.dev kimi-code-review@tais-den.dev'
 TOTAL_BAD=0
 for REPO in "${REPOS[@]}"; do
   REPO_NAME="$(basename "$REPO")"
@@ -63,73 +108,64 @@ for REPO in "${REPOS[@]}"; do
     echo "  SKIP  $REPO_NAME (not a git repo)"
     continue
   fi
-  # Fetch trunk if we can
-  git -C "$REPO" fetch origin trunk 2>/dev/null || true
-  if ! git -C "$REPO" rev-parse --verify "$COMMIT_RANGE" >/dev/null 2>&1; then
-    echo "  SKIP  $REPO_NAME (commit range $COMMIT_RANGE unavailable)"
+
+  # Resolve default branch and commit range
+  DEFAULT_BRANCH="$(_resolve_default_branch "$REPO")"
+  RANGE="${COMMIT_RANGE:-"origin/$DEFAULT_BRANCH~20..origin/$DEFAULT_BRANCH"}"
+
+  # Fetch default branch if we can
+  git -C "$REPO" fetch origin "$DEFAULT_BRANCH" 2>/dev/null || true
+
+  # Test range endpoints separately (git rev-parse --verify only accepts single revs)
+  RANGE_START="${RANGE%..*}"
+  RANGE_END="${RANGE##*..}"
+  if ! git -C "$REPO" rev-parse --verify "$RANGE_START" >/dev/null 2>&1 || \
+     ! git -C "$REPO" rev-parse --verify "$RANGE_END" >/dev/null 2>&1; then
+    echo "  SKIP  $REPO_NAME (commit range $RANGE unavailable)"
     continue
   fi
+
   BAD_COUNT=0
+  MISSING_COUNT=0
   while IFS= read -r line; do
     [ -z "$line" ] && continue
     COMMIT_HASH=$(echo "$line" | awk '{print $1}')
+    AUTHOR_EMAIL=$(git -C "$REPO" log -1 --format="%ae" "$COMMIT_HASH" 2>/dev/null)
     RAW=$(git -C "$REPO" log -1 --format="%(trailers:key=Agent-Attribution,only,separator=%n)" "$COMMIT_HASH" 2>/dev/null | head -1)
-    if [ -n "$RAW" ]; then
-      if echo "$RAW" | grep -qE 'Hermes Agent\s*\('; then
-        BAD_COUNT=$((BAD_COUNT + 1))
+
+    # Check if this commit is agent-authored
+    _is_agent=false
+    for _ae in $AGENT_EMAILS; do
+      [ "$AUTHOR_EMAIL" = "$_ae" ] && _is_agent=true && break
+    done
+
+    if [ -z "$RAW" ]; then
+      if $_is_agent; then
+        MISSING_COUNT=$((MISSING_COUNT + 1))
         TOTAL_BAD=$((TOTAL_BAD + 1))
-        echo "  BAD  $REPO_NAME <$COMMIT_HASH> wrapper format: $RAW"
-      elif ! echo "$RAW" | grep -qE "$ATTRIBUTION_RE"; then
-        BAD_COUNT=$((BAD_COUNT + 1))
-        TOTAL_BAD=$((TOTAL_BAD + 1))
-        echo "  BAD  $REPO_NAME <$COMMIT_HASH> wrong format: $RAW"
+        echo "  BAD  $REPO_NAME <$COMMIT_HASH> missing Agent-Attribution trailer (agent-authored: $AUTHOR_EMAIL)"
       fi
+    elif echo "$RAW" | grep -qE 'Hermes Agent[[:space:]]*\('; then
+      BAD_COUNT=$((BAD_COUNT + 1))
+      TOTAL_BAD=$((TOTAL_BAD + 1))
+      echo "  BAD  $REPO_NAME <$COMMIT_HASH> wrapper format: $RAW"
+    elif ! echo "$RAW" | grep -qE "$ATTRIBUTION_RE"; then
+      BAD_COUNT=$((BAD_COUNT + 1))
+      TOTAL_BAD=$((TOTAL_BAD + 1))
+      echo "  BAD  $REPO_NAME <$COMMIT_HASH> wrong format: $RAW"
     fi
-  done < <(git -C "$REPO" log --format="%H %s" "$COMMIT_RANGE" 2>/dev/null)
-  if [ "$BAD_COUNT" -eq 0 ]; then echo "  OK   $REPO_NAME (all ${COMMIT_RANGE} commits have correct attribution format)"; fi
+  done < <(git -C "$REPO" log --format="%H %s" "$RANGE" 2>/dev/null)
+  if [ "$BAD_COUNT" -eq 0 ] && [ "$MISSING_COUNT" -eq 0 ]; then
+    echo "  OK   $REPO_NAME (all $RANGE commits have correct attribution format)"
+  fi
 done
 if [ "$TOTAL_BAD" -gt 0 ]; then
-  err "$TOTAL_BAD commit(s) with wrong Agent-Attribution format across repos"
+  err "$TOTAL_BAD commit(s) with agent-attribution issues across repos"
 fi
 echo ""
 
-# ── check 2: FS/PLAN numbering uniqueness ──────────────────────────────────
-echo "─── check 2: FS/PLAN numbering uniqueness across repos ───"
-declare -A FS_NUMS PLAN_NUMS
-for REPO in "${REPOS[@]}"; do
-  REPO_NAME="$(basename "$REPO")"
-  for spec_dir in "$REPO/docs/specifications" "$REPO/docs/change-plans"; do
-    [ -d "$spec_dir" ] || continue
-    for f in "$spec_dir"/FS-*.md "$spec_dir"/PLAN-*.md; do
-      [ -f "$f" ] || continue
-      BASE=$(basename "$f")
-      if echo "$BASE" | grep -qE '^FS-[0-9]+'; then
-        NUM=$(echo "$BASE" | sed 's/^FS-0*//;s/-.*//')
-        KEY="FS-$NUM"
-        if [ -n "${FS_NUMS[$KEY]:-}" ] && [ "${FS_NUMS[$KEY]}" != "$REPO_NAME" ]; then
-          err "$KEY claimed by $REPO_NAME and ${FS_NUMS[$KEY]}"
-        else
-          FS_NUMS[$KEY]="$REPO_NAME"
-        fi
-      elif echo "$BASE" | grep -qE '^PLAN-[0-9]+'; then
-        NUM=$(echo "$BASE" | sed 's/^PLAN-0*//;s/-.*//')
-        KEY="PLAN-$NUM"
-        if [ -n "${PLAN_NUMS[$KEY]:-}" ] && [ "${PLAN_NUMS[$KEY]}" != "$REPO_NAME" ]; then
-          err "$KEY claimed by $REPO_NAME and ${PLAN_NUMS[$KEY]}"
-        else
-          PLAN_NUMS[$KEY]="$REPO_NAME"
-        fi
-      fi
-    done
-  done
-done
-echo "  FS:  ${#FS_NUMS[@]} unique numbers across repos"
-echo "  PLAN: ${#PLAN_NUMS[@]} unique numbers across repos"
-if ! $DIED; then echo "  OK   No numbering collisions detected"; fi
-echo ""
-
-# ── check 3: README index consistency ───────────────────────────────────────
-echo "─── check 3: README index consistency ───"
+# ── check 2: README index consistency ───────────────────────────────────────
+echo "─── check 2: README index consistency ───"
 for REPO in "${REPOS[@]}"; do
   REPO_NAME="$(basename "$REPO")"
   for doc_type in decisions specifications change-plans; do
@@ -137,16 +173,14 @@ for REPO in "${REPOS[@]}"; do
     [ -d "$dir" ] || continue
     readme="$dir/README.md"
     [ -f "$readme" ] || continue
-    # For each ADR/FS/PLAN doc, check it's mentioned in the README
     for f in "$dir"/*.md; do
       [ -f "$f" ] || continue
       BASE=$(basename "$f")
       [ "$BASE" = "README.md" ] && continue
-      ID=$(grep -m1 '^id:' "$f" 2>/dev/null | sed 's/^id:[[:space:]]*//')
+      # Extract ID from frontmatter (between --- delimiters)
+      ID=$(awk '/^---$/{f=1; next} f&&/^---$/{exit} f&&/^id:/{print $2; exit}' "$f" 2>/dev/null)
       [ -z "$ID" ] && continue
-      # Try to find the ID in the README
       if ! grep -qF "$ID" "$readme" 2>/dev/null; then
-        # Also try base name (some READMEs reference by filename)
         DOC_ID=$(echo "$BASE" | sed 's/\.md$//')
         if ! grep -qF "$DOC_ID" "$readme" 2>/dev/null; then
           err "$REPO_NAME: $ID ($BASE) has no README index entry in $doc_type/README.md"
@@ -156,6 +190,54 @@ for REPO in "${REPOS[@]}"; do
   done
 done
 if ! $DIED; then echo "  OK   All docs referenced in README indexes"; fi
+echo ""
+
+# ── check 3: FS/PLAN numbering validity within each repo (no duplicates) ────
+echo "─── check 3: FS/PLAN numbering validity within each repo (no duplicates) ───"
+UNIQUE_OK=true
+for REPO in "${REPOS[@]}"; do
+  REPO_NAME="$(basename "$REPO")"
+  for spec_dir in "$REPO/docs/specifications" "$REPO/docs/change-plans"; do
+    [ -d "$spec_dir" ] || continue
+    for f in "$spec_dir"/FS-*.md "$spec_dir"/PLAN-*.md; do
+      [ -f "$f" ] || continue
+      [ -f "$f" ] || continue
+      BASE=$(basename "$f")
+      _is_fs=false; _is_plan=false
+      echo "$BASE" | grep -qE '^FS-[0-9]+' && _is_fs=true
+      echo "$BASE" | grep -qE '^PLAN-[0-9]+' && _is_plan=true
+      $_is_fs || $_is_plan || continue
+
+      # Extract the ID prefix from filename (with original zero-padding)
+      _fn_id="$(echo "$BASE" | sed -n 's/^\(FS-[0-9][0-9]*\|PLAN-[0-9][0-9]*\).*$/\1/p')"
+      [ -z "$_fn_id" ] && continue
+
+      # Check frontmatter id: field matches filename ID
+      _fm_id=$(awk '/^---$/{f=1; next} f&&/^---$/{exit} f&&/^id:/{print $2; exit}' "$f" 2>/dev/null)
+      if [ -n "$_fm_id" ] && [ "$_fm_id" != "$_fn_id" ]; then
+        err "$REPO_NAME: $BASE has frontmatter id: $_fm_id but filename suggests $_fn_id"
+      fi
+    done
+  done
+done
+# Check for intra-repo collisions using sort/uniq (Bash 3.2 compatible)
+for REPO in "${REPOS[@]}"; do
+  REPO_NAME="$(basename "$REPO")"
+  for spec_dir in "$REPO/docs/specifications" "$REPO/docs/change-plans"; do
+    [ -d "$spec_dir" ] || continue
+    _collisions=$(for f in "$spec_dir"/FS-*.md "$spec_dir"/PLAN-*.md; do
+      [ -f "$f" ] || continue
+      BASE=$(basename "$f")
+      echo "$BASE" | grep -qE '^(FS|PLAN)-[0-9]+' || continue
+      echo "$BASE" | sed 's/-[^-]*\.md$//'
+    done | sort | uniq -d)
+    if [ -n "$_collisions" ]; then
+      err "$REPO_NAME: duplicate IDs in $spec_dir: $(echo $_collisions | tr '\n' ' ')"
+      UNIQUE_OK=false
+    fi
+  done
+done
+if $UNIQUE_OK && ! $DIED; then echo "  OK   No duplicate IDs within repos"; fi
 echo ""
 
 # ── summary ─────────────────────────────────────────────────────────────────
