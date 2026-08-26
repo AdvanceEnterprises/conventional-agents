@@ -302,3 +302,29 @@ to contain pattern" against files that matched perfectly well. The shared
 The framework does not vendor a test runner.
 
 **Failure.** Exits non-zero on any failing assertion in any suite.
+
+---
+
+## new-plan.sh
+
+`npm run new:plan` runs `bash scripts/new-plan.sh`.
+
+**Purpose.** Scaffolds a PLAN stub from an ADR markdown file. Accepts `--adr DOC.md` (required), `--number PLAN-NNNN` (optional, auto-filled), and `--dry-run` (preview without writing).
+
+**What it does.**
+
+1. Parses the source ADR's frontmatter for `id`, `title`, `related_specs`, and `related_adrs`.
+2. Extracts the Context, Decision Outcome, and Consequences sections from the ADR body (respecting MADR 4.0's nested heading structure).
+3. Determines the next available PLAN number (or accepts one via `--number`).
+4. Generates a PLAN file at `docs/change-plans/PLAN-NNNN-<slug>.md` with canonical frontmatter.
+
+**Conventions.**
+
+- Per `FS-0024`/`ADR-0033`: the target repository is resolved from the caller's working directory, not from the script's physical location. `CA_TARGET_REPO` overrides. A vendored copy creates the PLAN in the host repo.
+- The generated frontmatter follows `templates/core/change-plan.md` (`type: change-plan`, `role: implementer`, `language`, `status: draft`, `related_specs`, `related_adrs`, `touches: []`, `created`, `updated`). No `title:` field — plans carry none per existing convention.
+- Leading zeros on PLAN numbers are stripped safely via `sed` (avoiding bash's octal trap with `set -u`).
+- Generator sections follow the template's numbered structure with placeholders derived from the ADR.
+
+**When it runs.**
+
+- Manually: `npm run new:plan -- --adr docs/decisions/ADR-XXXX.md`.
