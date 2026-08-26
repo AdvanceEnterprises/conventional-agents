@@ -20,7 +20,7 @@ setup() {
 # ── ADR status transitions ──────────────────────────────────────────────────
 
 @test "adr_transitions: every ADR status is a recognised value" {
-  local known=("draft" "proposed" "accepted" "rejected" "implemented"
+  local known=("draft" "proposed" "accepted" "rejected"
                "deprecated" "superseded")
   for f in "$DECISIONS_DIR"/ADR-*.md; do
     [ -f "$f" ] || continue
@@ -109,11 +109,11 @@ setup() {
     if echo "$specs_line" | grep -qE '\[\s*\]'; then
       continue
     fi
-    # Extract all FS-NNNN references from the frontmatter
+    # Extract all FS-NNNN references from the frontmatter block only
     local refs
-    refs=$(grep -oE 'FS-[0-9]{4}' "$plan" || true)
+    refs=$(awk '/^---$/{f=1; next} f&&/^---$/{exit} f' "$plan" | grep -oE 'FS-[0-9]{4}' || true)
     if [ -z "$refs" ]; then
-      refs=$(grep -oE 'FS-[0-9]+' "$plan" | grep -v 'FS-[0-9]\{4\}' || true)
+      refs=$(awk '/^---$/{f=1; next} f&&/^---$/{exit} f' "$plan" | grep -oE 'FS-[0-9]+' | grep -v 'FS-[0-9]{4}' || true)
     fi
     [ -n "$refs" ] || continue
     while IFS= read -r ref; do
@@ -174,9 +174,11 @@ setup() {
   [ -f "$readme" ]
   for f in "$PLANS_DIR"/PLAN-*.md; do
     [ -f "$f" ] || continue
+    # PLAN docs don't have an id: frontmatter field; derive from filename
     local id
-    id=$(grep -m1 '^id:' "$f" | sed 's/^id:[[:space:]]*//')
-    [ -z "$id" ] && continue
+    id=$(basename "$f" .md)
+    id=$(echo "$id" | sed 's/^PLAN-0*//;s/-.*//')
+    id="PLAN-$(printf "%04d" "$id")"
     if ! grep -qF "$id" "$readme"; then
       echo "FAIL: $id has no PLAN README index entry"
       return 1
@@ -255,14 +257,15 @@ setup() {
   # Report findings but don't fail the suite — these are pre-existing
   # issues logged as suggest items.
   local found=false
-  for f in $ALL_DOCS; do
+  while IFS= read -r f; do
+    [ -z "$f" ] && continue
     local hits
     hits=$(grep -cE 'updated:[[:space:]]*YYYY-MM-DD|created:[[:space:]]*YYYY-MM-DD' "$f" || true)
     if [ "$hits" -gt 0 ]; then
       echo "WARN: $(basename "$f") contains placeholder date YYYY-MM-DD (see #121)"
       found=true
     fi
-  done
+  done <<< "$ALL_DOCS"
   $found && skip "Placeholder dates found — see suggest:#121 for the fix"
 }
 
@@ -295,7 +298,8 @@ setup() {
 }
 
 @test "status_consistency: created: date does not exceed updated: date" {
-  for f in $ALL_DOCS; do
+  while IFS= read -r f; do
+    [ -z "$f" ] && continue
     local created updated
     created=$(grep -m1 '^created:' "$f" | sed 's/^created:[[:space:]]*//' 2>/dev/null || echo "")
     updated=$(grep -m1 '^updated:' "$f" | sed 's/^updated:[[:space:]]*//' 2>/dev/null || echo "")
@@ -305,7 +309,7 @@ setup() {
       echo "FAIL: $(basename "$f") created: $created is after updated: $updated"
       return 1
     fi
-  done
+  done <<< "$ALL_DOCS"
 }
 
 # ── Governance value validation ─────────────────────────────────────────────
