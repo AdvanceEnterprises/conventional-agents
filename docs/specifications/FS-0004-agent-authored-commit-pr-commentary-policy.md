@@ -11,6 +11,9 @@ related_adrs:
   - ADR-0011
   - ADR-0012
 supersedes: []
+superseded_by:
+  - FS-0018
+  - FS-0019
 requires:
   - FS-0003
   - FS-0014
@@ -20,7 +23,7 @@ tags:
   - agents
   - roles
 created: 2026-02-07
-updated: 2026-08-24
+updated: 2026-08-26
 ---
 
 <!--
