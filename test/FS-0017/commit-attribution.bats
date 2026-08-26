@@ -19,6 +19,7 @@ ACTOR_EMAILS=(
   "hermes-agent@tais-den.dev"
   "hermes-cron@tais-den.dev"
   "codex@tais-den.dev"
+  "codex-cron@tais-den.dev"
   "claude-code@tais-den.dev"
   "ajoeofalltrades@users.noreply.github.com"
 )
