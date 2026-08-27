@@ -22,6 +22,13 @@ updated: 2026-08-24
 
 ## 2. Scope of Change
 
+> **Deprecated 2026-08-25:** FS-0004 is superseded in practice by FS-0018
+> (issue lifecycle and autonomous triggers) and FS-0019 (multi-model consensus).
+> Agent-stance and role-aware commentary conventions now live in
+> `workflows/git-and-gh-conventions.md`; the per-role PR templates this plan
+> specified were superseded by the `agent-stance:` trailer convention. This plan
+> is abandoned and will not be executed.
+
 **This change WILL:**
 
 - Replace the current single PR body template in `workflows/git-and-gh-conventions.md`

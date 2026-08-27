@@ -21,6 +21,7 @@ Change Plans progress through the following statuses:
 2. **Approved:** Ready for execution
 3. **In-progress:** Execution underway
 4. **Implemented:** All steps complete
+5. **Deprecated:** Abandoned before implementation; will not be executed
 
 See `workflows/document-lifecycle.md` for transition rules.
 
