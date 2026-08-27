@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0004
-status: draft
+status: deprecated
 title: Agent-authored commit + PR commentary policy (role-aware)
 owner: Tai
 test_required: false
@@ -11,6 +11,9 @@ related_adrs:
   - ADR-0011
   - ADR-0012
 supersedes: []
+superseded_by:
+  - FS-0018
+  - FS-0019
 requires:
   - FS-0003
   - FS-0014
@@ -20,7 +23,7 @@ tags:
   - agents
   - roles
 created: 2026-02-07
-updated: 2026-06-08
+updated: 2026-08-26
 ---
 
 <!--
@@ -37,7 +40,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Deprecated (superseded by FS-0018/FS-0019 — agent-stance and role-aware commentary conventions now live in `workflows/git-and-gh-conventions.md`)
 
 ## Summary
 

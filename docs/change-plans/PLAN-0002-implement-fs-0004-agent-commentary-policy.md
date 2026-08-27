@@ -2,14 +2,14 @@
 type: change-plan
 role: implementer
 language: markdown
-status: draft
+status: deprecated
 related_specs:
   - FS-0004
 related_adrs:
   - ADR-0011
   - ADR-0012
 created: 2026-02-07
-updated: 2026-06-08
+updated: 2026-08-24
 ---
 
 # PLAN-0002: Implement FS-0004 — Agent commentary policy (role-aware)
@@ -21,6 +21,13 @@ updated: 2026-06-08
 - Issue / PR Reference: TBD
 
 ## 2. Scope of Change
+
+> **Deprecated 2026-08-25:** FS-0004 is superseded in practice by FS-0018
+> (issue lifecycle and autonomous triggers) and FS-0019 (multi-model consensus).
+> Agent-stance and role-aware commentary conventions now live in
+> `workflows/git-and-gh-conventions.md`; the per-role PR templates this plan
+> specified were superseded by the `agent-stance:` trailer convention. This plan
+> is abandoned and will not be executed.
 
 **This change WILL:**
 

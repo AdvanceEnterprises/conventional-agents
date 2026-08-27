@@ -21,6 +21,7 @@ Change Plans progress through the following statuses:
 2. **Approved:** Ready for execution
 3. **In-progress:** Execution underway
 4. **Implemented:** All steps complete
+5. **Deprecated:** Abandoned before implementation; will not be executed
 
 See `workflows/document-lifecycle.md` for transition rules.
 
@@ -33,7 +34,7 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | ID | Title | Related Spec | Status |
 |---|---|---|---|
 | PLAN-0001 | Implement FS-0003 Git/GH CLI Conventions | FS-0003 | implemented |
-| PLAN-0002 | Implement FS-0004 Agent Commentary Policy | FS-0004 | draft |
+| PLAN-0002 | Implement FS-0004 Agent Commentary Policy | FS-0004 | deprecated |
 | PLAN-0003 | Implement FS-0005 Expand Docs Linting | FS-0005 | implemented |
 | PLAN-0004 | Markdownlint Integration for ADRs | FS-0001 | implemented |
 | PLAN-0005 | Move Workflow Skills into conventional-agents | FS-0002 | deprecated |

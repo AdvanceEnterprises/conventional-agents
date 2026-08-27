@@ -82,6 +82,10 @@ For this project (a documentation/standards kit), semver follows the
   thing this change makes true: that consumers run these scripts.
 - See `scripts/README.md` for the full mechanism and `ADR-0033` for the reasoning.
 
+### Fixed
+
+- FS-0004 / PLAN-0002 marked `deprecated` — superseded in practice by FS-0018/FS-0019 (agent-stance and role-aware commentary conventions now live in `workflows/git-and-gh-conventions.md`). Frontmatter and body Status sections updated, PLAN-0002 §2 records the deprecation rationale, README indexes synced, lifecycle lists include `deprecated`. Closes #82.
+
 ## [2.1.0] - 2026-08-01
 
 > Released 2026-08-01. `FS-0018`–`FS-0023` and `PLAN-0018`–`PLAN-0023` moved to
