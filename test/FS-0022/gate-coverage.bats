@@ -14,6 +14,13 @@ setup() {
   CHANGELOG="$REPO_ROOT/CHANGELOG.md"
 }
 
+teardown() {
+  # Clean up PLAN-9999-fake-test.md if a previous test run was interrupted.
+  # This test fixture is created by the plan_touches:* tests and must not
+  # leak onto disk — it breaks check-status.sh and CI (test-bats).
+  rm -f "$REPO_ROOT/docs/change-plans/PLAN-9999-fake-test.md"
+}
+
 # --- ADR index ----------------------------------------------------------------
 
 @test "adr_index: title mismatch is detected by check-status.sh" {
