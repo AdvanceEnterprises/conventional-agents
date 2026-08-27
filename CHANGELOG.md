@@ -84,7 +84,7 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Fixed
 
-- FS-0004 / PLAN-0002 status flip from `draft` to `implemented` — superseded in practice by FS-0018/FS-0019 (agent-stance and role-aware commentary conventions now live in `workflows/git-and-gh-conventions.md`). Frontmatter and body Status sections updated, README indexes synced. Closes #82.
+- FS-0004 / PLAN-0002 marked `deprecated` — superseded in practice by FS-0018/FS-0019 (agent-stance and role-aware commentary conventions now live in `workflows/git-and-gh-conventions.md`). Frontmatter and body Status sections updated, PLAN-0002 §2 records the deprecation rationale, README indexes synced, lifecycle lists include `deprecated`. Closes #82.
 
 ## [2.1.0] - 2026-08-01
 
