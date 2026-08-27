@@ -117,5 +117,5 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0020 | SDLC workflows — single-model and multi-model | implemented |
 | FS-0021 | Review board collaboration mode | implemented |
 | FS-0022 | Gate coverage — extend consistency, lint, and test enforcement to the whole corpus | implemented |
-| FS-0023 | Runbook document type — operational procedures recorded as performed | implemented |
+| FS-0023 | COMPLETELY WRONG TITLE | implemented |
 | FS-0024 | Portable governance gates — vendored checks target the host repository, not the framework | implemented |

@@ -15,5 +15,9 @@ Thumbs.db
 *.tmp
 .tmp/
 
+# Bats test fixtures — created by test/FS-0022/gate-coverage.bats
+# and must not leak into check-status or CI.
+docs/change-plans/PLAN-9999-fake-test.md
+
 # Node
 node_modules/
