@@ -57,4 +57,5 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | PLAN-0022 | Implement FS-0022 Gate coverage | FS-0022 | implemented |
 | PLAN-0023 | Implement FS-0023 Runbook document type | FS-0023 | implemented |
 | PLAN-0024 | Implement FS-0024 Portable governance gates | FS-0024 | implemented |
+| PLAN-0026 | Implement FS-0026 ADR and PLAN scaffolding CLI | FS-0026 | draft |
 | PLAN-0034 | Implement ADR-0034 MCP tool category and GitHub skills consolidation | ADR-0034 | draft |
