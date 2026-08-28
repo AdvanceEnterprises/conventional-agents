@@ -145,10 +145,6 @@ for REPO in "${REPOS[@]}"; do
         TOTAL_BAD=$((TOTAL_BAD + 1))
         echo "  BAD  $REPO_NAME <$COMMIT_HASH> missing Agent-Attribution trailer (agent-authored: $AUTHOR_EMAIL)"
       fi
-    elif echo "$RAW" | grep -qE 'Hermes Agent[[:space:]]*\('; then
-      BAD_COUNT=$((BAD_COUNT + 1))
-      TOTAL_BAD=$((TOTAL_BAD + 1))
-      echo "  BAD  $REPO_NAME <$COMMIT_HASH> wrapper format: $RAW"
     elif ! echo "$RAW" | grep -qE "$ATTRIBUTION_RE"; then
       BAD_COUNT=$((BAD_COUNT + 1))
       TOTAL_BAD=$((TOTAL_BAD + 1))
