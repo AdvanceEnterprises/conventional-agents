@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# new-adr.sh — Scaffold a new ADR from the MADR template
+# new-adr.sh — Scaffold a new ADR with framework-conformant frontmatter
 # Usage: npm run new:adr -- --title "My Decision Title"
 #        npm run new:adr                      # interactive mode
 #        npm run new:adr --dry-run            # generate to stdout only
 #
-# FRAMEWORK_HOME is where this script physically lives.
+# Generation uses a built-in template string (not the vendored MADR template),
+# so the scaffolded output is stable regardless of submodule state.
 FRAMEWORK_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 DOCS_DIR="$FRAMEWORK_HOME/docs/decisions"
 README="$DOCS_DIR/README.md"
@@ -21,7 +22,7 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --title)
       shift
-      if [ -n "$1" ]; then
+      if [ -n "${1:-}" ]; then
         TITLE="$*"
         INTERACTIVE=false
         break
@@ -57,8 +58,8 @@ next_adr_num() {
       # Strip optional slug suffix too: ADR-0034-foo -> 0034
       num="${basename_str#ADR-}"
       num="${num%%-*}"                          # before first dash
-      num="${num##+(0)}"                        # strip leading zeros
-      if [ -n "$num" ] && [ "$num" -gt "$max" ] 2>/dev/null; then
+      num=$((10#${num:-0}))                     # base-10 parse (strips leading zeros)
+      if [ "$num" -gt "$max" ] 2>/dev/null; then
         max=$num
       fi
     fi
@@ -138,12 +139,14 @@ else
 fi
 
 # Sanitize user input for shell expansion safety
+# (No escaping needed: variables are interpolated inside double quotes, so
+# quotes/apostrophes in user input are preserved verbatim in the generated file.)
 sanitize() {
-  echo "$1" | sed 's/"/\\"/g' | sed "s/'/\\'/g"
+  echo "$1"
 }
 
 TITLE_SAFE=$(sanitize "$TITLE")
-CONTEXT_SAFE=$(sanitize "${CONTEXT:-TODO: Describe the context and problem statement.}")
+CONTEXT_SAFE=$(sanitize "${CONTEXT:-}")
 DECISION_SAFE=$(sanitize "$DECISION")
 CONSEQUENCES_SAFE=$(sanitize "$CONSEQUENCES")
 DECISION_SCOPE_SAFE=$(sanitize "$DECISION_SCOPE")
@@ -216,7 +219,7 @@ if $DRY_RUN; then
 fi
 
 # Pre-flight check: ensure template directory exists (informational)
-if [ ! -f "$FRAMEWORK_HOME/vendor/madr/template/adr-template.md" ]; then
+if [ ! -f "$FRAMEWORK_HOME/vendor/madr/template/adr-template.md" ] && [ ! -f "$FRAMEWORK_HOME/vendor/madr/templates/adr-template.md" ]; then
   echo "⚠  Warning: vendor/madr template not found (submodule may not be initialized)."
   echo "   Generate will proceed with built-in template."
 fi
