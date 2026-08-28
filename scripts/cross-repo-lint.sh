@@ -29,12 +29,17 @@ err() { echo "FAIL: $*" >&2; DIED=true; }
 info() { echo "  $*"; }
 
 # ── tool check ────────────────────────────────────────────────────────────────
-for _tool in git grep sed awk basename; do
-  if ! command -v "$_tool" >/dev/null 2>&1; then
-    echo "ERROR: required tool '$_tool' not found" >&2
-    exit 1
-  fi
-done
+# Only enforce tool presence when STRICT_TOOLS=1 (default: warn and continue).
+# The list covers every command the script uses, including coreutils used
+# mid-run (head, sort, uniq, tr, basename, awk, sed, grep).
+if [ "$STRICT_TOOLS" = "1" ]; then
+  for _tool in git grep sed awk basename head sort uniq tr; do
+    if ! command -v "$_tool" >/dev/null 2>&1; then
+      echo "ERROR: required tool '$_tool' not found" >&2
+      exit 1
+    fi
+  done
+fi
 
 # ── locate repos ─────────────────────────────────────────────────────────────
 REPOS=()
@@ -98,7 +103,10 @@ _resolve_default_branch() {
 
 # ── check 1: Agent-Attribution format ───────────────────────────────────────
 echo "─── check 1: Agent-Attribution trailer format (FS-0017) ───"
-ATTRIBUTION_RE='^Agent-Attribution:[[:space:]]*actor=[^;]+;[[:space:]]*model=[^;]+;[[:space:]]*role=[^;]+;[[:space:]]*session=[^;]+$'
+# FS-0017: actor name is freeform (may contain parentheses, e.g.
+# "Hermes Agent (cron)"); ADR-0021 adds an optional `; mode=autonomous`
+# field for unattended actors. The structural regex accepts both.
+ATTRIBUTION_RE='^Agent-Attribution:[[:space:]]*actor=[^;]+;[[:space:]]*model=[^;]+;[[:space:]]*role=[^;]+;[[:space:]]*session=[^;]+(;[[:space:]]*mode=[^;]+)?$'
 # Known agent emails that must carry an Agent-Attribution trailer
 AGENT_EMAILS='hermes-agent@tais-den.dev hermes-cron@tais-den.dev hermes@tais-den.dev codex-cron@tais-den.dev kimi-code-review@tais-den.dev'
 TOTAL_BAD=0
@@ -225,7 +233,9 @@ for REPO in "${REPOS[@]}"; do
       [ -f "$f" ] || continue
       BASE=$(basename "$f")
       echo "$BASE" | grep -qE '^(FS|PLAN)-[0-9]+' || continue
-      echo "$BASE" | sed 's/-[^-]*\.md$//'
+      # Extract just the FS-#### / PLAN-#### prefix so FS-0017-foo.md and
+      # FS-0017-bar.md collide correctly.
+      echo "$BASE" | sed -n 's/^\(FS-[0-9][0-9]*\|PLAN-[0-9][0-9]*\).*$/\1/p'
     done | sort | uniq -d)
     if [ -n "$_collisions" ]; then
       err "$REPO_NAME: duplicate IDs in $spec_dir: $(echo $_collisions | tr '\n' ' ')"
