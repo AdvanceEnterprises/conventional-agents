@@ -144,7 +144,7 @@ agent_attribution_pattern() {
     [[ -z "$sha" ]] && continue
     email="$(git -C "$REPO_ROOT" log -1 --format='%ae' "$sha")"
     case "$email" in
-      hermes-agent@tais-den.dev)
+      hermes-agent@tais-den.dev|hermes-cron@tais-den.dev|codex@tais-den.dev|codex-cron@tais-den.dev|claude-code@tais-den.dev)
         message="$(git -C "$REPO_ROOT" log -1 --format='%B' "$sha")"
         trailer_lines="$(printf '%s\n' "$message" | git -C "$REPO_ROOT" interpret-trailers --parse | grep -i '^Agent-Attribution:' || true)"
         if [[ -z "$trailer_lines" ]]; then
