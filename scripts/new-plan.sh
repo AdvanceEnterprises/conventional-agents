@@ -118,11 +118,20 @@ extract_field() {
 }
 
 # Extract YAML list fields (e.g. related_specs: [FS-0018] or related_specs: \n  - FS-0018)
+# Portable (no grep -P); returns empty when the field is absent (no set -e exit).
 extract_list() {
   local field="$1"
   local val
-  # Try inline list format [item1, item2]
-  val=$(printf '%s\n' "$FRONTMATTER" | grep -E "^${field}:" | sed "s/^${field}: *//" | grep -oP '\b[A-Z]+-\d+\b' | tr '\n' ' ' | sed 's/ $//')
+  # Inline list form: field: [FS-0018, FS-0019]
+  val=$(printf '%s\n' "$FRONTMATTER" | grep -E "^${field}:" | sed "s/^${field}: *//" | grep -oE '[A-Z]+-[0-9]+' | tr '\n' ' ' | sed 's/ $//')
+  # Multi-line list form: field:\n  - FS-0018\n  - FS-0019
+  if [ -z "$val" ]; then
+    val=$(printf '%s\n' "$FRONTMATTER" | awk -v f="$field" '
+      $0 ~ "^" f ":[[:space:]]*$" { in_list=1; next }
+      in_list && /^[[:space:]]*-[[:space:]]+/ { gsub(/^[[:space:]]*-[[:space:]]*/, ""); print }
+      in_list && !/^[[:space:]]*-[[:space:]]+/ && !/^[[:space:]]*$/ { exit }
+    ' | grep -oE '[A-Z]+-[0-9]+' | tr '\n' ' ' | sed 's/ $//')
+  fi
   printf '%s' "$val"
 }
 
@@ -171,19 +180,29 @@ extract_section() {
 ADDR_CONTEXT=$(extract_section "Context and Problem Statement" "$ADR_FILE")
 ADDR_DECISION=$(extract_section "Decision Outcome" "$ADR_FILE")
 
-# Consequences is a subsection (###) under Decision Outcome; extract separately
-extract_subsection() {
-  local heading="$1"
-  local file="$2"
-  awk -v h="$heading" '
-    $0 ~ "^### " h "$" { found=1; next }
-    found && /^##/ { exit }
-    found && /^### / { exit }
+# Consequences: most ADRs use a top-level "## Consequences" section; some use
+# "### Consequences" as a subsection under "## Decision Outcome". Try the
+# top-level form first, then fall back to the subsection form.
+extract_consequences() {
+  local file="$1"
+  local out
+  out=$(awk -v h="Consequences" '
+    $0 ~ "^## " h "$" { found=1; next }
+    found && /^## / { exit }
     found { print }
-  ' "$file"
+  ' "$file")
+  if [ -z "$out" ]; then
+    out=$(awk -v h="Consequences" '
+      $0 ~ "^### " h "$" { found=1; next }
+      found && /^##/ { exit }
+      found && /^### / { exit }
+      found { print }
+    ' "$file")
+  fi
+  printf '%s' "$out"
 }
 
-ADDR_CONSEQUENCES=$(extract_subsection "Consequences" "$ADR_FILE")
+ADDR_CONSEQUENCES=$(extract_consequences "$ADR_FILE")
 
 # Use a fallback if any section is empty
 : "${ADDR_CONTEXT:=TODO: describe the context}"
