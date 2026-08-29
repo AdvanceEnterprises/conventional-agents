@@ -1,3 +1,7 @@
+---
+updated: 2026-07-29
+---
+
 # Bash Testing Guide
 
 This document provides **authoritative guidance for coding agents** when writing or reviewing tests for bash scripts in this repository.

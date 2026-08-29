@@ -1,3 +1,7 @@
+---
+updated: 2026-02-08
+---
+
 # JavaScript/TypeScript Implementer Guidance
 
 This document provides **authoritative, JavaScript/TypeScript-specific guidance** for coding agents acting as **Implementer**.

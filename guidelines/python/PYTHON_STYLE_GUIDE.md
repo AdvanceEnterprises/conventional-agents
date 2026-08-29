@@ -1,3 +1,7 @@
+---
+updated: 2026-07-29
+---
+
 # Google Developer Documentation Style Guide (for Codex reference)
 
 This document captures core principles and conventions from the Google Developer Documentation Style Guide, plus added guidance for writing NumPy-style Python docstrings (numpydoc). It’s meant as a quick, practical reference.

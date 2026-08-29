@@ -1,3 +1,7 @@
+---
+updated: 2026-02-08
+---
+
 # JavaScript/TypeScript Style Guide
 
 This document provides **authoritative style guidance for coding agents** writing or reviewing JavaScript and TypeScript code.

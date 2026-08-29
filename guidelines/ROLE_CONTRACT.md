@@ -1,3 +1,7 @@
+---
+updated: 2026-07-29
+---
+
 # Agent Role Contract: Docs → Tests → Code
 
 This document defines explicit roles, authority boundaries, and prohibitions for coding agents operating in this repository.

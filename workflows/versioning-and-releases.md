@@ -1,3 +1,7 @@
+---
+updated: 2026-07-26
+---
+
 # Versioning and Releases
 
 This document provides prescriptive guidance for how projects should handle versioning, releases, and packaging when LLM-backed agents are involved in the development workflow.

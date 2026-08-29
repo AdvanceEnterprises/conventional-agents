@@ -1,3 +1,7 @@
+---
+updated: 2026-07-29
+---
+
 # Bash Implementer Guidance
 
 This document provides **authoritative, Bash-specific guidance** for coding agents acting as **Implementer**.

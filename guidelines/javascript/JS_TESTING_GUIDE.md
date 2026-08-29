@@ -1,3 +1,7 @@
+---
+updated: 2026-06-08
+---
+
 # JavaScript/TypeScript Testing Guide
 
 This document provides **authoritative guidance for coding agents** when writing or reviewing tests for JavaScript and TypeScript projects.

@@ -1,3 +1,7 @@
+---
+updated: 2026-07-28
+---
+
 # SDLC Workflows — Single-Model
 
 This document is the **current-state description** of the single-model SDLC workflow.
