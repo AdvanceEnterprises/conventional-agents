@@ -21,6 +21,7 @@
     "new:adr": "bash scripts/new-adr.sh",
     "new:plan": "bash scripts/new-plan.sh",
     "check:status": "bash scripts/check-status.sh",
+    "check:freshness": "bash scripts/check-freshness.sh",
     "test": "bash scripts/run-bats.sh"
   }
 }

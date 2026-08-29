@@ -1,3 +1,7 @@
+---
+updated: 2026-07-28
+---
+
 # Session Modes
 
 This document defines five named session modes for agentic collaborative sessions.

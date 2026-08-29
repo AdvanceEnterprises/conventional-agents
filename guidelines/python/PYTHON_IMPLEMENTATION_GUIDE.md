@@ -1,3 +1,7 @@
+---
+updated: 2026-07-29
+---
+
 # Python Implementer Guidance
 
 This document provides **authoritative, Python-specific guidance** for coding agents acting as **Implementer**.

@@ -1,3 +1,7 @@
+---
+updated: 2026-08-02
+---
+
 # Git + GitHub (gh) conventions
 
 This document is the canonical, copy/pasteable guide for how we use Git + GitHub in this repo set.

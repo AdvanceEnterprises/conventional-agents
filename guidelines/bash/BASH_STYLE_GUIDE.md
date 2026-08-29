@@ -1,3 +1,7 @@
+---
+updated: 2026-07-29
+---
+
 # Bash Style and Documentation Guide
 
 This document provides guidance for writing clear, maintainable Bash scripts with consistent style and documentation. It emphasizes clarity over brevity and follows shell best practices.

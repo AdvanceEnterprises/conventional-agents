@@ -1,3 +1,7 @@
+---
+updated: 2026-07-28
+---
+
 # SDLC Workflows — Multi-Model
 
 This document is the **current-state description** of the multi-model SDLC workflow.

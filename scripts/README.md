@@ -263,6 +263,34 @@ delete the link.
 **Not caught.** An ADR that changes a rule and names no current-state document
 at all. That is a documentation defect the hygiene gate covers.
 
+## check-freshness.sh
+
+`npm run check:freshness` runs `bash scripts/check-freshness.sh`.
+
+**Purpose.** Validates the freshness of the exported workflow/guideline surface
+per `FS-0027`: every governed doc under `workflows/` and `guidelines/**`
+(excluding `**/README.md` index files) must carry an `updated: YYYY-MM-DD`
+front-matter field, and docs whose `updated:` date exceeds the staleness
+threshold are reported as candidates for refresh or `status: stale` marking.
+
+Two rules:
+
+1. **Hard (exit non-zero):** a governed doc without `updated:` — or with an
+   unparseable date — fails the gate. Freshness cannot be measured on a doc
+   that does not say when it was last touched.
+2. **Soft (printed, exit 0):** a doc whose `updated:` date is older than the
+   threshold (default 90 days, override with `DOC_STALE_DAYS`) is reported as
+   `STALE`. Deliberately non-fatal: a stale guideline is more dangerous flagged
+   than deleted.
+
+The front-matter extraction reads only the block between the first two `---`
+lines, so an `updated:` appearing in prose is not accepted as the field. Dates
+must be `YYYY-MM-DD` and are compared in epoch seconds; the age computation is
+day-granular (`(now - epoch) / 86400`).
+
+**When it runs.** CI push and `pull_request` (the `check-freshness` job in
+`.github/workflows/lint-docs.yml`), locally via `npm run check:freshness`.
+
 ## run-bats.sh
 
 `npm test` runs `bash scripts/run-bats.sh`.
