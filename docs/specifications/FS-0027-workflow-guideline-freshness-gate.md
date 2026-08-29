@@ -93,9 +93,15 @@ This mirrors the runbook pattern already adopted in feral-fleet
 ## Interfaces
 
 - `scripts/check-freshness.sh` — the gate script (Category 1 gate per ADR-0015).
+  Resolves its target from the caller's working directory per FS-0024/ADR-0033
+  (`git rev-parse --show-toplevel`, optional `CA_TARGET_REPO` override), so a
+  vendored copy checks the host's `workflows/` and `guidelines/`.
 - `package.json` — `npm run check:freshness` entry.
 - `.github/workflows/lint-docs.yml` — new `check-freshness` job on push and PR.
 - `workflows/*.md`, `guidelines/**/*.md` — governed docs; README files excluded.
+- `DOC_STALE_DAYS` — staleness threshold override (default 90 days).
+- `DOC_FRESHNESS_NOW` — epoch-seconds override of the evaluation date, for
+  deterministic tests.
 
 ## Success Criteria
 

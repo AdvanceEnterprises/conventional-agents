@@ -21,7 +21,9 @@ For this project (a documentation/standards kit), semver follows the
   `updated:` date exceeds 90 days are reported as staleness candidates
   (soft rule, `DOC_STALE_DAYS` override). Runs in CI on push and pull request.
   All 16 governed docs were backfilled with their last-commit date in the same
-  change, so the gate is green immediately.
+  change, so the gate is green immediately. Target resolution follows
+  FS-0024/ADR-0033 (caller's working-directory repo, `CA_TARGET_REPO` override),
+  and `DOC_FRESHNESS_NOW` pins the evaluation date for deterministic tests.
 - The maintenance tick's staleness detection (proactive check #2) now covers
   the workflow/guideline surface, which previously carried no `updated:` fields
   anywhere.

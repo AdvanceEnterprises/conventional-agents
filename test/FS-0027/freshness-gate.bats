@@ -4,11 +4,18 @@ load "../FS-0001/helpers.bash"
 
 # FS-0027 freshness gate — behavioral suite for scripts/check-freshness.sh.
 #
-# The gate resolves its target from its own location (ROOT_DIR = script/..),
-# so the corpus-level assertions run against the real repo, and the
+# The gate resolves its target from the caller's working directory per
+# FS-0024/ADR-0033 (REPO_ROOT = git rev-parse --show-toplevel, CA_TARGET_REPO
+# override), so the corpus-level assertions run against the real repo, and the
 # negative cases (missing field, invalid date, prose-only occurrence) are
 # exercised with throwaway probe files created inside the working tree and
 # removed in teardown.
+#
+# Determinism: the stale-count assertions pin DOC_FRESHNESS_NOW (the gate's
+# evaluation date) so they do not depend on the wall clock. The pinned epoch is
+# 2026-08-30 00:00 UTC — shortly after the PR was authored — under which the
+# two Feb-2026 JS guides are stale (203d) and the Jun-2026 JS testing guide
+# (83d) is not, keeping the expected counts stable.
 
 setup() {
   REPO_ROOT="$(repo_root)"
@@ -16,11 +23,11 @@ setup() {
 }
 
 teardown() {
-  rm -f "$REPO_ROOT/workflows/_freshness_probe.md"
-  rm -f "$REPO_ROOT/guidelines/_freshness_probe.md"
+  # Remove any probe file the suite may have created, wherever it lives.
+  find "$REPO_ROOT/workflows" "$REPO_ROOT/guidelines" -name '_*_probe.md' -delete 2>/dev/null || true
 }
 
-# --- Success criteria 5/6: the corpus is green and the npm script exists -----
+# --- Success criteria 5 and 6: the corpus is green and the npm script exists --
 
 @test "freshness: every governed doc under workflows/ and guidelines/ carries updated: (corpus green)" {
   run bash "$CHECK"
@@ -63,7 +70,7 @@ teardown() {
 # --- Success criterion 3: soft stale report ----------------------------------
 
 @test "freshness: stale docs are reported with path and age but do not fail the run" {
-  run env DOC_STALE_DAYS=0 bash "$CHECK"
+  run env DOC_STALE_DAYS=0 DOC_FRESHNESS_NOW=1788048000 bash "$CHECK"
   [ "$status" -eq 0 ]
   echo "$output" | grep -qF "STALE: "
   echo "$output" | grep -qF "threshold 0d"
@@ -95,7 +102,8 @@ teardown() {
   run bash "$CHECK"
   [ "$status" -eq 0 ]
   # 10 guideline files are checked (bash/JS/Python guides + ROLE_CONTRACT).
-  run bash -c "bash '$CHECK' 2>&1 | grep -c '^STALE: guidelines/' || true"
-  # With the default 90d threshold only the two Feb-2026 JS guides are stale.
+  # Pinned evaluation date (2026-08-30): only the two Feb-2026 JS guides are
+  # stale under the default 90d threshold.
+  run env DOC_FRESHNESS_NOW=1788048000 bash -c "bash '$CHECK' 2>&1 | grep -c '^STALE: guidelines/' || true"
   [ "$output" = "2" ]
 }
