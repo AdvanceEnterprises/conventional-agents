@@ -38,6 +38,12 @@ updated: 2026-08-29
   * **Soft:** docs whose `updated:` date exceeds the threshold (default 90 days,
     `DOC_STALE_DAYS` override, validated as non-negative integer) are reported
     as staleness candidates but do not fail the run.
+  * **Target resolution:** per FS-0024/ADR-0033, the gate checks the caller's
+    working-directory repository (`git rev-parse --show-toplevel`) with an
+    optional `CA_TARGET_REPO` override, so a vendored copy checks the host's
+    `workflows/` and `guidelines/`.
+  * **Determinism:** `DOC_FRESHNESS_NOW` (epoch seconds) overrides the
+    evaluation date so tests can pin it.
 * Register `npm run check:freshness` in `package.json`.
 * Add a `check-freshness` job to `.github/workflows/lint-docs.yml` (push + PR),
   mirroring the `check-status` job shape.

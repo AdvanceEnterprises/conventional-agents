@@ -21,8 +21,33 @@
 # Bash 3.2 compatible (macOS default) — no associative arrays.
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$ROOT_DIR"
+# FRAMEWORK_HOME is where this script physically lives — the script's own copy
+# of itself. It is a self-locator, not a target-resolver: every caller outside
+# this repository invokes a vendored copy whose own location is never the
+# repository being checked (FS-0024/ADR-0033).
+FRAMEWORK_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# REPO_ROOT is what this run checks — the git repository containing the caller's
+# working directory, per FS-0024/ADR-0033. `npm run check:freshness`, every CI
+# job in lint-docs.yml, and every bats suite that invokes this script all run
+# with their working directory at the repository they mean to check, so this
+# resolves identically to the old self-location for every invocation this
+# repository makes of itself. A vendored copy invoked from a host repository's
+# root now resolves to the host's root instead of the submodule's. CA_TARGET_REPO
+# overrides both, for a caller whose working directory is not inside the
+# repository it means to check. Canonicalized via `cd ... && pwd`; a
+# CA_TARGET_REPO that is not a real directory fails loudly rather than silently
+# falling back.
+if [ -n "${CA_TARGET_REPO:-}" ]; then
+  REPO_ROOT="$(cd "$CA_TARGET_REPO" 2>/dev/null && pwd)"
+  if [ -z "$REPO_ROOT" ]; then
+    echo "ERROR: CA_TARGET_REPO='$CA_TARGET_REPO' is not a directory." >&2
+    exit 1
+  fi
+else
+  REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+fi
+cd "$REPO_ROOT"
 
 STALE_DAYS="${DOC_STALE_DAYS:-90}"
 case "$STALE_DAYS" in
@@ -60,11 +85,22 @@ front_matter_field() {
 }
 
 # Seconds since epoch for a YYYY-MM-DD date. Empty if unparseable.
+# Platform-tested branch rather than an inline `||` chain: on a host where
+# neither `date -j` (BSD/macOS) nor GNU `date -d` works, the chain would
+# silently return empty; the explicit branch makes the failure mode visible.
+# The GNU branch pins `00:00:00 UTC` so `date -d "2026-02-08"` cannot be
+# interpreted as timezone-relative on any host.
 date_epoch() {
-  local d="$1"
+  local d="$1" epoch
   case "$d" in
     [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9])
-      date -j -f "%Y-%m-%d" "$d" "+%s" 2>/dev/null || date -d "$d" "+%s" 2>/dev/null || return 1
+      if epoch="$(date -j -f "%Y-%m-%d" "$d" "+%s" 2>/dev/null)"; then
+        printf '%s\n' "$epoch"
+      elif epoch="$(date -d "$d 00:00:00 UTC" "+%s" 2>/dev/null)"; then
+        printf '%s\n' "$epoch"
+      else
+        return 1
+      fi
       ;;
     *)
       return 1
@@ -72,8 +108,11 @@ date_epoch() {
   esac
 }
 
+# Current time in epoch seconds. DOC_FRESHNESS_NOW overrides the system clock so
+# tests can pin the evaluation date and stay deterministic (the stale-count
+# assertions depend on how many docs have crossed the threshold).
 now_epoch() {
-  date +%s
+  printf '%s\n' "${DOC_FRESHNESS_NOW:-$(date +%s)}"
 }
 
 # Collect governed docs, excluding README index files.
