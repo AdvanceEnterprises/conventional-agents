@@ -288,6 +288,16 @@ lines, so an `updated:` appearing in prose is not accepted as the field. Dates
 must be `YYYY-MM-DD` and are compared in epoch seconds; the age computation is
 day-granular (`(now - epoch) / 86400`).
 
+**Target resolution.** Per `FS-0024`/`ADR-0033`, the gate checks the git
+repository containing the caller's working directory (`git rev-parse
+--show-toplevel`), with an optional `CA_TARGET_REPO` override for a caller whose
+working directory is not inside the repository it means to check — so a vendored
+copy checks the host's `workflows/` and `guidelines/`, not the framework's own.
+
+**Determinism.** `DOC_FRESHNESS_NOW` (epoch seconds) overrides the system clock
+as the evaluation date, so tests can pin the date and keep stale-count
+assertions stable.
+
 **When it runs.** CI push and `pull_request` (the `check-freshness` job in
 `.github/workflows/lint-docs.yml`), locally via `npm run check:freshness`.
 
