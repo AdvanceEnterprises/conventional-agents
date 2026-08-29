@@ -120,3 +120,4 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0023 | Runbook document type — operational procedures recorded as performed | implemented |
 | FS-0024 | Portable governance gates — vendored checks target the host repository, not the framework | implemented |
 | FS-0026 | ADR and PLAN scaffolding CLI — npm run new:adr and npm run new:plan | draft |
+| FS-0027 | Workflow and guideline doc freshness gate — enforce updated: frontmatter | draft |

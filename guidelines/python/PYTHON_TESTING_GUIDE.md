@@ -1,3 +1,7 @@
+---
+updated: 2026-07-29
+---
+
 # Agent Test Guide (PyTest)
 
 This document provides **authoritative guidance for coding agents** when writing or reviewing tests using **pytest** in this repository.

@@ -13,6 +13,19 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
+#### Workflow and guideline freshness gate (`FS-0027`, draft)
+
+- **`npm run check:freshness` validates the exported workflow/guideline surface.**
+  Every governed doc under `workflows/` and `guidelines/**` must carry an
+  `updated:` front-matter field (hard rule, exit non-zero) and docs whose
+  `updated:` date exceeds 90 days are reported as staleness candidates
+  (soft rule, `DOC_STALE_DAYS` override). Runs in CI on push and pull request.
+  All 16 governed docs were backfilled with their last-commit date in the same
+  change, so the gate is green immediately.
+- The maintenance tick's staleness detection (proactive check #2) now covers
+  the workflow/guideline surface, which previously carried no `updated:` fields
+  anywhere.
+
 #### Template and instance repository forms (`ADR-0032`, proposed)
 
 - **`INTEGRATION.md` gains a "Template and instance repositories" section.** If you run

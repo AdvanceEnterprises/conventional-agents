@@ -1,3 +1,7 @@
+---
+updated: 2026-07-29
+---
+
 # Document Lifecycle
 
 This document defines the status values, transition rules, and maintenance responsibilities for all governed documents in projects using conventional-agents.
