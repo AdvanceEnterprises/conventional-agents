@@ -24,8 +24,8 @@ identity. The model assumes three GitHub accounts.
 The current operational reality of this repository is different. Only one
 GitHub account is in use (`ajoeofalltrades` / Joey Clark), and one agent
 currently operates on local files in this repo: **Hermes Agent**
-(running on `hades-01` via Quadlet, also operating in interactive
-sessions like this one). GitHub Copilot is used for cloud-side work but
+(operating via scheduled automation and in interactive sessions like this
+one). GitHub Copilot is used for cloud-side work but
 does not touch local files in this workflow; if cloud-agent attribution
 becomes relevant, it warrants its own ADR. This ADR is scoped to the
 This ADR is scoped to the local-file workflow.
