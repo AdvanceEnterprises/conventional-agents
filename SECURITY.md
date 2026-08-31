@@ -23,7 +23,8 @@ security-relevant surfaces are:
   for the failure mode history)
 - **Approval and provenance checks** — any path that lets a decision be
   backdated, self-approved outside its scope, or approved without a human
-  gate (ADR-0012, ADR-0026, ADR-0027)
+  gate (ADR-0012 merge gate, ADR-0026 recorded approval, ADR-0027 plan
+  self-approval)
 - **Templates and example configs** — anything that could steer a consumer
   into committing secrets or weakening a safety gate
 - **Agent-Attribution and identity handling** (ADR-0018, ADR-0021) — spoofable
