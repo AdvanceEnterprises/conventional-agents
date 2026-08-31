@@ -107,8 +107,13 @@ echo "─── check 1: Agent-Attribution trailer format (FS-0017) ───"
 # "Hermes Agent (cron)"); ADR-0021 adds an optional `; mode=autonomous`
 # field for unattended actors. The structural regex accepts both.
 ATTRIBUTION_RE='^Agent-Attribution:[[:space:]]*actor=[^;]+;[[:space:]]*model=[^;]+;[[:space:]]*role=[^;]+;[[:space:]]*session=[^;]+(;[[:space:]]*mode=[^;]+)?$'
-# Known agent emails that must carry an Agent-Attribution trailer
-AGENT_EMAILS='hermes-agent@tais-den.dev hermes-cron@tais-den.dev hermes@tais-den.dev codex-cron@tais-den.dev kimi-code-review@tais-den.dev'
+# Known agent emails that must carry an Agent-Attribution trailer.
+# Must stay in sync with the actor table in workflows/git-and-gh-conventions.md
+# and the allowlist in test/FS-0017/commit-attribution.bats.
+# Note: kimi-code-review@tais-den.dev is deliberately absent — Kimi K2.7
+# reviews are comment-only (posted under the authenticated user), so that
+# address never authors commits.
+AGENT_EMAILS='hermes-agent@tais-den.dev hermes-cron@tais-den.dev codex@tais-den.dev codex-cron@tais-den.dev claude-code@tais-den.dev'
 TOTAL_BAD=0
 for REPO in "${REPOS[@]}"; do
   REPO_NAME="$(basename "$REPO")"
