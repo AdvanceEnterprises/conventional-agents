@@ -26,13 +26,15 @@ security-relevant surfaces are:
   gate (ADR-0012, ADR-0026, ADR-0027)
 - **Templates and example configs** — anything that could steer a consumer
   into committing secrets or weakening a safety gate
-- **Agent-Attribution and identity handling** (ADR-0018/0021) — spoofable
+- **Agent-Attribution and identity handling** (ADR-0018, ADR-0021) — spoofable
   or ambiguous attribution that breaks audit
 
 ## Supported versions
 
 Only the current `trunk` and the latest tagged release receive security
-fixes. Older tags are unsupported.
+fixes. Security fixes ship as the next tagged framework version, or are
+backported to the most recent `vX.Y.Z` tag at maintainer discretion.
+Older tags are unsupported.
 
 ## Coordinated disclosure
 

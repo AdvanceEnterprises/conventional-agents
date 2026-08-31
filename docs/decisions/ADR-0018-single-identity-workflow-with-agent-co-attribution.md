@@ -27,8 +27,7 @@ currently operates on local files in this repo: **Hermes Agent**
 (operating via scheduled automation and in interactive sessions like this
 one). GitHub Copilot is used for cloud-side work but
 does not touch local files in this workflow; if cloud-agent attribution
-becomes relevant, it warrants its own ADR. This ADR is scoped to the
-This ADR is scoped to the local-file workflow.
+becomes relevant, it warrants its own ADR. This ADR is scoped to the local-file workflow.
 
 This creates three concrete problems:
 

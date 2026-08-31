@@ -26,12 +26,14 @@ For this project (a documentation/standards kit), semver follows the
   spoofing), supported-versions policy, coordinated-disclosure window.
 - **`CODE_OF_CONDUCT.md` added** — Contributor Covenant 2.1, with
   enforcement contact via the `ajoeofalltrades` GitHub account.
-- **`.github/ISSUE_TEMPLATE/work-item.md` added** — issue scaffold matching
-  the framework's own work-item schema (FS-0018 three axes: Type / Label /
-  Phase; ADR-0019 type-keyed checkpoints noted).
-- **ADR-0018 hostname scrub** — removed the `hades-01` reference from
-  ADR-0018's operational-context paragraph (internal infrastructure naming
-  should not appear in a public repository).
+- **`.github/ISSUE_TEMPLATE/work-item.md` added** — GitHub issue-template
+  front matter, scaffold matching the framework's own work-item schema
+  (FS-0018 three axes: Type / Label / Phase; ADR-0019 type-keyed
+  checkpoints noted).
+- **ADR-0018 operational-context scrub** — removed the `hades-01` / Quadlet
+  internal-infrastructure references from ADR-0018's operational-context
+  paragraph (internal infrastructure naming should not appear in a public
+  repository).
 
 #### ADR and PLAN scaffolding CLI (`FS-0026`, implemented)
 

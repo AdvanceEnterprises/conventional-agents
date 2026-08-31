@@ -241,7 +241,7 @@ When adding a new template:
 
 ## Code of Conduct
 
-This project follows the [Anthropic Code of Conduct](https://www.anthropic.com/policies/code-of-conduct). Be respectful, assume good intent, and focus on evidence and clarity.
+This project follows the [Code of Conduct](CODE_OF_CONDUCT.md). Be respectful, assume good intent, and focus on evidence and clarity.
 
 ## Questions?
 
