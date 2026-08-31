@@ -22,6 +22,7 @@
     "new:plan": "bash scripts/new-plan.sh",
     "check:status": "bash scripts/check-status.sh",
     "check:freshness": "bash scripts/check-freshness.sh",
+    "lint:cross-repo": "bash scripts/cross-repo-lint.sh",
     "test": "bash scripts/run-bats.sh"
   }
 }

@@ -301,6 +301,41 @@ assertions stable.
 **When it runs.** CI push and `pull_request` (the `check-freshness` job in
 `.github/workflows/lint-docs.yml`), locally via `npm run check:freshness`.
 
+## cross-repo-lint.sh
+
+`npm run lint:cross-repo` runs `bash scripts/cross-repo-lint.sh`.
+
+**Purpose.** Validates cross-repo consistency across the Tais-Den fleet
+(conventional-agents, feral-fleet, pack-protocol):
+
+1. **Agent-Attribution trailer format (FS-0017)** across recent commits on
+   each repo's default branch
+   (`Agent-Attribution: actor=…; model=…; role=…; session=…[; mode=…]`).
+2. **README index consistency** — every governed doc under `docs/decisions/`,
+   `docs/specifications/`, and `docs/change-plans/` appears in its
+   `README.md` index.
+3. **FS/PLAN numbering validity** — no duplicate IDs within a repo.
+
+**Repo discovery.** Heuristic sibling lookup from the framework home, or
+explicit via `CA_REPO_DIRS` (colon-separated repo roots) and `CA_TARGET_REPO`
+(single repo, takes precedence). A vendored copy checks the host repository
+when pointed at it explicitly.
+
+**Config.**
+- `COMMIT_RANGE` — git log range for the attribution check (default
+  `origin/<default-branch>~20..origin/<default-branch>`).
+- `STRICT_TOOLS=1` — fail on missing tools instead of warning.
+
+**When it runs.** Manually via `npm run lint:cross-repo`. CI wiring lives in
+`.github/workflows/lint-docs.yml` (the `lint-cross-repo` job) — it runs with
+`CA_REPO_DIRS` pointing at the three checked-out repos when sibling checkouts
+are available in the workspace, and skips repos it cannot fetch rather than
+failing open on nothing.
+
+**Failure.** Exits non-zero when any repo has a malformed/missing attribution
+trailer on an agent-authored commit, a doc missing from its README index, or
+a duplicate FS/PLAN ID.
+
 ## run-bats.sh
 
 `npm test` runs `bash scripts/run-bats.sh`.
