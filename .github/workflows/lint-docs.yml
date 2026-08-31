@@ -128,6 +128,32 @@ jobs:
       - name: Check workflow/guideline doc freshness
         run: npm run check:freshness
 
+  lint-cross-repo:
+    # cross-repo-lint.sh, wired per #85. On pull_request this audits the
+    # PR's own commits for FS-0017 attribution-trailer conformance; on push
+    # to trunk it audits the last 20 trunk commits (script default range).
+    #
+    # CA_REPO_DIRS is restricted to the workspace because all three repos are
+    # private and the default GITHUB_TOKEN cannot check out siblings — the
+    # full three-repo sweep runs in the maintenance tick, which holds all
+    # three checkouts on disk. This job is the fail-closed enforcement point
+    # for the calling repo's own agent-authored commits.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fetch default branch ref
+        run: git fetch --no-tags origin trunk
+      - name: Cross-repo lint (this repo)
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            export COMMIT_RANGE="origin/${{ github.base_ref }}..HEAD"
+          fi
+          npm run lint:cross-repo
+        env:
+          CA_REPO_DIRS: ${{ github.workspace }}
+
   current-state-update:
     # ADR-0030 rule 3, per FS-0022 §3: an ADR that changes a rule must modify the
     # current-state document carrying that rule in the same change. CI-only because it
