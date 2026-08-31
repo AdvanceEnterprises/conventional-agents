@@ -56,6 +56,17 @@ For this project (a documentation/standards kit), semver follows the
   no existing repository is required to change. The table of contents renumbers: the new
   section is 5, and everything after it shifts by one.
 
+#### Cross-repo lint enforcement (`#85`, delivered)
+
+- **`npm run lint:cross-repo` runs `scripts/cross-repo-lint.sh`, now wired into
+  CI.** The script shipped with the cross-repo linting change but was never
+  registered or gated; the `lint-cross-repo` job in `.github/workflows/lint-docs.yml`
+  audits the calling repository's commits for FS-0017 Agent-Attribution trailer
+  conformance (`origin/<base>..HEAD` on pull_request, last 20 trunk commits on push).
+  The full three-repo sweep remains a maintenance-tick responsibility (the runner
+  cannot check out the other two private repos), and `scripts/README.md` now documents
+  the gate per ADR-0015.
+
 ### Changed
 
 #### Instance data removed from the exported surface
