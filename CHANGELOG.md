@@ -24,6 +24,22 @@ For this project (a documentation/standards kit), semver follows the
   section (inline and multi-line YAML forms). Index updates remain a documented
   follow-up step.
 
+#### Bats coverage for the ADR/PLAN scaffolding CLI (`FS-0026`, implemented)
+
+- **`test/FS-0026/scaffolding-cli.bats` covers all six FS-0026 success
+  criteria** — ADR creation, dry-run, PLAN reference/consequence carry-over,
+  trailing-`--title` error, quote preservation, and base-10 next-number
+  computation — plus argument-validation edges. Tests run against scratch
+  repos under `BATS_TEST_TMPDIR`; the real `docs/` is never written.
+- **`scripts/new-plan.sh`: multi-line YAML list extraction now captures every
+  item.** The awk list-walker stripped the leading dash with `gsub` and then
+  re-tested the mutated line, tripping its own exit guard after the first
+  item — a `related_specs:` block with more than one entry carried only the
+  first into the generated PLAN. The walker now `next`s after printing, and
+  the exit guard only fires on a non-list, non-blank line. Found by the new
+  suite (criterion 3); the shipped CLI had carried single-item lists
+  correctly, so no previously generated PLAN was affected.
+
 #### Workflow and guideline freshness gate (`FS-0027`, implemented)
 
 - **`npm run check:freshness` validates the exported workflow/guideline surface.**
