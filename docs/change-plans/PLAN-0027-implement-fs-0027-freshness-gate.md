@@ -25,7 +25,7 @@ updated: 2026-08-31
 
 * Feature Spec ID(s): FS-0027
 * Related ADR ID(s): none (new capability; pattern precedent is feral-fleet PR #127)
-* Issue / PR Reference: #94
+* Issue / PR Reference: #94 (implemented in PR #95)
 
 ## 2. Scope of Change
 
@@ -93,6 +93,9 @@ updated: 2026-08-31
 6. Update `scripts/README.md` (new gate section), `docs/specifications/README.md`
    and `docs/change-plans/README.md` indexes.
 7. Run local checks (Section 5).
+8. `CHANGELOG.md`: FS-0027 entry's status marker moved `(draft)` → `(implemented)`
+   when the governing spec was reconciled (rule 7 — `workflows/` and
+   `guidelines/` are exported-surface interfaces).
 
 ## 5. Verification
 

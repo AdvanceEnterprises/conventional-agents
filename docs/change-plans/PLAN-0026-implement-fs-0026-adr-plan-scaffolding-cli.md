@@ -23,7 +23,8 @@ updated: 2026-08-31
 
 * Feature Spec ID(s): FS-0026
 * Related ADR ID(s): none (new capability, no governing ADR yet)
-* Issue / PR Reference: #84 (ADR template automation), #91 (spec/plan generation from ADRs)
+* Issue / PR Reference: #84 (ADR template automation, implemented in PR #88);
+  #91 (spec/plan generation from ADRs, implemented in PR #92)
 
 ## 2. Scope of Change
 
@@ -73,6 +74,9 @@ updated: 2026-08-31
      `### Consequences` (under Decision Outcome).
 3. `package.json`: add `"new:adr"` and `"new:plan"` script entries.
 4. `scripts/README.md`: document usage, flags, and the index-update follow-up.
+5. `CHANGELOG.md`: consumer-framed entry added when the governing spec was
+   reconciled to `implemented` (rule 7 — `scripts/` is an exported-surface
+   interface).
 
 ## 5. Verification
 
