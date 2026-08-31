@@ -7,17 +7,27 @@
 #
 # Isolation: every test builds a scratch repo under BATS_TEST_TMPDIR
 # (bats-provided, auto-cleaned per test) and COPIES the scripts into it.
-# Copying, not symlinking, matters: new-adr.sh resolves its docs directory
-# from FRAMEWORK_HOME (the script's own location), so a symlinked copy would
-# write into the real repository's docs/decisions. new-plan.sh resolves from
-# the caller's cwd (FS-0024/ADR-0033), so tests run it from the scratch root.
+# The script sources are self-locating — derived from $BATS_TEST_DIRNAME
+# (this suite's own directory), NOT repo_root() (git rev-parse
+# --show-toplevel) — so the framework's scripts are copied regardless of the
+# cwd or git context bats was launched from. Copying, not symlinking,
+# matters: new-adr.sh resolves its docs directory from FRAMEWORK_HOME (the
+# script's own location), so a symlinked copy would write into the real
+# repository's docs/decisions. new-plan.sh resolves from the caller's cwd
+# (FS-0024/ADR-0033), so tests run it from the scratch root.
 
 load "../FS-0001/helpers.bash"
 
 setup() {
-  REPO_ROOT="$(repo_root)"
-  NEW_ADR="$REPO_ROOT/scripts/new-adr.sh"
-  NEW_PLAN="$REPO_ROOT/scripts/new-plan.sh"
+  # Self-locating sources (Kimi K2.7 review, PR #102 finding 1): BATS_TEST_DIRNAME
+  # points at this suite's file wherever bats is invoked from, so a consumer or CI
+  # workspace can never silently copy a different tree's scripts.
+  NEW_ADR="$BATS_TEST_DIRNAME/../../scripts/new-adr.sh"
+  NEW_PLAN="$BATS_TEST_DIRNAME/../../scripts/new-plan.sh"
+  [ -f "$NEW_ADR" ] && [ -f "$NEW_PLAN" ] || {
+    echo "scaffolding scripts not found near $BATS_TEST_DIRNAME"
+    return 1
+  }
 }
 
 # --- fixture helpers ----------------------------------------------------------
@@ -164,6 +174,11 @@ EOF
   run bash -c "cd '$scratch' && bash scripts/new-adr.sh --title \"Don't Stop 'Til You Get Enough\""
   [ "$status" -eq 0 ]
 
+  # Note (Kimi K2.7 review, PR #102 finding 3): the double-shell invocation
+  # passes the title through `bash -c \"...\"` quoting, so this asserts the
+  # script preserves quotes/apostrophes through argument interpolation and
+  # catches backslash-escape artifacts — not raw unquoted shell parsing,
+  # which new-adr.sh can never see (the caller's shell always quotes first).
   local created
   created=$(ls "$scratch/docs/decisions"/ADR-0001-*.md 2>/dev/null | head -1)
   [ -n "$created" ]
@@ -177,18 +192,23 @@ EOF
 
 # --- criterion 6: next-ADR number is base-10 with leading zeros ----------------
 
-@test "scaffolding: next ADR number is base-10 (ADR-0008 -> ADR-0009, not ADR-00081)" {
+@test "scaffolding: next ADR number is base-10 with leading zeros (0009 -> 0010, not 00091)" {
   local scratch="$BATS_TEST_TMPDIR/scratch"
   build_scratch "$scratch"
-  # Seed the highest existing ADR at 0008 to exercise leading-zero parsing.
-  printf -- '---\ntype: adr\nid: ADR-0008\nstatus: proposed\ntitle: Seed\n---\n' \
-    > "$scratch/docs/decisions/ADR-0008-seed.md"
+  # Seed 0007/0008/0009 to pin the parser to decimal: 08 and 09 are invalid
+  # octal literals (which an octal-based parser would trip on), and the
+  # 0009 -> 0010 carry proves decimal increment rather than digit-wise
+  # string manipulation or octal math.
+  for seed in 0007 0008 0009; do
+    printf -- '---\ntype: adr\nid: ADR-%s\nstatus: proposed\ntitle: Seed %s\n---\n' "$seed" "$seed" \
+      > "$scratch/docs/decisions/ADR-$seed-seed.md"
+  done
 
   run bash -c "cd '$scratch' && bash scripts/new-adr.sh --title 'Next Number'"
   [ "$status" -eq 0 ]
 
-  [ -f "$scratch/docs/decisions/ADR-0009-next-number.md" ]
-  [ ! -f "$scratch/docs/decisions/ADR-00081-next-number.md" ]
+  [ -f "$scratch/docs/decisions/ADR-0010-next-number.md" ]
+  [ ! -f "$scratch/docs/decisions/ADR-00091-next-number.md" ]
 }
 
 # --- argument validation edges ------------------------------------------------
