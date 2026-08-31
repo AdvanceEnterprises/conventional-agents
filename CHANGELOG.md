@@ -56,7 +56,7 @@ For this project (a documentation/standards kit), semver follows the
   no existing repository is required to change. The table of contents renumbers: the new
   section is 5, and everything after it shifts by one.
 
-#### Cross-repo lint enforcement (`#85`, delivered)
+#### Cross-repo lint enforcement (`fixes #85`)
 
 - **`npm run lint:cross-repo` runs `scripts/cross-repo-lint.sh`, now wired into
   CI.** The script shipped with the cross-repo linting change but was never

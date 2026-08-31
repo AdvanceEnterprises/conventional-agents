@@ -34,8 +34,11 @@ DEFAULT_EMAIL="ajoeofalltrades@users.noreply.github.com"
 
 # Regex that matches a well-formed Agent-Attribution: trailer.
 # Format: Agent-Attribution: actor=<name>; model=<model>; role=<role>; session=<session-mode>
+# ADR-0021 adds an optional `; mode=autonomous` field for unattended actors;
+# the regex accepts it so cron-authored commits with the mandatory marker
+# (ADR-0021 decision outcome) also pass. Mirrors scripts/cross-repo-lint.sh.
 agent_attribution_pattern() {
-  printf '^Agent-Attribution:[[:space:]]*actor=[^;]+;[[:space:]]*model=[^;]+;[[:space:]]*role=[^;]+;[[:space:]]*session=[^;]+$'
+  printf '^Agent-Attribution:[[:space:]]*actor=[^;]+;[[:space:]]*model=[^;]+;[[:space:]]*role=[^;]+;[[:space:]]*session=[^;]+(;[[:space:]]*mode=[^;]+)?$'
 }
 
 @test "workflow doc teaches the single-identity convention" {
