@@ -327,10 +327,15 @@ when pointed at it explicitly.
 - `STRICT_TOOLS=1` — fail on missing tools instead of warning.
 
 **When it runs.** Manually via `npm run lint:cross-repo`. CI wiring lives in
-`.github/workflows/lint-docs.yml` (the `lint-cross-repo` job) — it runs with
-`CA_REPO_DIRS` pointing at the three checked-out repos when sibling checkouts
-are available in the workspace, and skips repos it cannot fetch rather than
-failing open on nothing.
+`.github/workflows/lint-docs.yml` (the `lint-cross-repo` job): on `pull_request`
+it audits the PR's own commits (`COMMIT_RANGE=origin/<base>..HEAD`), on push to
+trunk the last 20 trunk commits. The workflow sets `CA_REPO_DIRS` to the runner
+workspace only — the runner holds one repository (all three repos are private),
+so the job is the fail-closed enforcement point for the calling repository. The
+full three-repo sweep runs in the maintenance tick, which holds all three
+checkouts on disk. Trigger paths: the job runs on any change matching the
+workflow's `paths:` (any governed doc, `package.json`, `.github/**`,
+`scripts/**`, `test/**`).
 
 **Failure.** Exits non-zero when any repo has a malformed/missing attribution
 trailer on an agent-authored commit, a doc missing from its README index, or
