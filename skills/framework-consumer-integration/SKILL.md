@@ -80,7 +80,7 @@ Use when tools only read root files, or for one-off snapshots where submodule
 maintenance is not worth the overhead.
 
 ```bash
-git clone https://github.com/Tais-Den/conventional-agents.git /tmp/conventional-agents
+git clone https://github.com/ajoeofalltrades/conventional-agents.git /tmp/conventional-agents
 cp -r /tmp/conventional-agents/guidelines /path/to/host-repo/
 cp -r /tmp/conventional-agents/roles /path/to/host-repo/
 cp -r /tmp/conventional-agents/workflows /path/to/host-repo/

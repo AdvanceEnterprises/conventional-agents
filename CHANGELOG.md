@@ -34,6 +34,12 @@ For this project (a documentation/standards kit), semver follows the
   internal-infrastructure references from ADR-0018's operational-context
   paragraph (internal infrastructure naming should not appear in a public
   repository).
+- **Clone URLs point at the new home** — README (Quick Start submodule +
+  Manual Copy) and `skills/framework-consumer-integration/SKILL.md` now
+  reference `github.com/ajoeofalltrades/conventional-agents` (the
+  repository's post-transfer home; the Tais-Den URL redirects). The
+  README Project Board link to `pack-protocol` is unchanged (that repo
+  remains in the org).
 
 #### ADR and PLAN scaffolding CLI (`FS-0026`, implemented)
 
