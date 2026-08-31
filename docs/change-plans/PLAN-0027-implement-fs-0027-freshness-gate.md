@@ -2,7 +2,7 @@
 type: change-plan
 role: implementer
 language: bash
-status: draft
+status: implemented
 related_specs: [FS-0027]
 approved_by: ""
 related_adrs: []
@@ -16,7 +16,7 @@ touches:
   - docs/specifications/README.md
   - docs/change-plans/README.md
 created: 2026-08-29
-updated: 2026-08-29
+updated: 2026-08-31
 ---
 
 # PLAN-0027: Implement FS-0027 — Workflow and Guideline Doc Freshness Gate
@@ -105,5 +105,6 @@ updated: 2026-08-29
 
 * No rollout risk: the gate is additive, CI-only on a new job, and the corpus is
   backfilled in the same change so the gate goes green immediately.
-* The governing FS/PLAN pair (FS-0027/PLAN-0027) is authored in the same change
-  as the implementation (PR #95) and must be approved before merge.
+* The governing FS/PLAN pair (FS-0027/PLAN-0027) shipped in PR #95 (merged
+  2026-08-31) and its statuses were reconciled post-merge by the maintenance
+  tick.
