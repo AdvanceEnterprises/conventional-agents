@@ -128,8 +128,8 @@ extract_list() {
   if [ -z "$val" ]; then
     val=$(printf '%s\n' "$FRONTMATTER" | awk -v f="$field" '
       $0 ~ "^" f ":[[:space:]]*$" { in_list=1; next }
-      in_list && /^[[:space:]]*-[[:space:]]+/ { gsub(/^[[:space:]]*-[[:space:]]*/, ""); print }
-      in_list && !/^[[:space:]]*-[[:space:]]+/ && !/^[[:space:]]*$/ { exit }
+      in_list && /^[[:space:]]*-[[:space:]]+/ { gsub(/^[[:space:]]*-[[:space:]]*/, ""); print; next }
+      in_list && !/^[[:space:]]*$/ { exit }
     ' | grep -oE '[A-Z]+-[0-9]+' | tr '\n' ' ' | sed 's/ $//')
   fi
   printf '%s' "$val"
