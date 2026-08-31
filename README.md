@@ -23,6 +23,11 @@ Work tracking for the conventional-agents project uses a GitHub Project board.
 Board metadata (IDs, fields, options) is maintained outside this repository at
 [`pack-protocol/config/boards/conventional-agents.yml`](https://github.com/Tais-Den/pack-protocol/blob/trunk/config/boards/conventional-agents.yml).
 
+## Security and Conduct
+
+- [Security policy](SECURITY.md) — private vulnerability reporting, supported versions, coordinated disclosure
+- [Code of Conduct](CODE_OF_CONDUCT.md) — Contributor Covenant 2.1, enforcement via the `ajoeofalltrades` account
+
 For your own project, copy [`config/project.example.yml`](./config/project.example.yml)
 to `config/project.yml` and fill in your board's values.
 
