@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0027
-status: draft
+status: implemented
 title: Workflow and guideline doc freshness gate — enforce updated: frontmatter
 owner: ajoeofalltrades
 test_required: true
@@ -19,7 +19,7 @@ supersedes: []
 requires: []
 tags: [governance, freshness, workflows, guidelines, gates]
 created: 2026-08-29
-updated: 2026-08-29
+updated: 2026-08-31
 ---
 <!--
 PARSING_HINTS:
@@ -35,13 +35,13 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Implemented
 
 ## Plan Status
 
-- **PLAN-0027 is `draft`.** This spec and its plan are authored together in the
-  same change; neither is approved yet. Implementation (PR #95) is in review and
-  will be reconciled with this governing spec before merge.
+- **PLAN-0027 is `implemented`.** Implementation (PR #95 for #94) was merged
+  2026-08-31; the status transition was deferred post-merge and reconciled by
+  the maintenance tick.
 
 ## Summary
 

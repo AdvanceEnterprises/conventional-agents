@@ -2,7 +2,7 @@
 type: change-plan
 role: implementer
 language: bash
-status: draft
+status: implemented
 related_specs: [FS-0026]
 approved_by: ""
 related_adrs: []
@@ -14,7 +14,7 @@ touches:
   - docs/specifications/README.md
   - docs/change-plans/README.md
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-08-31
 ---
 
 # PLAN-0026: Implement FS-0026 — ADR and PLAN scaffolding CLI
@@ -83,5 +83,6 @@ updated: 2026-08-28
 ## 6. Rollout
 
 * No rollout risk: both commands are additive; no existing behavior changes.
-* The governing FS/PLAN pair (FS-0026/PLAN-0026) is authored in the same
-  change as the implementation (PR #88) and must be approved before merge.
+* The governing FS/PLAN pair (FS-0026/PLAN-0026) shipped in PR #88 (merged
+  2026-08-31) and its statuses were reconciled post-merge by the maintenance
+  tick.

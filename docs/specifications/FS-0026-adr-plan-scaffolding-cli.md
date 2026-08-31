@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0026
-status: draft
+status: implemented
 title: ADR and PLAN scaffolding CLI — npm run new:adr and npm run new:plan
 owner: ajoeofalltrades
 test_required: true
@@ -17,7 +17,7 @@ supersedes: []
 requires: []
 tags: [cli, scaffolding, adr, plan, developer-experience]
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-08-31
 ---
 
 <!--
@@ -34,14 +34,13 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Implemented
 
 ## Plan Status
 
-- **PLAN-0026 is `draft`.** This spec and its plan are authored together in the
-  same change; neither is approved yet. Implementation of the CLI (PR #88) is
-  currently in review and will be reconciled with this governing spec before
-  merge.
+- **PLAN-0026 is `implemented`.** Implementation of the CLI (PR #88 for #84,
+  PR #92 for #91) was merged 2026-08-31; the status transition was deferred
+  post-merge and reconciled by the maintenance tick.
 
 ## Summary
 
