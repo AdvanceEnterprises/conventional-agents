@@ -13,6 +13,26 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
+#### Public-release preflight (license, security, conduct, issue template)
+
+- **`LICENSE` corrected to the actual copyright holder.** The file carried
+  `Copyright (c) 2026 Anthropic` (inherited from an early contributor's
+  scaffold); the copyright now reads `Copyright (c) 2026 Joey Clark`
+  (matches the GitHub account that owns the repository — `ajoeofalltrades`).
+  MIT terms unchanged. Required before the repository goes public.
+- **`SECURITY.md` added** — private vulnerability reporting, the
+  security-relevant surfaces of a standards kit (gates that fail open,
+  approval/provenance bypasses, template secret-leaks, attribution
+  spoofing), supported-versions policy, coordinated-disclosure window.
+- **`CODE_OF_CONDUCT.md` added** — Contributor Covenant 2.1, with
+  enforcement contact via the `ajoeofalltrades` GitHub account.
+- **`.github/ISSUE_TEMPLATE/work-item.md` added** — issue scaffold matching
+  the framework's own work-item schema (FS-0018 three axes: Type / Label /
+  Phase; ADR-0019 type-keyed checkpoints noted).
+- **ADR-0018 hostname scrub** — removed the `hades-01` reference from
+  ADR-0018's operational-context paragraph (internal infrastructure naming
+  should not appear in a public repository).
+
 #### ADR and PLAN scaffolding CLI (`FS-0026`, implemented)
 
 - **`npm run new:adr` and `npm run new:plan` scaffold governed documents with
