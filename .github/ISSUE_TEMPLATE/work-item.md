@@ -2,14 +2,18 @@
 name: Work item
 about: File a governed work item (Type / Label / Phase) per FS-0018
 title: "[type]: brief description"
-labels: ["enhancement"]
+labels: []
 assignees: []
 ---
+
+<!-- Pick your labels after opening: one content label and one position
+label from the FS-0018 six (see below). The default is intentionally
+empty to avoid defaulting to `enhancement` for every issue type. -->
 
 ## Work Item
 
 - **Type:** `feature` | `bug` | `task` (single value — FS-0018 Axis 1)
-- **Label:** `enhancement` | `bug` | `documentation` | `spec` | `plan` | `question` (subset of FS-0018 six)
+- **Label:** `enhancement` | `bug` | `documentation` | `spec` | `plan` | `question` (the FS-0018 six — pick one content label and one position label)
 - **Phase:** `Backlog` | `Approved` | `In Progress` | `In Review` | `Done` (FS-0018 five named phases)
 
 ## What
@@ -24,8 +28,9 @@ The evidence or rationale — this framework is evidence-based
 
 ## Context
 
-Links to any governing FS/PLAN/ADR this touches, or consumer repos
-affected (e.g., feral-fleet, pack-protocol).
+Links to any governing FS/PLAN/ADR this touches, or consumer projects
+affected (e.g., feral-fleet, pack-protocol — internal Tais-Den repos;
+external contributors may leave this blank).
 
 ## Proposed action (if known)
 
