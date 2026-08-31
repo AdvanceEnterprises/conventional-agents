@@ -13,7 +13,18 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
-#### Workflow and guideline freshness gate (`FS-0027`, draft)
+#### ADR and PLAN scaffolding CLI (`FS-0026`, implemented)
+
+- **`npm run new:adr` and `npm run new:plan` scaffold governed documents with
+  framework-conformant frontmatter and sequential IDs.** `new:adr` creates
+  `docs/decisions/ADR-<next>-<slug>.md` (with a built-in template string — no
+  vendored MADR dependency), supports `--title` / `--dry-run`, and is base-10
+  safe for leading-zero IDs. `new:plan` scaffolds a draft PLAN from an existing
+  ADR, carrying over its `related_specs`/`related_adrs` and Consequences
+  section (inline and multi-line YAML forms). Index updates remain a documented
+  follow-up step.
+
+#### Workflow and guideline freshness gate (`FS-0027`, implemented)
 
 - **`npm run check:freshness` validates the exported workflow/guideline surface.**
   Every governed doc under `workflows/` and `guidelines/**` must carry an
