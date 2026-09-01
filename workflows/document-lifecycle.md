@@ -1,5 +1,5 @@
 ---
-updated: 2026-07-29
+updated: 2026-09-01
 ---
 
 # Document Lifecycle
@@ -73,7 +73,14 @@ A work item whose Type is unset has not been classified, and the gate treats it 
 
 ### Audit trail
 
-Every agent transition is attributable per `ADR-0018` as amended by `ADR-0029` — commit-author identity, `Co-authored-by:` trailer for hybrid sessions, `Agent-Attribution:` trailer, and the activity-record stance entry above. The activity timeline is therefore a record of role transitions, with each entry traceable to a specific model + role + session combination, subject to the retractability limits noted above.
+Every agent transition is attributable per `ADR-0018` as amended by
+`ADR-0029` and `ADR-0036` — commit-author identity,
+`Agent-Attribution:` trailer, and the activity-record stance entry
+above. `Co-authored-by:` is reserved for human–human collaboration
+(ADR-0036); agent participation is recorded via `Agent-Attribution:`
+trailers. The activity timeline is therefore a record of role
+transitions, with each entry traceable to a specific model + role +
+session combination, subject to the retractability limits noted above.
 
 ---
 ## Feature Specs (FS)

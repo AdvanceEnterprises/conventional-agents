@@ -61,8 +61,9 @@ across human and agent actors. In that mode:
 - The Identity Gate above becomes "verify the active account is
   `ajoeofalltrades`" — trivially passes.
 - The actor-distinguishing layer is git commit metadata
-  (`user.name` / `user.email`) plus `Co-authored-by:` trailers for
-  hybrid sessions.
+  (`user.name` / `user.email`) plus `Agent-Attribution:` trailers
+  (ADR-0018, amended by ADR-0029 and ADR-0036; `Co-authored-by:` is
+  reserved for human–human collaboration).
 - See **Single-Identity Workflow** below for the convention.
 
 ---
@@ -123,7 +124,7 @@ contributing agent in an `Agent-Attribution:` trailer (ADR-0036):
 ```text
 docs: explain single-identity workflow
 
-Agent-Attribution: actor=claude-code; model=anthropic/claude-opus-5; role=Implementer; session=hybrid
+Agent-Attribution: actor=claude-code; model=anthropic/claude-opus-5; role=Implementer; session=implementation
 ```
 
 `Co-authored-by:` is reserved for human–human collaboration and must not
@@ -144,9 +145,9 @@ but is parsed by `git log --format=%(trailers)`.
 | The human, unassisted | `Joey Clark <administrator@ajoeofalltrades.dev>` |
 
 Known actor emails: `claude-code@tais-den.dev`, `hermes-agent@tais-den.dev`,
-`hermes-cron@tais-den.dev`, `github.marten@fwd.mtnden.org`,
-`administrator@ajoeofalltrades.dev`. The canonical alias table lives in
-`.mailmap` (ADR-0036).
+`hermes-cron@tais-den.dev`, `codex@tais-den.dev`, `codex-cron@tais-den.dev`,
+`github.marten@fwd.mtnden.org`, `administrator@ajoeofalltrades.dev`. The
+canonical alias table lives in `.mailmap` (ADR-0036).
 
 > **Adopting this convention:** these are this repository's own actor
 > aliases on its `tais-den.dev` domain. Adopters substitute their own
