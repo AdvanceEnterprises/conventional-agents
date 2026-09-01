@@ -133,7 +133,7 @@ Agent-authored PRs MUST include enough context for review. Use this template (co
 - Validation:
 - Risk / Rollback:
 - Agent Attribution (only if any agent authored this PR):
-  - Hermes Agent — model=ollama-cloud/deepseek-v4-flash:0731, role=Implementer, session=desktop-<topic>
+  - Hermes Agent — model=ollama-cloud/deepseek-v4-flash:0731, role=Implementer, session=`desktop-<topic>`
 
 The Agent Attribution section summarizes the agent actors and their roles
 for the PR as a whole. Per-commit model/role metadata lives in
