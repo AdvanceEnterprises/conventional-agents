@@ -401,7 +401,8 @@ identity is.
 
 - **Pure-human commit** (Joey wrote the code, the message, the review):
   no special action. Default `user.email` should already be
-  `taisden@tais-den.dev`.
+  `taisden@tais-den.dev` (this repository's own alias — adopters
+  substitute their own domain).
 - **Pure-agent commit** (agent wrote and committed autonomously):
   set the agent's `user.email` via per-commit override or per-session
   config. Add an `Agent-Attribution:` trailer recording model, role,

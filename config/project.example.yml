@@ -7,8 +7,7 @@
 #
 # Copy this file to config/project.yml IN YOUR OWN REPOSITORY ROOT — not inside
 # vendor/conventional-agents/ — and fill in values for your own project board.
-# The real board metadata for the conventional-agents project lives in
-# pack-protocol at config/boards/conventional-agents.yml.
+# Real board metadata is maintained outside this repository.
 #
 # Schema is flat: no nested keys beyond the two-level field/options structure
 # shown below. Each option ID is a GitHub-issued opaque string.
