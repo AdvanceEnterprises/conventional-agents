@@ -34,13 +34,13 @@ For this project (a documentation/standards kit), semver follows the
   internal-infrastructure references from ADR-0018's operational-context
   paragraph (internal infrastructure naming should not appear in a public
   repository).
-- **Clone URLs point at the new home** — README (Quick Start submodule +
-  Manual Copy) and `skills/framework-consumer-integration/SKILL.md` (all
-  four integration patterns) now reference
-  `github.com/ajoeofalltrades/conventional-agents` (the repository's
-  post-transfer home; the Tais-Den URL redirects). The README Project
-  Board link to `pack-protocol` is unchanged (that repo remains in the
-  org) and now discloses that the board is a maintainer-side surface.
+- **Clone URLs verified against the org home** — README (Quick Start
+  submodule + Manual Copy) and `skills/framework-consumer-integration/SKILL.md`
+  (all four integration patterns) reference
+  `github.com/Tais-Den/conventional-agents` (the repository's home; the
+  org stays the owner). The README Project Board link to `pack-protocol`
+  is unchanged and now discloses that the board is a maintainer-side
+  surface.
 - **Exported-surface generalization (final review round)** — the issue
   template no longer names internal consumer repos; `scripts/cross-repo-lint.sh`
   drops the hardcoded repo-name/absolute-path heuristics (sibling discovery

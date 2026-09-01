@@ -179,7 +179,7 @@ See `templates/` directory.
 
 ```bash
 cd /path/to/your-project
-git submodule add https://github.com/ajoeofalltrades/conventional-agents.git vendor/conventional-agents
+git submodule add https://github.com/Tais-Den/conventional-agents.git vendor/conventional-agents
 git submodule update --init
 git add .gitmodules vendor/conventional-agents
 git commit -m "chore: add conventional-agents foundation layer"
@@ -239,7 +239,7 @@ git commit -m "chore: update conventional-agents to latest"
 For one-time use or when tools only read root files:
 
 ```bash
-git clone https://github.com/ajoeofalltrades/conventional-agents.git
+git clone https://github.com/Tais-Den/conventional-agents.git
 cp -r conventional-agents/guidelines /path/to/your-project/
 cp -r conventional-agents/roles /path/to/your-project/
 cp -r conventional-agents/workflows /path/to/your-project/

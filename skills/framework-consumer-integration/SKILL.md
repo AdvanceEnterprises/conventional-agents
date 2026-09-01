@@ -48,7 +48,7 @@ Use when the host repo wants baseline framework guidance and can read files in
 
 ```bash
 cd /path/to/host-repo
-git submodule add https://github.com/ajoeofalltrades/conventional-agents.git vendor/conventional-agents
+git submodule add https://github.com/Tais-Den/conventional-agents.git vendor/conventional-agents
 git submodule update --init
 git add .gitmodules vendor/conventional-agents
 git commit -m "chore: add conventional-agents foundation layer"
@@ -80,7 +80,7 @@ Use when tools only read root files, or for one-off snapshots where submodule
 maintenance is not worth the overhead.
 
 ```bash
-git clone https://github.com/ajoeofalltrades/conventional-agents.git /tmp/conventional-agents
+git clone https://github.com/Tais-Den/conventional-agents.git /tmp/conventional-agents
 cp -r /tmp/conventional-agents/guidelines /path/to/host-repo/
 cp -r /tmp/conventional-agents/roles /path/to/host-repo/
 cp -r /tmp/conventional-agents/workflows /path/to/host-repo/
@@ -142,7 +142,7 @@ conventions (tool boundaries, identity mappings, planning surface rules).
 
 ```bash
 cd /path/to/host-repo
-git submodule add https://github.com/ajoeofalltrades/conventional-agents.git vendor/conventional-agents
+git submodule add https://github.com/Tais-Den/conventional-agents.git vendor/conventional-agents
 git submodule add "https://github.com/<your-org>/<your-org>-conventions.git" "vendor/<your-org>-conventions"
 git submodule update --init
 git add .gitmodules vendor/conventional-agents "vendor/<your-org>-conventions"
