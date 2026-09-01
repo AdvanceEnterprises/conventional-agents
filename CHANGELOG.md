@@ -156,6 +156,30 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Changed
 
+#### History rewrite — identity normalization per ADR-0036 (2026-09-01)
+
+- **Repository history rewritten with `git filter-repo --mailmap .mailmap`
+  before the public release.** All human-authored commits are now
+  attributed to the canonical identity `Joey Clark
+  <administrator@ajoeofalltrades.dev>`: the `Joe Clark` variant (49
+  commits) and the `ajoeofalltrades <…noreply.github.com>` variant (2
+  commits) are merged in; the Marten persona's legacy alternate name
+  `martenoftheden` normalizes to `Marten <github.marten@fwd.mtnden.org>`.
+  Agent-author identities are unchanged (ADR-0018/ADR-0029).
+- **Only author/committer identities changed.** Verified before
+  force-push: tree hash identical (`6c13a16f`), 237 commits preserved,
+  all 165 `Agent-Attribution:` trailers preserved byte-for-byte
+  (trailers are the audit record and are never edited retroactively —
+  ADR-0036).
+- **All pre-rewrite commit SHAs are invalidated.** Tag `v2.0.0` and
+  `v2.1.0` were re-pushed to the rewritten history; any reference to a
+  pre-rewrite SHA (CHANGELOG, docs, issues, local clones) no longer
+  resolves. Consumer submodule pins bump in the companion PRs:
+  feral-fleet `35503c2` → `5c5af66`, pack-protocol `7dbfb32` → `5c5af66`.
+- **Signatures:** the 36 commits signed with the historical key remain
+  (and remain `unverified`); commit signing resumes per ADR-0036 going
+  forward.
+
 #### Instance data removed from the exported surface
 
 - **`config/project.yml` deleted.** It held one organization's GitHub Project board
