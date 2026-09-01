@@ -247,3 +247,4 @@ If validation fails:
 | ADR-0032 | Template and instance repository forms | proposed |
 | ADR-0033 | Governance gate target resolution and configuration | accepted |
 | ADR-0034 | MCP tool category and GitHub skills consolidation | proposed |
+| ADR-0035 | Concurrent-session workspace isolation | proposed |
