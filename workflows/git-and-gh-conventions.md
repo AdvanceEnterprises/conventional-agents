@@ -254,6 +254,12 @@ These addresses are aliases under the same login. GitHub renders each
 commit's author email as a link to the same profile, but `git log`,
 `git shortlog`, and downstream tooling can distinguish actors by email.
 
+> **Adopting this convention:** the addresses above are this repository's
+> own actor aliases on its `tais-den.dev` domain. Adopters should substitute
+> their own domain and actor names — the binding part of the convention is
+> the *pattern* (one login, per-actor email aliases, `Agent-Attribution:`
+> trailers), not these concrete values.
+
 `user.name` carries a display form; the `Agent-Attribution:` trailer
 carries the canonical provider-qualified model id. Where the two
 disagree, the trailer is authoritative.

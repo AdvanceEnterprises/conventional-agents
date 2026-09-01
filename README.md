@@ -22,6 +22,8 @@ treats documents as the primary interface between humans and agents:
 Work tracking for the conventional-agents project uses a GitHub Project board.
 Board metadata (IDs, fields, options) is maintained outside this repository at
 [`pack-protocol/config/boards/conventional-agents.yml`](https://github.com/Tais-Den/pack-protocol/blob/trunk/config/boards/conventional-agents.yml).
+The board lives in the Tais-Den organization; external contributors can open
+issues without it — the board is a maintainer-side tracking surface.
 
 ## Security and Conduct
 

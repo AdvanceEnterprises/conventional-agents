@@ -35,11 +35,20 @@ For this project (a documentation/standards kit), semver follows the
   paragraph (internal infrastructure naming should not appear in a public
   repository).
 - **Clone URLs point at the new home** — README (Quick Start submodule +
-  Manual Copy) and `skills/framework-consumer-integration/SKILL.md` now
-  reference `github.com/ajoeofalltrades/conventional-agents` (the
-  repository's post-transfer home; the Tais-Den URL redirects). The
-  README Project Board link to `pack-protocol` is unchanged (that repo
-  remains in the org).
+  Manual Copy) and `skills/framework-consumer-integration/SKILL.md` (all
+  four integration patterns) now reference
+  `github.com/ajoeofalltrades/conventional-agents` (the repository's
+  post-transfer home; the Tais-Den URL redirects). The README Project
+  Board link to `pack-protocol` is unchanged (that repo remains in the
+  org) and now discloses that the board is a maintainer-side surface.
+- **Exported-surface generalization (final review round)** — the issue
+  template no longer names internal consumer repos; `scripts/cross-repo-lint.sh`
+  drops the hardcoded repo-name/absolute-path heuristics (sibling discovery
+  is now overridable via `CA_SIBLING_NAMES`, agent-email allowlist via
+  `AGENT_EMAILS`); the single-identity convention docs now state that the
+  `tais-den.dev` actor addresses are this repository's own aliases and
+  adopters substitute their own domain; the CI comment no longer claims
+  the repos are private.
 
 #### ADR and PLAN scaffolding CLI (`FS-0026`, implemented)
 
