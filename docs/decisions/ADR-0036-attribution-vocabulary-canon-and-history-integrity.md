@@ -147,9 +147,15 @@ gates protect the future.
 
 ## Consequences
 
-- The FS-0017 bats gate gains a canonical-vocabulary assertion for
-  interactive agent commits; future drift fails CI instead of
-  accumulating.
+- The FS-0017 bats gate keeps its structural checks (field presence and
+  order via the `agent_attribution_pattern` regex) and gains a
+  `.mailmap` regression test. Canonical-vocabulary *values* (lowercase
+  actor slug, provider-qualified model, title-case role, kebab-case
+  session) are review-audited per ADR-0030's detection-based enforcement
+  stance; mechanical value enforcement is deferred to a future FS/PLAN
+  and deliberately not claimed here — the current regex is structural,
+  and a vocabulary gate over legacy history would fail on pre-canon
+  commits.
 - The maintenance-loop cron prompt still writes a bare
   `model=deepseek-v4-flash`; updating it is tracked separately as a
   "found, not fixed" item. Enforcement scope in this ADR's first
@@ -169,8 +175,11 @@ gates protect the future.
 
 ## Validation
 
-- The FS-0017 bats suite passes with the canonical-vocabulary and
-  `.mailmap` assertions in place (`bats test/FS-0017/commit-attribution.bats`).
+- The FS-0017 bats suite passes with the `.mailmap` regression and
+  structural trailer assertions in place
+  (`bats test/FS-0017/commit-attribution.bats`). Canonical-vocabulary
+  value enforcement is intentionally review-audited, not CI-asserted
+  (see Consequences).
 - `npm run check:status` is green for the ADR-0036 index rows; the ADR's
   `## Validation` section is present (this section) per the requirement
   for acceptance.

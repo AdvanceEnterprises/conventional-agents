@@ -133,7 +133,7 @@ Agent-authored PRs MUST include enough context for review. Use this template (co
 - Validation:
 - Risk / Rollback:
 - Agent Attribution (only if any agent authored this PR):
-  - Hermes Agent — model=ollama-cloud/deepseek-v4-flash, role=Implementer, session=implementation
+  - Hermes Agent — model=ollama-cloud/deepseek-v4-flash:0731, role=Implementer, session=desktop-<topic>
 
 The Agent Attribution section summarizes the agent actors and their roles
 for the PR as a whole. Per-commit model/role metadata lives in
@@ -437,14 +437,18 @@ identity is.
 When this repository (or any project following this convention) is ready to
 transition to separate GitHub accounts, the migration path is:
 
-1. Create `taisden-agent-committer` and `taisden-agent-reviewer` accounts.
+1. Create `<org>-agent-committer` and `<org>-agent-reviewer` accounts
+   (this repository's own future accounts would be
+   `taisden-agent-committer` and `taisden-agent-reviewer` — adopters
+   substitute their own organization).
 2. Add the existing emails as additional addresses on each actor's
    GitHub profile so historical commits still link correctly.
 3. Switch per-agent sessions from `GIT_AUTHOR_EMAIL` overrides to
    `gh auth switch --user <agent-account>`.
-4. The `Co-authored-by:` convention continues unchanged — it now
-   represents a cross-account relationship rather than same-account
-   co-authorship.
+4. The `Co-authored-by:` convention for human–human collaboration
+   continues unchanged — it now represents a cross-account relationship
+   rather than same-account co-authorship (ADR-0036: agent
+   participation remains in `Agent-Attribution:` trailers).
 
 See ADR-0018 for the original rationale and ADR-0029 for the change to
 the name-field assignment.
