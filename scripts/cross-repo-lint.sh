@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# cross-repo-lint.sh — Validate ADR/FS/PLAN consistency across all Tais-Den repos
+# cross-repo-lint.sh — Validate ADR/FS/PLAN consistency across sibling repos
 #
 # Checks:
 #   1. Agent-Attribution trailer format (FS-0017) across recent commits
@@ -51,25 +51,18 @@ elif [ -n "${CA_REPO_DIRS:-}" ]; then
     [ -d "$_r/.git" ] && REPOS+=("$_r")
   done
 else
-  # Heuristic: walk up from $FRAMEWORK_HOME to find sibling repos
+  # Heuristic: walk up from $FRAMEWORK_HOME to find sibling repos of the
+  # governance stack this script lints. Override the stack with
+  # CA_SIBLING_NAMES (space-separated) for other layouts.
   PARENT="$(cd "$FRAMEWORK_HOME/.." && pwd)"
-  for _name in conventional-agents feral-fleet pack-protocol; do
+  for _name in ${CA_SIBLING_NAMES:-conventional-agents feral-fleet pack-protocol}; do
     _dir="$PARENT/$_name"
     [ -d "$_dir/.git" ] && REPOS+=("$_dir")
   done
-  if [ ${#REPOS[@]} -eq 0 ]; then
-    # Fallback: try known absolute paths
-    for _dir in \
-      "$HOME/Developer/projects/conventional-agents" \
-      "$HOME/Developer/projects/feral-fleet" \
-      "$HOME/Developer/projects/pack-protocol"; do
-      [ -d "$_dir/.git" ] && REPOS+=("$_dir")
-    done
-  fi
 fi
 
 if [ ${#REPOS[@]} -eq 0 ]; then
-  echo "ERROR: Could not locate any Tais-Den repos. Set CA_REPO_DIRS or CA_TARGET_REPO." >&2
+  echo "ERROR: Could not locate any repos. Set CA_REPO_DIRS or CA_TARGET_REPO." >&2
   exit 1
 fi
 
@@ -110,10 +103,11 @@ ATTRIBUTION_RE='^Agent-Attribution:[[:space:]]*actor=[^;]+;[[:space:]]*model=[^;
 # Known agent emails that must carry an Agent-Attribution trailer.
 # Must stay in sync with the actor table in workflows/git-and-gh-conventions.md
 # and the allowlist in test/FS-0017/commit-attribution.bats.
+# Overridable via AGENT_EMAILS for adopting repos with different actors.
 # Note: kimi-code-review@tais-den.dev is deliberately absent — Kimi K2.7
 # reviews are comment-only (posted under the authenticated user), so that
 # address never authors commits.
-AGENT_EMAILS='hermes-agent@tais-den.dev hermes-cron@tais-den.dev codex@tais-den.dev codex-cron@tais-den.dev claude-code@tais-den.dev'
+AGENT_EMAILS="${AGENT_EMAILS:-hermes-agent@tais-den.dev hermes-cron@tais-den.dev codex@tais-den.dev codex-cron@tais-den.dev claude-code@tais-den.dev}"
 TOTAL_BAD=0
 for REPO in "${REPOS[@]}"; do
   REPO_NAME="$(basename "$REPO")"

@@ -29,8 +29,7 @@ The evidence or rationale — this framework is evidence-based
 ## Context
 
 Links to any governing FS/PLAN/ADR this touches, or consumer projects
-affected (e.g., feral-fleet, pack-protocol — internal Tais-Den repos;
-external contributors may leave this blank).
+affected (external contributors may leave this blank).
 
 ## Proposed action (if known)
 

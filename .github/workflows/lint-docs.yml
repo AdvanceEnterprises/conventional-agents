@@ -133,11 +133,11 @@ jobs:
     # PR's own commits for FS-0017 attribution-trailer conformance; on push
     # to trunk it audits the last 20 trunk commits (script default range).
     #
-    # CA_REPO_DIRS is restricted to the workspace because all three repos are
-    # private and the default GITHUB_TOKEN cannot check out siblings — the
-    # full three-repo sweep runs in the maintenance tick, which holds all
-    # three checkouts on disk. This job is the fail-closed enforcement point
-    # for the calling repo's own agent-authored commits.
+    # CA_REPO_DIRS is restricted to the workspace because the default
+    # GITHUB_TOKEN cannot check out sibling repos — the full three-repo
+    # sweep runs in the maintenance tick, which holds all three checkouts
+    # on disk. This job is the fail-closed enforcement point for the
+    # calling repo's own agent-authored commits.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
