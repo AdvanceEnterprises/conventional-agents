@@ -1,5 +1,5 @@
 ---
-updated: 2026-08-02
+updated: 2026-09-01
 ---
 
 # Git + GitHub (gh) conventions
@@ -10,6 +10,7 @@ Normative requirements are derived from:
 
 - Spec: FS-0003
 - ADR: ADR-0011
+- ADR: ADR-0036 (attribution vocabulary canon, `.mailmap`, history rewrites)
 
 ## Defaults
 
@@ -212,7 +213,7 @@ If you use multiple accounts, ensure you explicitly switch contexts before takin
 
 - `gh auth switch -u <username>`
 
-## Single-identity workflow with agent co-attribution (ADR-0018, ADR-0029)
+## Single-identity workflow with agent co-attribution (ADR-0018, ADR-0029, ADR-0036)
 
 Most projects — including this repository — operate with one GitHub login
 shared across human and agent actors. The single-identity workflow uses
@@ -245,7 +246,8 @@ distinguishing layer is git's `user.name` / `user.email`:
 | Hermes Agent (unattended / cron) | `Hermes Agent (cron) <hermes-cron@tais-den.dev>` |
 | Codex (interactive) | `Minimax M3 <codex@tais-den.dev>` |
 | Codex (unattended / cron) | `Minimax M3 (cron) <codex-cron@tais-den.dev>` |
-| Joey, unassisted | `Joey Clark <taisden@tais-den.dev>` |
+| Marten (agent persona) | `Marten <github.marten@fwd.mtnden.org>` |
+| Joey Clark, unassisted | `Joey Clark <administrator@ajoeofalltrades.dev>` |
 
 The human row is the exception: a human is not a model, so `user.name`
 carries the person's name.
@@ -310,36 +312,52 @@ git -c user.name="Opus 5" \
     commit -m "..."
 ```
 
-For hybrid sessions (human + agent co-authoring a single commit), also add
-a `Co-authored-by:` trailer to the commit message:
+For hybrid sessions (human + agent co-authoring a single commit), the
+human is the accountable author: commit under the human identity and
+record each contributing agent in an `Agent-Attribution:` trailer:
 
 ```text
-docs: explain single-identity workflow with agent co-attribution
+docs: explain single-identity workflow with agent attribution
 
-Co-authored-by: Opus 5 <claude-code@tais-den.dev>
+Agent-Attribution: actor=claude-code; model=anthropic/claude-opus-5; role=Head Architect; session=architecture-planning
 ```
 
 GitHub renders `Co-authored-by:` trailers natively as a second author chip
-on the commit page.
-
-For local-file agents (Hermes today, future agents that edit files
-in this repo), also include an `Agent-Attribution:` trailer recording
-the model, role, and session mode:
-
-```text
-docs: explain single-identity workflow with agent co-attribution
-
-Co-authored-by: Opus 5 <claude-code@tais-den.dev>
-Agent-Attribution: actor=Claude Code; model=anthropic/claude-opus-5; role=Head Architect; session=architecture-planning
-```
-
-The `Agent-Attribution:` trailer is not rendered by GitHub but is parsed
-by `git log --format=%(trailers)` and verified by
+on the commit page; `Agent-Attribution:` is not rendered by GitHub but is
+parsed by `git log --format=%(trailers)` and verified by
 `test/FS-0017/commit-attribution.bats`. It persists the role/session-mode
 declaration that ROLE_CONTRACT §"Role and session transparency" requires
 at session start, into the commit audit trail. Multiple
 `Agent-Attribution:` trailers are permitted when more than one agent
-contributed.
+actor contributed (e.g., one per agent persona).
+
+### Canonical trailer vocabulary (ADR-0036)
+
+`Agent-Attribution:` field values are canonical; non-canonical values
+fail CI. The table is normative (mirrors ADR-0036):
+
+| Field | Canonical form | Valid examples | Invalid examples |
+| --- | --- | --- | --- |
+| `actor=` | Lowercase slug naming the agent persona | `hermes-agent`, `claude-code`, `codex`, `marten` | `Hermes Agent`, `Claude Code` |
+| `model=` | Provider-qualified `provider/vendor/model[:variant]` | `ollama-cloud/deepseek-v4-flash:0731`, `anthropic/claude-opus-5` | `Opus 5`, `deepseek-v4-flash` (bare) |
+| `role=` | ROLE_CONTRACT role in title case | `Implementer`, `Head Architect`, `Document Author` | `implementer`, `document-author` |
+| `session=` | Lowercase kebab-case session name | `architecture-planning`, `conventional-agents-maintenance` | `Architecture Planning` |
+| `mode=` | Optional terminal field; `autonomous` per ADR-0021 | `mode=autonomous` | `mode=hybrid` |
+
+Field order is fixed: `actor; model; role; session; mode?`.
+
+### `.mailmap` and history rewrites (ADR-0036)
+
+- `.mailmap` at the repository root is the canonical alias table. Keep
+  it in sync with the actor table above and the allowlist in
+  `test/FS-0017/commit-attribution.bats`.
+- A history rewrite may normalize **identities only** (author and
+  committer name/email via `.mailmap`). Trailers are never edited
+  retroactively — they are the audit record. Verify tree-identical and
+  trailer-preserved before force-pushing, and complete any rewrite
+  before a public flip.
+- Prefer SSH commit signing so public-era commits carry `Verified`
+  (ADR-0036).
 
 ### Per-session configuration (recommended for sustained agent runs)
 
@@ -401,18 +419,18 @@ identity is.
 
 - **Pure-human commit** (Joey wrote the code, the message, the review):
   no special action. Default `user.email` should already be
-  `taisden@tais-den.dev` (this repository's own alias — adopters
-  substitute their own domain).
+  `Joey Clark <administrator@ajoeofalltrades.dev>` (this repository's
+  own alias — adopters substitute their own domain).
 - **Pure-agent commit** (agent wrote and committed autonomously):
   set the agent's `user.email` via per-commit override or per-session
   config. Add an `Agent-Attribution:` trailer recording model, role,
   and session mode. No `Co-authored-by:` trailer needed — the email
-  alone identifies the actor.
+  alone identifies the actor (ADR-0036).
 - **Hybrid commit** (human and agent both contributed):
-  set the *committer's* `user.email` to whoever ran `git commit`, add a
-  `Co-authored-by:` trailer naming the other actor, and add an
-  `Agent-Attribution:` trailer for each agent actor with their model
-  and role. Both email and trailers are part of the audit trail.
+  the human is the accountable author — commit under the human
+  identity, and add an `Agent-Attribution:` trailer for each agent
+  actor with their model and role. No `Co-authored-by:` trailer for
+  agents (ADR-0036); it is reserved for human–human co-authorship.
 
 ### Forward compatibility with ADR-0011
 

@@ -13,6 +13,23 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
+- **ADR-0036: Attribution vocabulary canon and history-integrity
+  policy** (proposed) — canonical `Agent-Attribution:` trailer vocabulary
+  (`actor=` lowercase persona slug; `model=` provider-qualified;
+  `role=` ROLE_CONTRACT title case; `session=` kebab-case; fixed field
+  order), `Co-authored-by:` restricted to human–human collaboration
+  (amends ADR-0018's hybrid example; aligns with the ecosystem consensus
+  that models cannot hold co-authorship), a committed `.mailmap` as the
+  canonical alias table (drives `git log --use-mailmap` and the
+  pre-public history rewrite via `git filter-repo --use-mailmap`),
+  history-rewrite policy (identities only; trailers never edited
+  retroactively; tree-identical verification before force-push), and
+  SSH commit-signing guidance so public-era commits carry `Verified`.
+  Includes `.mailmap` (human aliases + Marten persona), FS-0017 bats
+  updates (human-identity allowlist, `.mailmap` regression test,
+  removal of the default-email Co-authored-by rule, Marten agent case),
+  and the cross-repo-lint agent-email sync.
+
 - **ADR-0035: Concurrent-session workspace isolation** (proposed) — every
   agent session performs repository mutations in a per-session worktree;
   the shared checkout is read-only for agents; `git stash` in a shared

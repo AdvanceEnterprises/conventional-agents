@@ -1,0 +1,14 @@
+# Canonical repository identity table (ADR-0036).
+# Maps every historical alias to its canonical identity for
+# `git log --use-mailmap`, `git shortlog -se`, and the pre-public
+# history rewrite (`git filter-repo --use-mailmap`).
+#
+# Human canonical identity — every human commit by the maintainer:
+Joey Clark <administrator@ajoeofalltrades.dev> Joe Clark <administrator@ajoeofalltrades.dev>
+Joey Clark <administrator@ajoeofalltrades.dev> ajoeofalltrades <ajoeofalltrades@users.noreply.github.com>
+Joey Clark <administrator@ajoeofalltrades.dev> <taisden@tais-den.dev>
+
+# Agent personas (ADR-0018/ADR-0029): user.name = model display form,
+# user.email = actor alias. Agent histories are already canonical;
+# only Marten's legacy alternate name needs mapping.
+Marten <github.marten@fwd.mtnden.org> martenoftheden <github.marten@fwd.mtnden.org>
