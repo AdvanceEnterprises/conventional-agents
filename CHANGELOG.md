@@ -55,6 +55,16 @@ For this project (a documentation/standards kit), semver follows the
   board-metadata home (generalized to "maintained outside this
   repository").
 
+- **ADR-0035: Concurrent-session workspace isolation** (proposed) — every
+  agent session performs repository mutations in a per-session worktree;
+  the shared checkout is read-only for agents; `git stash` in a shared
+  checkout is forbidden. Where a container runtime is available, sessions
+  should run in per-session sandbox instances mounting their own
+  worktrees (mechanical enforcement, not a replacement). Includes the
+  per-agent sandbox instance design: one session, one sandbox, one
+  worktree — never a shared workspace inside a container. Extends
+  ADR-0013's authority model with workspace mechanics.
+
 #### ADR and PLAN scaffolding CLI (`FS-0026`, implemented)
 
 - **`npm run new:adr` and `npm run new:plan` scaffold governed documents with
