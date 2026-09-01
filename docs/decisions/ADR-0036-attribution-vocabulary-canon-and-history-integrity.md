@@ -195,6 +195,8 @@ gates protect the future.
   (amended on the hybrid `Co-authored-by:` example)
 - ADR-0021 — cron actor identity; `mode=autonomous` marker
 - ADR-0029 — commit-author naming; `model=` lives in the trailer
+- ADR-0030 — decision records versus current-state documents
+  (detection-based enforcement stance used by this ADR)
 - ADR-0032 — template and instance repository forms
 - FS-0017 — single-identity commit attribution; bats enforcement
 - `workflows/git-and-gh-conventions.md` — current-state document (ADR-0030)

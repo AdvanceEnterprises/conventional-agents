@@ -249,6 +249,11 @@ distinguishing layer is git's `user.name` / `user.email`:
 | Marten (agent persona) | `Marten <github.marten@fwd.mtnden.org>` |
 | Joey Clark, unassisted | `Joey Clark <administrator@ajoeofalltrades.dev>` |
 
+The `user.name` display forms in this table follow ADR-0029: the name
+carries the model's display form (e.g. `Minimax M3`, `Opus 5`) and may
+differ from the canonical provider-qualified `model=` token in the
+`Agent-Attribution:` trailer (e.g. `minimax/minimax-3`).
+
 The human row is the exception: a human is not a model, so `user.name`
 carries the person's name.
 
@@ -333,8 +338,13 @@ actor contributed (e.g., one per agent persona).
 
 ### Canonical trailer vocabulary (ADR-0036)
 
-`Agent-Attribution:` field values are canonical; non-canonical values
-fail CI. The table is normative (mirrors ADR-0036):
+`Agent-Attribution:` field values follow the canonical form below (mirrors
+ADR-0036). The canonical values are binding for new commits and
+review-audited per ADR-0030's detection-based enforcement stance;
+mechanical value enforcement is deferred to a future FS/PLAN. The
+structural regex in `test/FS-0017/commit-attribution.bats` checks field
+presence and order only — it does not check vocabulary values. The table
+is normative:
 
 | Field | Canonical form | Valid examples | Invalid examples |
 | --- | --- | --- | --- |
