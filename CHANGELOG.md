@@ -49,6 +49,11 @@ For this project (a documentation/standards kit), semver follows the
   `tais-den.dev` actor addresses are this repository's own aliases and
   adopters substitute their own domain; the CI comment no longer claims
   the repos are private.
+- **MM3 final-round polish** — the pure-human-commit guidance notes the
+  `taisden@tais-den.dev` default is this repo's own alias, and
+  `config/project.example.yml` no longer names `pack-protocol` as the
+  board-metadata home (generalized to "maintained outside this
+  repository").
 
 #### ADR and PLAN scaffolding CLI (`FS-0026`, implemented)
 
