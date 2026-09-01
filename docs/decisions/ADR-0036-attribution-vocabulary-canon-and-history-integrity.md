@@ -149,7 +149,7 @@ gates protect the future.
 
 - The FS-0017 bats gate keeps its structural checks (field presence and
   order via the `agent_attribution_pattern` regex) and gains a
-  `.mailmap` regression test. Canonical-vocabulary *values* (lowercase
+  `.mailmap` regression test. Canonical-vocabulary _values_ (lowercase
   actor slug, provider-qualified model, title-case role, kebab-case
   session) are review-audited per ADR-0030's detection-based enforcement
   stance; mechanical value enforcement is deferred to a future FS/PLAN
