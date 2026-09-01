@@ -107,7 +107,7 @@ ATTRIBUTION_RE='^Agent-Attribution:[[:space:]]*actor=[^;]+;[[:space:]]*model=[^;
 # Note: kimi-code-review@tais-den.dev is deliberately absent — Kimi K2.7
 # reviews are comment-only (posted under the authenticated user), so that
 # address never authors commits.
-AGENT_EMAILS="${AGENT_EMAILS:-hermes-agent@tais-den.dev hermes-cron@tais-den.dev codex@tais-den.dev codex-cron@tais-den.dev claude-code@tais-den.dev}"
+AGENT_EMAILS="${AGENT_EMAILS:-hermes-agent@tais-den.dev hermes-cron@tais-den.dev codex@tais-den.dev codex-cron@tais-den.dev claude-code@tais-den.dev github.marten@fwd.mtnden.org}"
 TOTAL_BAD=0
 for REPO in "${REPOS[@]}"; do
   REPO_NAME="$(basename "$REPO")"

@@ -15,22 +15,24 @@ setup() {
 # with it; it drifted once already, failing a legitimate commit because an
 # actor documented there was missing here.
 ACTOR_EMAILS=(
-  "taisden@tais-den.dev"
+  "administrator@ajoeofalltrades.dev"
+  "ajoeofalltrades@users.noreply.github.com"
   "hermes-agent@tais-den.dev"
   "hermes-cron@tais-den.dev"
   "codex@tais-den.dev"
   "codex-cron@tais-den.dev"
   "claude-code@tais-den.dev"
-  "ajoeofalltrades@users.noreply.github.com"
+  "github.marten@fwd.mtnden.org"
 )
 
 # How many recent commits to enforce the convention on. ADR-0018
 # takes effect going forward; we don't enforce on legacy history.
 RECENT_COMMIT_COUNT=5
 
-# Default GitHub identity email for this repo (used when no
-# distinguishing email override is in effect).
-DEFAULT_EMAIL="ajoeofalltrades@users.noreply.github.com"
+# Canonical human identity email for this repo (ADR-0036). Human
+# commits need no trailers; agent-authored commits are identified by
+# their own email aliases and must carry Agent-Attribution trailers.
+DEFAULT_EMAIL="administrator@ajoeofalltrades.dev"
 
 # Regex that matches a well-formed Agent-Attribution: trailer.
 # Format: Agent-Attribution: actor=<name>; model=<model>; role=<role>; session=<session-mode>
@@ -46,6 +48,8 @@ agent_attribution_pattern() {
   assert_file_contains "$REPO_ROOT/workflows/git-and-gh-conventions.md" "hermes-agent@tais-den.dev"
   assert_file_contains "$REPO_ROOT/workflows/git-and-gh-conventions.md" "Co-authored-by:"
   assert_file_contains "$REPO_ROOT/workflows/git-and-gh-conventions.md" "Agent-Attribution:"
+  assert_file_contains "$REPO_ROOT/workflows/git-and-gh-conventions.md" "reserved for human–human"
+  assert_file_contains "$REPO_ROOT/workflows/git-and-gh-conventions.md" "Canonical trailer vocabulary"
 }
 
 @test "skill teaches the single-identity convention" {
@@ -116,25 +120,22 @@ agent_attribution_pattern() {
   done < <(git -C "$REPO_ROOT" log -n "$RECENT_COMMIT_COUNT" --format='%H')
 }
 
-@test "recent default-email commits have Co-authored-by trailers" {
-  # A commit with the default `ajoeofalltrades@users.noreply.github.com`
-  # email must include a `Co-authored-by:` trailer naming another actor.
-  # Commits with `taisden@tais-den.dev` or `hermes-agent@tais-den.dev`
-  # are self-identifying and need no trailer.
-  local sha email message trailer_lines
-  while read -r sha; do
-    [[ -z "$sha" ]] && continue
-    email="$(git -C "$REPO_ROOT" log -1 --format='%ae' "$sha")"
-    if [[ "$email" == "$DEFAULT_EMAIL" ]]; then
-      message="$(git -C "$REPO_ROOT" log -1 --format='%B' "$sha")"
-      trailer_lines="$(printf '%s\n' "$message" | git -C "$REPO_ROOT" interpret-trailers --parse | grep -i '^Co-authored-by:' || true)"
-      if [[ -z "$trailer_lines" ]]; then
-        echo "commit $sha uses default email but has no Co-authored-by trailer:"
-        git -C "$REPO_ROOT" log -1 --format='  subject: %s' "$sha"
-        return 1
-      fi
-    fi
-  done < <(git -C "$REPO_ROOT" log -n "$RECENT_COMMIT_COUNT" --format='%H')
+@test ".mailmap maps human aliases to the canonical identity" {
+  # ADR-0036: .mailmap at the repo root is the committed canonical alias
+  # table. The pre-public history rewrite applies it via
+  # `git filter-repo --use-mailmap`, so a broken mapping here is a
+  # broken rewrite.
+  local mapped
+  mapped="$(git -C "$REPO_ROOT" check-mailmap "Joe Clark <administrator@ajoeofalltrades.dev>")"
+  if [[ "$mapped" != "Joey Clark <administrator@ajoeofalltrades.dev>" ]]; then
+    echo "FAIL: .mailmap maps Joe Clark to: $mapped"
+    return 1
+  fi
+  mapped="$(git -C "$REPO_ROOT" check-mailmap "ajoeofalltrades <ajoeofalltrades@users.noreply.github.com>")"
+  if [[ "$mapped" != "Joey Clark <administrator@ajoeofalltrades.dev>" ]]; then
+    echo "FAIL: .mailmap maps noreply identity to: $mapped"
+    return 1
+  fi
 }
 
 @test "recent commits with agent emails carry Agent-Attribution trailers" {
@@ -147,7 +148,7 @@ agent_attribution_pattern() {
     [[ -z "$sha" ]] && continue
     email="$(git -C "$REPO_ROOT" log -1 --format='%ae' "$sha")"
     case "$email" in
-      hermes-agent@tais-den.dev|hermes-cron@tais-den.dev|codex@tais-den.dev|codex-cron@tais-den.dev|claude-code@tais-den.dev)
+      hermes-agent@tais-den.dev|hermes-cron@tais-den.dev|codex@tais-den.dev|codex-cron@tais-den.dev|claude-code@tais-den.dev|github.marten@fwd.mtnden.org)
         message="$(git -C "$REPO_ROOT" log -1 --format='%B' "$sha")"
         trailer_lines="$(printf '%s\n' "$message" | git -C "$REPO_ROOT" interpret-trailers --parse | grep -i '^Agent-Attribution:' || true)"
         if [[ -z "$trailer_lines" ]]; then

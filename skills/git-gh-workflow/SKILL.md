@@ -116,16 +116,21 @@ export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
 ### Hybrid sessions
 
 When you and the human co-author a commit (e.g., the human wrote the
-code, you wrote the commit message, or vice versa), add a
-`Co-authored-by:` trailer naming the other actor:
+code, you wrote the commit message, or vice versa), the human is the
+accountable author: commit under the human identity and record each
+contributing agent in an `Agent-Attribution:` trailer (ADR-0036):
 
 ```text
 docs: explain single-identity workflow
 
-Co-authored-by: Opus 5 <claude-code@tais-den.dev>
+Agent-Attribution: actor=claude-code; model=anthropic/claude-opus-5; role=Implementer; session=hybrid
 ```
 
-GitHub renders the trailer as a second author chip on the commit page.
+`Co-authored-by:` is reserved for human–human collaboration and must not
+be used for agent participation (ADR-0036): a model cannot hold
+co-authorship, and GitHub mints a contributor avatar for every
+`Co-authored-by:` name. `Agent-Attribution:` is not rendered by GitHub
+but is parsed by `git log --format=%(trailers)`.
 
 ### Authorship form (this repo)
 
@@ -135,11 +140,13 @@ GitHub renders the trailer as a second author chip on the commit page.
 | Commit source | Author line |
 | --- | --- |
 | Claude Code running Opus 5 | `Opus 5 <claude-code@tais-den.dev>` |
-| Hermes running DeepSeek V4 | `DeepSeek V4 <hermes-agent@tais-den.dev>` |
-| The human, unassisted | `Joey Clark <taisden@tais-den.dev>` |
+| Hermes Agent (multi-model framework) | `Hermes Agent <hermes-agent@tais-den.dev>` |
+| The human, unassisted | `Joey Clark <administrator@ajoeofalltrades.dev>` |
 
 Known actor emails: `claude-code@tais-den.dev`, `hermes-agent@tais-den.dev`,
-`taisden@tais-den.dev`.
+`hermes-cron@tais-den.dev`, `github.marten@fwd.mtnden.org`,
+`administrator@ajoeofalltrades.dev`. The canonical alias table lives in
+`.mailmap` (ADR-0036).
 
 > **Adopting this convention:** these are this repository's own actor
 > aliases on its `tais-den.dev` domain. Adopters substitute their own
