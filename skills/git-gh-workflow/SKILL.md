@@ -141,6 +141,12 @@ GitHub renders the trailer as a second author chip on the commit page.
 Known actor emails: `claude-code@tais-den.dev`, `hermes-agent@tais-den.dev`,
 `taisden@tais-den.dev`.
 
+> **Adopting this convention:** these are this repository's own actor
+> aliases on its `tais-den.dev` domain. Adopters substitute their own
+> domain and actor names — the binding part is the pattern (one login,
+> per-actor email aliases, `Agent-Attribution:` trailers), not these
+> concrete values.
+
 Verify both fields with `git config --get user.name` and
 `git config --get user.email` before any commit in a fresh session — and
 verify them against what you actually are, not merely that they are set.

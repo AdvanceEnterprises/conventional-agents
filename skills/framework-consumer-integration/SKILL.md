@@ -48,7 +48,7 @@ Use when the host repo wants baseline framework guidance and can read files in
 
 ```bash
 cd /path/to/host-repo
-git submodule add https://github.com/Tais-Den/conventional-agents.git vendor/conventional-agents
+git submodule add https://github.com/ajoeofalltrades/conventional-agents.git vendor/conventional-agents
 git submodule update --init
 git add .gitmodules vendor/conventional-agents
 git commit -m "chore: add conventional-agents foundation layer"
@@ -142,7 +142,7 @@ conventions (tool boundaries, identity mappings, planning surface rules).
 
 ```bash
 cd /path/to/host-repo
-git submodule add https://github.com/Tais-Den/conventional-agents.git vendor/conventional-agents
+git submodule add https://github.com/ajoeofalltrades/conventional-agents.git vendor/conventional-agents
 git submodule add "https://github.com/<your-org>/<your-org>-conventions.git" "vendor/<your-org>-conventions"
 git submodule update --init
 git add .gitmodules vendor/conventional-agents "vendor/<your-org>-conventions"
