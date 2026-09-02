@@ -506,6 +506,93 @@ for adr_file in "$ADR_DIR"/ADR-*.md; do
   fi
 done
 
+# --- rule 5b: ADR supersession chain (FS-0028) -------------------------------
+#
+# Every ADR front-matter block carries a `superseded_by:` field (template default
+# `null`). `docs/decisions/README.md` §5 defines the supersede process: mark the
+# old ADR `status: superseded` and point `superseded_by:` at the replacement;
+# the replacement links back in its Links section. This rule makes the field
+# machine-checked — previously a superseded ADR with `superseded_by: null`, a
+# dangling replacement id, or a replacement declared by an accepted ADR all
+# passed silently (FS-0022's "unchecked surface" principle).
+#
+# Three obligations:
+#   1. An ADR at `status: superseded` must name at least one replacement.
+#   2. Every non-null `superseded_by` entry must resolve to an existing ADR
+#      file (matched by front-matter `id:`, tolerating suffixed filenames).
+#   3. A non-null `superseded_by` on an ADR whose status is not `superseded`
+#      is flagged: the field means "this ADR is replaced by...", which only a
+#      superseded ADR may claim.
+#
+# The field may name one id (inline `superseded_by: ADR-00XX`) or several (a
+# YAML list). `null` is the empty declaration and satisfies none of the three.
+# The whole line is matched so a value never bleeds into `related_specs:`.
+
+for adr_file in "$ADR_DIR"/ADR-*.md; do
+  [ -f "$adr_file" ] || continue
+  adr_id=$(get_field "$adr_file" "id")
+  [ -z "$adr_id" ] && continue
+  adr_status=$(get_field "$adr_file" "status")
+  [ -z "$adr_status" ] && continue
+
+  # Extract every replacement id named by superseded_by:, one per line. Handles
+  # the three field shapes the template/README allow: `null`, a single inline id,
+  # and a YAML list (inline `[ADR-00XX, ADR-00YY]` or indented `  - ADR-00XX`
+  # entries). `null` is the empty declaration and yields no ids.
+  superseded_ids=$(awk '
+    /^---/{n++; if(n==2) exit; next}
+    n==1 && /^superseded_by:/{
+      line=$0; sub(/^superseded_by:[[:space:]]*/, "", line)
+      if (line ~ /\[/) {
+        gsub(/^[[:space:]]*\[|[][[:space:]]*$/, "", line)
+        gsub(/[[:space:]]*,[[:space:]]*/, "\n", line)
+        gsub(/"/, "", line)
+        if (line != "") print line
+        next
+      }
+      if (line != "") print line
+      in_list=1
+      next
+    }
+    n==1 && in_list && /^[[:space:]]*-/{
+      v=$0; sub(/^[[:space:]]*-[[:space:]]*/, "", v); gsub(/"/, "", v)
+      if (v != "") print v
+      next
+    }
+    n==1 && in_list && !/^[[:space:]]*-/{in_list=0}
+  ' "$adr_file" | sed '/^null$/d')
+
+  has_superseded_by=false
+  [ -n "$superseded_ids" ] && has_superseded_by=true
+
+  if [ "$adr_status" = "superseded" ]; then
+    if [ "$has_superseded_by" = "false" ]; then
+      echo "ERROR: $adr_id is 'superseded' but has no replacement — superseded_by: must name the replacing ADR (README §5)."
+      errors=$((errors+1))
+    fi
+  fi
+
+  if [ "$has_superseded_by" = "true" ]; then
+    if [ "$adr_status" != "superseded" ]; then
+      echo "ERROR: $adr_id (status='$adr_status') declares superseded_by: '$superseded_ids' but only a 'superseded' ADR may declare a replacement (README §5)."
+      errors=$((errors+1))
+    fi
+
+    while IFS= read -r entry; do
+      [ -z "$entry" ] && continue
+      resolved=""
+      for candidate in "$ADR_DIR"/"$entry".md "$ADR_DIR"/"$entry"-*.md; do
+        [ -f "$candidate" ] || continue
+        [ "$(get_field "$candidate" "id")" = "$entry" ] && resolved="$candidate" && break
+      done
+      if [ -z "$resolved" ]; then
+        echo "ERROR: $adr_id superseded_by: '$entry' does not resolve to any ADR file (matched by id: in $ADR_DIR)."
+        errors=$((errors+1))
+      fi
+    done <<< "$superseded_ids"
+  fi
+done
+
 # --- rule 6: PLAN touches: containment (FS-0022 §2 / ADR-0027) --------------
 
 # Reserved paths: paths in touches: that always require human approval regardless of FS's

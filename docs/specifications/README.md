@@ -122,3 +122,4 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0026 | ADR and PLAN scaffolding CLI — npm run new:adr and npm run new:plan | implemented |
 | FS-0027 | Workflow and guideline doc freshness gate — enforce updated: frontmatter | implemented |
 | FS-0029 | Executable layer for the GitHub binding — provisioning, initialisation, and audit commands | draft |
+| FS-0028 | ADR supersession chain gate — machine-check superseded_by completeness | draft |

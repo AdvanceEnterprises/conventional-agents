@@ -151,6 +151,11 @@ Use `superseded` when:
 
 Superseding with a reference to the replacement is a standard ADR convention.
 
+The front-matter chain is machine-checked by `scripts/check-status.sh` rule 5b
+(FS-0028): a `superseded` ADR must name a replacement in `superseded_by:`,
+every non-null value must resolve to an existing ADR, and only a `superseded`
+ADR may declare a replacement.
+
 ## Editing Rules and Immutability
 
 ### After Acceptance, ADRs Are Append-Only

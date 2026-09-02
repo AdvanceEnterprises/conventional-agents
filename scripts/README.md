@@ -102,6 +102,12 @@ consumer-impact CHANGELOG entries.
    `### Consequences` under `## Decision Outcome` and
    `docs/decisions/README.md` adopts MADR as the baseline. Anchor to the
    line; do not pin the level.
+5b. **ADR supersession chain** (`FS-0028`). The `superseded_by:` front-matter
+   field is machine-checked. An ADR at `status: superseded` must name at
+   least one replacement; every non-null value must resolve to an existing
+   ADR file (by front-matter `id:`); and an ADR whose status is not
+   `superseded` may not declare a replacement. `null` is the empty
+   declaration. See `docs/decisions/README.md` §5.
 6. **PLAN `touches:` containment** (ADR-0027). For an `approved` PLAN, every
    path in `touches:` must fall within the union of its governing FS's
    `interfaces:`, AND must not match the reserved-path set. Checking this
