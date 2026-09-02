@@ -165,7 +165,10 @@ For this project (a documentation/standards kit), semver follows the
   commits) and the `ajoeofalltrades <…noreply.github.com>` variant (2
   commits) are merged in; the Marten persona's legacy alternate name
   `martenoftheden` normalizes to `Marten <github.marten@fwd.mtnden.org>`.
-  Agent-author identities are unchanged (ADR-0018/ADR-0029).
+  (The `.mailmap` also carries a dormant `taisden@tais-den.dev` alias
+  for Joey Clark — unexercised in the rewritten history, listed for
+  completeness.) Agent-author identities are unchanged
+  (ADR-0018/ADR-0029).
 - **Only author/committer identities changed.** Verified before
   force-push: tree hash identical (`6c13a16f`), 237 commits preserved,
   all 165 `Agent-Attribution:` trailers preserved byte-for-byte
