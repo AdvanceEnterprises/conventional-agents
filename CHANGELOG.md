@@ -171,14 +171,19 @@ For this project (a documentation/standards kit), semver follows the
   all 165 `Agent-Attribution:` trailers preserved byte-for-byte
   (trailers are the audit record and are never edited retroactively —
   ADR-0036).
-- **All pre-rewrite commit SHAs are invalidated.** Tag `v2.0.0` and
-  `v2.1.0` were re-pushed to the rewritten history; any reference to a
-  pre-rewrite SHA (CHANGELOG, docs, issues, local clones) no longer
-  resolves. Consumer submodule pins bump in the companion PRs:
-  feral-fleet `35503c2` → `5c5af66`, pack-protocol `7dbfb32` → `5c5af66`.
-- **Signatures:** the 36 commits signed with the historical key remain
-  (and remain `unverified`); commit signing resumes per ADR-0036 going
-  forward.
+- **All pre-rewrite commit SHAs are invalidated.** Tag `v2.1.0` was
+  re-pushed to the rewritten history; `v2.0.0` still points at a
+  pre-rewrite commit (`94e9640`) that is not an ancestor of trunk
+  (consumers checking out `v2.0.0` land off the mainline). Pre-rewrite
+  SHAs (CHANGELOG, docs, issues, local clones) are no longer reachable
+  from any ref — SHA-based lookups still resolve the objects, but
+  ref-based resolution fails. Consumer submodule pins bump in the
+  companion PRs: feral-fleet `35503c2` → `5c5af66`, pack-protocol
+  `7dbfb32` → `5c5af66`.
+- **Signatures:** the rewrite (filter-repo) stripped the historical
+  commit signatures — all commits on the rewritten history are now
+  unsigned (GitHub reports `unsigned`, not `unverified`). Commit
+  signing resumes per ADR-0036 going forward.
 
 #### Instance data removed from the exported surface
 
