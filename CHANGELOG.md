@@ -13,6 +13,15 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
+- **FS-0028: ADR supersession chain gate** (draft) — rule 5b in
+  `scripts/check-status.sh` machine-checks the `superseded_by:` front-matter
+  field on every ADR: a `superseded` ADR must name a replacement, every
+  non-null value must resolve to an existing ADR (by `id:`), and only a
+  `superseded` ADR may declare a replacement. Lands with zero backlog —
+  the corpus is 37/37 `superseded_by: null` with no supersessions.
+  Documented in `scripts/README.md` and `docs/decisions/README.md` §5;
+  covered by `test/FS-0028/adr-supersession-chain.bats`.
+
 - **ADR-0036: Attribution vocabulary canon and history-integrity
   policy** (proposed) — canonical `Agent-Attribution:` trailer vocabulary
   (`actor=` lowercase persona slug; `model=` provider-qualified;
