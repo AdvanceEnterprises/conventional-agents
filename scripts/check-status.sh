@@ -180,6 +180,42 @@ has_flat_field() {
   [ -f "$file" ] && grep -qE "^${field}:" "$file"
 }
 
+# Extract every id named by a relationship field in a document's front matter.
+# The field name is a parameter rather than a literal so a second relationship is
+# a call, not a copy of this parser. FS-0028 defers `amends`/`amended_by` to its
+# own spec; this is the seam that work will use.
+#
+# Handles the three field shapes the ADR template and `docs/decisions/README.md`
+# §5 allow: `null` (the empty declaration, yielding no ids), a single inline id,
+# and a YAML list in either inline (`[ADR-00XX, ADR-00YY]`) or indented
+# (`  - ADR-00XX`) form. Only the front-matter block is read, so the same token
+# appearing in prose is never mistaken for the field.
+get_relation_ids() {
+  local file="$1" field="$2"
+  awk -v field="$field" '
+    /^---/{n++; if(n==2) exit; next}
+    n==1 && $0 ~ "^"field":"{
+      line=$0; sub("^"field":[[:space:]]*", "", line)
+      if (line ~ /\[/) {
+        gsub(/^[[:space:]]*\[|[][[:space:]]*$/, "", line)
+        gsub(/[[:space:]]*,[[:space:]]*/, "\n", line)
+        gsub(/"/, "", line)
+        if (line != "") print line
+        next
+      }
+      if (line != "") print line
+      in_list=1
+      next
+    }
+    n==1 && in_list && /^[[:space:]]*-/{
+      v=$0; sub(/^[[:space:]]*-[[:space:]]*/, "", v); gsub(/"/, "", v)
+      if (v != "") print v
+      next
+    }
+    n==1 && in_list && !/^[[:space:]]*-/{in_list=0}
+  ' "$file" | sed '/^null$/d'
+}
+
 # Resolve a governed document by its ID, tolerating descriptive filename suffixes.
 #
 #   FS-0018 -> docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md
@@ -535,32 +571,9 @@ for adr_file in "$ADR_DIR"/ADR-*.md; do
   adr_status=$(get_field "$adr_file" "status")
   [ -z "$adr_status" ] && continue
 
-  # Extract every replacement id named by superseded_by:, one per line. Handles
-  # the three field shapes the template/README allow: `null`, a single inline id,
-  # and a YAML list (inline `[ADR-00XX, ADR-00YY]` or indented `  - ADR-00XX`
-  # entries). `null` is the empty declaration and yields no ids.
-  superseded_ids=$(awk '
-    /^---/{n++; if(n==2) exit; next}
-    n==1 && /^superseded_by:/{
-      line=$0; sub(/^superseded_by:[[:space:]]*/, "", line)
-      if (line ~ /\[/) {
-        gsub(/^[[:space:]]*\[|[][[:space:]]*$/, "", line)
-        gsub(/[[:space:]]*,[[:space:]]*/, "\n", line)
-        gsub(/"/, "", line)
-        if (line != "") print line
-        next
-      }
-      if (line != "") print line
-      in_list=1
-      next
-    }
-    n==1 && in_list && /^[[:space:]]*-/{
-      v=$0; sub(/^[[:space:]]*-[[:space:]]*/, "", v); gsub(/"/, "", v)
-      if (v != "") print v
-      next
-    }
-    n==1 && in_list && !/^[[:space:]]*-/{in_list=0}
-  ' "$adr_file" | sed '/^null$/d')
+  # Replacement ids named by superseded_by:. Parsing lives in get_relation_ids
+  # so the field name stays a parameter (see the helper's note on `amends`).
+  superseded_ids=$(get_relation_ids "$adr_file" "superseded_by")
 
   has_superseded_by=false
   [ -n "$superseded_ids" ] && has_superseded_by=true
