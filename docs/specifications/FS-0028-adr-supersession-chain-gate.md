@@ -17,7 +17,7 @@ supersedes: []
 requires: []
 tags: [governance, gates, adr, lifecycle]
 created: 2026-09-01
-updated: 2026-09-01
+updated: 2026-09-03
 ---
 
 <!--
@@ -77,9 +77,21 @@ This spec makes the supersession chain machine-checked.
   name a replacement (deprecation is for decisions that are simply no longer
   relevant).
 - **Automated supersession.** The gate reports; it does not edit ADRs.
-- **Applying the gate to FS/PLAN documents.** FS files carry their own
-  `supersedes:`/`superseded_by:` vocabulary with different semantics and are
-  out of scope.
+- **Applying the gate to FS/PLAN documents.** FS supersession vocabulary is
+  declared but unused: `supersedes:` is present in all 27 specs and empty in
+  all 27, `superseded_by:` is absent from `templates/core/feature-spec.md`
+  entirely and appears in exactly one spec (`FS-0004`, deprecated) with no
+  value. There is no defined FS supersession semantics for a gate to check;
+  giving it any is out of scope here.
+- **The `amends` / `amended_by` relationship.** Replacement is not the only way
+  a decision changes. One ADR may *amend* another — narrowing, extending, or
+  correcting part of it while the original stays `accepted` and governing.
+  `workflows/document-lifecycle.md` already records one in prose ("`ADR-0018`
+  as amended by `ADR-0029`") with no front-matter field to hold it. That
+  relationship needs its own vocabulary, an ADR to ratify it, and its own
+  spec; this gate covers the supersession chain only. Deferred deliberately
+  rather than overlooked, so that adding it later is a new spec rather than a
+  change to this one.
 
 ## Users / Stakeholders
 
@@ -125,3 +137,4 @@ This spec makes the supersession chain machine-checked.
 - Back-link enforcement (see Non-Goals).
 - Deprecation semantics.
 - Applying the gate to FS/PLAN documents.
+- The `amends` / `amended_by` relationship (see Non-Goals).
