@@ -249,3 +249,4 @@ If validation fails:
 | ADR-0034 | MCP tool category and GitHub skills consolidation | proposed |
 | ADR-0035 | Concurrent-session workspace isolation | proposed |
 | ADR-0036 | Attribution vocabulary canon and history-integrity policy | proposed |
+| ADR-0037 | Executable layer for the GitHub binding | proposed |
