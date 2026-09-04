@@ -59,14 +59,18 @@ PARSING_HINTS:
 
 ## Plan Status
 
-- **PLAN-0035 is `draft`** and will remain `draft` through the implementing pull
-  request. Its `touches:` set includes `scripts/README.md`,
+- **PLAN-0035 is `draft`** in this planning PR and transitions to `approved`
+  on this PR's human merge, carried by an `Approved-By:` trailer per
+  `ADR-0026`. Its `touches:` set includes `scripts/README.md`,
   `.github/workflows/lint-docs.yml`, and `package.json` — all reserved paths
-  under `ADR-0027` — so it cannot self-approve under any `interfaces:` framing,
-  and flipping it to `approved` inside the implementing PR would fail
-  `check-status.sh` rule 6 rather than express an approval that had occurred.
-  The transition to `approved`/`in-progress` belongs after human merge, carried
-  by an `Approved-By:` trailer per `ADR-0026`.
+  under `ADR-0027` — so it cannot self-approve and the transition happens
+  only as a recorded human act. **Implementation does not begin before that
+  approval**: `ROLE_CONTRACT` spec-first requires an approved FS and an
+  approved PLAN before production or test code is written
+  (`guidelines/ROLE_CONTRACT.md:49-54`), and `ADR-0026:179-188` authorizes
+  no implementation under deferred approval. Flipping the PLAN inside a
+  later implementing PR would fail `check-status.sh` rule 6 rather than
+  record an approval that had already occurred.
 - **This spec must be approved before implementation begins**, and `ADR-0037`
   must be `accepted`. The Open Questions below are non-blocking; each names its
   default.
@@ -232,81 +236,86 @@ capability mapping; this layer provides mechanisms it already names.
 - **SC-14.** Given the command is invoked with `--audit`, when it runs, then it makes no
   mutating API call, reports labels that are **missing** and labels that are
   **unexpected** as two distinct categories, and exits 0.
-- **SC-15.** Given a repository carries labels beyond the framework set, when `--audit`
+- **SC-15.** Given the command is invoked with `--dry-run`, when it runs, then it
+  makes no mutating API call, prints exactly the mutations it *would* make
+  in default mode, and exits 0. `--dry-run` composes with `--audit` (the
+  audit's `missing` set is printed as the would-create list); both flags'
+  behaviour is covered by the same stubbed-`gh` tests as SC-12–SC-14.
+- **SC-16.** Given a repository carries labels beyond the framework set, when `--audit`
   runs, then those labels are reported as unexpected and are never deleted,
   under any flag this command provides.
-- **SC-16.** Given the shipped framework label set is inspected, then it contains exactly
+- **SC-17.** Given the shipped framework label set is inspected, then it contains exactly
   the `FS-0018` six and no organisation-specific label — `propagation`
   specifically must not appear (`ADR-0032`). Consumer additions are supplied
   through the documented extension input and are not compiled in.
 
 ### `gh-board-audit.sh` — read-only drift report
 
-- **SC-17.** Given the command's source is inspected, then it contains no mutating project
+- **SC-18.** Given the command's source is inspected, then it contains no mutating project
   or issue operation — no `item-add`, no `item-edit`, no `--single-select-option-id`
   write, no `issue edit`, no `issue create`.
-- **SC-18.** Given a project board, when the command runs, then it reports, as separate
+- **SC-19.** Given a project board, when the command runs, then it reports, as separate
   categories: project items whose `Issue Type` is unset, project items whose
   `Status` is unset, and open Issues in the target repository that have no
   project item.
-- **SC-19.** Given the command makes successive GraphQL calls, when it runs, then it
+- **SC-20.** Given the command makes successive GraphQL calls, when it runs, then it
   leaves at least a configurable minimum interval between them (default 7
   seconds, override via a documented environment variable).
-- **SC-20.** Given a GraphQL call returns a `RATE_LIMIT` error, when the command handles
+- **SC-21.** Given a GraphQL call returns a `RATE_LIMIT` error, when the command handles
   it, then it waits until the reported reset timestamp plus a buffer before
   retrying, and does not consult the `rate_limit` endpoint to decide whether to
   proceed — that endpoint reports the primary quota and is silent about the
   secondary burst limit that actually failed the call. Verified against a
   stubbed `gh`.
-- **SC-21.** Given the command completes enumeration, when it exits, then it exits 0
+- **SC-22.** Given the command completes enumeration, when it exits, then it exits 0
   whether or not it found drift. `--strict` exits non-zero when findings exist,
   and the framework does not wire `--strict` into its own CI: a command that
   fails a pull request is a Category 1 gate and belongs in `scripts/`
   (`ADR-0037` §3).
-- **SC-22.** Given an operational failure — unreachable API, exhausted retries, malformed
+- **SC-23.** Given an operational failure — unreachable API, exhausted retries, malformed
   response — when the command exits, then it exits non-zero and is
   distinguishable in its output from a clean run that found drift.
 
 ### CI templates and the pull-request template
 
-- **SC-23.** Given any file under `integrations/github/ci-templates/` or
+- **SC-24.** Given any file under `integrations/github/ci-templates/` or
   `integrations/github/templates/`, when it is inspected, then it contains no
   organisation name, repository name, project number, node ID, field or option
   ID, or secret value (`ADR-0032`).
-- **SC-24.** Given any file under `integrations/github/`, when it is inspected, then it
+- **SC-25.** Given any file under `integrations/github/`, when it is inspected, then it
   contains no `schedule:` trigger (`ADR-0037` §2).
-- **SC-25.** Given `ci-templates/submodule-checkout.yml`, when it is inspected, then its
+- **SC-26.** Given `ci-templates/submodule-checkout.yml`, when it is inspected, then its
   checkout step sets `fetch-depth: 0` and its submodule step invokes
   `gh-submodule-init.sh` rather than inlining the credential rewrite. The
   shallow-clone hazard is documented in `scripts/README.md`; the canonical
   template must not reintroduce it.
-- **SC-26.** Given `.github/pull_request_template.md`, when it is inspected, then it
+- **SC-27.** Given `.github/pull_request_template.md`, when it is inspected, then it
   exists and carries every section defined by
   `integrations/github/templates/pull-request.md`. The framework uses what it
   ships.
 
 ### Documentation and registration
 
-- **SC-27.** Given `integrations/github/README.md`, when it is inspected, then it contains
+- **SC-28.** Given `integrations/github/README.md`, when it is inspected, then it contains
   a table with one row per shipped command classifying it as **enforces**,
   **provisions**, or **reports**, and every command under `bin/` appears in it
   (`ADR-0037` §6).
-- **SC-28.** Given `integrations/github/README.md`, when it is inspected, then it records
+- **SC-29.** Given `integrations/github/README.md`, when it is inspected, then it records
   the operational hazards this layer works around: the `--global` requirement,
   the invisible GraphQL secondary limit and its `unknown owner type` symptom,
   `gh pr edit --body` failing on the GraphQL deprecation with `gh api -X PATCH`
   as the working path, `reviewDecision` being null on draft pull requests, and
   the 60-day scheduled-workflow auto-disable already named in the reference
   binding §6.
-- **SC-29.** Given `package.json`, when it is inspected, then each `bin/` command is
+- **SC-30.** Given `package.json`, when it is inspected, then each `bin/` command is
   registered as an npm script, and `scripts/README.md` cross-references the
   executable layer and states why these are not Category 1 gates.
-- **SC-30.** Given `npm run lint:integrations`, when it runs, then it covers markdown
+- **SC-31.** Given `npm run lint:integrations`, when it runs, then it covers markdown
   beneath `integrations/` recursively, not only `integrations/*.md`.
-- **SC-31.** Given `npm run check:status`, when it runs against this repository after the
+- **SC-32.** Given `npm run check:status`, when it runs against this repository after the
   change, then rule 8 passes: every path named in backticks in
   `integrations/github/README.md` resolves.
-- **SC-32.** Given `npm test`, when it runs, then the `test/FS-0029/` suites execute and
+- **SC-33.** Given `npm test`, when it runs, then the `test/FS-0029/` suites execute and
   pass, and `bash -n` succeeds on every shipped `.sh` file.
 
 ## Edge Cases
@@ -334,7 +343,7 @@ capability mapping; this layer provides mechanisms it already names.
   already-exists error from the API, which is treated as success — that is what
   idempotent means here. The commands impose no locking.
 - **A shallow clone.** `check-status.sh` already fails loudly and misleadingly
-  under `fetch-depth: 1`; SC-25 puts `fetch-depth: 0` in the canonical
+  under `fetch-depth: 1`; SC-26 puts `fetch-depth: 0` in the canonical
   template so a consumer copying it does not rediscover this.
 - **Bash 3.2.** macOS system bash has no associative arrays. The shipped library
   must not use them, consistent with the constraint `scripts/README.md` already
