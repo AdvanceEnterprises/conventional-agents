@@ -113,9 +113,10 @@ live, how are they governed, and what may they not do?**
   never orchestration." Anything shipped here must survive that constraint
   read strictly, not read charitably.
 - **`ADR-0015` classifies tools by how they are governed, and miscategorisation
-  has a concrete cost.** `ADR-0034` states it plainly: a tool filed as
-  Category 2 escapes the approved-FS requirement, and one filed as Category 3
-  escapes governance entirely. A new kind of executable must be placed
+  has a concrete cost.** A tool filed as Category 2 escapes the approved-FS
+  requirement, and one filed as Category 3 escapes governance entirely
+  (ADR-0034 makes the same point in its proposed taxonomy; this ADR adopts
+  the analysis independently). A new kind of executable must be placed
   deliberately.
 - **`ADR-0032` forbids instance data in a template repository.** Board IDs,
   project numbers, and field option IDs belong to the consumer. Whatever ships
@@ -237,9 +238,11 @@ the knowledge is shipped and tested without the loop being shipped with it.
 ### 3. Binding executables are governed by `ADR-0024`, not classified under `ADR-0015`
 
 `ADR-0015` classifies *tools* by how they are introduced and governed.
-`ADR-0034` widened it with a fourth category and, in doing so, established the
-right test: place a thing where its governance actually is, not where it
-superficially resembles something else.
+The right test is to place a thing where its governance actually is, not
+where it superficially resembles something else — the test ADR-0034's
+proposed fourth category applies in its own analysis, and this ADR adopts
+that analysis here independently of whether ADR-0034 is accepted. The
+classification of binding executables does not depend on ADR-0034:
 
 A binding executable's governance is already fully determined: it is exported
 surface, it requires an approved FS to introduce (this one), it is versioned with

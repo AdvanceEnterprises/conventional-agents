@@ -36,7 +36,8 @@ updated: 2026-09-03
 * Feature Spec ID(s): FS-0029
 * Related ADR ID(s): ADR-0037 (governing); ADR-0024, ADR-0007, ADR-0012,
   ADR-0015, ADR-0028, ADR-0032, ADR-0033 (constraining)
-* Issue / PR Reference: to be assigned
+* Issue / PR Reference: #111 (feature work item — created per FS-0018
+  Origination Path 3); implementation PR to be linked on merge
 
 ## Approval Routing
 
@@ -46,12 +47,16 @@ includes `scripts/README.md`, `.github/workflows/lint-docs.yml`, and
 `check-status.sh` rule 6 requires human approval regardless of how `FS-0029`'s
 `interfaces:` are framed.
 
-It therefore stays `status: draft` through the implementing pull request. The
-transition to `approved`/`in-progress` belongs after human merge, carried by an
-`Approved-By:` trailer on the commit that makes it (`ADR-0026`). Flipping it
-inside the implementing PR would fail the gate rather than record an approval
-that had occurred — a known trap, and the reason this section exists rather than
-being assumed.
+It is `status: draft` in this planning PR and transitions to `approved` on
+this PR's human merge, carried by an `Approved-By:` trailer on the merge
+commit (`ADR-0026`). **Implementation begins only after that approval** —
+per the spec-first gate (`guidelines/ROLE_CONTRACT.md:49-54`) an approved FS
+and an approved PLAN must exist before production or test code is written,
+and `ADR-0026:179-188` authorizes no implementation under deferred approval.
+The implementing PR therefore opens after this PR merges, never inside it;
+flipping the PLAN inside the implementing PR would fail the gate rather than
+record an approval that had occurred — a known trap, and the reason this
+section exists rather than being assumed.
 
 ## 2. Scope of Change
 
@@ -113,19 +118,21 @@ being assumed.
     regime with no credential fails closed; **`--global` scope asserted
     explicitly**; credential absent from combined output; second run byte-identical;
     indeterminate visibility fails rather than guesses
-  * `test_sc_12_16__label_provision` — creates only what is missing; second run
+  * `test_sc_12_17__label_provision` — creates only what is missing; second run
     creates nothing; `--audit` mutates nothing and separates missing from
-    unexpected; unexpected labels never deleted; shipped set is exactly the
+    unexpected; `--dry-run` mutates nothing and prints the would-create set;
+    unexpected labels never deleted; shipped set is exactly the
     `FS-0018` six and contains no `propagation`
-  * `test_sc_17_22__board_audit` — source contains no mutating operation; three
+  * `test_sc_18_23__board_audit` — source contains no mutating operation; three
     drift categories reported separately; minimum inter-call interval honoured;
-    `RATE_LIMIT` waits past the reset timestamp and does not consult
+    `RATE_LIMIT` waits past the reset timestamp, honours `Retry-After`,
+    bounded exponential backoff when no reset is reported, and does not consult
     `rate_limit`; exit 0 on findings, `--strict` non-zero, operational failure
     distinguishable
-  * `test_sc_23_26__templates` — no instance data; no `schedule:` anywhere under
+  * `test_sc_24_27__templates` — no instance data; no `schedule:` anywhere under
     `integrations/github/`; `fetch-depth: 0` present and the credential rewrite
     not inlined; `.github/pull_request_template.md` carries the shipped sections
-  * `test_sc_27_32__docs_and_registration` — enforcement table covers every
+  * `test_sc_28_33__docs_and_registration` — enforcement table covers every
     command; hazards recorded; npm registration and `scripts/README.md`
     cross-reference present; recursive lint glob; `bash -n` clean
 
