@@ -18,6 +18,35 @@ For this project (a documentation/standards kit), semver follows the
   board audit under `integrations/github/`. Copyable CI and pull-request
   templates document the required full-history checkout and keep authentication
   and board reconciliation explicit; the framework's own CI runs the label audit.
+- **Two authoring skills: `adr-authoring` and `spec-authoring`** — the two
+  `BACKLOG.md` named as "the two worth revisiting first: they teach the two
+  document types this repository has watched get mis-authored repeatedly,
+  including by its own agents." Category 2 under `ADR-0015` (no FS/PLAN);
+  authored to the `skills/AUTHORING.md` profile.
+  - **`adr-authoring`** teaches craft, not mechanics: deciding whether the work
+    is an ADR at all (`ADR-0030`'s two families and four rules) or a
+    current-state edit; whether the decision implies a governing FS
+    (`docs/decisions/README.md` §1a); verifying a cited ADR's status and title
+    against the file rather than an index; building each MADR section; and the
+    claim discipline — enforcement versus detection, absolute verbs, and the
+    tense a change actually delivers. Every rule is derived from an ADR in this
+    repository that was mis-authored and corrected, with the correcting commit
+    cited (11 pitfalls, each with its SHA).
+  - **`spec-authoring`** centres the one section tests are generated from:
+    numbered `SC-N` criteria in Given/When/Then form that a test author can map
+    without asking a question — because `skills/testing-guide/SKILL.md` converts
+    an ambiguous criterion into an `xfail`/`todo`/`skip`, so vagueness produces a
+    green suite rather than a loud failure. Also covers Non-Goals and Out of
+    Scope as hard constraints, `interfaces:` as a machine-read surface contract
+    (block-list form — the inline form's quotes are not stripped by
+    `get_list_field`), Open Questions carrying their own defaults, and approval
+    routing when a PLAN touches an `ADR-0027` reserved path.
+  - Both state explicitly what they do **not** cover — IDs, status transitions,
+    templates, README index, `check:status` resolution — and defer to
+    `skills/document-lifecycle/SKILL.md` for it, per the profile's
+    no-duplicate-gates rule. Both carry a "what the gates catch and what they do
+    not" table, so a reader knows which quality properties are theirs to hold.
+  - `skills/index.md` gains both rows.
 
 - **Agent-runtime integration is now a governed surface** — `ADR-0038` and
   `ADR-0039` (both **accepted** 2026-09-05), plus the new `skills/AUTHORING.md`
