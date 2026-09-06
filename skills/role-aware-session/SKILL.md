@@ -1,6 +1,6 @@
 ---
 name: role-aware-session
-description: "Infers session mode, primary/supporting roles, and enforces role boundaries for every interaction."
+description: "Infers session mode, primary and supporting roles, and holds role boundaries for every interaction. Use at the start of a session, when the work shifts phase, or when deciding which role may act — covers session modes, the role contract, governance stance, and the non-overridable safety gates."
 license: MIT
 ---
 

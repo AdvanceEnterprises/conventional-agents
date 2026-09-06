@@ -1,6 +1,6 @@
 ---
 name: framework-consumer-integration
-description: "Guides agents through integrating conventional-agents into a host repository, selecting the right pattern, writing AGENTS.md, and avoiding common mistakes."
+description: "Guides agents through integrating conventional-agents into a host repository, selecting the right pattern, writing AGENTS.md, and avoiding common mistakes. Use when vendoring the framework as a git submodule, onboarding a new repository, auditing an existing integration, or adding a consumer-conventions repository."
 license: MIT
 ---
 
@@ -237,11 +237,14 @@ When reviewing a host integration, verify:
 - [ ] Tool-specific files (CLAUDE.md, .cursorrules) are short and referential
 - [ ] Project-specific rules are documented in AGENTS.md, not in the framework
 
+## Related Skills
+
+- `skills/role-aware-session/SKILL.md` — session mode and role stance when auditing or changing an integration
+- `skills/git-gh-workflow/SKILL.md` — the submodule, branch, and commit mechanics an integration change goes through
+
 ## Links
 
 - `README.md` § Installation and Upstream References
 - `INTEGRATION.md` § Precedence Rules and Integration Patterns
 - `ADR-0016`: Consumer conventions
 - `ADR-0017`: Framework vendor directory is internal
-- `skills/role-aware-session/SKILL.md`
-- `skills/git-gh-workflow/SKILL.md`

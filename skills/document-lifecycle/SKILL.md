@@ -1,6 +1,6 @@
 ---
 name: document-lifecycle
-description: "Scaffolds, transitions, and maintains governed documents (FS, PLAN, ADR) with correct front matter and cross-references."
+description: "Scaffolds, transitions, and maintains governed documents — feature specs (FS), change plans (PLAN), and architecture decision records (ADR) — with correct front matter and cross-references. Use when creating or updating a governed document, changing its status, working from a template, or resolving a check:status violation."
 license: MIT
 ---
 

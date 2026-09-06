@@ -1,6 +1,6 @@
 ---
 name: framework-health-audit
-description: "Runs check:status, performs full framework health audits, and enforces the document hygiene gate."
+description: "Runs and interprets check:status, performs full framework health audits, and applies the document hygiene gate. Use before marking a pull request ready for review, when a status or lint gate fails, or when auditing the repository for stale statuses, compliance drift, and README index mismatches."
 license: MIT
 ---
 

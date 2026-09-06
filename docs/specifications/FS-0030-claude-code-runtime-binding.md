@@ -44,7 +44,7 @@ requires:
   - ADR-0038
 tags: [runtime-binding, claude-code, integrations, skills, mcp, exported-surface]
 created: 2026-09-05
-updated: 2026-09-05
+updated: 2026-09-06
 ---
 <!--
 PARSING_HINTS:
@@ -293,9 +293,11 @@ runs the governed workflow off `AGENTS.md` + `scripts/` + `skills/`.
 - **A consumer runs Claude Code without the plugin, using the `.claude/`
   fragment.** Both paths are supported; the binding README documents both and the
   audit checks whichever is present.
-- **The source skills still carry `metadata.hermes.*`.** `claude plugin validate`
-  warns; SC-13 permits the warnings until the `ADR-0038` cleanup lands, and the
-  binding README records that they are expected.
+- **The source skills no longer carry `metadata.hermes.*`.** The `ADR-0038`
+  Category 2 cleanup landed (work item #115), so SC-13's warning allowance has
+  expired by its own terms: the six indexed skills carry only `name`,
+  `description`, and `license`. A `claude plugin validate` warning on a framework
+  skill is now a defect to fix, not an expected condition to record.
 - **A consumer has their own `.claude/settings.json` hooks.** The binding's hook
   fragment is additive; the README says how to merge rather than overwrite.
 - **`claude` CLI is absent.** The audit and any validate step fail with an

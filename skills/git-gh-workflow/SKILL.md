@@ -1,6 +1,6 @@
 ---
 name: git-gh-workflow
-description: "Encodes git branching, commits, PR workflow, multi-identity model, versioning, and release process."
+description: "Encodes git branching, commits, pull-request workflow, commit identity and attribution, versioning, changelogs, and the release process. Use before any branch, commit, push, or PR operation on GitHub, when recording agent attribution, and when preparing a release or CI auto-merge."
 license: MIT
 ---
 

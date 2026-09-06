@@ -19,8 +19,16 @@ The agentskills.io specification governs `SKILL.md` frontmatter, its typing, and
 directory layout. Where a framework skill and the spec disagree on structure, the
 spec wins and the skill is the defect. In particular:
 
-- Frontmatter fields are only those the spec defines. `version`, `author`, and
-  `platforms` go **under `metadata:`** as string values, or are dropped.
+- Frontmatter fields are only those the spec defines: `name` and `description`
+  (both **required**), plus the optional `license`, `compatibility`, `metadata`,
+  and `allowed-tools`. Nothing else is valid at the top level.
+- `version` and `author` go **under `metadata:`** as string values, or are
+  dropped where they carry no information.
+- A genuine environment requirement goes in **`compatibility`** (max 500
+  characters), not in `metadata`. A client reading `compatibility` to decide
+  whether a skill can run will not consult a `metadata.platforms` key. Most
+  skills need neither — omit both rather than asserting a constraint that is not
+  real.
 - `metadata` is a flat map of string keys to string values — no nested maps, no
   arrays.
 - Runtime-specific frontmatter (Hermes's `metadata.hermes.*`, OpenClaw's
@@ -59,8 +67,13 @@ conformance gate.
 
 ## Adding a skill
 
-1. Create `skills/<topic>/SKILL.md`. The `name` field, if present, matches the
-   directory; the directory name is the skill's identity.
-2. Follow the rules above and the spec.
-3. Add a row to `skills/index.md`.
-4. Do not add a runtime dialect to the source file — that is a binding's job.
+1. Create `skills/<topic>/SKILL.md`. `name` and `description` are both required.
+   `name` must equal the directory name — lowercase `a-z`, `0-9`, and hyphens
+   only, with no leading, trailing, or consecutive hyphen.
+2. Write `description` to say both **what** the skill does and **when** to use
+   it, carrying the keywords an agent would search for. It is the only field the
+   spec loads at startup for every skill, so it is the entire discovery surface:
+   a skill nobody retrieves is a skill nobody runs.
+3. Follow the rules above and the spec.
+4. Add a row to `skills/index.md`.
+5. Do not add a runtime dialect to the source file — that is a binding's job.

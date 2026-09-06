@@ -1,6 +1,6 @@
 ---
 name: testing-guide
-description: "Writes tests from approved specs across Python, JS/TS, and Bash; applies implementer guidance and approved test patterns."
+description: "Writes tests from approved specs across Python, JavaScript/TypeScript, and Bash; applies implementer guidance and approved test patterns. Use when translating success criteria into tests, choosing a test layout, practising TDD, or working with pytest, vitest, or bats."
 license: MIT
 ---
 
