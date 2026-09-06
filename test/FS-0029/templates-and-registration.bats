@@ -19,6 +19,8 @@ setup() {
 @test "SC-26: submodule template uses complete history and the shared initializer" {
     local template="$BINDING_ROOT/ci-templates/submodule-checkout.yml"
     grep -F -q 'fetch-depth: 0' "$template"
+    grep -F -q 'submodules: true' "$template"
+    grep -F -q 'persist-credentials: false' "$template"
     grep -F -q 'gh-submodule-init.sh' "$template"
     ! grep -F -q 'insteadOf' "$template"
 }
@@ -67,6 +69,6 @@ setup() {
 @test "SC-33: all shipped shell files pass bash syntax" {
     local file
     while IFS= read -r file; do
-        bash -n "$file"
+        "$TEST_BASH" -n "$file"
     done < <(find "$BINDING_ROOT" -type f -name '*.sh' -print)
 }

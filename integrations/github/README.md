@@ -72,19 +72,23 @@ that case. `--strict` turns findings into a non-zero result, but the framework's
 own CI does not wire that mode into a pull-request gate.
 
 The command paces successive GraphQL calls at seven seconds by default. Set
-`CA_GRAPHQL_MIN_INTERVAL=0` for a controlled test or an operator who has chosen a
-different rate budget. When GitHub returns the invisible secondary burst-limit
-failure commonly surfaced by `gh project` as `unknown owner type`, the shared
-library honors `Retry-After` or waits through the reported reset timestamp plus a
-buffer, then retries a bounded number of times. It does not consult the
-`rate_limit` endpoint: that endpoint describes the primary quota and can remain
-healthy while the secondary limit is failing.
+`CA_GRAPHQL_MIN_INTERVAL=0` for a controlled test or an operator who has chosen
+a different rate budget. When GitHub returns an explicit rate-limit response,
+the shared library honors `Retry-After` or waits through the reported reset
+timestamp plus a buffer, then retries a bounded number of times. Set
+`CA_GRAPHQL_SERVER_WAIT_MAX_SECONDS` to change the safety ceiling for a
+server-directed wait. The separate `unknown owner type` response is treated as
+an owner-resolution error, not as a rate-limit signal. The library does not
+consult the `rate_limit` endpoint: that endpoint describes the primary quota and
+can remain healthy while the secondary limit is failing.
 
 ## Shared library contract
 
 [`lib/gh-common.sh`](lib/gh-common.sh) provides command checks, authentication
 prechecks, caller-relative target and repository resolution, visibility lookup,
-scoped credential configuration, GraphQL pacing, and bounded rate-limit backoff.
+token-free global rewrite configuration, GraphQL pacing, and bounded
+rate-limit backoff. Private submodule authentication is supplied through a
+temporary process-scoped askpass helper and is never persisted in git config.
 It is Bash 3.2 compatible and uses no associative arrays. Callers must not add a
 scheduler or a mutating work-item operation around it.
 
@@ -94,9 +98,11 @@ exhausted rate-limit retry identifies the wait-and-retry remediation.
 
 ## Operational hazards recorded by this binding
 
-- The submodule credential rewrite must be **global**, not repository-local.
-- The GraphQL secondary limit is invisible through the primary quota endpoint and
-  may appear as `unknown owner type`.
+- The submodule's token-free credential rewrite must be **global**, not
+  repository-local; the token itself stays process-scoped.
+- The GraphQL secondary limit is invisible through the primary quota endpoint;
+  `unknown owner type` is a separate owner-resolution failure and is not retried
+  as a rate limit.
 - `gh pr edit --body` can fail on GitHub's GraphQL deprecation path; the working
   fallback is `gh api -X PATCH` with the pull-request endpoint and an explicit
   body payload.

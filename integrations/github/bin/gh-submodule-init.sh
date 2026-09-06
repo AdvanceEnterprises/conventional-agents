@@ -15,7 +15,8 @@ Usage: gh-submodule-init.sh [OPTIONS]
 
 Initialise the framework submodule from the caller's repository. Public
 framework repositories use no credential. Private repositories require a
-credential and configure the rewrite at global git scope before cloning.
+credential, configure a token-free rewrite at global git scope, and supply the
+credential through a temporary process-scoped askpass helper.
 
 Options:
   --framework-repository OWNER/NAME  Override CA_FRAMEWORK_REPOSITORY
@@ -40,25 +41,105 @@ EOF
 PRIVATE_CREDENTIAL_KEY=""
 PRIVATE_CREDENTIAL_EXISTING_VALUES=""
 PRIVATE_CREDENTIAL_HAD_EXISTING=false
+PRIVATE_ASKPASS_SCRIPT=""
+PRIVATE_ASKPASS_HAD_GIT_ASKPASS=false
+PRIVATE_ASKPASS_OLD_GIT_ASKPASS=""
+PRIVATE_ASKPASS_HAD_TERMINAL_PROMPT=false
+PRIVATE_ASKPASS_OLD_TERMINAL_PROMPT=""
+PRIVATE_ASKPASS_HAD_PASSWORD=false
+PRIVATE_ASKPASS_OLD_PASSWORD=""
+
+configure_private_askpass() {
+    local token="$1"
+
+    PRIVATE_ASKPASS_SCRIPT="$(mktemp "${TMPDIR:-/tmp}/ca-gh-askpass.XXXXXX")" || {
+        gh_common_error "could not create the temporary private git credential helper."
+        return 1
+    }
+    if ! cat > "$PRIVATE_ASKPASS_SCRIPT" <<'EOF'; then
+#!/bin/sh
+case "${1:-}" in
+    *Username*) printf '%s\n' 'x-access-token' ;;
+    *) printf '%s\n' "${CA_PRIVATE_GIT_PASSWORD:-}" ;;
+esac
+EOF
+        gh_common_error "could not write the temporary private git credential helper."
+        return 1
+    fi
+    if ! chmod 700 "$PRIVATE_ASKPASS_SCRIPT"; then
+        gh_common_error "could not prepare the temporary private git credential helper."
+        return 1
+    fi
+
+    if [[ ${GIT_ASKPASS+x} == x ]]; then
+        PRIVATE_ASKPASS_HAD_GIT_ASKPASS=true
+        PRIVATE_ASKPASS_OLD_GIT_ASKPASS="$GIT_ASKPASS"
+    fi
+    if [[ ${GIT_TERMINAL_PROMPT+x} == x ]]; then
+        PRIVATE_ASKPASS_HAD_TERMINAL_PROMPT=true
+        PRIVATE_ASKPASS_OLD_TERMINAL_PROMPT="$GIT_TERMINAL_PROMPT"
+    fi
+    if [[ ${CA_PRIVATE_GIT_PASSWORD+x} == x ]]; then
+        PRIVATE_ASKPASS_HAD_PASSWORD=true
+        PRIVATE_ASKPASS_OLD_PASSWORD="$CA_PRIVATE_GIT_PASSWORD"
+    fi
+    CA_PRIVATE_GIT_PASSWORD="$token"
+    GIT_ASKPASS="$PRIVATE_ASKPASS_SCRIPT"
+    GIT_TERMINAL_PROMPT=0
+    export CA_PRIVATE_GIT_PASSWORD GIT_ASKPASS GIT_TERMINAL_PROMPT
+}
 
 restore_private_credentials() {
     local value restore_failed=false
 
-    [[ -n "$PRIVATE_CREDENTIAL_KEY" ]] || return 0
-    git config --global --unset-all "$PRIVATE_CREDENTIAL_KEY" >/dev/null 2>&1 || true
-    if [[ "$PRIVATE_CREDENTIAL_HAD_EXISTING" == true ]]; then
-        while IFS= read -r value; do
-            [[ -n "$value" ]] || continue
-            if ! git config --global --add "$PRIVATE_CREDENTIAL_KEY" "$value" >/dev/null 2>&1; then
-                restore_failed=true
-            fi
-        done <<< "$PRIVATE_CREDENTIAL_EXISTING_VALUES"
+    if [[ -n "$PRIVATE_CREDENTIAL_KEY" ]]; then
+        git config --global --unset-all "$PRIVATE_CREDENTIAL_KEY" >/dev/null 2>&1 || true
+        if [[ "$PRIVATE_CREDENTIAL_HAD_EXISTING" == true ]]; then
+            while IFS= read -r value; do
+                [[ -n "$value" ]] || continue
+                if ! git config --global --add "$PRIVATE_CREDENTIAL_KEY" "$value" >/dev/null 2>&1; then
+                    restore_failed=true
+                fi
+            done <<< "$PRIVATE_CREDENTIAL_EXISTING_VALUES"
+        fi
     fi
+
+    if [[ -n "$PRIVATE_ASKPASS_SCRIPT" ]]; then
+        if ! rm -f "$PRIVATE_ASKPASS_SCRIPT"; then
+            restore_failed=true
+        fi
+    fi
+    if [[ "$PRIVATE_ASKPASS_HAD_GIT_ASKPASS" == true ]]; then
+        GIT_ASKPASS="$PRIVATE_ASKPASS_OLD_GIT_ASKPASS"
+        export GIT_ASKPASS
+    else
+        unset GIT_ASKPASS
+    fi
+    if [[ "$PRIVATE_ASKPASS_HAD_TERMINAL_PROMPT" == true ]]; then
+        GIT_TERMINAL_PROMPT="$PRIVATE_ASKPASS_OLD_TERMINAL_PROMPT"
+        export GIT_TERMINAL_PROMPT
+    else
+        unset GIT_TERMINAL_PROMPT
+    fi
+    if [[ "$PRIVATE_ASKPASS_HAD_PASSWORD" == true ]]; then
+        CA_PRIVATE_GIT_PASSWORD="$PRIVATE_ASKPASS_OLD_PASSWORD"
+        export CA_PRIVATE_GIT_PASSWORD
+    else
+        unset CA_PRIVATE_GIT_PASSWORD
+    fi
+
     PRIVATE_CREDENTIAL_KEY=""
     PRIVATE_CREDENTIAL_EXISTING_VALUES=""
     PRIVATE_CREDENTIAL_HAD_EXISTING=false
+    PRIVATE_ASKPASS_SCRIPT=""
+    PRIVATE_ASKPASS_HAD_GIT_ASKPASS=false
+    PRIVATE_ASKPASS_OLD_GIT_ASKPASS=""
+    PRIVATE_ASKPASS_HAD_TERMINAL_PROMPT=false
+    PRIVATE_ASKPASS_OLD_TERMINAL_PROMPT=""
+    PRIVATE_ASKPASS_HAD_PASSWORD=false
+    PRIVATE_ASKPASS_OLD_PASSWORD=""
     if [[ "$restore_failed" == true ]]; then
-        gh_common_error "could not restore the pre-existing global git credential rewrite."
+        gh_common_error "could not restore the pre-existing global git credential state."
         return 1
     fi
     return 0
@@ -126,7 +207,7 @@ main() {
                 gh_common_error "framework repository '$framework_repository' is private; set CA_FRAMEWORK_TOKEN (or GH_TOKEN/GITHUB_TOKEN) before retrying."
                 return 1
             fi
-            PRIVATE_CREDENTIAL_KEY="$(gh_common_git_credentials_key "$token" "$framework_repository")"
+            PRIVATE_CREDENTIAL_KEY="$(gh_common_git_credentials_key "$framework_repository")"
             if PRIVATE_CREDENTIAL_EXISTING_VALUES="$(git config --global --get-all "$PRIVATE_CREDENTIAL_KEY" 2>/dev/null)"; then
                 PRIVATE_CREDENTIAL_HAD_EXISTING=true
             else
@@ -137,12 +218,15 @@ main() {
                     return 1
                 fi
             fi
-            if ! gh_common_configure_git_credentials "$token" "$framework_repository"; then
+            if ! configure_private_askpass "$token"; then
+                return 1
+            fi
+            if ! gh_common_configure_git_credentials "$framework_repository"; then
                 gh_common_error "could not configure the global git credential rewrite for '$framework_repository'."
                 return 1
             fi
             gh_common_update_submodules "$target_root" || return 1
-            gh_common_info "submodules initialized for private framework $framework_repository with a scoped global credential rewrite."
+            gh_common_info "submodules initialized for private framework $framework_repository with a token-free global rewrite and temporary process-scoped credential."
             ;;
         *)
             gh_common_error "visibility '$visibility' is not supported; refusing to initialize submodules."

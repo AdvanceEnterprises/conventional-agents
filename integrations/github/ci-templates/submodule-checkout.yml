@@ -6,7 +6,12 @@ steps:
     uses: actions/checkout@v4
     with:
       fetch-depth: 0
-      submodules: false
+      # Bootstrap the pinned gitlink before invoking the initializer stored
+      # inside it. The initializer still re-runs the update with the binding's
+      # visibility-aware authentication and pacing rules.
+      submodules: true
+      token: ${{ secrets.CA_FRAMEWORK_TOKEN || github.token }}
+      persist-credentials: false
 
   - name: Initialize framework submodule
     shell: bash

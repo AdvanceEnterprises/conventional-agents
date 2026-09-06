@@ -15,7 +15,7 @@ gh_common_error() {
 
 # Print normal progress information.
 gh_common_info() {
-    printf 'INFO: %s\n' "$*"
+    printf 'INFO: %s\n' "$*" >&2
 }
 
 # Require a command before a later operation depends on it.
@@ -181,25 +181,24 @@ gh_common_repository_visibility() {
     esac
 }
 
-# Return the exact global git-config key used for a private framework clone.
-# Callers keep the value in memory only; this function must never be printed.
+# Return the exact token-free global git-config key used for a private framework
+# clone. The credential itself is supplied out of band through GIT_ASKPASS.
 gh_common_git_credentials_key() {
-    local token="$1"
-    local repository="$2"
-    local host="${3:-$(gh_common_git_host)}"
+    local repository="$1"
+    local host="${2:-$(gh_common_git_host)}"
 
-    printf 'url.https://x-access-token:%s@%s/%s/.insteadOf\n' "$token" "$host" "$repository"
+    printf 'url.https://x-access-token@%s/%s/.insteadOf\n' "$host" "$repository"
 }
 
 # Configure a scoped global insteadOf rewrite for a private framework clone.
-# The token is never printed by this function.
+# The rewrite is deliberately token-free; the caller supplies authentication
+# through a temporary process-scoped GIT_ASKPASS helper.
 gh_common_configure_git_credentials() {
-    local token="$1"
-    local repository="$2"
-    local host="${3:-$(gh_common_git_host)}"
+    local repository="$1"
+    local host="${2:-$(gh_common_git_host)}"
     local rewrite_key
 
-    rewrite_key="$(gh_common_git_credentials_key "$token" "$repository" "$host")"
+    rewrite_key="$(gh_common_git_credentials_key "$repository" "$host")"
     git config --global \
         "$rewrite_key" \
         "https://${host}/${repository}/" >/dev/null 2>&1
@@ -209,7 +208,7 @@ gh_common_configure_git_credentials() {
 gh_common_update_submodules() {
     local target_root="$1"
 
-    if ! (cd "$target_root" && git submodule update --init) >/dev/null 2>&1; then
+    if ! (cd "$target_root" && git submodule update --init); then
         gh_common_error "submodule initialisation failed; verify git access and the configured credential."
         return 1
     fi
@@ -241,12 +240,15 @@ gh_common_pace_graphql() {
     GH_COMMON_GRAPHQL_CALLS=$((GH_COMMON_GRAPHQL_CALLS + 1))
 }
 
-# Determine whether captured gh output represents a rate-limit response.
+# Determine whether captured response headers or stderr represent a
+# rate-limit response. Successful GraphQL data bodies are intentionally not
+# passed here because consumer content may contain arbitrary text such as
+# "Rate limited".
 gh_common_is_rate_limited() {
     local output="$1"
 
     if printf '%s\n' "$output" | grep -Eiq \
-        '(^|[^[:alnum:]])RATE_LIMIT(ED)?([^[:alnum:]]|$)|rate limit|secondary rate|unknown owner type|HTTP[^0-9]*(403|429)|status[^0-9]*(403|429)|(^|[[:space:]])Retry-After:[[:space:]]*[0-9]+'; then
+        '(^|[^[:alnum:]])RATE_LIMIT(ED)?([^[:alnum:]]|$)|rate limit|secondary rate|HTTP[^0-9]*(403|429)|status[^0-9]*(403|429)|(^|[[:space:]])Retry-After:[[:space:]]*[0-9]+'; then
         return 0
     fi
     return 1
@@ -297,11 +299,12 @@ gh_common_reset_epoch() {
 gh_common_rate_wait() {
     local output="$1"
     local attempt="$2"
-    local retry_after reset_epoch now_epoch buffer base maximum wait multiplier server_wait=false
+    local retry_after reset_epoch now_epoch buffer base maximum server_max wait multiplier server_wait=false
 
     buffer="${CA_RATE_LIMIT_BUFFER_SECONDS:-1}"
     base="${CA_GRAPHQL_BACKOFF_BASE_SECONDS:-1}"
     maximum="${CA_GRAPHQL_BACKOFF_MAX_SECONDS:-60}"
+    server_max="${CA_GRAPHQL_SERVER_WAIT_MAX_SECONDS:-86400}"
 
     if [[ ! "$buffer" =~ ^[0-9]+$ ]]; then
         gh_common_error "CA_RATE_LIMIT_BUFFER_SECONDS must be a non-negative integer."
@@ -313,6 +316,10 @@ gh_common_rate_wait() {
     fi
     if [[ ! "$maximum" =~ ^[0-9]+$ ]]; then
         gh_common_error "CA_GRAPHQL_BACKOFF_MAX_SECONDS must be a non-negative integer."
+        return 1
+    fi
+    if [[ ! "$server_max" =~ ^[1-9][0-9]*$ ]]; then
+        gh_common_error "CA_GRAPHQL_SERVER_WAIT_MAX_SECONDS must be a positive integer."
         return 1
     fi
 
@@ -339,6 +346,10 @@ gh_common_rate_wait() {
     fi
 
     [[ "$wait" =~ ^[0-9]+$ ]] || wait="$base"
+    if [[ "$server_wait" == true ]] && (( wait > server_max )); then
+        gh_common_error "server-directed wait ${wait}s exceeds CA_GRAPHQL_SERVER_WAIT_MAX_SECONDS=${server_max}; refusing to sleep indefinitely."
+        return 1
+    fi
     if [[ "$server_wait" != true ]] && (( wait > maximum )); then
         wait="$maximum"
     fi
@@ -353,6 +364,15 @@ gh_common_body_only() {
         printf '%s\n' "$response" | awk 'BEGIN { body = 0 } { sub(/\r$/, "") } body { print } !body && /^$/ { body = 1 }'
     else
         printf '%s\n' "$response"
+    fi
+}
+
+# Keep only an optional HTTP response header block emitted by gh --include.
+gh_common_headers_only() {
+    local response="$1"
+
+    if printf '%s\n' "$response" | grep -qE '^HTTP/[0-9]'; then
+        printf '%s\n' "$response" | awk 'BEGIN { body = 0 } { sub(/\r$/, "") } !body && /^$/ { body = 1; next } !body { print }'
     fi
 }
 
@@ -387,9 +407,11 @@ gh_common_graphql() {
         output=""
         error_output=""
         args=(graphql --include -f "query=$query")
-        for api_arg in "${api_args[@]}"; do
-            args+=("$api_arg")
-        done
+        if (( ${#api_args[@]} > 0 )); then
+            for api_arg in "${api_args[@]}"; do
+                args+=("$api_arg")
+            done
+        fi
         if [[ -n "$jq_filter" ]]; then
             args+=(--jq "$jq_filter")
         fi
@@ -398,13 +420,16 @@ gh_common_graphql() {
         if output="$(gh api "${args[@]}" 2>"$error_file")"; then
             error_output="$(<"$error_file")"
             rm -f "$error_file"
-            combined="$output
+            body="$(gh_common_body_only "$output")"
+            combined="$(gh_common_headers_only "$output")
 $error_output"
             if ! gh_common_is_rate_limited "$combined"; then
-                body="$(gh_common_body_only "$output")"
                 printf '%s\n' "$body"
                 return 0
             fi
+            combined="$(gh_common_headers_only "$output")
+$body
+$error_output"
         else
             error_output="$(<"$error_file")"
             rm -f "$error_file"
@@ -421,7 +446,10 @@ $error_output"
             return 1
         fi
 
-        wait_seconds="$(gh_common_rate_wait "$combined" "$attempt")"
+        if ! wait_seconds="$(gh_common_rate_wait "$combined" "$attempt")"; then
+            gh_common_error "could not honor the server-directed GraphQL retry wait."
+            return 1
+        fi
         if [[ -n "$(gh_common_reset_epoch "$combined")" ]]; then
             gh_common_info "GraphQL rate limit encountered; waiting ${wait_seconds}s for the reported reset window before retry ${attempt}/${max_attempts}."
         elif [[ -n "$(gh_common_retry_after "$combined")" ]]; then

@@ -10,7 +10,7 @@ setup() {
 @test "SC-12: default mode creates only missing framework labels" {
     set_fake_labels $'enhancement\nquestion'
 
-    run bash "$LABEL_PROVISION"
+    run "$TEST_BASH" "$LABEL_PROVISION"
     [ "$status" -eq 0 ]
     [[ "$output" == *"created=4"* ]]
     [[ "$output" == *"existing=2"* ]]
@@ -24,7 +24,7 @@ setup() {
 @test "SC-13: a second provision run creates nothing" {
     set_fake_labels $'enhancement\nbug\ndocumentation\nspec\nplan\nquestion'
 
-    run bash "$LABEL_PROVISION"
+    run "$TEST_BASH" "$LABEL_PROVISION"
     [ "$status" -eq 0 ]
     [[ "$output" == *"created=0"* ]]
     ! grep -F -q -- '--method POST' "$FAKE_GH_TRACE"
@@ -33,7 +33,7 @@ setup() {
 @test "SC-14 and SC-16: audit separates missing and unexpected without mutation" {
     set_fake_labels $'enhancement\nquestion\nconsumer-only'
 
-    run bash "$LABEL_PROVISION" --audit
+    run "$TEST_BASH" "$LABEL_PROVISION" --audit
     [ "$status" -eq 0 ]
     [[ "$output" == *"LABEL AUDIT: missing"* ]]
     [[ "$output" == *"bug"* ]]
@@ -45,7 +45,7 @@ setup() {
 @test "SC-15: dry-run composes with audit and prints the would-create set" {
     set_fake_labels $'enhancement\nquestion\nconsumer-only'
 
-    run bash "$LABEL_PROVISION" --audit --dry-run
+    run "$TEST_BASH" "$LABEL_PROVISION" --audit --dry-run
     [ "$status" -eq 0 ]
     [[ "$output" == *"DRY RUN: would-create"* ]]
     [[ "$output" == *"bug"* ]]
@@ -66,7 +66,7 @@ setup() {
     printf '%s\n' 'consumer-extension' > "$extension_file"
     set_fake_labels $'enhancement\nbug\ndocumentation\nspec\nplan\nquestion'
 
-    run bash "$LABEL_PROVISION" --extensions "$extension_file"
+    run "$TEST_BASH" "$LABEL_PROVISION" --extensions "$extension_file"
     [ "$status" -eq 0 ]
     grep -F -q 'name=consumer-extension' "$FAKE_GH_TRACE"
     grep -F -q 'created=1' <<< "$output"
@@ -77,7 +77,7 @@ setup() {
     export FAKE_GH_LABEL_POST_RESPONSE='{"message":"Validation Failed","errors":[{"resource":"Label","code":"invalid","field":"name"}]}'
     export FAKE_GH_LABEL_POST_RC=1
 
-    run bash "$LABEL_PROVISION"
+    run "$TEST_BASH" "$LABEL_PROVISION"
     [ "$status" -ne 0 ]
     [[ "$output" == *"could not create label"* ]]
     ! grep -q '[^[:space:]]' "$FAKE_GH_LABELS"
@@ -88,7 +88,7 @@ setup() {
     export FAKE_GH_LABEL_POST_RESPONSE='{"message":"Validation Failed","errors":[{"resource":"Label","code":"already_exists","field":"name"}]}'
     export FAKE_GH_LABEL_POST_RC=1
 
-    run bash "$LABEL_PROVISION"
+    run "$TEST_BASH" "$LABEL_PROVISION"
     [ "$status" -eq 0 ]
     [[ "$output" == *"created=0 existing=6"* ]]
 }

@@ -55,7 +55,8 @@ PARSING_HINTS:
 
 ## Status
 
-- Approved
+- **Approval:** Approved by a recorded human act.
+- **Implementation:** In progress under PLAN-0035.
 
 ## Plan Status
 
@@ -296,7 +297,8 @@ capability mapping; this layer provides mechanisms it already names.
   (`ADR-0037` §6).
 - **SC-29.** Given `integrations/github/README.md`, when it is inspected, then it records
   the operational hazards this layer works around: the `--global` requirement,
-  the invisible GraphQL secondary limit and its `unknown owner type` symptom,
+  the invisible GraphQL secondary limit, and the distinct `unknown owner type`
+  owner-resolution error that must not be retried as a rate limit,
   `gh pr edit --body` failing on the GraphQL deprecation with `gh api -X PATCH`
   as the working path, `reviewDecision` being null on draft pull requests, and
   the 60-day scheduled-workflow auto-disable already named in the reference
@@ -339,9 +341,10 @@ capability mapping; this layer provides mechanisms it already names.
 - **A shallow clone.** `check-status.sh` already fails loudly and misleadingly
   under `fetch-depth: 1`; SC-26 puts `fetch-depth: 0` in the canonical
   template so a consumer copying it does not rediscover this.
-- **Bash 3.2.** macOS system bash has no associative arrays. The shipped library
-  must not use them, consistent with the constraint `scripts/README.md` already
-  records.
+- **Bash 3.2.** macOS system bash has no associative arrays and treats an empty
+  array expansion as unset under `set -u`. The shipped commands avoid both
+  hazards; the FS-0029 suites can be run with an explicit interpreter via
+  `CA_BASH_FOR_TESTS`, as recorded in `scripts/README.md`.
 
 ## Out of Scope
 
