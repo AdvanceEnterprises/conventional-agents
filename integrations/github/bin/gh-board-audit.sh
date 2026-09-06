@@ -80,7 +80,9 @@ else
     | [(.content.__typename // ""),
        (.content.number // ""),
        (.content.repository.nameWithOwner // ""),
-       (([.fieldValues.nodes[]? | select((.field.name // "") == "Issue Type") | .name] | first) // "__UNSET__"),
+       (([.fieldValues.nodes[]? | select((.field.name // "") == "Issue Type") | .name] | first)
+        // ([.fieldValues.nodes[]? | select((.field.name // "") == "Doc Type") | .name] | first)
+        // "__UNSET__"),
        (([.fieldValues.nodes[]? | select((.field.name // "") == "Status") | .name] | first) // "__UNSET__")]
     | @tsv),
   (if .data.repositoryOwner.projectV2.items.pageInfo.hasNextPage

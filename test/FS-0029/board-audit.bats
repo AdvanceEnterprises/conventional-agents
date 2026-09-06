@@ -16,6 +16,11 @@ board_with_drift() {
     ! grep -E -n -- 'item-add|item-edit|--single-select-option-id|issue edit|issue create' "$BOARD_AUDIT"
 }
 
+@test "board audit supports the FS-0011 Doc Type compatibility field" {
+    grep -F -q 'Doc Type' "$BOARD_AUDIT"
+    grep -F -q 'Issue Type' "$BOARD_AUDIT"
+}
+
 @test "SC-19 and SC-22: audit reports three drift categories and exits zero" {
     board_with_drift
 
