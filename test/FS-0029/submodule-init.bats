@@ -31,6 +31,7 @@ setup() {
     [ "$status" -eq 0 ]
     grep -F -q -- 'git config --global' "$FAKE_GIT_TRACE"
     grep -F -q 'example/framework' "$FAKE_GIT_TRACE"
+    ! grep -F -q 'test-only-secret' "$GIT_CONFIG_GLOBAL"
 }
 
 @test "SC-9: private credential never appears in combined command output" {
@@ -64,6 +65,20 @@ setup() {
     [ "$status" -ne 0 ]
     [[ "$output" != *"test-only-secret"* ]]
     [[ "$output" == *"submodule initialisation failed"* ]]
+    ! grep -F -q 'test-only-secret' "$GIT_CONFIG_GLOBAL"
+}
+
+@test "private initialisation restores a pre-existing rewrite exactly" {
+    old_key='url.https://x-access-token:old-secret@example.com/example/framework/.insteadOf'
+    "$REAL_GIT" config --global "$old_key" 'https://example.com/example/framework/'
+    cp "$GIT_CONFIG_GLOBAL" "$BATS_TEST_TMPDIR/before.gitconfig"
+    export FAKE_GH_VISIBILITY=private
+    export CA_FRAMEWORK_TOKEN='test-only-secret'
+
+    run bash "$SUBMODULE_INIT"
+    [ "$status" -eq 0 ]
+    cmp -s "$BATS_TEST_TMPDIR/before.gitconfig" "$GIT_CONFIG_GLOBAL"
+    ! grep -F -q 'test-only-secret' "$GIT_CONFIG_GLOBAL"
 }
 
 @test "SC-11: indeterminate visibility fails instead of guessing a regime" {

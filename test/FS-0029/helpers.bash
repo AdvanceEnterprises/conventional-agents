@@ -117,6 +117,10 @@ if [[ "$endpoint" == repos/*/labels ]]; then
         esac
     done
     if [[ "$method" == "POST" ]]; then
+        if [[ -n "${FAKE_GH_LABEL_POST_RESPONSE:-}" ]]; then
+            printf '%s\n' "$FAKE_GH_LABEL_POST_RESPONSE"
+            exit "${FAKE_GH_LABEL_POST_RC:-1}"
+        fi
         if [[ -s "$FAKE_GH_LABELS" ]]; then
             previous="$(<"$FAKE_GH_LABELS")"
         fi

@@ -57,6 +57,10 @@ and dry-run need read access. Every API operation is preceded by `gh auth status
 `bin/gh-board-audit.sh` reads a Project v2 board and the target repository's open
 Issues. It reports three independent categories:
 
+All Project items are included in the field-drift categories, including pull
+requests and other non-Issue items. Only open Issues in the target repository
+participate in the absent-from-board category.
+
 1. project items without an `Issue Type` value (or the legacy `Doc Type` value on
    boards created from FS-0011);
 2. project items without a `Status` value; and
