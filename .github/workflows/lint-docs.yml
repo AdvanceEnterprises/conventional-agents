@@ -122,7 +122,14 @@ jobs:
     # FS-0029 adoption: the framework runs the non-mutating binding audit against
     # itself. A project number is an optional repository variable because the
     # framework must not ship a board identifier as instance data.
+    #
+    # This repository's default GITHUB_TOKEN permission is read-only on
+    # contents and packages only (no issues), so the label audit's read of
+    # repos/{repo}/labels 403s without an explicit issues:read grant here.
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
     steps:
       - uses: actions/checkout@v4
         with:
