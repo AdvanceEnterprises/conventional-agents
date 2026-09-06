@@ -558,13 +558,22 @@ reference, `skills-ref validate` is the conformance check, and a hand-written lo
 example would fork a standard the framework does not own and freeze whatever it
 understood the format to be on the day it was written.
 
-**New skills are deferred with it.** Several were proposed — `adr-authoring`,
-`spec-authoring`, `work-item-lifecycle`, `bootstrap-merge-authoring`,
-`platform-neutral-authoring`, `mcp-tool-governance`. Most would teach procedures from
-ADRs accepted in this PR and never yet performed, which is the imagined-abstraction
-failure `ADR-0024` exists to prevent. `adr-authoring` and `spec-authoring` are the two
-worth revisiting first: they teach the two document types this repository has watched
-get mis-authored repeatedly, including by its own agents.
+**New skills — two landed, four still deferred.** Six were proposed:
+`adr-authoring`, `spec-authoring`, `work-item-lifecycle`,
+`bootstrap-merge-authoring`, `platform-neutral-authoring`, `mcp-tool-governance`.
+
+`adr-authoring` and `spec-authoring` **have shipped**. They were the two worth doing
+first because they teach the two document types this repository has watched get
+mis-authored repeatedly, including by its own agents — and because they could be
+written from observed corrections rather than from imagined procedure. Both are
+grounded in commits that caught the failure they teach against.
+
+The remaining four stay deferred for the original reason: they would teach procedures
+from ADRs accepted but never yet performed, which is the imagined-abstraction failure
+`ADR-0024` exists to prevent. Revisit each once its subject has been exercised —
+`work-item-lifecycle` after the `FS-0018` lifecycle has run end to end,
+`platform-neutral-authoring` and `mcp-tool-governance` once a second binding and a
+first MCP server exist respectively.
 
 **The pattern worth naming.** The framework has now vendored or adopted five upstream
 standards and lost track of one. Its second-highest quality goal is Tool Neutrality
