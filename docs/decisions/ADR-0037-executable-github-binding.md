@@ -1,7 +1,7 @@
 ---
 type: adr
 id: ADR-0037
-status: proposed
+status: accepted
 decision_scope: architecture
 reversible: yes
 related_specs:
@@ -10,7 +10,7 @@ related_specs:
   - FS-0024
 superseded_by: null
 created: 2026-09-03
-updated: 2026-09-03
+updated: 2026-09-06
 ---
 <!--
 PARSING_HINTS:
@@ -25,7 +25,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Proposed
+- Accepted
 
 ## Context and Problem Statement
 

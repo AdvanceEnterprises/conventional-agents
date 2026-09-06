@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0029
-status: draft
+status: approved
 title: Executable layer for the GitHub binding — provisioning, initialisation, and audit commands
 owner: ajoeofalltrades
 test_required: true
@@ -39,7 +39,7 @@ requires:
   - FS-0024
 tags: [github, binding, integrations, substrate, provisioning, ci, exported-surface]
 created: 2026-09-03
-updated: 2026-09-03
+updated: 2026-09-06
 ---
 <!--
 PARSING_HINTS:
@@ -55,25 +55,19 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Approved
 
 ## Plan Status
 
-- **PLAN-0035 is `draft`** in this planning PR and transitions to `approved`
-  on this PR's human merge, carried by an `Approved-By:` trailer per
-  `ADR-0026`. Its `touches:` set includes `scripts/README.md`,
+- **PLAN-0035 is approved by a recorded human act** in this change. Its
+  `touches:` set includes `scripts/README.md`,
   `.github/workflows/lint-docs.yml`, and `package.json` — all reserved paths
-  under `ADR-0027` — so it cannot self-approve and the transition happens
-  only as a recorded human act. **Implementation does not begin before that
-  approval**: `ROLE_CONTRACT` spec-first requires an approved FS and an
-  approved PLAN before production or test code is written
-  (`guidelines/ROLE_CONTRACT.md:49-54`), and `ADR-0026:179-188` authorizes
-  no implementation under deferred approval. Flipping the PLAN inside a
-  later implementing PR would fail `check-status.sh` rule 6 rather than
-  record an approval that had already occurred.
-- **This spec must be approved before implementation begins**, and `ADR-0037`
-  must be `accepted`. The Open Questions below are non-blocking; each names its
-  default.
+  under `ADR-0027` — so the approval is carried by matching `Approved-By:` and
+  `Approved-Artifacts:` trailers per `ADR-0026`, not by agent judgment.
+  Implementation begins only after that approval record. The Open Questions
+  below are non-blocking; each names its default.
+- `ADR-0037` is accepted and this spec is approved. The implementation may now
+  proceed under PLAN-0035.
 
 ## Summary
 

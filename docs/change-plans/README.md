@@ -60,6 +60,6 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | PLAN-0026 | Implement FS-0026 ADR and PLAN scaffolding CLI | FS-0026 | implemented |
 | PLAN-0034 | Implement ADR-0034 MCP tool category and GitHub skills consolidation | ADR-0034 | deprecated |
 | PLAN-0027 | Implement FS-0027 Workflow and guideline freshness gate | FS-0027 | implemented |
-| PLAN-0035 | Implement FS-0029 Executable layer for the GitHub binding | FS-0029 | draft |
+| PLAN-0035 | Implement FS-0029 Executable layer for the GitHub binding | FS-0029 | approved |
 | PLAN-0028 | Implement FS-0028 ADR supersession chain gate | FS-0028 | draft |
 | PLAN-0036 | Implement FS-0030 Claude Code runtime binding | FS-0030 | draft |
