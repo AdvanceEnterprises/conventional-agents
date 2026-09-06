@@ -255,3 +255,5 @@ If validation fails:
 | ADR-0035 | Concurrent-session workspace isolation | proposed |
 | ADR-0036 | Attribution vocabulary canon and history-integrity policy | proposed |
 | ADR-0037 | Executable layer for the GitHub binding | proposed |
+| ADR-0038 | Agent Skills as a profiled upstream standard | proposed |
+| ADR-0039 | Agent-runtime integration bindings | proposed |
