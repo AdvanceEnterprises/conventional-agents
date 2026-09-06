@@ -10,6 +10,27 @@ gate people work around. This file is the contract.
 
 ---
 
+## GitHub binding executables
+
+The exported GitHub binding lives under `integrations/github/`, not `scripts/`.
+Its three commands are registered as `github:submodule-init`,
+`github:label-provision`, and `github:board-audit` in `package.json`.
+
+These commands are **not Category 1 governance gates**. They provision or report
+substrate state, and two of them require repository or project permissions that a
+pull-request gate must not hold. `gh-board-audit.sh` is deliberately read-only;
+consumer policy decides whether reported drift should be reconciled. A command
+that is wired to fail a pull request belongs here under `scripts/` instead, with
+the corresponding governance decision and gate coverage.
+
+The canonical CI fragments use full checkout history because the framework's
+status and attribution checks inspect history. In particular, a shallow checkout
+can make a consumer's governance run appear healthy while omitting approval
+provenance. The submodule fragment calls the shared initializer so consumers do
+not duplicate its `--global` credential-rewrite requirement.
+
+---
+
 ## Running these scripts against a vendored (host) repository
 
 Per `FS-0024`/`ADR-0033`: each script resolves the repository it checks from the

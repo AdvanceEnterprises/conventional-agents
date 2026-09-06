@@ -304,12 +304,18 @@ for why it is the one rule the framework made non-overridable.
 - [ ] Project board exists with the five `Status` values (`FS-0011`)
 - [ ] `Issue Type` single-select field created with `feature`, `bug`, `task`
 - [ ] Auto-add workflow enabled
-- [ ] Label vocabulary created: `enhancement`, `bug`, `documentation`, `spec`, `plan`, `question`
+- [ ] Label vocabulary created: `enhancement`, `bug`, `documentation`, `spec`, `plan`, `question` — run `integrations/github/bin/gh-label-provision.sh`
 - [ ] Unattended actor identity provisioned with its own `user.email` (`ADR-0021`)
 - [ ] Branch protection on `trunk`: required review, agent identities denied direct push
 - [ ] Webhook endpoint or Actions workflows subscribed to the §6 events
 - [ ] Per-Issue concurrency serialization configured
 - [ ] `projects_v2_item.edited` alerting for agent-authored `Issue Type` changes
+
+The checklist's executable, read-only parts are shipped by the GitHub binding layer:
+`integrations/github/bin/gh-submodule-init.sh` performs dual-regime submodule
+initialisation, `integrations/github/bin/gh-label-provision.sh` provisions or audits
+the label vocabulary, and `integrations/github/bin/gh-board-audit.sh` reports board
+drift without changing it. Consumer adoption remains an explicit repository choice.
 
 ## References
 
