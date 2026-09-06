@@ -87,6 +87,26 @@ all six capabilities with none marked deferred or planned, and must state its
 scheduler's reliability characteristics — under `ADR-0028` the reconciler carries
 correctness, so a scheduler that silently stops is an outage rather than a delay.
 
+## Two kinds of binding
+
+`integrations/` holds two:
+
+- **Substrate bindings** map the six work-item capabilities above onto a
+  work-tracking platform (`ADR-0024`). `integrations/<substrate>.md` or, when the
+  binding ships templates and executables, `integrations/<substrate>/` —
+  `github-issues-projects.md` is the reference.
+- **Runtime bindings** map the framework's setup requirements — anchor-file
+  wiring (`ADR-0004`), gate-script execution, skill discovery (`ADR-0038`),
+  commit identity and the `Agent-Attribution:` trailer, and optionally MCP
+  configuration — onto one agent runtime's configuration surface.
+  `integrations/runtimes/<runtime>/`, governed by `ADR-0039` and one FS per
+  binding. The first is Claude Code (`FS-0030`).
+
+`ADR-0037`'s envelope applies to both: a binding directory may ship parameterised
+templates and executables; an executable that provisions or reports is binding
+content, but any executable wired into a merge-blocking CI job is a Category 1
+gate (`ADR-0015` Location invariant) and lives in `scripts/`.
+
 ## Related
 
 - `ADR-0024` — the two-layer model and the ordering rule

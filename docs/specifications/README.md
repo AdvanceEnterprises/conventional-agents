@@ -123,3 +123,4 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0027 | Workflow and guideline doc freshness gate — enforce updated: frontmatter | implemented |
 | FS-0029 | Executable layer for the GitHub binding — provisioning, initialisation, and audit commands | draft |
 | FS-0028 | ADR supersession chain gate — machine-check superseded_by completeness | draft |
+| FS-0030 | Claude Code runtime binding — the first agent-runtime binding under ADR-0039 | draft |

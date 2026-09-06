@@ -299,7 +299,7 @@ authoritative full specifications are available at the URLs below.
 - **Keep a Changelog** — [keepachangelog.com](https://keepachangelog.com/) (framework subset in `workflows/versioning-and-releases.md`)
 - **MADR** — [adr.github.io/madr](https://adr.github.io/madr/) (template adapted in `templates/core/adr-full-madr.md`)
 - **arc42** — [arc42.org](https://arc42.org/) (structure adapted in `docs/ARC42.md`)
-- **Agent Skills** — [agentskills.io/specification](https://agentskills.io/specification) (format adopted for every `skills/*/SKILL.md`; framework profile differs from the spec at `version`/`author`/`platforms` field placement — see BACKLOG)
+- **Agent Skills** — [agentskills.io/specification](https://agentskills.io/specification) (format adopted for every `skills/*/SKILL.md`; the framework *profiles* the standard rather than defining a format — the spec is authoritative for structure, and the framework's authoring rules and the runtime-dialect boundary are in `skills/AUTHORING.md`, per `ADR-0038`)
 
 Recommended reading:
 
