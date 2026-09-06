@@ -134,9 +134,11 @@ conventional-agents
 ├── guidelines/
 ├── roles/
 ├── templates/
-├── packs/ (planned)
-├── integrations/ (planned)
+├── integrations/          # substrate + runtime bindings (ADR-0024, ADR-0039)
 ├── skills/
+├── runbooks/
+├── scripts/
+├── workflows/
 ├── docs/
 ├── vendor/
 ├── INTEGRATION.md
@@ -154,9 +156,8 @@ Contained Building Blocks (black boxes):
 | guidelines/       | Evidence-based engineering and testing guidance                      |
 | roles/            | Role contracts and shared guardrails                                 |
 | templates/        | Reusable document templates (ADR, specs, reviews)                    |
-| packs/ (planned)  | Copy-ready anchor files for common tools                              |
-| integrations/ (planned) | Tool-specific integration guidance and precedence summaries   |
-| skills/           | Portable skill modules for session management, document lifecycle, git workflow, framework health, and testing |
+| integrations/     | Substrate bindings (ADR-0024) and runtime bindings (ADR-0039). `packs/` was named "planned" here from the start and never built; the runtime binding replaces it. |
+| skills/           | Portable skill modules for session management, document lifecycle, git workflow, framework health, and testing; `AUTHORING.md` carries the Agent Skills profile (ADR-0038) |
 | docs/             | Architecture, ADRs, and process documentation                        |
 | vendor/madr/      | ADR template and ADR documentation (framework-internal)            |
 | INTEGRATION.md    | Cross-tool precedence rules and integration guidance                 |

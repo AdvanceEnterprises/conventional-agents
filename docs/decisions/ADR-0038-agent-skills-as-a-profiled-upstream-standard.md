@@ -1,7 +1,7 @@
 ---
 type: adr
 id: ADR-0038
-status: proposed
+status: accepted
 decision_scope: architecture
 reversible: yes
 related_specs: []
@@ -22,7 +22,8 @@ PARSING_HINTS:
 
 ## Status
 
-- Proposed
+- Accepted (2026-09-05). Approved by the maintainer in the review thread on
+  PR #112; the merge commit carries the `Approved-By:` trailer per `ADR-0026`.
 
 ## Context and Problem Statement
 
@@ -204,9 +205,10 @@ and this ADR's prose.
 
 ### 4. Source skills must target the base spec
 
-The committed `skills/*/SKILL.md` files **do not** conform today; this rule is
-the target state, and reaching it is Category 2 follow-up work under `ADR-0015`
-(**not performed in this PR**). When that work is done:
+The committed `skills/*/SKILL.md` files **do not** conform when this ADR is
+accepted; this rule is the target state, and reaching it is Category 2 follow-up
+work under `ADR-0015` (**not performed in the accepting change**). When that
+work is done:
 
 - `version`, `author`, `platforms` move under `metadata:` as string values, or
   are dropped where they carry no information.
@@ -264,9 +266,9 @@ and follow rules 3–5 above when done.
 
 ### Negative
 
-- The six skills need mechanical edits and re-review, and that work is not in
-  this PR — the merged ADR describes a target the source does not yet meet, and
-  says so.
+- The six skills need mechanical edits and re-review, and that work does not
+  land with acceptance — the accepted ADR describes a target the source does not
+  yet meet, and says so.
 - A consumer running the framework's skills through Hermes today and relying on
   `metadata.hermes.*` in the **source** files loses that until the Hermes runtime
   binding restores it at sync time — a migration with a timing gap.
@@ -314,13 +316,14 @@ Hermes/OpenClaw split by accident.
 ## Links
 
 - `ADR-0001` — the skill-format decision this ADR succeeds on provenance; gains a
-  forward-pointing Status note.
+  forward-pointing Status note in the same change.
 - `ADR-0015` — the tool taxonomy; skill edits are Category 2, the conformance
   gate is Category 1.
 - `ADR-0030` — decision records versus current-state documents; why the profile
   rules move to `skills/AUTHORING.md` rather than staying in `ADR-0001` or
   pointing at `BACKLOG.md`.
-- `ADR-0034` — the proposed ADR whose Part 2 this carries forward.
+- `ADR-0034` — the ADR whose Part 2 this carries forward; `ADR-0034` moves to
+  `superseded` (`superseded_by: [ADR-0038, ADR-0039]`) in the same change.
 - `ADR-0039` — agent-runtime bindings; consumes rule 5 (dialects are a binding's
   job).
 - `README.md` §"Upstream References" — the existing Agent Skills line, rewritten

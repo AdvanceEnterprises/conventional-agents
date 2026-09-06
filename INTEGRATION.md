@@ -62,15 +62,20 @@ git commit -m "Add conventional-agents foundation layer"
 
 ### Alternative: copy-in pattern
 
-Use this when a tool only reads root files.
+Use this when a tool only reads root files. Write the same `AGENTS.md` stub
+shown above (there is no `packs/` directory — that was never built; see
+`ADR-0039`), then customize:
 
 ```bash
-cp vendor/conventional-agents/packs/agents-md/AGENTS.full.example.md ./AGENTS.md
-cp vendor/conventional-agents/packs/claude/CLAUDE.full.example.md ./CLAUDE.md
-
-# Customize
+# Write the AGENTS.md stub from the recommended pattern above, then:
 vim AGENTS.md
 ```
+
+Per-runtime configuration — `.claude/` for Claude Code, `AGENTS.md` +
+`config.toml` for Codex, `~/.hermes/config.yaml` for Hermes Agent,
+`openclaw.json` for OpenClaw — is a *runtime binding* under
+`integrations/runtimes/<runtime>/`, governed by `ADR-0039`. The first binding
+(Claude Code) is specified in `FS-0030`.
 
 ⸻
 
@@ -458,21 +463,17 @@ Precedence: vendor/conventional-agents/INTEGRATION.md
 
 ### Aider
 
-Reference via config:
+Reference the foundation files via config:
 
 ```yaml
 read:
-  - vendor/conventional-agents/packs/aider/CONVENTIONS.md
   - vendor/conventional-agents/roles/ROLE_CONTRACT.md
-  - vendor/conventional-agents/guidelines/tests.md
-  - vendor/conventional-agents/guidelines/commit-and-pr.md
+  - vendor/conventional-agents/guidelines/ROLE_CONTRACT.md
+  - vendor/conventional-agents/workflows/git-and-gh-conventions.md
 ```
 
-Or copy:
-
-```bash
-cp vendor/conventional-agents/packs/aider/CONVENTIONS.md ./CONVENTIONS.md
-```
+Aider reads `CONVENTIONS.md` from the repo root if present; keep it short and
+point it back to `AGENTS.md`.
 
 ### Cursor and other editors
 

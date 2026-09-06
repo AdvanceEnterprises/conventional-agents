@@ -2,6 +2,9 @@
 
 Portable skill modules for agentic development using the conventional-agents framework.
 
+Authoring a skill? See [`AUTHORING.md`](./AUTHORING.md) — the framework's profile
+of the [Agent Skills](https://agentskills.io/specification) standard (`ADR-0038`).
+
 | Skill | Purpose | Source Documents |
 | --- | --- | --- |
 | [role-aware-session](./role-aware-session/SKILL.md) | Infers session mode, primary/supporting roles, and enforces role boundaries for every interaction | `roles/ROLE_CONTRACT.md`, `workflows/session-modes.md` |

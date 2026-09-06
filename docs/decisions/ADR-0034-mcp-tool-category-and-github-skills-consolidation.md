@@ -1,21 +1,30 @@
 ---
 type: adr
 id: ADR-0034
-status: proposed
+status: superseded
 decision_scope: architecture
 reversible: yes
 related_specs:
   - FS-0018
-superseded_by: null
+superseded_by:
+  - ADR-0038
+  - ADR-0039
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-09-05
 ---
 
 # ADR-0034: MCP tool category and GitHub skills consolidation
 
 ## Status
 
-- Proposed
+- Superseded (2026-09-05) by `ADR-0038` (Agent Skills profile — carries Part 2:
+  the upstream recording and skill conformance) and `ADR-0039` (agent-runtime
+  bindings — carries Part 1: MCP-server configuration is runtime-binding
+  content, not a fifth `ADR-0015` category).
+- This ADR was never accepted. It bundled two independent decisions, and that
+  bundling kept it stalled at `proposed` for a month (issue #107 shows a reader
+  losing track of its state). The two concerns are now recorded separately.
+- `PLAN-0034` (draft, never approved) is `deprecated` in the same change.
 
 ## Context and Problem Statement
 
@@ -288,5 +297,10 @@ as deprecated.
 - `BACKLOG.md` §"New skills are deferred with it": the deferred skills this
   ADR's Part 2 begins to address.
 - `skills/git-gh-workflow/SKILL.md`: the oversize skill this ADR splits.
-- `README.md` §"Upstream References": where the Agent Skills entry will be
-  added.
+- `README.md` §"Upstream References": where the Agent Skills entry lives
+  (already present; repointed by `ADR-0038`).
+- `ADR-0038` — supersedes this ADR's Part 2 (Agent Skills upstream + skill
+  conformance).
+- `ADR-0039` — supersedes this ADR's Part 1 (MCP tool category); MCP-server
+  config is runtime-binding content under `ADR-0024`, not a new `ADR-0015`
+  category.

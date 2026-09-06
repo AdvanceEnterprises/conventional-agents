@@ -2,7 +2,7 @@
 type: change-plan
 role: implementer
 language: markdown
-status: draft
+status: deprecated
 consensus_required: false
 related_specs: []
 related_adrs:
@@ -23,15 +23,22 @@ touches:
   - skills/git-gh-workflow/SKILL.md
   - skills/index.md
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-09-05
 ---
 
 # PLAN-0034: Implement ADR-0034 — MCP tool category and GitHub skills consolidation
 
+> **Deprecated (2026-09-05).** `ADR-0034` was superseded by `ADR-0038` and
+> `ADR-0039` (PR #112) before this plan was ever approved or executed. Its Part 2
+> skill work is carried by `ADR-0038` (Category 2, no PLAN); its Part 1 MCP
+> taxonomy is carried by `ADR-0039` §4. Nothing in this plan was implemented —
+> the split-target skills it names (`skills/gh-pr-workflow/` etc.) never existed.
+> Issue #107, which claimed this plan's work was done, is corrected and closed.
+
 ## 1. Feature / Issue Reference
 
-- Related ADR ID(s): ADR-0034
-- Issue / PR Reference: PR #79 (this PR)
+- Related ADR ID(s): ADR-0034 (superseded by ADR-0038, ADR-0039)
+- Issue / PR Reference: PR #79 (ADR-0034 file); deprecated in PR #112
 
 ## 2. Scope of Change
 

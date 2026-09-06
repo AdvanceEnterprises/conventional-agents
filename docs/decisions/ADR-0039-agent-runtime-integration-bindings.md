@@ -1,10 +1,11 @@
 ---
 type: adr
 id: ADR-0039
-status: proposed
+status: accepted
 decision_scope: architecture
 reversible: yes
-related_specs: []
+related_specs:
+  - FS-0030
 superseded_by: null
 created: 2026-09-05
 updated: 2026-09-05
@@ -22,7 +23,10 @@ PARSING_HINTS:
 
 ## Status
 
-- Proposed
+- Accepted (2026-09-05). Approved by the maintainer in the review thread on
+  PR #112; the merge commit carries the `Approved-By:` trailer per `ADR-0026`.
+  Governed by `FS-0030` (the first binding, Claude Code); further bindings get
+  their own FS/PLAN per §5.
 
 ## Context and Problem Statement
 
@@ -394,16 +398,16 @@ learns the location was superseded. Nothing is built at `packs/`.
   `integrations/github/` by `FS-0029`).
 - The reference substrate binding (`integrations/github-issues-projects.md`) is
   untouched in scope.
-- **`ADR-0034` disposition — a follow-up, not an automatic effect.** `ADR-0034`
-  was `proposed` and never `accepted`. It bundled the MCP taxonomy (Part 1,
-  superseded by this ADR §4) with skills consolidation and upstream recording
-  (Part 2, carried by `ADR-0038`). Merging this PR does **not** change
-  `ADR-0034` or any GitHub state on its own. If both `ADR-0038` and this ADR are
-  accepted, a Document Author then performs two explicit, separately recorded
-  operations: (a) set `ADR-0034` to `status: superseded`,
-  `superseded_by: [ADR-0038, ADR-0039]`, with a Status note; (b) correct and
-  close issue #107, which misreports Part 2 as implemented. Each is its own
-  small change with its own commit.
+- **`ADR-0034` disposition — an explicit recorded act, not an automatic
+  effect.** `ADR-0034` was `proposed` and never `accepted`. It bundled the MCP
+  taxonomy (Part 1, superseded by this ADR §4) with skills consolidation and
+  upstream recording (Part 2, carried by `ADR-0038`). Accepting `ADR-0038` and
+  this ADR does not by itself change `ADR-0034`. The disposition is done as its
+  own distinct commit in the same change: (a) `ADR-0034` → `status: superseded`,
+  `superseded_by: [ADR-0038, ADR-0039]`, with a back-link in its Status section
+  (README §5); (b) `PLAN-0034` (draft) → `deprecated`; (c) issue #107, which
+  misreports Part 2 as implemented, is corrected and closed. `check-status.sh`
+  rule 5b (`FS-0028`) then machine-checks the supersession chain.
 
 ## Validation
 
@@ -459,21 +463,24 @@ nobody installs — the `packs/` failure mode relocated, which is the same failu
 - `ADR-0038` — Agent Skills as a profiled upstream standard; supplies §2's skill
   requirement (runtime dialects are a binding's job) and the base-spec
   conformance §5 stage 1 relies on.
-- `ADR-0034` — the proposed ADR whose Part 1 this supersedes; disposition is a
-  follow-up operation, not an effect of merge — see Consequences.
+- `ADR-0034` — the ADR whose Part 1 this supersedes (`ADR-0034` moves to
+  `superseded` in the same change that accepts this one); disposition detail in
+  Consequences.
 - `ADR-0001` — receives a Status note (only) recording that its `packs/agent-config`
   location is superseded by `integrations/runtimes/` (§7).
+- `FS-0030` — the governing spec: the first runtime binding (Claude Code) in
+  full, plus the `integrations/runtimes/` surface and the neutrality
+  demonstration. `related_specs` names it.
 - `INTEGRATION.md`, `integrations/README.md`, `docs/ARC42.md` §5.1 — current-state
   documents updated on acceptance (`ADR-0030` rule 3).
 - `FS-0029` — cited only as precedent: a binding as a directory with an
-  executable layer and a widened lint glob. Not a governing or related spec of
-  this ADR, hence absent from `related_specs`.
+  executable layer and a widened lint glob.
 - [docs.openclaw.ai](https://docs.openclaw.ai/) — OpenClaw's workspace bootstrap
   files, skill hierarchy, `metadata.openclaw.*` namespace, and the bundle
   importer (which maps skills/MCP/LSP/settings but not hooks or agents).
 - [learn.chatgpt.com/docs/build-skills](https://learn.chatgpt.com/docs/build-skills)
   — Codex CLI native skills via `.agents/skills`, the cross-tool convention §2
   and the drivers reference.
-- Governing FS(s) — to be written, one per binding; each ships a binding in full
-  and (for the first) the neutrality demonstration. This ADR does not
-  self-authorize that work.
+- Further binding FS/PLAN cycles — one per runtime (Hermes, OpenClaw, Codex),
+  after `FS-0030`. A neutral runtime contract, if warranted, is a successor ADR
+  after ≥2 bindings ship (§5).
