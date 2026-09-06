@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0029
-status: approved
+status: in-progress
 title: Executable layer for the GitHub binding — provisioning, initialisation, and audit commands
 owner: ajoeofalltrades
 test_required: true
@@ -66,8 +66,8 @@ PARSING_HINTS:
   `Approved-Artifacts:` trailers per `ADR-0026`, not by agent judgment.
   Implementation begins only after that approval record. The Open Questions
   below are non-blocking; each names its default.
-- `ADR-0037` is accepted and this spec is approved. The implementation may now
-  proceed under PLAN-0035.
+- `ADR-0037` is accepted and this spec is in progress under PLAN-0035. The
+  implementation has begun after the recorded human approval.
 
 ## Summary
 

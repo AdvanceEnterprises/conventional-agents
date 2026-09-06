@@ -14,6 +14,7 @@ concluding either is wrong.
 | Binding | Platform | Status |
 | --- | --- | --- |
 | [`github-issues-projects.md`](./github-issues-projects.md) | GitHub Issues + Projects v2 | Reference binding; the substrate this repository runs on |
+| [`github/README.md`](./github/README.md) | GitHub binding executables | Executable provisioning and audit layer; mechanisms only |
 
 ## The six capabilities
 

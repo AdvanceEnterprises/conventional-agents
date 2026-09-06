@@ -2,7 +2,7 @@
 type: change-plan
 role: implementer
 language: bash
-status: approved
+status: in-progress
 related_specs: [FS-0029]
 approved_by: "Joey Clark <administrator@ajoeofalltrades.dev>"
 related_adrs: [ADR-0037]
@@ -49,7 +49,7 @@ recorded human approval regardless of how `FS-0029`'s `interfaces:` are framed.
 Human approval is recorded in this change with matching `Approved-By:` and
 `Approved-Artifacts:` trailers on the approval commit, and the approving human
 is recorded in `approved_by:` above (`ADR-0026`). `ADR-0037` is accepted and
-`FS-0029` is approved, so implementation may proceed from this plan.
+`FS-0029` is now in progress, so implementation is underway from this plan.
 
 ## 2. Scope of Change
 
