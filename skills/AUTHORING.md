@@ -52,10 +52,32 @@ Carried forward from `ADR-0001` and owned here:
    two runnable examples; a copy-paste-friendly checklist; a common-pitfalls
    section.
 4. **Size signal.** The main `SKILL.md` stays under ~400 lines (the framework's
-   number; the spec recommends under 500). Overflow moves into the spec's
-   optional `references/` directory — not into a second skill.
+   number; the spec recommends under 500). What to do when it does not depends on
+   *why* it is long:
+   - **One topic that ran long.** The overflow is depth on a single subject. Move
+     it into the spec's optional `references/` directory and keep one skill.
+     Do **not** split: fracturing a coherent topic to hit a line count leaves
+     every fragment less useful than the whole was, and rule 1 then fails on all
+     of them.
+   - **Several topics sharing a file.** The length is a symptom, not the defect —
+     the skill is really N skills bundled, and each would satisfy rules 1–3
+     standing alone. Split on the topic boundaries and give each successor a
+     `description` that says when to reach for it rather than for its siblings.
+
+   The test is whether a reader who needs one part reliably needs the others. If
+   yes, it is one topic — use `references/`. If no, it was a bundle — split it.
+   **Size alone never justifies a split**, and cohesion always justifies one
+   regardless of size.
 5. **No duplicate gates.** A skill summarises and links; it does not restate
-   `roles/ROLE_CONTRACT.md`.
+   `roles/ROLE_CONTRACT.md`. Where another skill already owns a gate's full
+   statement, link to that skill rather than repeating it: two skills expanding
+   the same rule is the drift `ADR-0030` exists to prevent.
+
+> Rule 4's two cases were separated after an earlier single-sentence form ("not
+> into a second skill") was read as forbidding the `git-gh-workflow` split that
+> `ADR-0038` rule 7 sanctions. Both readings were defensible against the old
+> wording, which is the defect. The rule now turns on cohesion rather than on
+> line count, so the two documents agree.
 
 ## Conformance
 
