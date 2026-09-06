@@ -217,6 +217,28 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Changed
 
+#### Skill frontmatter conformed to the Agent Skills base spec (ADR-0038)
+
+- **The six shipped skills' `SKILL.md` frontmatter is now base-spec-clean.**
+  `version`, `author`, and `platforms` — non-spec fields, identical and
+  information-free across all six — are dropped; the nested
+  `metadata.hermes.{tags,related_skills}` map-of-arrays, which is Hermes
+  Agent's runtime dialect, is removed from source per `ADR-0038` rules 4–5.
+  Each skill keeps `name`, `description`, and `license`. Cross-references move
+  to a prose `## Related Skills` section, and the three dangling
+  `related_skills` targets — `test-driven-development`, `github-auth`,
+  `github-pr-workflow`, none of which exist in this repository — are gone. A
+  runtime that needs a dialect gets it from a runtime binding at sync time,
+  never from source (`ADR-0039`).
+- **`skills/example-skill/` removed.** It held an empty, unindexed `SKILL.md`
+  that failed the spec's `name`/`description` requirement; `ADR-0038` rule 4's
+  stated position is to remove it. The format reference is
+  [agentskills.io/specification](https://agentskills.io/specification) and
+  `skills/AUTHORING.md`.
+- Discharges the `ADR-0038` Category 2 conformance follow-up (work item #115).
+  Unblocks `FS-0030` SC-13. No consumer-visible behaviour change — skills load
+  identically; only non-spec metadata was removed.
+
 #### History rewrite — identity normalization per ADR-0036 (2026-09-01)
 
 - **Repository history rewritten with `git filter-repo --mailmap .mailmap`

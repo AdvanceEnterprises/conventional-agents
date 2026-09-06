@@ -1,14 +1,7 @@
 ---
 name: framework-consumer-integration
 description: "Guides agents through integrating conventional-agents into a host repository, selecting the right pattern, writing AGENTS.md, and avoiding common mistakes."
-version: 1.0.0
-author: conventional-agents
 license: MIT
-platforms: [linux, macos, windows]
-metadata:
-  hermes:
-    tags: [integration, onboarding, submodules, agents-md, consumer-conventions]
-    related_skills: [role-aware-session, git-gh-workflow]
 ---
 
 # Framework Consumer Integration Skill

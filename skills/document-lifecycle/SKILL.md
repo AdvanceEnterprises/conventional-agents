@@ -1,14 +1,7 @@
 ---
 name: document-lifecycle
 description: "Scaffolds, transitions, and maintains governed documents (FS, PLAN, ADR) with correct front matter and cross-references."
-version: 1.0.0
-author: conventional-agents
 license: MIT
-platforms: [linux, macos, windows]
-metadata:
-  hermes:
-    tags: [document-lifecycle, feature-specs, adrs, change-plans, governance, templates]
-    related_skills: [role-aware-session, git-gh-workflow, framework-health-audit]
 ---
 
 # Document Lifecycle Skill
@@ -277,6 +270,14 @@ When updating an existing governed document:
 4. **Update the README index** if the status changed
 5. **Run `npm run check:status`** and resolve any violations
 6. **Commit** with a descriptive message
+
+---
+
+## Related Skills
+
+- `skills/role-aware-session/SKILL.md` — session mode, primary/supporting roles, when Document Author leads
+- `skills/git-gh-workflow/SKILL.md` — branch, commit, and PR conventions for landing document changes
+- `skills/framework-health-audit/SKILL.md` — `check:status` interpretation and the document hygiene gate
 
 ---
 

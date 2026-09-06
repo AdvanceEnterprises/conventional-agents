@@ -242,8 +242,10 @@ Key elements:
 Purpose:
 - Provide portable skill modules that encode the framework's knowledge
   into actionable guidance for agents. Each skill is a self-contained
-  `SKILL.md` in the [Agent Skills](https://agentskills.io/specification) format;
-  see `skills/index.md` for the canonical catalog and source-document map.
+  `SKILL.md` in the [Agent Skills](https://agentskills.io/specification)
+  format, which the framework *profiles* rather than defines (`ADR-0038`);
+  `skills/AUTHORING.md` carries the profile and the runtime-dialect
+  boundary, and `skills/index.md` is the catalog and source-document map.
 
 Key elements (current set):
 - `skills/role-aware-session/` — session mode inference, role boundaries, safety gates.
@@ -253,8 +255,6 @@ Key elements (current set):
 - `skills/framework-consumer-integration/` — host-repo integration patterns and pitfalls.
 - `skills/framework-health-audit/` — `check:status`, hygiene gate, full audit procedure.
 - `skills/testing-guide/` — language-specific test patterns for Python, JS/TS, Bash.
-- `skills/example-skill/` — placeholder directory; the format reference is
-  [agentskills.io/specification](https://agentskills.io/specification).
 
 ### White Box vendor/
 

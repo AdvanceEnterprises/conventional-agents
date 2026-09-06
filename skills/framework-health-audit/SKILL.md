@@ -1,14 +1,7 @@
 ---
 name: framework-health-audit
 description: "Runs check:status, performs full framework health audits, and enforces the document hygiene gate."
-version: 1.0.0
-author: conventional-agents
 license: MIT
-platforms: [linux, macos, windows]
-metadata:
-  hermes:
-    tags: [audit, compliance, status-checks, governance, document-hygiene]
-    related_skills: [document-lifecycle, role-aware-session, git-gh-workflow]
 ---
 
 # Framework Health / Audit Skill
@@ -195,6 +188,14 @@ Produce a summary with:
 | Cross-reference points to non-existent doc | Update the reference or create the missing doc |
 | Approved spec is no longer planned | Set to `deprecated` with a note |
 | Lint errors in governed docs | Run `npm run lint:docs` and fix violations |
+
+---
+
+## Related Skills
+
+- `skills/document-lifecycle/SKILL.md` — the status transitions and README index rules an audit checks against
+- `skills/role-aware-session/SKILL.md` — Reviewer vs Head Architect stance when an audit surfaces drift
+- `skills/git-gh-workflow/SKILL.md` — the PR hygiene gate this skill enforces before review
 
 ---
 

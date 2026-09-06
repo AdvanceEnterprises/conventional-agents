@@ -1,14 +1,7 @@
 ---
 name: git-gh-workflow
 description: "Encodes git branching, commits, PR workflow, multi-identity model, versioning, and release process."
-version: 1.0.0
-author: conventional-agents
 license: MIT
-platforms: [linux, macos, windows]
-metadata:
-  hermes:
-    tags: [git, github, branching, prs, versioning, releases, changelog, ci-cd]
-    related_skills: [role-aware-session, framework-health-audit, github-auth, github-pr-workflow]
 ---
 
 # Git/GH Workflow Skill
@@ -536,6 +529,13 @@ Before marking a PR as ready for review, verify all of the following:
 5. **Cross-references are complete** — FS `related_adrs` and PLAN `related_specs` front matter fields reference all relevant companion documents.
 6. **Interfaces match reality** — The files touched by this PR align with the `interfaces:` declared in the governing FS. If they diverge, update the FS or explain in the PR description.
 7. **Status consistency check passes** — Run `npm run check:status` and resolve all reported violations before marking the PR ready.
+
+---
+
+## Related Skills
+
+- `skills/role-aware-session/SKILL.md` — session mode and role stance before acting on a branch or PR
+- `skills/framework-health-audit/SKILL.md` — the hygiene gate and `check:status` run before a PR is marked ready
 
 ---
 
