@@ -71,3 +71,24 @@ setup() {
     grep -F -q 'name=consumer-extension' "$FAKE_GH_TRACE"
     grep -F -q 'created=1' <<< "$output"
 }
+
+@test "label validation failures do not masquerade as duplicate-label races" {
+    set_fake_labels ''
+    export FAKE_GH_LABEL_POST_RESPONSE='{"message":"Validation Failed","errors":[{"resource":"Label","code":"invalid","field":"name"}]}'
+    export FAKE_GH_LABEL_POST_RC=1
+
+    run bash "$LABEL_PROVISION"
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"could not create label"* ]]
+    ! grep -q '[^[:space:]]' "$FAKE_GH_LABELS"
+}
+
+@test "the specific duplicate-label response is treated as already existing" {
+    set_fake_labels ''
+    export FAKE_GH_LABEL_POST_RESPONSE='{"message":"Validation Failed","errors":[{"resource":"Label","code":"already_exists","field":"name"}]}'
+    export FAKE_GH_LABEL_POST_RC=1
+
+    run bash "$LABEL_PROVISION"
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"created=0 existing=6"* ]]
+}

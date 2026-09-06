@@ -8,8 +8,13 @@ setup() {
 }
 
 board_with_drift() {
-    write_graphql_step 1 $'__PROJECT_PRESENT__\nIssue\t101\texample/target\t__UNSET__\tIn Progress\nIssue\t102\texample/target\tfeature\t__UNSET__\n__DONE__'
+    write_graphql_step 1 $'__PROJECT_PRESENT__\nitem-101\tIssue\t101\texample/target\t__UNSET__\tIn Progress\nitem-102\tIssue\t102\texample/target\tfeature\t__UNSET__\n__DONE__'
     set_fake_issues $'101\thttps://example.invalid/issues/101\n102\thttps://example.invalid/issues/102\n103\thttps://example.invalid/issues/103'
+}
+
+board_with_non_issue_drift() {
+    write_graphql_step 1 $'__PROJECT_PRESENT__\nitem-pr-201\tPullRequest\t\t\t__UNSET__\t__UNSET__\n__DONE__'
+    set_fake_issues ''
 }
 
 @test "SC-18: board audit source contains no mutating project or issue operation" {
@@ -94,6 +99,39 @@ board_with_drift() {
     run bash "$BOARD_AUDIT" --project 2 --owner example --repository example/target
     [ "$status" -eq 0 ]
     grep -F -q '2' "$FAKE_SLEEP_TRACE"
+}
+
+@test "SC-21: reset waits honor the server value beyond the exponential cap" {
+    write_graphql_step 1 '' '{"type":"RATE_LIMIT","resetAt":"1100"}' 1
+    write_graphql_step 2 $'__PROJECT_PRESENT__\n__DONE__'
+    export CA_GRAPHQL_MAX_ATTEMPTS=2
+    export CA_GRAPHQL_BACKOFF_MAX_SECONDS=60
+    export CA_NOW_EPOCH=100
+    export CA_RATE_LIMIT_BUFFER_SECONDS=1
+
+    run bash "$BOARD_AUDIT" --project 2 --owner example --repository example/target
+    [ "$status" -eq 0 ]
+    grep -F -q '1001' "$FAKE_SLEEP_TRACE"
+}
+
+@test "SC-21: Retry-After waits honor the server value beyond the exponential cap" {
+    write_graphql_step 1 '' 'RATE_LIMIT Retry-After: 3600' 1
+    write_graphql_step 2 $'__PROJECT_PRESENT__\n__DONE__'
+    export CA_GRAPHQL_MAX_ATTEMPTS=2
+    export CA_GRAPHQL_BACKOFF_MAX_SECONDS=60
+
+    run bash "$BOARD_AUDIT" --project 2 --owner example --repository example/target
+    [ "$status" -eq 0 ]
+    grep -F -q '3600' "$FAKE_SLEEP_TRACE"
+}
+
+@test "board audit counts non-Issue Project items for field drift" {
+    board_with_non_issue_drift
+
+    run bash "$BOARD_AUDIT" --project 2 --owner example --repository example/target
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"item:item-pr-201 (PullRequest)"* ]]
+    [[ "$output" == *"BOARD SUMMARY: unset-issue-type=1 unset-status=1 absent-from-board=0"* ]]
 }
 
 @test "SC-23: API failure is operationally distinct from drift" {

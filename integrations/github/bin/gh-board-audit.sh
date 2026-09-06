@@ -18,6 +18,7 @@ BOARD_QUERY='query($owner: String!, $number: Int!, $cursor: String) {
         title
         items(first: 100, after: $cursor) {
           nodes {
+            id
             content {
               __typename
               ... on Issue {
@@ -44,6 +45,7 @@ BOARD_QUERY='query($owner: String!, $number: Int!, $cursor: String) {
         title
         items(first: 100, after: $cursor) {
           nodes {
+            id
             content {
               __typename
               ... on Issue {
@@ -77,7 +79,8 @@ elif ((.data.repositoryOwner | objects | has("projectV2")) | not) or .data.repos
 else
   "__PROJECT_PRESENT__",
   (.data.repositoryOwner.projectV2.items.nodes[]?
-    | [(.content.__typename // ""),
+    | [(.id // ""),
+       (.content.__typename // ""),
        (.content.number // ""),
        (.content.repository.nameWithOwner // ""),
        (([.fieldValues.nodes[]? | select((.field.name // "") == "Issue Type") | .name] | first)
@@ -97,6 +100,8 @@ Usage: gh-board-audit.sh [OPTIONS]
 
 Report Project v2 drift without changing GitHub. The report separates unset
 Issue Type, unset Status, and open Issues absent from the selected project.
+All Project items are classified, including non-Issue items such as pull
+requests; only repository Issues participate in the absent-from-board check.
 
 Options:
   --project NUMBER              Project number; overrides CA_GITHUB_PROJECT_NUMBER
@@ -146,6 +151,21 @@ read_project_number_from_config() {
     printf '%s\n' "$project_number"
 }
 
+# Find a board item key in the parallel arrays without associative arrays so
+# the command remains compatible with the Bash 3.2 baseline.
+board_item_index() {
+    local wanted="$1"
+    local index
+
+    for index in "${!board_item_keys[@]}"; do
+        if [[ "${board_item_keys[$index]}" == "$wanted" ]]; then
+            printf '%s\n' "$index"
+            return 0
+        fi
+    done
+    return 1
+}
+
 # Find a board issue key in the parallel arrays without associative arrays so
 # the command remains compatible with the Bash 3.2 baseline.
 board_issue_index() {
@@ -161,37 +181,53 @@ board_issue_index() {
     return 1
 }
 
-# Append an Issue item and its two relevant single-select values.
+# Append any Project item and its two relevant single-select values. Non-Issue
+# items use a stable item-id display key and are included in field-drift counts.
 record_board_item() {
-    local number="$1"
-    local repository="$2"
-    local issue_type="$3"
-    local status="$4"
-    local key="${repository}#${number}"
+    local item_id="$1"
+    local content_type="$2"
+    local number="$3"
+    local repository="$4"
+    local issue_type="$5"
+    local status="$6"
+    local key display issue_key
 
-    [[ -n "$number" && -n "$repository" ]] || return 0
+    [[ -n "$item_id" ]] || return 0
+    if [[ "$content_type" == "Issue" && -n "$number" && -n "$repository" ]]; then
+        key="${repository}#${number}"
+        display="$key"
+    else
+        key="item:${item_id}"
+        display="item:${item_id} (${content_type:-unknown})"
+    fi
     if [[ "$issue_type" == "__UNSET__" ]]; then
         issue_type=""
     fi
     if [[ "$status" == "__UNSET__" ]]; then
         status=""
     fi
-    if board_issue_index "$key" >/dev/null; then
+    if board_item_index "$key" >/dev/null; then
         return 0
     fi
-    board_issue_keys+=("$key")
-    board_issue_types+=("$issue_type")
-    board_issue_statuses+=("$status")
+    board_item_keys+=("$key")
+    board_item_labels+=("$display")
+    board_item_types+=("$issue_type")
+    board_item_statuses+=("$status")
+    if [[ "$content_type" == "Issue" && -n "$number" && -n "$repository" ]]; then
+        issue_key="${repository}#${number}"
+        board_issue_keys+=("$issue_key")
+    fi
 }
 
 main() {
     local target_root repository owner project_number config_number
-    local cursor="" board_output response_file line field_a field_b field_c field_d field_e
+    local cursor="" board_output response_file line field_a field_b field_c field_d field_e field_f
     local project_present=false project_absent=false next_cursor=""
     local strict=false
     local issue_output issue_number issue_url issue_key index
     local unset_type=0 unset_status=0 absent_from_board=0
-    local -a board_issue_keys=() board_issue_types=() board_issue_statuses=()
+    local -a board_item_keys=() board_item_labels=() board_item_types=() board_item_statuses=()
+    local -a board_issue_keys=()
     local -a absent_issue_keys=()
 
     while (( $# > 0 )); do
@@ -309,10 +345,8 @@ main() {
                 __DONE__)
                     ;;
                 *)
-                    IFS=$'\t' read -r field_a field_b field_c field_d field_e <<< "$line"
-                    if [[ "$field_a" == "Issue" ]]; then
-                        record_board_item "$field_b" "$field_c" "$field_d" "$field_e"
-                    fi
+                    IFS=$'\t' read -r field_a field_b field_c field_d field_e field_f <<< "$line"
+                    record_board_item "$field_a" "$field_b" "$field_c" "$field_d" "$field_e" "$field_f"
                     ;;
             esac
         done <<< "$board_output"
@@ -331,11 +365,11 @@ main() {
         return 1
     fi
 
-    for index in "${!board_issue_keys[@]}"; do
-        if [[ -z "${board_issue_types[$index]}" ]]; then
+    for index in "${!board_item_keys[@]}"; do
+        if [[ -z "${board_item_types[$index]}" ]]; then
             unset_type=$((unset_type + 1))
         fi
-        if [[ -z "${board_issue_statuses[$index]}" ]]; then
+        if [[ -z "${board_item_statuses[$index]}" ]]; then
             unset_status=$((unset_status + 1))
         fi
     done
@@ -357,15 +391,15 @@ main() {
 
     printf 'BOARD AUDIT: project=present owner=%s number=%s\n' "$owner" "$project_number"
     printf 'BOARD AUDIT: unset-issue-type\n'
-    for index in "${!board_issue_keys[@]}"; do
-        if [[ -z "${board_issue_types[$index]}" ]]; then
-            printf '  - %s\n' "${board_issue_keys[$index]}"
+    for index in "${!board_item_keys[@]}"; do
+        if [[ -z "${board_item_types[$index]}" ]]; then
+            printf '  - %s\n' "${board_item_labels[$index]}"
         fi
     done
     printf 'BOARD AUDIT: unset-status\n'
-    for index in "${!board_issue_keys[@]}"; do
-        if [[ -z "${board_issue_statuses[$index]}" ]]; then
-            printf '  - %s\n' "${board_issue_keys[$index]}"
+    for index in "${!board_item_keys[@]}"; do
+        if [[ -z "${board_item_statuses[$index]}" ]]; then
+            printf '  - %s\n' "${board_item_labels[$index]}"
         fi
     done
     printf 'BOARD AUDIT: open-issues-without-project-item\n'

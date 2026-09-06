@@ -181,15 +181,27 @@ gh_common_repository_visibility() {
     esac
 }
 
+# Return the exact global git-config key used for a private framework clone.
+# Callers keep the value in memory only; this function must never be printed.
+gh_common_git_credentials_key() {
+    local token="$1"
+    local repository="$2"
+    local host="${3:-$(gh_common_git_host)}"
+
+    printf 'url.https://x-access-token:%s@%s/%s/.insteadOf\n' "$token" "$host" "$repository"
+}
+
 # Configure a scoped global insteadOf rewrite for a private framework clone.
 # The token is never printed by this function.
 gh_common_configure_git_credentials() {
     local token="$1"
     local repository="$2"
     local host="${3:-$(gh_common_git_host)}"
+    local rewrite_key
 
+    rewrite_key="$(gh_common_git_credentials_key "$token" "$repository" "$host")"
     git config --global \
-        "url.https://x-access-token:${token}@${host}/${repository}/.insteadOf" \
+        "$rewrite_key" \
         "https://${host}/${repository}/" >/dev/null 2>&1
 }
 
@@ -285,15 +297,29 @@ gh_common_reset_epoch() {
 gh_common_rate_wait() {
     local output="$1"
     local attempt="$2"
-    local retry_after reset_epoch now_epoch buffer base maximum wait multiplier
+    local retry_after reset_epoch now_epoch buffer base maximum wait multiplier server_wait=false
 
     buffer="${CA_RATE_LIMIT_BUFFER_SECONDS:-1}"
     base="${CA_GRAPHQL_BACKOFF_BASE_SECONDS:-1}"
     maximum="${CA_GRAPHQL_BACKOFF_MAX_SECONDS:-60}"
 
+    if [[ ! "$buffer" =~ ^[0-9]+$ ]]; then
+        gh_common_error "CA_RATE_LIMIT_BUFFER_SECONDS must be a non-negative integer."
+        return 1
+    fi
+    if [[ ! "$base" =~ ^[0-9]+$ ]]; then
+        gh_common_error "CA_GRAPHQL_BACKOFF_BASE_SECONDS must be a non-negative integer."
+        return 1
+    fi
+    if [[ ! "$maximum" =~ ^[0-9]+$ ]]; then
+        gh_common_error "CA_GRAPHQL_BACKOFF_MAX_SECONDS must be a non-negative integer."
+        return 1
+    fi
+
     retry_after="$(gh_common_retry_after "$output")"
     if [[ -n "$retry_after" ]]; then
         wait=$((retry_after + buffer))
+        server_wait=true
     else
         reset_epoch="$(gh_common_reset_epoch "$output")"
         if [[ -n "$reset_epoch" ]]; then
@@ -302,6 +328,7 @@ gh_common_rate_wait() {
             if (( wait < buffer )); then
                 wait="$buffer"
             fi
+            server_wait=true
         else
             multiplier=1
             for (( i = 1; i < attempt; i++ )); do
@@ -312,7 +339,9 @@ gh_common_rate_wait() {
     fi
 
     [[ "$wait" =~ ^[0-9]+$ ]] || wait="$base"
-    (( wait > maximum )) && wait="$maximum"
+    if [[ "$server_wait" != true ]] && (( wait > maximum )); then
+        wait="$maximum"
+    fi
     printf '%s\n' "$wait"
 }
 

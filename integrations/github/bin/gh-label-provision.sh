@@ -227,9 +227,13 @@ main() {
         if response="$(gh api "repos/$repository/labels" --method POST \
             -f "name=$label" -f "color=$LABEL_COLOR" 2>&1)"; then
             created=$((created + 1))
-        elif printf '%s\n' "$response" | grep -Eiq 'already exists|already_exists|validation failed'; then
+        elif printf '%s\n' "$response" \
+            | grep -Eiq '"resource"[[:space:]]*:[[:space:]]*"Label"' \
+            && printf '%s\n' "$response" \
+            | grep -Eiq '"code"[[:space:]]*:[[:space:]]*"already_exists"'; then
             # Concurrent invocations may race on the same create. The desired
-            # postcondition is still true, so classify it as already present.
+            # postcondition is still true, so classify only this specific
+            # duplicate-label response as already present.
             existing=$((existing + 1))
         else
             gh_common_error "could not create label '$label' in '$repository'; verify issues:write access."

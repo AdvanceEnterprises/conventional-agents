@@ -37,8 +37,46 @@ Exit codes:
 EOF
 }
 
+PRIVATE_CREDENTIAL_KEY=""
+PRIVATE_CREDENTIAL_EXISTING_VALUES=""
+PRIVATE_CREDENTIAL_HAD_EXISTING=false
+
+restore_private_credentials() {
+    local value restore_failed=false
+
+    [[ -n "$PRIVATE_CREDENTIAL_KEY" ]] || return 0
+    git config --global --unset-all "$PRIVATE_CREDENTIAL_KEY" >/dev/null 2>&1 || true
+    if [[ "$PRIVATE_CREDENTIAL_HAD_EXISTING" == true ]]; then
+        while IFS= read -r value; do
+            [[ -n "$value" ]] || continue
+            if ! git config --global --add "$PRIVATE_CREDENTIAL_KEY" "$value" >/dev/null 2>&1; then
+                restore_failed=true
+            fi
+        done <<< "$PRIVATE_CREDENTIAL_EXISTING_VALUES"
+    fi
+    PRIVATE_CREDENTIAL_KEY=""
+    PRIVATE_CREDENTIAL_EXISTING_VALUES=""
+    PRIVATE_CREDENTIAL_HAD_EXISTING=false
+    if [[ "$restore_failed" == true ]]; then
+        gh_common_error "could not restore the pre-existing global git credential rewrite."
+        return 1
+    fi
+    return 0
+}
+
+finish_with_credential_cleanup() {
+    local exit_status=$?
+    if ! restore_private_credentials; then
+        exit_status=1
+    fi
+    trap - EXIT
+    exit "$exit_status"
+}
+
+trap finish_with_credential_cleanup EXIT
+
 main() {
-    local target_root framework_repository visibility token
+    local target_root framework_repository visibility token config_status
 
     while (( $# > 0 )); do
         case "$1" in
@@ -87,6 +125,17 @@ main() {
             if [[ -z "$token" ]]; then
                 gh_common_error "framework repository '$framework_repository' is private; set CA_FRAMEWORK_TOKEN (or GH_TOKEN/GITHUB_TOKEN) before retrying."
                 return 1
+            fi
+            PRIVATE_CREDENTIAL_KEY="$(gh_common_git_credentials_key "$token" "$framework_repository")"
+            if PRIVATE_CREDENTIAL_EXISTING_VALUES="$(git config --global --get-all "$PRIVATE_CREDENTIAL_KEY" 2>/dev/null)"; then
+                PRIVATE_CREDENTIAL_HAD_EXISTING=true
+            else
+                config_status=$?
+                if (( config_status != 1 )); then
+                    PRIVATE_CREDENTIAL_KEY=""
+                    gh_common_error "could not inspect the pre-existing global git credential rewrite for '$framework_repository'."
+                    return 1
+                fi
             fi
             if ! gh_common_configure_git_credentials "$token" "$framework_repository"; then
                 gh_common_error "could not configure the global git credential rewrite for '$framework_repository'."
