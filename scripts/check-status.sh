@@ -199,16 +199,17 @@ get_relation_ids() {
       if (line ~ /\[/) {
         gsub(/^[[:space:]]*\[|[][[:space:]]*$/, "", line)
         gsub(/[[:space:]]*,[[:space:]]*/, "\n", line)
-        gsub(/"/, "", line)
+        gsub(/["'\'']/, "", line)
         if (line != "") print line
         next
       }
+      gsub(/^["'\'']|["'\'']$/, "", line)
       if (line != "") print line
       in_list=1
       next
     }
     n==1 && in_list && /^[[:space:]]*-/{
-      v=$0; sub(/^[[:space:]]*-[[:space:]]*/, "", v); gsub(/"/, "", v)
+      v=$0; sub(/^[[:space:]]*-[[:space:]]*/, "", v); gsub(/["'\'']/, "", v)
       if (v != "") print v
       next
     }

@@ -103,6 +103,14 @@ FIXTURE_EOF
   ! echo "$output" | grep -F "ADR-9996"
 }
 
+@test "supersession: a double-quoted scalar id is normalised before resolution" {
+  write_fixture "superseded" '"ADR-0000"' "superseded"
+  run bash "$CHECK"
+  echo "$output"
+  [ "$status" -eq 0 ]
+  ! echo "$output" | grep -F "ADR-9996"
+}
+
 @test "supersession: YAML block list shape resolves each entry" {
   write_fixture "superseded" "null" "superseded"
   # Block list shape:
