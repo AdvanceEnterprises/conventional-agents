@@ -45,23 +45,32 @@ decision was vindicated; its reasoning was overtaken.
 
 ### The evidence that this is not hypothetical
 
-Three consequences have accumulated, each already recorded in `BACKLOG.md`:
+Three problems, all within the area `BACKLOG.md`'s "The Agent Skills format is an
+unnamed upstream dependency" entry covers:
 
-- **The upstream is unrecorded.** `README.md`'s "Upstream References" section
-  lists four adopted standards — Conventional Commits, Keep a Changelog, MADR,
-  arc42 — each with a URL and a pointer to where the framework's subset lives.
-  Agent Skills is the fifth adopted standard and is absent. Grepping the
-  repository for any reference to the format's origin returns nothing.
+- **The upstream is recorded only in passing, and the record points at the wrong
+  kind of document.** `README.md`'s "Upstream References" carries an Agent Skills
+  line with the `agentskills.io/specification` URL — but where the other four
+  upstreams each point at a current-state document holding the framework's
+  subset (`workflows/git-and-gh-conventions.md`, `templates/core/adr-full-madr.md`,
+  and so on), this one points at `BACKLOG.md`, whose own header states it "is not
+  normative" and that "an agent must not treat an entry here as authorization to
+  act." `ADR-0030` puts current rules in the exported surface, not the backlog.
+  The line also describes the divergence as only a `version` / `author` /
+  `platforms` "field placement" difference, which understates it — see the next
+  point.
 
-- **The framework's own skills do not conform to the base spec.** All six shipped
+- **The framework's own skills do not conform to the base spec.** All six indexed
   skills carry `version`, `author`, and `platforms` as top-level frontmatter
   keys; the spec's own example places `author` and `version` **under
   `metadata:`**. All six carry `metadata.hermes.tags: [array]` and
   `metadata.hermes.related_skills: [array]` — nested maps containing arrays,
   where the spec defines `metadata` as *"a map from string keys to string
-  values."* `skills/git-gh-workflow/SKILL.md` also lists `related_skills:`
-  entries `github-auth` and `github-pr-workflow`, which exist only in Hermes
-  Agent's shipped skill set, not this repository.
+  values."* Cross-references are broken in both directions:
+  `skills/testing-guide/SKILL.md` names `test-driven-development` and
+  `skills/git-gh-workflow/SKILL.md` names `github-auth` and `github-pr-workflow`
+  — none of which exist in this repository (the latter two are Hermes Agent's).
+  `skills/example-skill/SKILL.md` is a tracked, empty, unindexed file.
 
 - **The framework's skills are written in one runtime's dialect, and it is not
   the only dialect.** The `metadata.hermes.*` keys the six skills carry are
@@ -82,11 +91,12 @@ Three consequences have accumulated, each already recorded in `BACKLOG.md`:
 skills remain standalone-useful, skills do not duplicate the universal gate list.
 This ADR does not reopen any of that.
 
-What is missing is a record of **provenance and profile**. The framework has been
-authoring an unrecorded profile of an external standard and calling it "the
-format." `ADR-0001` is `accepted` and append-only, so its premise cannot be
-corrected in place. `ADR-0030` requires that the rule a document carries live in
-a current-state document; there is no current-state document naming the skill
+What is missing is a **properly homed record of the profile**. The framework has
+been authoring a profile of an external standard with the profile itself
+undocumented — the README line gestures at it and points at `BACKLOG.md`.
+`ADR-0001` is `accepted` and append-only, so its premise cannot be corrected in
+place. `ADR-0030` requires that the rule a document carries live in a
+current-state document; there is no current-state document naming the skill
 format's origin or the framework's own authoring rules — those rules are prose
 buried in an accepted ADR.
 
@@ -101,10 +111,10 @@ and how do runtime-specific dialects stay out of portable source?**
 - **`ADR-0030` separates decision records from current-state documents.** The
   framework's authoring rules are a current-state concern and currently have no
   current-state home.
-- **Public release.** Publishing a framework that implements someone else's open
-  standard without citing it is both a correctness problem and a discourtesy.
-  `README.md` already treats four other upstreams with a URL and a subset
-  pointer; Agent Skills is conspicuously the exception.
+- **Public release.** The Agent Skills line in `README.md` points readers at
+  `BACKLOG.md` for the framework's profile — a non-normative internal document a
+  public adopter should not be sent to. The other four upstreams point at
+  exported current-state documents. This one should too.
 - **The framework runs on at least four runtimes** — Hermes Agent, OpenClaw,
   Claude Code, an OpenAI Codex-family agent — and each has its own
   skill-discovery expectations and its own (or no) extension namespace. A source
@@ -117,15 +127,15 @@ and how do runtime-specific dialects stay out of portable source?**
 
 ## Considered Options
 
-### Option A — Record the upstream in `README.md`, change nothing else
+### Option A — Repoint the `README.md` line, change nothing else
 
-Add the Agent Skills row to "Upstream References" and stop.
+Rewrite the existing Agent Skills line to point at a real current-state document
+instead of `BACKLOG.md` and stop.
 
-Cheapest, and it clears the public-release blocker. It fixes neither the
-conformance drift nor the dialect problem: the six skills still fail
-`claude plugin validate`, and a skill authored tomorrow still defaults to the
-Hermes profile because nothing says otherwise. This is the status quo `BACKLOG.md`
-has flagged since 2026-07-29.
+Cheapest. It fixes neither the conformance drift nor the dialect problem: the six
+skills still fail `claude plugin validate`, and a skill authored tomorrow still
+defaults to the Hermes profile because nothing says otherwise. This is close to
+the status quo `BACKLOG.md` has flagged since 2026-07-29.
 
 ### Option B — Formally fork: the framework defines its own skill format
 
@@ -153,12 +163,14 @@ exist yet.
 
 **Chosen option: Option C — the framework profiles Agent Skills.**
 
-### 1. Agent Skills is a recorded upstream
+### 1. The `README.md` upstream entry points at the profile document
 
-`README.md`'s "Upstream References" gains an Agent Skills entry with its URL
-(`agentskills.io/specification`) and a pointer to where the framework's profile
-is documented, matching the treatment of the other four upstreams. `ADR-0001`
-gains a Status note pointing to this ADR (an allowed post-acceptance edit).
+`README.md`'s existing Agent Skills line in "Upstream References" keeps its URL
+and is rewritten to point at the current-state profile document (rule 3), not at
+`BACKLOG.md`, and to describe the divergence accurately rather than as a
+"field placement" difference — matching how the other four upstreams cite an
+exported subset document. `ADR-0001` gains a Status note pointing to this ADR (an
+allowed post-acceptance edit — Status section only).
 
 ### 2. The framework profiles the standard; it does not define a format
 
@@ -184,20 +196,33 @@ carried forward from `ADR-0001` and stated here so they can be checked:
 - **No duplicate gates.** A skill summarises and links; it does not restate
   `ROLE_CONTRACT.md`.
 
-Per `ADR-0030`, these rules live in a current-state document
-(`skills/index.md` or a new `skills/AUTHORING.md`), and this ADR is discharged
-once that document carries them.
+Per `ADR-0030`, these rules live in **one** current-state document,
+`skills/AUTHORING.md` (new; `skills/index.md` stays a pure catalogue). Creating
+that document and moving the rules into it is an acceptance prerequisite for this
+ADR — the ADR is not discharged while the rules remain only in `ADR-0001`'s body
+and this ADR's prose.
 
-### 4. Source skills target the base spec
+### 4. Source skills must target the base spec
 
-The committed `skills/*/SKILL.md` files are base-spec-clean:
+The committed `skills/*/SKILL.md` files **do not** conform today; this rule is
+the target state, and reaching it is Category 2 follow-up work under `ADR-0015`
+(**not performed in this PR**). When that work is done:
 
 - `version`, `author`, `platforms` move under `metadata:` as string values, or
   are dropped where they carry no information.
 - `metadata` is a flat map of string keys to string values. The
-  `metadata.hermes.*` nesting is removed from source.
-- Cross-references (`related_skills` and prose) name only skills that exist in
-  this repository and appear in `skills/index.md`.
+  `metadata.hermes.*` nesting leaves the source files.
+- Every `related_skills` entry and every prose cross-reference names a skill that
+  exists in this repository and appears in `skills/index.md`. The known dangling
+  entries — `test-driven-development` (in `testing-guide`), `github-auth` and
+  `github-pr-workflow` (in `git-gh-workflow`) — are resolved or removed.
+- `skills/example-skill/SKILL.md` is filled to the minimum content checklist and
+  indexed, or removed. `BACKLOG.md` records that an empty local format example
+  "should stay that way or be removed"; this ADR's position is: remove it.
+
+The conformance claim is scoped to the six skills in `skills/index.md` plus
+whatever `example-skill` becomes. Nothing here asserts the source tree is clean
+before that work lands.
 
 ### 5. Runtime dialects are a binding's responsibility, not the source's
 
@@ -209,9 +234,14 @@ dialect is never backported into `skills/*/SKILL.md`.
 
 ### 6. Conformance becomes a gate — under its own FS
 
-Adopting `skills-ref validate` (or an equivalent conformance validator) as a CI
-gate is Category 1 under `ADR-0015` and requires an approved FS and PLAN. This
-ADR authorises the direction; it does not authorise writing the gate.
+Adopting `skills-ref validate` (the Agent Skills reference validator) or an
+equivalent as a merge-blocking CI check is Category 1 under `ADR-0015` — its
+"Location invariant": *any executable invoked by CI as a blocking check is a
+governance gate regardless of its physical location* — and requires an approved
+FS and PLAN, and a home in `scripts/`. This ADR authorises the direction; it does
+not authorise writing the gate. `claude plugin validate` is **not** that gate: it
+validates a Claude plugin manifest and Claude-side frontmatter, which is a
+different and narrower check than cross-runtime Agent Skills conformance.
 
 ### 7. The `ADR-0034` Part 2 skill reorganisations proceed as Category 2 work
 
@@ -223,24 +253,28 @@ and follow rules 3–5 above when done.
 
 ### Positive
 
-- The upstream dependency is recorded, clearing a public-release blocker and
-  matching the framework's own second-highest quality goal (Tool Neutrality is
-  better served by tracking upstreams than by inventing).
-- The six shipped skills become spec-conformant and portable; `git-gh-workflow`'s
-  dangling cross-references are resolved.
-- The framework's authoring rules stop being folklore in an accepted ADR's prose
-  and become a checkable current-state document.
+- The profile is properly homed: the `README.md` upstream entry points at an
+  exported current-state document, and the authoring rules stop being folklore in
+  an accepted ADR's prose.
+- The follow-up cleanup has a defined target: the six indexed skills become
+  spec-conformant and portable, and every dangling cross-reference and the empty
+  `example-skill` are resolved.
 - A clean seam — portable source skill versus runtime dialect — that `ADR-0039`
   builds on directly.
 
 ### Negative
 
-- The six skills need mechanical edits and re-review.
+- The six skills need mechanical edits and re-review, and that work is not in
+  this PR — the merged ADR describes a target the source does not yet meet, and
+  says so.
 - A consumer running the framework's skills through Hermes today and relying on
   `metadata.hermes.*` in the **source** files loses that until the Hermes runtime
   binding restores it at sync time — a migration with a timing gap.
 - Adopting `skills-ref validate` later makes the framework depend on an external
   tool, the same maintenance class as `markdownlint`.
+- `skills/AUTHORING.md` is a new exported-surface file: it joins the lint globs
+  and the surface enumeration `BACKLOG.md` already notes is maintained by hand in
+  five places.
 
 ### Neutral
 
@@ -255,15 +289,18 @@ and follow rules 3–5 above when done.
 
 This decision is correct if:
 
+- **The profile is homed.** `skills/AUTHORING.md` exists, carries the five
+  authoring rules, and is what the `README.md` upstream line points at —
+  `BACKLOG.md` is no longer cited there.
+- **The cleanup lands.** After the Category 2 follow-up: no `skills/*/SKILL.md`
+  has a nested map or array under `metadata:`; no `related_skills` entry or prose
+  cross-reference names a skill absent from `skills/index.md` (the named danglers
+  — `test-driven-development`, `github-auth`, `github-pr-workflow` — are gone);
+  `example-skill` is removed or filled and indexed. All grep-checkable, and the
+  content of the future conformance gate.
 - **Conformance holds.** Once adopted, `skills-ref validate ./skills/<name>`
-  passes on every framework skill, or each failure is a documented exception in
-  the profile document.
-- **The upstream is cited.** `README.md`'s "Upstream References" has an Agent
-  Skills row with its URL.
-- **Source stays base-spec-clean.** No `skills/*/SKILL.md` has a nested map or
-  array under `metadata:`, and no cross-reference names a skill absent from
-  `skills/index.md`. Both are grep-checkable and belong in the future conformance
-  gate.
+  passes on every indexed framework skill, or each failure is a documented
+  exception in `skills/AUTHORING.md`.
 - **Review checkpoint — first runtime binding.** When `ADR-0039`'s first binding
   ships, confirm the runtime dialect it needs was applied *in the binding*, not
   backported into a source skill.
@@ -280,17 +317,24 @@ Hermes/OpenClaw split by accident.
   forward-pointing Status note.
 - `ADR-0015` — the tool taxonomy; skill edits are Category 2, the conformance
   gate is Category 1.
-- `ADR-0030` — decision records versus current-state documents; the profile rules
-  move to a current-state document.
+- `ADR-0030` — decision records versus current-state documents; why the profile
+  rules move to `skills/AUTHORING.md` rather than staying in `ADR-0001` or
+  pointing at `BACKLOG.md`.
 - `ADR-0034` — the proposed ADR whose Part 2 this carries forward.
 - `ADR-0039` — agent-runtime bindings; consumes rule 5 (dialects are a binding's
   job).
-- `README.md` §"Upstream References" — where the Agent Skills entry lands.
-- `skills/index.md` — the current-state document that will carry the profile.
+- `README.md` §"Upstream References" — the existing Agent Skills line, rewritten
+  by rule 1.
+- `skills/index.md` — the skill catalogue; stays a catalogue.
+- `skills/AUTHORING.md` — new; the single current-state home for the profile
+  (rule 3).
 - `BACKLOG.md` §"The Agent Skills format is an unnamed upstream dependency" — the
-  gap this ADR closes.
+  gap this ADR closes; also the source of the "remove the empty example" position.
 - [agentskills.io/specification](https://agentskills.io/specification) — the
   authoritative format specification.
+- [learn.chatgpt.com/docs/build-skills](https://learn.chatgpt.com/docs/build-skills)
+  — Codex CLI's skills support: base agentskills.io, `.agents/skills` discovery,
+  no `metadata.codex.*` namespace (a base-spec consumer).
 - [docs.openclaw.ai/tools/skills-config](https://docs.openclaw.ai/tools/skills-config)
-  — OpenClaw's six-source skill hierarchy and `metadata.openclaw.*` namespace;
-  the second `metadata.<runtime>.*` extension this ADR's rule 5 accounts for.
+  — OpenClaw's `metadata.openclaw.*` namespace; the second `metadata.<runtime>.*`
+  extension this ADR's rule 5 accounts for.

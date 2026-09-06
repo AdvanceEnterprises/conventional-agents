@@ -16,43 +16,51 @@ For this project (a documentation/standards kit), semver follows the
 - **ADR-0038: Agent Skills as a profiled upstream standard** (proposed) —
   records that the framework *profiles* the Agent Skills open standard
   ([agentskills.io](https://agentskills.io/specification)) rather than
-  defining a skill format, that ADR-0001's "most other tools have no formal
-  skills system" premise was overtaken (the format is now implemented by
-  ~45 products and by both dominant self-hosted runtimes, Hermes Agent and
-  OpenClaw — which each add an incompatible `metadata.<runtime>.*` extension
-  namespace), and names the framework's own authoring rules (standalone-useful,
-  non-exhaustive compliance summary, minimum content checklist, ~400-line size
-  signal, no duplicate gates) as a profile distinct from the spec. Source
-  `skills/*/SKILL.md` target the base spec (flat string `metadata`, no
-  `metadata.hermes.*` / `metadata.openclaw.*` nesting); runtime-specific
-  frontmatter is applied by a runtime binding (ADR-0039), never committed to
-  source. Adopting a conformance validator as CI is Category 1 and deferred
-  to its own FS. Carries forward ADR-0034 Part 2.
+  defining a skill format, and that ADR-0001's "most other tools have no
+  formal skills system" premise was overtaken (the format is now implemented
+  by ~45 products, by Codex CLI, and by both dominant self-hosted runtimes —
+  Hermes Agent and OpenClaw, which each add an incompatible
+  `metadata.<runtime>.*` extension namespace). `README.md` already carries an
+  Agent Skills upstream line, but it points at the non-normative `BACKLOG.md`
+  and understates the divergence; this ADR moves the framework's authoring
+  rules (standalone-useful, non-exhaustive compliance summary, minimum
+  content checklist, ~400-line size signal, no duplicate gates) into one new
+  current-state document `skills/AUTHORING.md` and repoints the README line
+  at it. Source `skills/*/SKILL.md` **must** target the base spec (flat
+  string `metadata`, no `metadata.hermes.*` / `metadata.openclaw.*` nesting,
+  no dangling cross-references); the six skills are non-conformant today and
+  that mechanical cleanup is Category 2 follow-up, **not in this PR**.
+  Runtime-specific frontmatter is applied by a runtime binding (ADR-0039),
+  never committed to source. Adopting a conformance validator as merge-CI is
+  Category 1 and deferred to its own FS. Carries forward ADR-0034 Part 2.
 - **ADR-0039: Agent-runtime integration bindings** (proposed) — extends
   ADR-0024's two-layer substrate model to agent runtimes: a *runtime
   binding* under `integrations/runtimes/<runtime>/` maps the framework's
   setup requirements (anchor-file wiring per ADR-0004, gate-script
   execution, skill discovery, commit identity/attribution, MCP config) onto
   one runtime's config surface, packaged in ADR-0037's directory envelope
-  and governed as binding content. Names the four runtimes the framework
-  runs on — Hermes Agent, OpenClaw (near-identical "gateway-class"
-  siblings), Claude Code, and an OpenAI Codex-family agent — and sequences
-  the bindings: Claude Code first (its plugin layout doubles as a lingua
-  franca OpenClaw's bundle importer and Codex's `.codex-plugin/` both
-  consume; `claude plugin validate` gives a free conformance gate), the
-  Hermes + OpenClaw gateway-class family second (two independent
-  implementations = ADR-0024's "extract from more than one" in one cycle),
-  Codex third. Draws the ADR-0007 line: a binding ships config that
-  *applies* framework-defined rules (a hook running `check-status.sh`),
+  and governed as binding content — **bounded by ADR-0015's Location
+  invariant**: a binding executable is outside the tool taxonomy only while
+  non-blocking; anything wired into a merge-blocking CI job is a Category 1
+  gate and moves to `scripts/` with its own FS. Names the four runtimes the
+  framework runs on (Hermes Agent, OpenClaw, Claude Code, an OpenAI
+  Codex-family agent) and suggests — without pre-unifying any two — a binding
+  order: Claude Code first (forces ADR-0038 skill conformance; its plugin's
+  skill/MCP portions carry to other runtimes via OpenClaw's importer and
+  Codex's `.agents/skills`, its hooks and wiring do not), then Hermes and
+  OpenClaw as **two independently specified and accepted bindings**, then
+  Codex. Draws the ADR-0007 line: a binding ships config that *applies*
+  framework-defined rules (a local advisory hook running `check-status.sh`),
   never config that *defines* new workflow (a hook writing a `status:`
   field, a `schedule:` trigger, a plugin agent swap). MCP-server
   configuration is runtime-binding content, not a new ADR-0015 category —
-  **supersedes ADR-0034 Part 1**. The layer is optional; the neutral
-  surface stays authoritative; no neutral runtime contract is extracted
-  before the gateway-class binding lands. Retires the never-built `packs/`
-  concept and fixes the broken `packs/` copy-paste path in `INTEGRATION.md`.
-  On acceptance of both ADRs, ADR-0034 (proposed, never accepted) moves to
-  `superseded`.
+  **supersedes ADR-0034 Part 1**. The layer is optional; no neutral runtime
+  contract is defined here — it is recorded in a successor ADR only after ≥2
+  bindings ship and their overlap is demonstrated. Retires the never-built
+  `packs/` concept (ADR-0001 gets a Status note, not a body edit) and fixes
+  the broken `packs/` copy-paste path in `INTEGRATION.md`. If both ADRs are
+  accepted, ADR-0034's supersession and issue #107's closure are separate
+  recorded follow-up operations, not effects of merge.
 - **FS-0028: ADR supersession chain gate** (draft) — rule 5b in
   `scripts/check-status.sh` machine-checks the `superseded_by:` front-matter
   field on every ADR: a `superseded` ADR must name a replacement, every
