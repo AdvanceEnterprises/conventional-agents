@@ -2,9 +2,9 @@
 type: change-plan
 role: implementer
 language: bash
-status: draft
+status: approved
 related_specs: [FS-0029]
-approved_by: ""
+approved_by: "Joey Clark <administrator@ajoeofalltrades.dev>"
 related_adrs: [ADR-0037]
 touches:
   - integrations/github/README.md
@@ -26,7 +26,7 @@ touches:
   - docs/change-plans/README.md
   - CHANGELOG.md
 created: 2026-09-03
-updated: 2026-09-03
+updated: 2026-09-06
 ---
 
 # PLAN-0035: Implement FS-0029 — Executable Layer for the GitHub Binding
@@ -41,22 +41,15 @@ updated: 2026-09-03
 
 ## Approval Routing
 
-This plan **cannot self-approve** and does not attempt to. Its `touches:` set
-includes `scripts/README.md`, `.github/workflows/lint-docs.yml`, and
-`package.json` — three of the five reserved paths under `ADR-0027` — so
-`check-status.sh` rule 6 requires human approval regardless of how `FS-0029`'s
-`interfaces:` are framed.
+This plan cannot self-approve. Its `touches:` set includes `scripts/README.md`,
+`.github/workflows/lint-docs.yml`, and `package.json` — three of the five
+reserved paths under `ADR-0027` — so `check-status.sh` rule 6 required a
+recorded human approval regardless of how `FS-0029`'s `interfaces:` are framed.
 
-It is `status: draft` in this planning PR and transitions to `approved` on
-this PR's human merge, carried by an `Approved-By:` trailer on the merge
-commit (`ADR-0026`). **Implementation begins only after that approval** —
-per the spec-first gate (`guidelines/ROLE_CONTRACT.md:49-54`) an approved FS
-and an approved PLAN must exist before production or test code is written,
-and `ADR-0026:179-188` authorizes no implementation under deferred approval.
-The implementing PR therefore opens after this PR merges, never inside it;
-flipping the PLAN inside the implementing PR would fail the gate rather than
-record an approval that had occurred — a known trap, and the reason this
-section exists rather than being assumed.
+Human approval is recorded in this change with matching `Approved-By:` and
+`Approved-Artifacts:` trailers on the approval commit, and the approving human
+is recorded in `approved_by:` above (`ADR-0026`). `ADR-0037` is accepted and
+`FS-0029` is approved, so implementation may proceed from this plan.
 
 ## 2. Scope of Change
 
@@ -306,12 +299,12 @@ Modified:
 
 ## 10. Readiness Check
 
-* [ ] `ADR-0037` is `accepted`
-* [ ] `FS-0029` is `approved`
-* [ ] Tests are defined against `FS-0029` Success Criteria (§3 above)
-* [ ] Scope is minimal and explicit
-* [ ] No architectural changes implied beyond those `ADR-0037` records
-* [ ] Human approval recorded for the reserved paths in `touches:` (`ADR-0027`)
+* [x] `ADR-0037` is `accepted`
+* [x] `FS-0029` is `approved`
+* [x] Tests are defined against `FS-0029` Success Criteria (§3 above)
+* [x] Scope is minimal and explicit
+* [x] No architectural changes implied beyond those `ADR-0037` records
+* [x] Human approval recorded for the reserved paths in `touches:` (`ADR-0027`)
 
 ## Declaration
 
