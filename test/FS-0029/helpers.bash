@@ -11,6 +11,7 @@ setup_binding_fixture() {
     FAKE_BIN="$BATS_TEST_TMPDIR/bin"
     FAKE_GH_TRACE="$BATS_TEST_TMPDIR/gh.trace"
     FAKE_GIT_TRACE="$BATS_TEST_TMPDIR/git.trace"
+    FAKE_GIT_ASKPASS_TRACE="$BATS_TEST_TMPDIR/git-askpass.trace"
     FAKE_SLEEP_TRACE="$BATS_TEST_TMPDIR/sleep.trace"
     FAKE_GH_LABELS="$BATS_TEST_TMPDIR/labels"
     FAKE_GH_ISSUES="$BATS_TEST_TMPDIR/issues"
@@ -21,14 +22,17 @@ setup_binding_fixture() {
     (cd "$TARGET_ROOT" && git init -q && git remote add origin https://github.com/example/target.git)
     : > "$FAKE_GH_TRACE"
     : > "$FAKE_GIT_TRACE"
+    : > "$FAKE_GIT_ASKPASS_TRACE"
     : > "$FAKE_SLEEP_TRACE"
     : > "$FAKE_GH_LABELS"
     : > "$FAKE_GH_ISSUES"
     : > "$GIT_CONFIG_GLOBAL"
 
     export REPO_ROOT BINDING_ROOT SUBMODULE_INIT LABEL_PROVISION BOARD_AUDIT
-    export TARGET_ROOT FAKE_BIN FAKE_GH_TRACE FAKE_GIT_TRACE FAKE_SLEEP_TRACE
+    export TARGET_ROOT FAKE_BIN FAKE_GH_TRACE FAKE_GIT_TRACE FAKE_GIT_ASKPASS_TRACE FAKE_SLEEP_TRACE
     export FAKE_GH_LABELS FAKE_GH_ISSUES FAKE_GH_GRAPHQL_DIR GIT_CONFIG_GLOBAL
+    # Binding commands may be exercised with an explicit Bash 3.2 binary.
+    export TEST_BASH="${CA_BASH_FOR_TESTS:-bash}"
     export CA_TARGET_REPO="$TARGET_ROOT"
     export CA_GITHUB_REPOSITORY="example/target"
     export CA_FRAMEWORK_REPOSITORY="example/framework"
@@ -164,6 +168,10 @@ for argument in "$@"; do
 done
 printf '\n' >> "$FAKE_GIT_TRACE"
 if [[ "${1:-}" == "submodule" ]]; then
+    printf '%s\n' "${GIT_ASKPASS:-}" > "$FAKE_GIT_ASKPASS_TRACE"
+    if [[ -n "${FAKE_GIT_SUBMODULE_ERROR:-}" ]]; then
+        printf '%s\n' "$FAKE_GIT_SUBMODULE_ERROR" >&2
+    fi
     exit "${FAKE_GIT_SUBMODULE_RC:-0}"
 fi
 exec "$REAL_GIT" "$@"

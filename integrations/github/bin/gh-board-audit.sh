@@ -120,6 +120,7 @@ Environment variables:
   CA_GRAPHQL_MAX_ATTEMPTS       Maximum attempts for a rate-limited call (default: 3)
   CA_GRAPHQL_BACKOFF_BASE_SECONDS  Initial exponential-backoff seconds (default: 1)
   CA_GRAPHQL_BACKOFF_MAX_SECONDS   Maximum exponential-backoff wait (default: 60)
+  CA_GRAPHQL_SERVER_WAIT_MAX_SECONDS  Safety ceiling for server-directed waits (default: 86400)
   CA_RATE_LIMIT_BUFFER_SECONDS  Buffer added to a reported reset or retry wait (default: 1)
   CA_NOW_EPOCH                  Test/operator override for the current epoch
 
@@ -323,8 +324,6 @@ main() {
         next_cursor=""
         while IFS= read -r line; do
             case "$line" in
-                INFO:*)
-                    ;;
                 __PROJECT_PRESENT__)
                     project_present=true
                     ;;

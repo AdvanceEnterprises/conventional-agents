@@ -66,7 +66,10 @@ read_extension_labels() {
     while IFS= read -r line || [[ -n "$line" ]]; do
         normalized="$(printf '%s' "$line" | sed -e 's/[[:space:]]*#.*$//' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
         [[ -n "$normalized" ]] || continue
-        if ! array_contains "$normalized" "${FRAMEWORK_LABELS[@]}" "${EXTENSION_LABELS[@]}"; then
+        if array_contains "$normalized" "${FRAMEWORK_LABELS[@]}"; then
+            continue
+        fi
+        if (( ${#EXTENSION_LABELS[@]} == 0 )) || ! array_contains "$normalized" "${EXTENSION_LABELS[@]}"; then
             EXTENSION_LABELS+=("$normalized")
         fi
     done < "$extension_file"
@@ -151,7 +154,10 @@ main() {
         return 1
     fi
     read_extension_labels "$extension_file"
-    expected_labels=("${FRAMEWORK_LABELS[@]}" "${EXTENSION_LABELS[@]}")
+    expected_labels=("${FRAMEWORK_LABELS[@]}")
+    if (( ${#EXTENSION_LABELS[@]} > 0 )); then
+        expected_labels+=("${EXTENSION_LABELS[@]}")
+    fi
 
     gh_common_auth_check || return 1
     if ! current_labels="$(gh api "repos/$repository/labels?per_page=100" --paginate --jq '.[].name' 2>/dev/null)"; then
@@ -222,24 +228,26 @@ main() {
         return 0
     fi
 
-    for label in "${missing_labels[@]}"; do
-        gh_common_auth_check || return 1
-        if response="$(gh api "repos/$repository/labels" --method POST \
-            -f "name=$label" -f "color=$LABEL_COLOR" 2>&1)"; then
-            created=$((created + 1))
-        elif printf '%s\n' "$response" \
-            | grep -Eiq '"resource"[[:space:]]*:[[:space:]]*"Label"' \
-            && printf '%s\n' "$response" \
-            | grep -Eiq '"code"[[:space:]]*:[[:space:]]*"already_exists"'; then
-            # Concurrent invocations may race on the same create. The desired
-            # postcondition is still true, so classify only this specific
-            # duplicate-label response as already present.
-            existing=$((existing + 1))
-        else
-            gh_common_error "could not create label '$label' in '$repository'; verify issues:write access."
-            return 1
-        fi
-    done
+    if (( ${#missing_labels[@]} > 0 )); then
+        for label in "${missing_labels[@]}"; do
+            gh_common_auth_check || return 1
+            if response="$(gh api "repos/$repository/labels" --method POST \
+                -f "name=$label" -f "color=$LABEL_COLOR" 2>&1)"; then
+                created=$((created + 1))
+            elif printf '%s\n' "$response" \
+                | grep -Eiq '"resource"[[:space:]]*:[[:space:]]*"Label"' \
+                && printf '%s\n' "$response" \
+                | grep -Eiq '"code"[[:space:]]*:[[:space:]]*"already_exists"'; then
+                # Concurrent invocations may race on the same create. The desired
+                # postcondition is still true, so classify only this specific
+                # duplicate-label response as already present.
+                existing=$((existing + 1))
+            else
+                gh_common_error "could not create label '$label' in '$repository'; verify issues:write access."
+                return 1
+            fi
+        done
+    fi
 
     printf 'LABEL SUMMARY: created=%d existing=%d unexpected=%d\n' \
         "$created" "$existing" "${#unexpected_labels[@]}"

@@ -372,6 +372,14 @@ a duplicate FS/PLAN ID.
 
 `npm test` runs `bash scripts/run-bats.sh`.
 
+The FS-0029 suites invoke shipped binding commands with `${CA_BASH_FOR_TESTS:-bash}`.
+Set `CA_BASH_FOR_TESTS` to an explicit Bash 3.2 binary when validating the
+documented macOS system-bash baseline, for example:
+
+```sh
+CA_BASH_FOR_TESTS=/path/to/bash-3.2 bats test/FS-0029
+```
+
 **Purpose.** Executes every `.bats` suite under `test/`. Per `FS-0022` §6,
 "a missing `bats` binary fails loudly with an install hint, rather than
 passing vacuously."
