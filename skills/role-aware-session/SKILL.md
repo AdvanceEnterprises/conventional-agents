@@ -201,9 +201,9 @@ Honor overrides without argument. If an override creates ambiguity, ask rather t
 
 ## Related Skills
 
-- `skills/document-lifecycle/SKILL.md` — FS/PLAN/ADR scaffolding, transitions, front matter hygiene
-- `skills/git-gh-workflow/SKILL.md` — branching, commits, PRs, attribution, the non-overridable gates
-- `skills/framework-health-audit/SKILL.md` — `check:status`, the document hygiene gate, full audits
+- `../document-lifecycle/SKILL.md` — FS/PLAN/ADR scaffolding, transitions, front matter hygiene
+- `../git-gh-workflow/SKILL.md` — branching, commits, PRs, attribution, the non-overridable gates
+- `../framework-health-audit/SKILL.md` — `check:status`, the document hygiene gate, full audits
 
 ---
 

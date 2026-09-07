@@ -534,8 +534,8 @@ Before marking a PR as ready for review, verify all of the following:
 
 ## Related Skills
 
-- `skills/role-aware-session/SKILL.md` — session mode and role stance before acting on a branch or PR
-- `skills/framework-health-audit/SKILL.md` — the hygiene gate and `check:status` run before a PR is marked ready
+- `../role-aware-session/SKILL.md` — session mode and role stance before acting on a branch or PR
+- `../framework-health-audit/SKILL.md` — the hygiene gate and `check:status` run before a PR is marked ready
 
 ---
 

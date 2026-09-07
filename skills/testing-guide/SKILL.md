@@ -499,8 +499,8 @@ When reviewing tests, check:
 
 ## Related Skills
 
-- `skills/document-lifecycle/SKILL.md` — the FS `status: approved` gate that must hold before tests are written
-- `skills/role-aware-session/SKILL.md` — Spec Reader / Test Planner vs Implementer stance
+- `../document-lifecycle/SKILL.md` — the FS `status: approved` gate that must hold before tests are written
+- `../role-aware-session/SKILL.md` — Spec Reader / Test Planner vs Implementer stance
 
 ---
 

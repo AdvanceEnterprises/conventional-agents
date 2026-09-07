@@ -193,9 +193,9 @@ Produce a summary with:
 
 ## Related Skills
 
-- `skills/document-lifecycle/SKILL.md` — the status transitions and README index rules an audit checks against
-- `skills/role-aware-session/SKILL.md` — Reviewer vs Head Architect stance when an audit surfaces drift
-- `skills/git-gh-workflow/SKILL.md` — the PR hygiene gate this skill enforces before review
+- `../document-lifecycle/SKILL.md` — the status transitions and README index rules an audit checks against
+- `../role-aware-session/SKILL.md` — Reviewer vs Head Architect stance when an audit surfaces drift
+- `../git-gh-workflow/SKILL.md` — the PR hygiene gate this skill enforces before review
 
 ---
 
