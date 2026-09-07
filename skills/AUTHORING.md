@@ -71,9 +71,15 @@ conformance gate.
    `name` must equal the directory name — lowercase `a-z`, `0-9`, and hyphens
    only, with no leading, trailing, or consecutive hyphen.
 2. Write `description` to say both **what** the skill does and **when** to use
-   it, carrying the keywords an agent would search for. It is the only field the
-   spec loads at startup for every skill, so it is the entire discovery surface:
-   a skill nobody retrieves is a skill nobody runs.
+   it, carrying the keywords an agent would search for. It is the only field
+   loaded at startup that carries discovery keywords, so it is the entire
+   discovery surface: a skill nobody retrieves is a skill nobody runs.
 3. Follow the rules above and the spec.
+
+   **Cross-references** (Related Skills, prose links to other skills) use
+   paths relative to the skill's own directory — `../<name>/SKILL.md` — per
+   the Agent Skills spec's relative resolution. Root-relative
+   `skills/<name>/SKILL.md` paths resolve against the wrong base when an
+   agent loads the skill standalone.
 4. Add a row to `skills/index.md`.
 5. Do not add a runtime dialect to the source file — that is a binding's job.
