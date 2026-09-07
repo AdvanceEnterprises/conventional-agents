@@ -46,7 +46,7 @@ Carried forward from `ADR-0001` and owned here:
 1. **Standalone-useful.** A skill must be actionable when loaded alone — it
    includes operational procedures and at least two runnable examples.
 2. **Compliance-aware, non-exhaustive.** A short, clearly labelled summary of key
-   gates, plus links to canonical sources (`roles/ROLE_CONTRACT.md`, the
+   gates, plus links to canonical sources (`guidelines/ROLE_CONTRACT.md`, the
    relevant `guidelines/`). Never the full universal gate list.
 3. **Minimum content checklist.** When-to-use; compliance references; at least
    two runnable examples; a copy-paste-friendly checklist; a common-pitfalls
@@ -55,7 +55,7 @@ Carried forward from `ADR-0001` and owned here:
    number; the spec recommends under 500). Overflow moves into the spec's
    optional `references/` directory — not into a second skill.
 5. **No duplicate gates.** A skill summarises and links; it does not restate
-   `roles/ROLE_CONTRACT.md`.
+   `guidelines/ROLE_CONTRACT.md`.
 
 ## Conformance
 
