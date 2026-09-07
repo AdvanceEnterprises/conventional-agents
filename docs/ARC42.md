@@ -261,6 +261,8 @@ Key elements (current set):
 - `skills/framework-consumer-integration/` — host-repo integration patterns and pitfalls.
 - `skills/framework-health-audit/` — `check:status`, hygiene gate, full audit procedure.
 - `skills/testing-guide/` — language-specific test patterns for Python, JS/TS, Bash.
+- `skills/binding-authoring/` — selecting and authoring a substrate or runtime
+  binding under `integrations/` (`ADR-0024`/`ADR-0037`/`ADR-0039`).
 
 ### White Box vendor/
 
