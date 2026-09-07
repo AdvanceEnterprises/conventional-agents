@@ -39,8 +39,26 @@ it points at.
 
 ## Related Skills
 
-- `skills/git-commit-identity/SKILL.md`
-- `skills/git-branch-and-commit/SKILL.md`
-- `skills/gh-pr-workflow/SKILL.md`
-- `skills/versioning-and-releases/SKILL.md`
-- `skills/work-item-stance/SKILL.md`
+- `../git-commit-identity/SKILL.md`
+- `../git-branch-and-commit/SKILL.md`
+- `../gh-pr-workflow/SKILL.md`
+- `../versioning-and-releases/SKILL.md`
+- `../work-item-stance/SKILL.md`
+- `../role-aware-session/SKILL.md` — session mode and role stance before acting on a branch or PR
+- `../framework-health-audit/SKILL.md` — the hygiene gate and `check:status` run before a PR is marked ready
+
+---
+
+## Prohibitions
+
+- **Do NOT** push to the default branch (`trunk`) — always use a feature branch and PR.
+- **Do NOT** merge pull requests (non-overridable gate). Use `gh pr merge --auto` to enable CI-based auto-merge, or request human review.
+- **Do NOT** run `gh pr merge` without the `--auto` flag — that merges immediately and violates ADR-0012.
+- **Do NOT** assume the correct GitHub identity is active — verify every time.
+- **Do NOT** bump major versions without human approval.
+- **Do NOT** publish packages to registries without explicit human approval.
+- **Do NOT** mix version bumps into feature commits — release-prep only.
+- **Do NOT** remove or rewrite existing changelog entries.
+- **Do NOT** delete or regenerate lockfiles during feature work.
+- **Do NOT** run `npm update` or equivalent during feature work unless explicitly instructed.
+- **Do NOT** bump submodules during unrelated feature work.

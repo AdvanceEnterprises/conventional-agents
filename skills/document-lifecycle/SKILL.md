@@ -275,10 +275,10 @@ When updating an existing governed document:
 
 ## Related Skills
 
-- `skills/role-aware-session/SKILL.md` — session mode, primary/supporting roles, when Document Author leads
-- `skills/git-branch-and-commit/SKILL.md` — branch and commit conventions for landing document changes
-- `skills/gh-pr-workflow/SKILL.md` — opening the PR that carries a status transition
-- `skills/framework-health-audit/SKILL.md` — `check:status` interpretation and the document hygiene gate
+- `../role-aware-session/SKILL.md` — session mode, primary/supporting roles, when Document Author leads
+- `../git-branch-and-commit/SKILL.md` — branch and commit conventions for landing document changes
+- `../gh-pr-workflow/SKILL.md` — opening the PR that carries a status transition
+- `../framework-health-audit/SKILL.md` — `check:status` interpretation and the document hygiene gate
 
 ---
 

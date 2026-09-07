@@ -148,6 +148,11 @@ docs: explain single-identity workflow
 Agent-Attribution: actor=claude-code; model=anthropic/claude-opus-5; role=Implementer; session=implementation
 ```
 
+```bash
+# Commit under the human identity; the trailer records the agent's part.
+git -c user.name="Joey Clark" -c user.email="administrator@ajoeofalltrades.dev" commit -m "docs: explain single-identity workflow"
+```
+
 ## Verify Before You Commit
 
 ```bash

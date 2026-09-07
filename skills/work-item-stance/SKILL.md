@@ -106,8 +106,10 @@ gh issue comment <issue-number> --body \
 ## Example 2 — Unattended stance, stopping at the Type checkpoint
 
 ```bash
-# Read Type before any phase change; unset is treated as most restrictive.
-gh issue view <issue-number> --json labels,title
+# Read Type (a project field, not a label) before any phase change; unset is
+# treated as most restrictive.
+gh project item-list <project-number> --owner <owner> --format json \
+  --jq '.items[] | select(.content.number == <issue-number>) | .status'
 
 gh issue comment <issue-number> --body \
 'agent-stance: mode=autonomous; role=Head Architect; model=anthropic/claude-opus-5; session=nightly-drift-scan; rationale=check:status reported an FS/PLAN status mismatch; opening a bug work item'

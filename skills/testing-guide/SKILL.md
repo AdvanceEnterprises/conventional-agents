@@ -139,6 +139,9 @@ scope: unit | integration
 
 ## Example 1 — Map a Success Criterion to a test
 
+Illustrative of the mapping pattern; the bats form shown here is the Bash
+reference's dialect. The mapping rules themselves are language-agnostic.
+
 Given this criterion in an approved spec:
 
 ```text
@@ -161,6 +164,9 @@ in a comment, so the mapping survives a reader who has not opened the spec:
 ```
 
 ## Example 2 — Surface an ambiguous criterion instead of guessing
+
+Illustrative of the pattern; the pytest form shown here is the Python
+reference's dialect.
 
 When a criterion does not say enough to test, do not infer. Encode the gap so it
 fails visibly and names what is missing:
@@ -212,9 +218,9 @@ When reviewing tests, check:
 
 ## Related Skills
 
-- `skills/document-lifecycle/SKILL.md` — the FS `status: approved` gate that must hold before tests are written
-- `skills/role-aware-session/SKILL.md` — Spec Reader / Test Planner vs Implementer stance
-- `skills/git-branch-and-commit/SKILL.md` — the pre-commit testing gate this skill's output feeds
+- `../document-lifecycle/SKILL.md` — the FS `status: approved` gate that must hold before tests are written
+- `../role-aware-session/SKILL.md` — Spec Reader / Test Planner vs Implementer stance
+- `../git-branch-and-commit/SKILL.md` — the pre-commit testing gate this skill's output feeds
 
 ---
 

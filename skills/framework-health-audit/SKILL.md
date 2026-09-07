@@ -12,7 +12,7 @@ Encodes the conventional-agents status consistency check, document hygiene gate,
 
 - `scripts/check-status.sh` — the status consistency check script
 - `docs/specifications/FS-0013-status-consistency-check.md` — status consistency check spec
-- `roles/ROLE_CONTRACT.md` — document hygiene gate (7-item checklist)
+- `guidelines/ROLE_CONTRACT.md` — document hygiene gate (7-item checklist)
 - `workflows/document-lifecycle.md` — status transition rules
 - `docs/decisions/ADR-0012-non-overridable-gates.md` — non-overridable safety gates
 
@@ -193,9 +193,9 @@ Produce a summary with:
 
 ## Related Skills
 
-- `skills/document-lifecycle/SKILL.md` — the status transitions and README index rules an audit checks against
-- `skills/role-aware-session/SKILL.md` — Reviewer vs Head Architect stance when an audit surfaces drift
-- `skills/gh-pr-workflow/SKILL.md` — the PR lifecycle this skill's hygiene gate runs before
+- `../document-lifecycle/SKILL.md` — the status transitions and README index rules an audit checks against
+- `../role-aware-session/SKILL.md` — Reviewer vs Head Architect stance when an audit surfaces drift
+- `../gh-pr-workflow/SKILL.md` — the PR lifecycle this skill's hygiene gate runs before
 
 ---
 

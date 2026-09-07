@@ -15,7 +15,7 @@ projects that already consume the framework keep their integration healthy.
 - `README.md` — overview and upstream references
 - `ADR-0016` — consumer conventions live outside the framework repo
 - `ADR-0017` — framework vendor directory is internal
-- `skills/index.md` — skill catalog
+- `../index.md` — skill catalog
 
 ## When to Use
 
@@ -239,8 +239,9 @@ When reviewing a host integration, verify:
 
 ## Related Skills
 
-- `skills/role-aware-session/SKILL.md` — session mode and role stance when auditing or changing an integration
-- `skills/git-branch-and-commit/SKILL.md` — the branch and commit mechanics an integration change goes through
+- `../role-aware-session/SKILL.md` — session mode and role stance when auditing or changing an integration
+- `../git-branch-and-commit/SKILL.md` — the branch and commit mechanics an integration change goes through
+- `../versioning-and-releases/SKILL.md` — submodule bumps, lockfiles, and vendored-path verification for integration work
 
 ## Links
 
