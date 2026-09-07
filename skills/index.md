@@ -13,6 +13,8 @@ of the [Agent Skills](https://agentskills.io/specification) standard (`ADR-0038`
 | [framework-consumer-integration](./framework-consumer-integration/SKILL.md) | Helps host projects integrate conventional-agents correctly | `INTEGRATION.md`, `ADR-0016`, `ADR-0017` |
 | [framework-health-audit](./framework-health-audit/SKILL.md) | Runs and interprets `npm run check:status`, performs full framework health audits, enforces the document hygiene gate | `scripts/check-status.sh`, `FS-0013`, `roles/ROLE_CONTRACT.md` |
 | [testing-guide](./testing-guide/SKILL.md) | Writes tests from approved specs across Python, JS/TS, and Bash; applies implementer guidance and approved test patterns | `guidelines/python/*`, `guidelines/javascript/*`, `guidelines/bash/*` |
+| [binding-authoring](./binding-authoring/SKILL.md) | Writes substrate and runtime bindings — the six capabilities, the ordering rule, and the governance envelope | `integrations/README.md`, `ADR-0024`, `ADR-0037`, `ADR-0039`, `FS-0030` |
+| [binding-selection](./binding-selection/SKILL.md) | Chooses the right binding for a task — substrate vs runtime, reference vs executable, and when to write a new one | `integrations/README.md`, `integrations/github-issues-projects.md`, `integrations/github/README.md`, `ADR-0024`, `ADR-0039` |
 
 ## How to Use
 
