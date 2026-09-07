@@ -217,6 +217,29 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Changed
 
+#### `testing-guide` overflow moved into `references/` (AUTHORING rule 4)
+
+- **`skills/testing-guide/SKILL.md` goes 517 → 231 lines.** The three
+  language-specific sections — Python, JavaScript/TypeScript, Bash — moved into
+  the Agent Skills spec's optional `references/` directory:
+  `references/python.md` (98), `references/javascript-typescript.md` (117),
+  `references/bash.md` (164). `SKILL.md` keeps the language-agnostic core
+  (authoritative signals, Success Criteria mapping, ambiguity handling, test file
+  metadata, the reviewer checklist) plus a routing table.
+- **This is the other half of the amended rule 4, and the test of it.**
+  `testing-guide` is one coherent topic that ran long, so it takes `references/`
+  and stays one skill; `git-gh-workflow` was five topics sharing a file, so it
+  splits. Same rule, opposite remedies, decided by cohesion rather than line
+  count. The split is now the whole of `skills/` **under the ~400-line signal**.
+- This is also the framework's first use of the spec's `references/` convention
+  at all — no skill previously had a `references/`, `scripts/`, or `assets/`
+  directory, and progressive disclosure (name + description at startup, `SKILL.md`
+  on activation, references on demand) was unexercised.
+- `SKILL.md` gains an explicit `When to Use` section, a `Gates That Bind Here`
+  summary, two runnable examples, and a consolidated cross-language pitfalls
+  table, so it still satisfies profile rules 1–3 standing alone now that the
+  per-language examples live in `references/`.
+
 #### `git-gh-workflow` split into five focused skills (ADR-0038 rule 7)
 
 - **`skills/git-gh-workflow/SKILL.md` (554 lines) is now a 46-line deprecated
