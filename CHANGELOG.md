@@ -13,6 +13,24 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
+- **`binding-authoring` skill.** Operationalises `integrations/README.md`
+  § "Writing a binding" plus `ADR-0024` / `ADR-0037` / `ADR-0039` for a
+  contributor writing or reviewing a binding — substrate or runtime. Covers the
+  step of deciding whether a platform needs a binding at all, mapping the six
+  substrate capabilities or the five runtime setup requirements with none
+  deferred, stating enforcement honestly per capability, the binding-first
+  ordering rule (no generalisation from a single binding), the
+  `enforces`/`provisions`/`reports` classification and the "anything that can
+  fail a PR lives in `scripts/`" bright line for shipped executables, and a
+  grep-shape conformance-test pattern modelled on
+  `test/FS-0016/vendor-boundary.bats`. The GitHub reference binding — the
+  declarative `integrations/github-issues-projects.md` and the executable
+  `integrations/github/` layer — is the worked example throughout. Category 2
+  under `ADR-0015`; no FS. `binding-selection` is folded in as the skill's first
+  step rather than shipped as a separate skill: a reader concluding they *do*
+  need a binding immediately needs the authoring content, and the "no" branch is
+  a short decision with no natural runnable example of its own.
+
 - **Executable GitHub binding layer (`FS-0029`).** Consumers can use the shared
   submodule initializer, idempotent label provisioner, and read-only Project
   board audit under `integrations/github/`. Copyable CI and pull-request
