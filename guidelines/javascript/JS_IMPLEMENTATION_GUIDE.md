@@ -1,5 +1,5 @@
 ---
-updated: 2026-02-08
+updated: 2026-09-07
 ---
 
 # JavaScript/TypeScript Implementer Guidance
