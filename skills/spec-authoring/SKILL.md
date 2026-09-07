@@ -16,7 +16,7 @@ The governing constraint is unusual and worth stating first: **`## Success Crite
 - `docs/specifications/README.md` — index rules and the consumer-impact rule
 - `guidelines/ROLE_CONTRACT.md` — the spec-first rule; the document hygiene gate
 - `ADR-0026` / `ADR-0027` — approval as a recorded act; reserved paths a PLAN may never self-approve
-- `skills/testing-guide/SKILL.md` — how a test author consumes what you write
+- `../testing-guide/SKILL.md` — how a test author consumes what you write
 - `scripts/check-status.sh` — rules 1, 2, 4, 6, 7
 
 ## Purpose
@@ -33,7 +33,7 @@ This skill helps an agent:
 
 ## Scope: Craft, Not Mechanics
 
-This skill does **not** cover ID assignment, status transition rules, front matter field lists, README index maintenance, or resolving `npm run check:status` violations. That is `skills/document-lifecycle/SKILL.md`. Load that for mechanics; load this for judgement.
+This skill does **not** cover ID assignment, status transition rules, front matter field lists, README index maintenance, or resolving `npm run check:status` violations. That is `../document-lifecycle/SKILL.md`. Load that for mechanics; load this for judgement.
 
 ---
 
@@ -59,7 +59,7 @@ This is the section the spec exists for. Everything else is context.
 
 ### Number every criterion
 
-Write them `SC-1`, `SC-2`, … and group them by component with sub-headings. `skills/testing-guide/SKILL.md` requires that test names include the SC identifier and that the criterion text be referenced verbatim in the test. Unnumbered criteria make that impossible and the mapping silently degrades.
+Write them `SC-1`, `SC-2`, … and group them by component with sub-headings. `../testing-guide/SKILL.md` requires that test names include the SC identifier and that the criterion text be referenced verbatim in the test. Unnumbered criteria make that impossible and the mapping silently degrades.
 
 ### Use Given / When / Then
 
@@ -99,10 +99,10 @@ A spec that admits what its tests do not cover is stronger than one that implies
 grep -c '^- \*\*SC-' docs/specifications/FS-00XX-*.md
 
 # Any criterion missing a "then"?
-grep -n '^- \*\*SC-' -A3 docs/specifications/FS-00XX-*.md | grep -L 'then'
+grep -n '^- \*\*SC-' -A3 docs/specifications/FS-00XX-*.md | grep -v 'then'
 
 # After implementation: does every SC appear in a test?
-for n in $(grep -o 'SC-[0-9]*' docs/specifications/FS-00XX-*.md | sort -u); do
+for n in $(grep -o 'SC-[0-9]\+' docs/specifications/FS-00XX-*.md | sort -u); do
   grep -rq "$n" test/ || echo "UNMAPPED: $n"
 done
 ```
@@ -232,10 +232,10 @@ npm run check:status
 
 ## Related Skills
 
-- `skills/document-lifecycle/SKILL.md` — IDs, status transitions, templates, front matter, README index, `check:status` resolution
-- `skills/testing-guide/SKILL.md` — how a test author maps your Success Criteria into tests; read it before writing them
-- `skills/adr-authoring/SKILL.md` — writing the decision record that may require this spec
-- `skills/framework-health-audit/SKILL.md` — the document hygiene gate before a PR is marked ready
+- `../document-lifecycle/SKILL.md` — IDs, status transitions, templates, front matter, README index, `check:status` resolution
+- `../testing-guide/SKILL.md` — how a test author maps your Success Criteria into tests; read it before writing them
+- `../adr-authoring/SKILL.md` — writing the decision record that may require this spec
+- `../framework-health-audit/SKILL.md` — the document hygiene gate before a PR is marked ready
 
 ---
 

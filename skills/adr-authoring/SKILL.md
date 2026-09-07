@@ -33,7 +33,7 @@ This skill helps an agent:
 
 ## Scope: Craft, Not Mechanics
 
-This skill does **not** cover ID assignment, status transition rules, front matter field lists, README index maintenance, or resolving `npm run check:status` violations. All of that is `skills/document-lifecycle/SKILL.md`. Load that skill for mechanics; load this one for judgement.
+This skill does **not** cover ID assignment, status transition rules, front matter field lists, README index maintenance, or resolving `npm run check:status` violations. All of that is `../document-lifecycle/SKILL.md`. Load that skill for mechanics; load this one for judgement.
 
 ---
 
@@ -88,7 +88,7 @@ The single most damaging failure class here is building an argument on an unveri
 ```bash
 # The only authoritative status and title: the file itself.
 grep -m1 '^status:' docs/decisions/ADR-0015-*.md
-grep -m1 '^# ADR-' docs/decisions/ADR-0015-*.md
+grep -m1 '^# ' docs/decisions/ADR-0015-*.md
 
 # Every ADR's real status, to check an index claim in bulk.
 for f in docs/decisions/ADR-*.md; do
@@ -251,10 +251,10 @@ npm run check:status
 
 ## Related Skills
 
-- `skills/document-lifecycle/SKILL.md` — IDs, status transitions, templates, front matter, README index, `check:status` resolution
-- `skills/spec-authoring/SKILL.md` — writing the governing FS an ADR's decision may require
-- `skills/role-aware-session/SKILL.md` — Head Architect proposes ADRs; Document Author drafts them; neither approves them
-- `skills/framework-health-audit/SKILL.md` — the document hygiene gate before a PR is marked ready
+- `../document-lifecycle/SKILL.md` — IDs, status transitions, templates, front matter, README index, `check:status` resolution
+- `../spec-authoring/SKILL.md` — writing the governing FS an ADR's decision may require
+- `../role-aware-session/SKILL.md` — Head Architect proposes ADRs; Document Author drafts them; neither approves them
+- `../framework-health-audit/SKILL.md` — the document hygiene gate before a PR is marked ready
 
 ---
 
