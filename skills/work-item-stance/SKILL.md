@@ -93,11 +93,11 @@ The actor table in `workflows/git-and-gh-conventions.md` carries the aliases.
 
 ```bash
 # 1. Never act on a parked item. Check first.
-gh issue view 115 --json labels --jq '.labels[].name' | grep -qx question \
+gh issue view <issue-number> --json labels --jq '.labels[].name' | grep -qx question \
   && { echo "parked: question label set, taking no action"; exit 0; }
 
 # 2. Post the stance BEFORE the action it justifies.
-gh issue comment 115 --body \
+gh issue comment <issue-number> --body \
 'agent-stance: mode=implementation; role=Implementer; model=anthropic/claude-opus-5; session=implementation; rationale=PLAN-0036 approved; beginning step 1 of the library-first sequence'
 
 # 3. Now act.
@@ -107,9 +107,9 @@ gh issue comment 115 --body \
 
 ```bash
 # Read Type before any phase change; unset is treated as most restrictive.
-gh issue view 118 --json labels,title
+gh issue view <issue-number> --json labels,title
 
-gh issue comment 118 --body \
+gh issue comment <issue-number> --body \
 'agent-stance: mode=autonomous; role=Head Architect; model=anthropic/claude-opus-5; session=nightly-drift-scan; rationale=check:status reported an FS/PLAN status mismatch; opening a bug work item'
 
 # Type is `bug` -> the checkpoint is Approved. Stop here; a human advances it.

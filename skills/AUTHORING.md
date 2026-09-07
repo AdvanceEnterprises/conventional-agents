@@ -45,8 +45,12 @@ Carried forward from `ADR-0001` and owned here:
 
 1. **Standalone-useful.** A skill must be actionable when loaded alone — it
    includes operational procedures and at least two runnable examples.
+   **Exemption:** a deprecated router that exists only to point consumers at
+   successor skills (e.g. `skills/git-gh-workflow/SKILL.md` after the
+   `git-gh-workflow` split) is exempt — it teaches nothing and is not meant to;
+   a router that carried examples would compete with the skills it points at.
 2. **Compliance-aware, non-exhaustive.** A short, clearly labelled summary of key
-   gates, plus links to canonical sources (`roles/ROLE_CONTRACT.md`, the
+   gates, plus links to canonical sources (`guidelines/ROLE_CONTRACT.md`, the
    relevant `guidelines/`). Never the full universal gate list.
 3. **Minimum content checklist.** When-to-use; compliance references; at least
    two runnable examples; a copy-paste-friendly checklist; a common-pitfalls
@@ -69,7 +73,7 @@ Carried forward from `ADR-0001` and owned here:
    **Size alone never justifies a split**, and cohesion always justifies one
    regardless of size.
 5. **No duplicate gates.** A skill summarises and links; it does not restate
-   `roles/ROLE_CONTRACT.md`. Where another skill already owns a gate's full
+   `guidelines/ROLE_CONTRACT.md`. Where another skill already owns a gate's full
    statement, link to that skill rather than repeating it: two skills expanding
    the same rule is the drift `ADR-0030` exists to prevent.
 

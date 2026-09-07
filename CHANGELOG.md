@@ -253,7 +253,7 @@ For this project (a documentation/standards kit), semver follows the
   | `skills/versioning-and-releases/` | Semver by project type, changelog conventions, the release process, agent-safe vs human-gated actions |
   | `skills/work-item-stance/` | The `agent-stance:` entry, Type-keyed autonomous checkpoints, `question` suppression, unattended actor identity |
 
-  Each successor is 135–196 lines, satisfies the profile's rules 1–3 standing
+  Each successor is 146–196 lines, satisfies the profile's rules 1–3 standing
   alone, and is listed in `skills/index.md`.
 - **`skills/AUTHORING.md` rule 4 amended first, as the governance predicate.**
   The old single sentence — overflow goes to `references/`, "not into a second
