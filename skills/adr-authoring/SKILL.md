@@ -153,7 +153,7 @@ The framework already names the correct stance — `ADR-0024` §"Detection over 
 grep -n "agent_attribution_pattern" -A4 test/FS-0017/commit-attribution.bats
 
 # What rule 5b actually obliges (supersession chain, FS-0028):
-sed -n '556,566p' scripts/check-status.sh
+grep -n "rule 5b" -A20 scripts/check-status.sh
 ```
 
 ### Absolute verbs
@@ -243,7 +243,7 @@ npm run check:status
 | Premise never checked against the repository | `8ee78e2` |
 | Claiming as done what the PR does not do | `3fe03d8` |
 | Treating a `proposed` ADR as binding precedent | `c5b8820` |
-| Code-implying ADR with no governing FS | `466af62` |
+| Code-implying ADR with no governing FS | `0156cf0` |
 | Validation written to clear the gate | `4521178`, `68bc36c` |
 | Unqualified cross-repository ID | `39cf301` |
 
