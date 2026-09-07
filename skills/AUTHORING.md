@@ -80,6 +80,8 @@ conformance gate.
    paths relative to the skill's own directory — `../<name>/SKILL.md` — per
    the Agent Skills spec's relative resolution. Root-relative
    `skills/<name>/SKILL.md` paths resolve against the wrong base when an
-   agent loads the skill standalone.
+   agent loads the skill standalone. Links to repo-root documents
+   (`README.md`, `INTEGRATION.md`, `guidelines/…`) stay root-relative — they
+   are source documents, not skill cross-references.
 4. Add a row to `skills/index.md`.
 5. Do not add a runtime dialect to the source file — that is a binding's job.

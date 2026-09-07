@@ -244,7 +244,7 @@ When reviewing a host integration, verify:
 
 ## Links
 
-- `../README.md` § Installation and Upstream References
-- `../INTEGRATION.md` § Precedence Rules and Integration Patterns
+- `README.md` § Installation and Upstream References
+- `INTEGRATION.md` § Precedence Rules and Integration Patterns
 - `ADR-0016`: Consumer conventions
 - `ADR-0017`: Framework vendor directory is internal
