@@ -33,7 +33,7 @@ a new binding instead of stretching an existing one.
 | Task | Binding to use |
 | --- | --- |
 | Work items, types, phases, boards on GitHub | `integrations/github-issues-projects.md` (reference substrate binding) |
-| Provisioning labels, initialising submodules, auditing board drift | `integrations/github/` executable layer (`bin/gh-*.sh`) |
+| Provisioning labels, initialising submodules, auditing board drift | `integrations/github/` executable layer (`integrations/github/bin/gh-*.sh`) |
 | Wiring the framework into Claude Code | `integrations/runtimes/claude-code/` (per `FS-0030`) |
 | Wiring the framework into Hermes, OpenClaw, or Codex | No binding yet — write one (`ADR-0039` §5, one FS/PLAN per binding) |
 | A new work-tracking platform (Linear, Jira, …) | Write a substrate binding (`ADR-0024`) |
@@ -62,9 +62,9 @@ into repeatable commands:
 
 | Command | Posture | What it does not claim |
 | --- | --- | --- |
-| `bin/gh-submodule-init.sh` | **enforces** fail-closed initialisation | It does not make a missing credential usable or mutate repository policy |
-| `bin/gh-label-provision.sh` | **provisions** the framework vocabulary | It does not delete, recolour, or otherwise own consumer labels |
-| `bin/gh-board-audit.sh` | **reports** project drift | It does not reconcile fields, items, Issues, or board membership |
+| `integrations/github/bin/gh-submodule-init.sh` | **enforces** fail-closed initialisation | It does not make a missing credential usable or mutate repository policy |
+| `integrations/github/bin/gh-label-provision.sh` | **provisions** the framework vocabulary | It does not delete, recolour, or otherwise own consumer labels |
+| `integrations/github/bin/gh-board-audit.sh` | **reports** project drift | It does not reconcile fields, items, Issues, or board membership |
 
 The distinction is deliberate: a binding can provide a mechanism without
 pretending that GitHub's permission model enforces a convention. The board
@@ -76,7 +76,7 @@ consumer deliberately wants its own job to fail.
 Write a new binding when the platform or runtime is genuinely new — never to
 work around a limitation of an existing one:
 
-- **New substrate** (Linear, Jira, GitLab): write `integrations/<substrate>.md`
+- **New substrate** (Linear, Jira, GitLab): write a new binding under `integrations/`
   mapping all six capabilities, per `ADR-0024`'s ordering rule — first and in
   full, never as a stub.
 - **New runtime** (Hermes, OpenClaw, Codex): write
@@ -108,9 +108,9 @@ the parameterised MCP example. Point the consumer there; do not hand-write a
 
 **Example 2 — a consumer asks "can the framework track work in Linear?"** No
 substrate binding exists for Linear. The correct move is a new substrate
-binding under `integrations/linear.md` mapping all six capabilities — written
-first and in full (`ADR-0024`), with enforcement posture stated per capability,
-opened as a draft PR. It is not a `scripts/` script and not a core change.
+binding under `integrations/` mapping all six capabilities — written first and
+in full (`ADR-0024`), with enforcement posture stated per capability, opened as
+a draft PR. It is not a `scripts/` script and not a core change.
 
 ## Checklist
 
