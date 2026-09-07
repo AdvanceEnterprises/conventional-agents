@@ -68,7 +68,7 @@ Role and session transparency
  • One sentence is sufficient. The human may override the interpretation at any time. If overridden, the agent adopts the stated role without argument.
  • See `workflows/session-modes.md` for mode definitions, primary/supporting role assignments, and role-transition phrase templates.
  • This is not optional ceremony — it is the mechanism by which humans stay in control of agentic sessions without needing to read every tool call.
- • For work-item actions by an autonomous or hybrid agent, the equivalent record is an `agent-stance:` activity entry on the work item, in the format defined by `FS-0018` and `skills/git-gh-workflow/SKILL.md` §"Work-Item Stance and Autonomous Gates". Interactive sessions declare the role here; unattended sessions declare it there. Both are the audit trail the framework relies on to know who actually did what.
+ • For work-item actions by an autonomous or hybrid agent, the equivalent record is an `agent-stance:` activity entry on the work item, in the format defined by `FS-0018` and `skills/work-item-stance/SKILL.md`. Interactive sessions declare the role here; unattended sessions declare it there. Both are the audit trail the framework relies on to know who actually did what.
 
 ⸻
 

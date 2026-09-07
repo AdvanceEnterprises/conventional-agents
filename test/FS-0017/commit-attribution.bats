@@ -53,10 +53,14 @@ agent_attribution_pattern() {
 }
 
 @test "skill teaches the single-identity convention" {
-  assert_file_contains "$REPO_ROOT/skills/git-gh-workflow/SKILL.md" "Single-Identity Workflow"
-  assert_file_contains "$REPO_ROOT/skills/git-gh-workflow/SKILL.md" "hermes-agent@tais-den.dev"
-  assert_file_contains "$REPO_ROOT/skills/git-gh-workflow/SKILL.md" "Co-authored-by:"
-  assert_file_contains "$REPO_ROOT/skills/git-gh-workflow/SKILL.md" "Agent-Attribution:"
+  # The 554-line git-gh-workflow skill was split on topic boundaries (work item
+  # #115 item B, ADR-0038 rule 7, skills/AUTHORING.md rule 4). The identity and
+  # attribution content — what this test guards — moved to git-commit-identity;
+  # git-gh-workflow is retained as a deprecated router only.
+  assert_file_contains "$REPO_ROOT/skills/git-commit-identity/SKILL.md" "Single-Identity Workflow"
+  assert_file_contains "$REPO_ROOT/skills/git-commit-identity/SKILL.md" "hermes-agent@tais-den.dev"
+  assert_file_contains "$REPO_ROOT/skills/git-commit-identity/SKILL.md" "Co-authored-by:"
+  assert_file_contains "$REPO_ROOT/skills/git-commit-identity/SKILL.md" "Agent-Attribution:"
 }
 
 @test "PR body template includes Agent Attribution section" {

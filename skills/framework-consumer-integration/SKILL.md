@@ -240,7 +240,7 @@ When reviewing a host integration, verify:
 ## Related Skills
 
 - `skills/role-aware-session/SKILL.md` — session mode and role stance when auditing or changing an integration
-- `skills/git-gh-workflow/SKILL.md` — the submodule, branch, and commit mechanics an integration change goes through
+- `skills/git-branch-and-commit/SKILL.md` — the branch and commit mechanics an integration change goes through
 
 ## Links
 

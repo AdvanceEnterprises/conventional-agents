@@ -202,7 +202,8 @@ Honor overrides without argument. If an override creates ambiguity, ask rather t
 ## Related Skills
 
 - `skills/document-lifecycle/SKILL.md` — FS/PLAN/ADR scaffolding, transitions, front matter hygiene
-- `skills/git-gh-workflow/SKILL.md` — branching, commits, PRs, attribution, the non-overridable gates
+- `skills/git-commit-identity/SKILL.md` — the commit identity and attribution a session's role is recorded in
+- `skills/work-item-stance/SKILL.md` — the same role and mode values, declared on a work item
 - `skills/framework-health-audit/SKILL.md` — `check:status`, the document hygiene gate, full audits
 
 ---
