@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0030
-status: draft
+status: approved
 title: Claude Code runtime binding — the first agent-runtime binding under ADR-0039
 owner: ajoeofalltrades
 test_required: true
@@ -44,7 +44,7 @@ requires:
   - ADR-0038
 tags: [runtime-binding, claude-code, integrations, skills, mcp, exported-surface]
 created: 2026-09-05
-updated: 2026-09-05
+updated: 2026-09-08
 ---
 <!--
 PARSING_HINTS:
@@ -60,16 +60,22 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Approved
+
+Approved 2026-09-08 by Joey Clark, recorded on the commit that flips this status
+with an `Approved-By:` trailer (`ADR-0026`). #112's merge message asserted this
+transition but carried no trailer and left both documents `draft`; issue #122
+detected the gap and this change reconciles it. `ADR-0039` is `accepted`, so the
+spec-first gate (`guidelines/ROLE_CONTRACT.md`) is now satisfied and
+implementation of the Claude Code runtime binding may begin.
 
 ## Plan Status
 
-- **PLAN-0036 is `draft`** in this planning PR and transitions to `approved` on
-  this PR's human merge, carried by an `Approved-By:` trailer per `ADR-0026`. Its
-  `touches:` set includes `package.json`, `.github/workflows/lint-docs.yml`, and
-  `scripts/README.md` — three reserved paths under `ADR-0027` — so it cannot
-  self-approve. **Implementation does not begin before that approval** and before
-  this spec is `approved` (`guidelines/ROLE_CONTRACT.md` spec-first gate).
+- **PLAN-0036 is `approved`**, recorded on the same commit and carried by the same
+  `Approved-By:` trailer (`ADR-0026`). Its `touches:` set includes `package.json`,
+  `.github/workflows/lint-docs.yml`, and `scripts/README.md` — three reserved
+  paths under `ADR-0027` — so it could not self-approve; this is a recorded human
+  act. The implementing PR opens separately, after this one merges.
 
 ## Summary
 
