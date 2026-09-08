@@ -1,7 +1,7 @@
 ---
 type: adr
 id: ADR-0037
-status: proposed
+status: accepted
 decision_scope: architecture
 reversible: yes
 related_specs:
@@ -10,7 +10,7 @@ related_specs:
   - FS-0024
 superseded_by: null
 created: 2026-09-03
-updated: 2026-09-03
+updated: 2026-09-06
 ---
 <!--
 PARSING_HINTS:
@@ -25,7 +25,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Proposed
+- Accepted
 
 ## Context and Problem Statement
 
@@ -75,10 +75,11 @@ by hand, and have drifted:
 - **Operational knowledge lives in session transcripts.** Projects v2 is
   GraphQL-only, and its *secondary* burst limit is invisible through the
   `rate_limit` endpoint — that endpoint reports the primary quota as full while
-  real calls fail, and `gh project` surfaces the failure as `unknown owner type`.
-  The working discipline (pace calls, probe before mutating, wait past the reset
-  timestamp) was learned twice in one session and written down nowhere a reader
-  would find it.
+  real calls fail, and older `gh project` paths may surface the separate
+  owner-resolution message `unknown owner type`. That message is not itself a
+  rate-limit signal. The working discipline (pace calls, probe before mutating,
+  wait past the reset timestamp) was learned twice in one session and written
+  down nowhere a reader would find.
 
 Every one of these is the same defect: the binding names a mechanism, and the
 mechanism's operation is left to be rediscovered. The declarative layer cannot

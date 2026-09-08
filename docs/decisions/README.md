@@ -254,6 +254,6 @@ If validation fails:
 | ADR-0034 | MCP tool category and GitHub skills consolidation | superseded |
 | ADR-0035 | Concurrent-session workspace isolation | proposed |
 | ADR-0036 | Attribution vocabulary canon and history-integrity policy | proposed |
-| ADR-0037 | Executable layer for the GitHub binding | proposed |
+| ADR-0037 | Executable layer for the GitHub binding | accepted |
 | ADR-0038 | Agent Skills as a profiled upstream standard | accepted |
 | ADR-0039 | Agent-runtime integration bindings | accepted |

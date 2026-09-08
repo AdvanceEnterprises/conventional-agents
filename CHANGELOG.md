@@ -13,6 +13,12 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
+- **Executable GitHub binding layer (`FS-0029`).** Consumers can use the shared
+  submodule initializer, idempotent label provisioner, and read-only Project
+  board audit under `integrations/github/`. Copyable CI and pull-request
+  templates document the required full-history checkout and keep authentication
+  and board reconciliation explicit; the framework's own CI runs the label audit.
+
 - **Agent-runtime integration is now a governed surface** — `ADR-0038` and
   `ADR-0039` (both **accepted** 2026-09-05), plus the new `skills/AUTHORING.md`
   and `integrations/runtimes/` scaffolding, plus the first governing spec
