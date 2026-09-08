@@ -121,7 +121,7 @@ agents from self-authorizing substantive work.
 
 Multi-agent collaboration modes — `consensus` (FS-0019) and `review-board` (FS-0021) — and the
 autonomous meta-mode (ADR-0022) are documented in [`workflows/session-modes.md`](./workflows/session-modes.md)
-and operationalized in [`skills/git-gh-workflow/SKILL.md`](./skills/git-gh-workflow/SKILL.md).
+and operationalized in [`skills/work-item-stance/SKILL.md`](./skills/work-item-stance/SKILL.md).
 
 ### Process Gates
 

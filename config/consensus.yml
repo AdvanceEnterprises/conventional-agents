@@ -11,8 +11,7 @@
 # for the full specification.
 #
 # Consumer repos copy this file into their project root (or into a
-# location of their choice; update the path in skills/git-gh-workflow
-# accordingly) and customize it.
+# location of their choice) and customize it.
 #
 # Default state: consensus is DISABLED. Set `enabled: true` below to
 # opt in.

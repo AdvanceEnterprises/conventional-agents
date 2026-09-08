@@ -10,9 +10,8 @@ Encodes the conventional-agents role contract and session mode system into actio
 
 ## Source Documents
 
-- `roles/ROLE_CONTRACT.md` — role definitions, authority boundaries, prohibitions, stop conditions
+- `guidelines/ROLE_CONTRACT.md` — role definitions, authority boundaries, prohibitions, stop conditions
 - `workflows/session-modes.md` — five named session modes with primary/supporting role assignments
-- `guidelines/ROLE_CONTRACT.md` — canonical copy of the role contract (identical to `roles/`)
 
 ## Purpose
 
@@ -202,7 +201,9 @@ Honor overrides without argument. If an override creates ambiguity, ask rather t
 ## Related Skills
 
 - `../document-lifecycle/SKILL.md` — FS/PLAN/ADR scaffolding, transitions, front matter hygiene
-- `../git-gh-workflow/SKILL.md` — branching, commits, PRs, attribution, the non-overridable gates
+- `../git-commit-identity/SKILL.md` — the commit identity and attribution a session's role is recorded in
+- `../work-item-stance/SKILL.md` — the same role and mode values, declared on a work item
+- `../gh-pr-workflow/SKILL.md` — the non-overridable gates (identity, merge) a session's role must respect
 - `../framework-health-audit/SKILL.md` — `check:status`, the document hygiene gate, full audits
 
 ---

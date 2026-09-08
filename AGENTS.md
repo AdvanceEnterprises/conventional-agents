@@ -31,8 +31,8 @@ Key references:
 - `FS-0018-issue-lifecycle-and-autonomous-triggers.md` — work item schema, three-axis
   classification, three origination paths, agent-stance format, autonomous gate.
 - `workflows/document-lifecycle.md` §"Work Items" — lifecycle summary.
-- `skills/git-gh-workflow/SKILL.md` §"Work-Item Stance and Autonomous Gates" — operational
-  rules for `agent-stance:` entries, Type-keyed checkpoints, `question` suppression.
+- `skills/work-item-stance/SKILL.md` — operational rules for `agent-stance:` entries,
+  Type-keyed checkpoints, `question` suppression.
 - `ADR-0019`, `ADR-0020`, `ADR-0021`, `ADR-0022` — the binding decisions that ratify these
   rules. Convention-level enforcement on most platforms; audit-trail-based detection
   everywhere.

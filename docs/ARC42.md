@@ -250,8 +250,14 @@ Purpose:
 Key elements (current set):
 - `skills/role-aware-session/` — session mode inference, role boundaries, safety gates.
 - `skills/document-lifecycle/` — FS/PLAN/ADR lifecycle, templates, front matter hygiene.
-- `skills/git-gh-workflow/` — branching, commits, PRs, attribution (`ADR-0018`/`ADR-0029`),
-  work-item stance (`FS-0018`), collaboration rounds (`FS-0019`/`FS-0021`).
+- `skills/git-commit-identity/` — commit identity and `Agent-Attribution:` trailers
+  (`ADR-0011`/`ADR-0018`/`ADR-0029`/`ADR-0036`).
+- `skills/git-branch-and-commit/` — branching, Conventional Commits, commit bodies.
+- `skills/gh-pr-workflow/` — pull-request lifecycle and the merge gate (`ADR-0012`).
+- `skills/versioning-and-releases/` — semver, changelogs, release process.
+- `skills/work-item-stance/` — `agent-stance:` entries and the autonomous gates
+  (`FS-0018`, `ADR-0019`–`ADR-0022`).
+- `skills/git-gh-workflow/` — deprecated router to the five above.
 - `skills/framework-consumer-integration/` — host-repo integration patterns and pitfalls.
 - `skills/framework-health-audit/` — `check:status`, hygiene gate, full audit procedure.
 - `skills/testing-guide/` — language-specific test patterns for Python, JS/TS, Bash.

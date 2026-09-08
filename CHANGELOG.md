@@ -223,6 +223,73 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Changed
 
+#### `testing-guide` overflow moved into `references/` (AUTHORING rule 4)
+
+- **`skills/testing-guide/SKILL.md` goes 517 → 231 lines.** The three
+  language-specific sections — Python, JavaScript/TypeScript, Bash — moved into
+  the Agent Skills spec's optional `references/` directory:
+  `references/python.md` (98), `references/javascript-typescript.md` (117),
+  `references/bash.md` (164). `SKILL.md` keeps the language-agnostic core
+  (authoritative signals, Success Criteria mapping, ambiguity handling, test file
+  metadata, the reviewer checklist) plus a routing table.
+- **This is the other half of the amended rule 4, and the test of it.**
+  `testing-guide` is one coherent topic that ran long, so it takes `references/`
+  and stays one skill; `git-gh-workflow` was five topics sharing a file, so it
+  splits. Same rule, opposite remedies, decided by cohesion rather than line
+  count. The split is now the whole of `skills/` **under the ~400-line signal**.
+- This is also the framework's first use of the spec's `references/` convention
+  at all — no skill previously had a `references/`, `scripts/`, or `assets/`
+  directory, and progressive disclosure (name + description at startup, `SKILL.md`
+  on activation, references on demand) was unexercised.
+- `SKILL.md` gains an explicit `When to Use` section, a `Gates That Bind Here`
+  summary, two runnable examples, and a consolidated cross-language pitfalls
+  table, so it still satisfies profile rules 1–3 standing alone now that the
+  per-language examples live in `references/`.
+
+#### `git-gh-workflow` split into five focused skills (ADR-0038 rule 7)
+
+- **`skills/git-gh-workflow/SKILL.md` (554 lines) is now a 46-line deprecated
+  router.** It bundled five distinct topics in one file. Its content moved to:
+
+  | Successor | Covers |
+  | --- | --- |
+  | `skills/git-commit-identity/` | Commit identity, the multi-identity and single-identity models, `Agent-Attribution:` trailers, the actor alias table, the `gh auth status` gate |
+  | `skills/git-branch-and-commit/` | Branch prefixes, the mandatory feature-branch rule, Conventional Commits, commit bodies, pushing |
+  | `skills/gh-pr-workflow/` | PR bodies, rebasing, review response, CI checks, the merge gate, compliant `--auto` merge |
+  | `skills/versioning-and-releases/` | Semver by project type, changelog conventions, the release process, agent-safe vs human-gated actions |
+  | `skills/work-item-stance/` | The `agent-stance:` entry, Type-keyed autonomous checkpoints, `question` suppression, unattended actor identity |
+
+  Each successor is 146–196 lines, satisfies the profile's rules 1–3 standing
+  alone, and is listed in `skills/index.md`.
+- **`skills/AUTHORING.md` rule 4 amended first, as the governance predicate.**
+  The old single sentence — overflow goes to `references/`, "not into a second
+  skill" — read as forbidding the split that `ADR-0038` rule 7 sanctions. Both
+  documents were current and authoritative, so the wording was the defect. Rule 4
+  now turns on **cohesion rather than line count**: one topic that ran long takes
+  `references/`; several topics sharing a file are split. Size alone never
+  justifies a split. Under the amended rule the two current breaches resolve
+  differently, which is the test of it — `git-gh-workflow` splits,
+  `testing-guide` (517 lines, one topic) will take `references/`.
+- **The duplicated gates collapsed rather than being copied five times.** The old
+  skill restated the seven-item document hygiene gate in full, which
+  `framework-health-audit` already expands; and the `ADR-0012` non-overridable
+  gates, which `guidelines/ROLE_CONTRACT.md` owns. Each successor now carries a
+  short, labelled "Gates That Bind Here" summary plus links. Rule 5 gains a
+  clause making this explicit. Net effect: **fewer** places state each rule, not
+  more.
+- **Inbound references updated** in `README.md`, `AGENTS.md`,
+  `guidelines/ROLE_CONTRACT.md`, `docs/ARC42.md`, `config/consensus.yml`,
+  `skills/index.md`, and the four sibling skills' Related Skills sections.
+  `test/FS-0017/commit-attribution.bats` now asserts the identity strings against
+  `git-commit-identity`, where they live. Decision records (ADRs, FS, PLAN) and
+  historical `CHANGELOG` entries are left alone: they describe the state when
+  written.
+- **Consumer impact.** `skills/git-gh-workflow/SKILL.md` still resolves, so no
+  vendored reference breaks today, but it no longer carries guidance — a consumer
+  loading it gets a routing table. Consumers referencing it should move to the
+  successor they actually need. The router is expected to be removed in a future
+  major release.
+
 #### Skill frontmatter conformed to the Agent Skills base spec (ADR-0038)
 
 - **The six shipped skills' `SKILL.md` frontmatter is now base-spec-clean.**
