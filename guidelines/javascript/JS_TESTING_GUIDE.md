@@ -1,5 +1,5 @@
 ---
-updated: 2026-06-08
+updated: 2026-09-08
 ---
 
 # JavaScript/TypeScript Testing Guide
