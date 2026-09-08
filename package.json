@@ -26,6 +26,7 @@
     "check:status": "bash scripts/check-status.sh",
     "check:freshness": "bash scripts/check-freshness.sh",
     "lint:cross-repo": "bash scripts/cross-repo-lint.sh",
+    "bench:run": "bash scripts/bench-run.sh",
     "test": "bash scripts/run-bats.sh"
   }
 }

@@ -13,7 +13,7 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
-- **`binding-authoring` skill.** Operationalises `integrations/README.md`
+  - **`binding-authoring` skill.** Operationalises `integrations/README.md`
   § "Writing a binding" plus `ADR-0024` / `ADR-0037` / `ADR-0039` for a
   contributor writing or reviewing a binding — substrate or runtime. Covers the
   step of deciding whether a platform needs a binding at all, mapping the six
@@ -30,6 +30,16 @@ For this project (a documentation/standards kit), semver follows the
   step rather than shipped as a separate skill: a reader concluding they *do*
   need a binding immediately needs the authoring content, and the "no" branch is
   a short decision with no natural runnable example of its own.
+- **FS-0031: Governed-agent benchmark harness (draft)** — reproducible
+  functional + governance scoring for issue #124. `scripts/bench-run.sh`
+  executes a versioned task card under a named condition in a disposable
+  worktree and emits a JSON report separating functional success from
+  governance compliance, with evidence, overhead, and failure fields.
+  Includes `benchmark/task-card.schema.json` (v1), the first shipped task card
+  (`benchmark/task-cards/pilot-001.md`, with escalation + adversarial
+  scenarios), the `bench:run` npm script, and bats coverage
+  (`test/FS-0031/bench-harness.bats`). No live model calls — the harness
+  drives any command; wiring real agents is a later pilot concern.
 
 - **Executable GitHub binding layer (`FS-0029`).** Consumers can use the shared
   submodule initializer, idempotent label provisioner, and read-only Project
