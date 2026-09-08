@@ -253,6 +253,11 @@ Key elements (current set):
 - `skills/framework-consumer-integration/` — host-repo integration patterns and pitfalls.
 - `skills/framework-health-audit/` — `check:status`, hygiene gate, full audit procedure.
 - `skills/testing-guide/` — language-specific test patterns for Python, JS/TS, Bash.
+- `skills/binding-authoring/` — writing substrate and runtime bindings: the six
+  capabilities, the ordering rule (`ADR-0024`), and the envelope
+  (`ADR-0037`/`ADR-0039`/`ADR-0015`).
+- `skills/binding-selection/` — choosing the right binding for a task:
+  substrate vs runtime, reference vs executable, and when to write a new one.
 - `skills/example-skill/` — placeholder directory; the format reference is
   [agentskills.io/specification](https://agentskills.io/specification).
 

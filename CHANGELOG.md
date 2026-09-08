@@ -13,6 +13,26 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
+- **`binding-authoring` and `binding-selection` skills.** `binding-authoring`
+  operationalises `integrations/README.md` § "Writing a binding" plus
+  `ADR-0024` / `ADR-0037` / `ADR-0038` / `ADR-0039` / `ADR-0015` for a
+  contributor writing or reviewing a binding — the six substrate capabilities
+  mapped with enforcement posture stated honestly per capability, the five
+  runtime setup requirements (`ADR-0039` §2), the binding-first ordering rule
+  (no generalisation from a single binding), the
+  `enforces`/`provisions`/`reports` envelope and the "anything that can fail a
+  PR lives in `scripts/`" bright line for shipped executables, and the
+  detection-over-prevention posture. `binding-selection` captures the choice
+  procedure: substrate vs runtime, reference vs executable, and when a new
+  binding is warranted. Both are written to the Agent Skills base spec
+  (`ADR-0038`: `name`/`description`/`license` frontmatter only) and are
+  Category 2 under `ADR-0015` (no new FS/PLAN). The substrate half is grounded
+  in the shipped GitHub reference binding (`integrations/github-issues-projects.md`
+  and the `integrations/github/` executable layer); the runtime half is
+  forward-looking — the Claude Code runtime binding (`FS-0030` / `PLAN-0036`)
+  remains draft, so runtime guidance teaches the procedure to follow once the
+  binding ships rather than describing a shipped artifact.
+
 - **Executable GitHub binding layer (`FS-0029`).** Consumers can use the shared
   submodule initializer, idempotent label provisioner, and read-only Project
   board audit under `integrations/github/`. Copyable CI and pull-request

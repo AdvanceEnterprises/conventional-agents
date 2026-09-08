@@ -21,7 +21,7 @@ governance envelope.
 - `docs/decisions/ADR-0038-agent-skills-as-a-profiled-upstream-standard.md` — skill dialect rules
 - `docs/decisions/ADR-0028-*.md` — level-triggered reconciliation (capability 6)
 - `docs/decisions/ADR-0015-*.md` — the Location invariant (Category 1 vs binding content)
-- `docs/specifications/FS-0030-claude-code-runtime-binding.md` — the first runtime binding, as worked example
+- `docs/specifications/FS-0030-claude-code-runtime-binding.md` — the first runtime binding (still draft; the runtime half of this skill is forward-looking until it ships)
 
 ## When to Use
 
@@ -106,14 +106,19 @@ runtime's configuration surface:
 - **MCP configuration** — parameterised, as an example, never a hardcoded credential
 
 Each runtime binding gets its own FS/PLAN (`ADR-0039` §5). The first is Claude
-Code (`FS-0030`); its plugin layout is the most reusable starting point for the
-Hermes, OpenClaw, and Codex bindings that follow — the *skill and MCP* portions
-carry over even though hooks and anchor-file wiring do not.
+Code (`FS-0030`) — still **draft**, so `integrations/runtimes/claude-code/`
+does not exist on trunk yet. Until it ships, runtime-binding guidance is
+forward-looking: it teaches the procedure a binding must follow, not a binding
+that already exists. The plugin layout is planned to be the most reusable
+starting point for the Hermes, OpenClaw, and Codex bindings that follow — the
+*skill and MCP* portions carry over even though hooks and anchor-file wiring
+do not. Do not cite `integrations/runtimes/claude-code/` as a shipped worked
+example until `FS-0030` / `PLAN-0036` land.
 
 ## Procedure
 
 1. **Read the governing ADR(s) first.** Substrate: `ADR-0024` + `ADR-0028` + `ADR-0037`. Runtime: `ADR-0039` + `ADR-0038` + `ADR-0004` + `ADR-0018`/`ADR-0029`.
-2. **Check for an existing binding of the same kind.** The reference substrate binding is `integrations/github-issues-projects.md`; the executable layer is `integrations/github/`; the first runtime binding is `integrations/runtimes/claude-code/` (per `FS-0030`). Extend rather than duplicate.
+2. **Check for an existing binding of the same kind.** The reference substrate binding is `integrations/github-issues-projects.md`; the executable layer is `integrations/github/`; the first runtime binding is `integrations/runtimes/claude-code/` per `FS-0030` (**draft** — if the directory does not exist on trunk, the binding has not shipped; treat runtime guidance as forward-looking). Extend rather than duplicate.
 3. **Map all six capabilities** (substrate) or all five setup requirements (runtime) — none deferred, none planned.
 4. **State enforcement posture per capability**: enforces or attributable — never claim prevention the platform cannot supply.
 5. **State the scheduler's reliability characteristics** (substrate) — the reconciler carries correctness.

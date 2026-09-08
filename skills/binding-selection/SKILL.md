@@ -34,7 +34,7 @@ a new binding instead of stretching an existing one.
 | --- | --- |
 | Work items, types, phases, boards on GitHub | `integrations/github-issues-projects.md` (reference substrate binding) |
 | Provisioning labels, initialising submodules, auditing board drift | `integrations/github/` executable layer (`integrations/github/bin/gh-*.sh`) |
-| Wiring the framework into Claude Code | `integrations/runtimes/claude-code/` (per `FS-0030`) |
+| Wiring the framework into Claude Code | `integrations/runtimes/claude-code/` once shipped (per `FS-0030` — **draft**, so the directory does not exist on trunk yet; until it lands, treat runtime guidance as the procedure to follow, not a shipped artifact) |
 | Wiring the framework into Hermes, OpenClaw, or Codex | No binding yet — write one (`ADR-0039` §5, one FS/PLAN per binding) |
 | A new work-tracking platform (Linear, Jira, …) | Write a substrate binding (`ADR-0024`) |
 | A merge-blocking CI check | Not a binding — a Category 1 gate in `scripts/` (`ADR-0015`) |
@@ -100,11 +100,14 @@ binding implements (the core never forecasts — `ADR-0024`).
 ## Runnable examples
 
 **Example 1 — a consumer asks "how do I wire conventional-agents into my
-Claude Code project?"** The answer is the Claude Code runtime binding
-(`integrations/runtimes/claude-code/`, per `FS-0030`): it ships the plugin
-layout, the `CLAUDE.md` anchor, the advisory hook, the settings fragment, and
-the parameterised MCP example. Point the consumer there; do not hand-write a
-`CLAUDE.md` from memory.
+Claude Code project?"** The planned answer is the Claude Code runtime binding
+(`integrations/runtimes/claude-code/`, per `FS-0030`): it is specified to ship
+the plugin layout, the `CLAUDE.md` anchor, the advisory hook, the settings
+fragment, and the parameterised MCP example. The binding has **not shipped
+yet** — `FS-0030` / `PLAN-0036` are draft — so do not point the consumer at
+`integrations/runtimes/claude-code/` as if it existed; point them at the spec
+and the work item instead, and do not hand-write a `CLAUDE.md` from memory as a
+substitute procedure.
 
 **Example 2 — a consumer asks "can the framework track work in Linear?"** No
 substrate binding exists for Linear. The correct move is a new substrate
@@ -124,7 +127,7 @@ a draft PR. It is not a `scripts/` script and not a core change.
 
 ## Pitfalls
 
-- **Reaching for a new binding when an existing one covers the task** — the reference substrate binding and executable layer cover GitHub; the Claude Code runtime binding covers that runtime. Extend, don't duplicate.
+- **Reaching for a new binding when an existing one covers the task** — the reference substrate binding and executable layer cover GitHub; the Claude Code runtime binding (once `FS-0030` ships) covers that runtime. Extend, don't duplicate.
 - **Treating a binding as a script library** — a binding maps capabilities onto mechanisms; a one-off invocation is consumer policy, not binding content.
 - **Putting a merge-blocking gate in a binding directory** — Category 1 gates live in `scripts/` (`ADR-0015`).
 - **Assuming a runtime is bound because a sibling is** — Hermes and OpenClaw are close in shape but are two runtimes and will be two bindings (`ADR-0039`).
