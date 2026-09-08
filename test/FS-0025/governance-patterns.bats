@@ -76,16 +76,31 @@ setup() {
 @test "fs_plan_pairing: every implemented/approved FS names a PLAN" {
   for fs in "$SPECS_DIR"/FS-*.md; do
     [ -f "$fs" ] || continue
-    local status basename fs_num
+    local status basename fs_id fs_num found
     status=$(grep -m1 '^status:' "$fs" | sed 's/^status:[[:space:]]*//')
     [ "$status" != "approved" ] && [ "$status" != "implemented" ] && continue
     basename=$(basename "$fs")
+    fs_id=$(grep -m1 '^id:' "$fs" | sed 's/^id:[[:space:]]*//')
     fs_num=$(echo "$basename" | sed 's/^FS-0*//;s/-.*//')
-    # Look for matching PLAN
-    local found=$(ls "$PLANS_DIR"/PLAN-$(printf "%04d" "$fs_num")-*.md "$PLANS_DIR"/PLAN-"$fs_num"-*.md 2>/dev/null | head -1)
+    # Prefer numeric alignment, then fall back to a PLAN declaring this FS in
+    # related_specs (rule 1 in check-status.sh resolves the primary PLAN via
+    # related_specs, not the number — FS-0029/PLAN-0035 and FS-0030/PLAN-0036
+    # legitimately offset).
+    found=$(ls "$PLANS_DIR"/PLAN-$(printf "%04d" "$fs_num")-*.md "$PLANS_DIR"/PLAN-"$fs_num"-*.md 2>/dev/null | head -1)
+    if [ -z "$found" ] && [ -n "$fs_id" ]; then
+      for plan in "$PLANS_DIR"/PLAN-*.md; do
+        [ -f "$plan" ] || continue
+        specs_line=$(grep -m1 '^related_specs:' "$plan" || true)
+        if echo "$specs_line" | grep -qE "(^|\[|[, ])$fs_id([, ]|\]|$)"; then
+          found="$plan"
+          break
+        fi
+      done
+    fi
     if [ -z "$found" ]; then
       echo "FAIL: $basename (status=$status) has no corresponding PLAN"
-      echo "       Expected $PLANS_DIR/PLAN-$(printf "%04d" "$fs_num")-*.md"
+      echo "       Expected PLAN-$(printf "%04d" "$fs_num")-*.md or a PLAN " \
+           "whose related_specs include $fs_id"
       return 1
     fi
   done
