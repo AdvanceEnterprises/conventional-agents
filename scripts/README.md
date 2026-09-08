@@ -23,6 +23,19 @@ consumer policy decides whether reported drift should be reconciled. A command
 that is wired to fail a pull request belongs here under `scripts/` instead, with
 the corresponding governance decision and gate coverage.
 
+---
+
+## Runtime binding executables
+
+The runtime binding's executables live under `integrations/runtimes/claude-code/`,
+not `scripts/` (`FS-0030`, `ADR-0039`, `ADR-0015` Location invariant). They are
+registered in `package.json` as `sync:claude-skills` and `ca-runtime-audit`.
+
+These commands are **not Category 1 governance gates**. They sync skill copies
+into the binding and audit `.claude/` conformance, both report-only/advisory by
+design — see `integrations/runtimes/claude-code/README.md` for the audit's exit
+semantics (`--strict` is an opt-in signal for scripts, not a CI blocking gate).
+
 The canonical CI fragments use full checkout history because the framework's
 status and attribution checks inspect history. In particular, a shallow checkout
 can make a consumer's governance run appear healthy while omitting approval

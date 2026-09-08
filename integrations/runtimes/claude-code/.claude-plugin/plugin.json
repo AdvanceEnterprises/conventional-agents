@@ -1,0 +1,8 @@
+{
+  "name": "conventional-agents",
+  "version": "0.1.0",
+  "description": "Runtime binding: makes the conventional-agents governance framework's skills and gate scripts usable from Claude Code (FS-0030, ADR-0039).",
+  "author": {
+    "name": "conventional-agents maintainers"
+  }
+}

@@ -13,6 +13,17 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
+- **Claude Code runtime binding (`FS-0030`).** The framework's first agent-runtime
+  binding ships under `integrations/runtimes/claude-code/`: a plugin manifest
+  (`claude plugin validate` clean), synced skill copies sourced from
+  `skills/*/SKILL.md`, an advisory gate-runner hook, a parameterised MCP
+  example, an identity/attribution settings fragment, and a report-only
+  `ca-runtime-audit.sh` that never mutates `.claude/` and never blocks. The
+  framework adopts its own binding (`CLAUDE.md`, `.claude/settings.json`),
+  `npm run ca-runtime-audit`/`sync:claude-skills` are registered, and an
+  advisory (non-blocking) `claude-plugin-validate` CI job was added.
+  Hermes Agent, OpenClaw, and Codex bindings remain planned behind their own
+  FS/PLAN cycles (`ADR-0039` §5).
 - **Bounded, hermetic validation runner (`FS-0039`, issue #132).** Framework
   maintainers and consumers can run `npm run validate` to execute the five
   documented acceptance gates through one ordered, timed, fail-closed entry

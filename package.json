@@ -23,6 +23,8 @@
     "github:submodule-init": "bash integrations/github/bin/gh-submodule-init.sh",
     "github:label-provision": "bash integrations/github/bin/gh-label-provision.sh",
     "github:board-audit": "bash integrations/github/bin/gh-board-audit.sh",
+    "sync:claude-skills": "bash integrations/runtimes/claude-code/bin/sync-skills.sh",
+    "ca-runtime-audit": "bash integrations/runtimes/claude-code/bin/ca-runtime-audit.sh",
     "check:status": "bash scripts/check-status.sh",
     "check:freshness": "bash scripts/check-freshness.sh",
     "lint:cross-repo": "bash scripts/cross-repo-lint.sh",

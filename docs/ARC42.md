@@ -218,6 +218,11 @@ Key elements:
 - `integrations/README.md` — capability vocabulary and binding selection.
 - `integrations/github-issues-projects.md` — reference binding; six
   capability mappings plus the substrate limitations table.
+- `integrations/runtimes/` — runtime bindings (`ADR-0039`), mapping the
+  framework's setup onto agent runtimes' configuration surfaces. The Claude
+  Code binding (`FS-0030`) ships under
+  `integrations/runtimes/claude-code/`; Hermes Agent, OpenClaw, and Codex
+  bindings are planned, each behind its own FS/PLAN cycle.
 
 ### White Box runbooks/
 

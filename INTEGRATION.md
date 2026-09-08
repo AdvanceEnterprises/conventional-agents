@@ -71,7 +71,8 @@ Per-runtime configuration — `.claude/` for Claude Code, `AGENTS.md` +
 `config.toml` for Codex, `~/.hermes/config.yaml` for Hermes Agent,
 `openclaw.json` for OpenClaw — is a *runtime binding* under
 `integrations/runtimes/<runtime>/`, governed by `ADR-0039`. The first binding
-(Claude Code) is specified in `FS-0030`.
+(Claude Code) is implemented in `FS-0030` at
+[`integrations/runtimes/claude-code/`](integrations/runtimes/claude-code/README.md).
 
 ⸻
 

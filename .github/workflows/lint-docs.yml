@@ -327,4 +327,22 @@ jobs:
           path: ${{ runner.temp }}/conventional-agents-validation.log
           if-no-files-found: error
 
+  claude-plugin-validate:
+    # FS-0030 advisory: the Claude Code runtime binding's plugin manifest must
+    # stay valid. This job is deliberately NON-BLOCKING (continue-on-error) —
+    # `claude plugin validate` is not a Category 1 governance gate (ADR-0015,
+    # FS-0030 Non-Goals). It runs for signal only; a failure here never blocks
+    # a merge.
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Validate Claude Code plugin manifest (advisory)
+        run: |
+          npx -y @anthropic-ai/claude-code plugin validate integrations/runtimes/claude-code \
+            || echo "ADVISORY: claude plugin validate reported issues (non-blocking)"
+
 # noop: retrigger CI
