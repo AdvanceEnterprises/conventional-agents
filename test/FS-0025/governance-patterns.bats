@@ -92,9 +92,29 @@ setup() {
         [ -f "$plan" ] || continue
         # Match only the plan whose FIRST related_specs entry is this FS —
         # check-status.sh rule 1 resolves the primary PLAN the same way
-        # (get_related_specs | head -1), so a plan listing the FS in a
-        # non-primary position must not satisfy the pairing.
-        primary=$(grep -m1 '^related_specs:' "$plan" | sed 's/^related_specs:[[:space:]]*//' | tr -d '[]' | cut -d, -f1 | tr -d '[:space:]')
+        # (get_related_specs | head -1). Mirror check-status.sh's parser so
+        # inline ([FS-XXXX]) and block-style (- FS-XXXX) lists both work.
+        primary=$(awk '
+          /^---/{n++; if(n==2) exit; next}
+          n==1 && /^related_specs:/{
+            in_field=1
+            if ($0 ~ /\[/) {
+              gsub(/^related_specs:[[:space:]]*\[/, "")
+              gsub(/\]/, "")
+              gsub(/ /, "")
+              n2=split($0, parts, ",")
+              for (i=1; i<=n2; i++) { if (parts[i] != "") { print parts[i]; exit } }
+              in_field=0
+            }
+            next
+          }
+          n==1 && in_field && /^  - /{
+            val=$0; gsub(/^  - /, "", val); gsub(/^[[:space:]]+|[[:space:]]+$/, "", val)
+            if (val != "") { print val; exit }
+            next
+          }
+          n==1 && in_field && !/^  /{in_field=0}
+        ' "$plan")
         if [ "$primary" = "$fs_id" ]; then
           found="$plan"
           break
