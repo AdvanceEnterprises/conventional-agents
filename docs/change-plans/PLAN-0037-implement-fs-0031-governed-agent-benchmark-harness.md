@@ -62,7 +62,8 @@ Implements the reproducible benchmark harness defined by FS-0031:
 - Driver commands are arbitrary shell commands supplied by the caller (e.g.
   `bash driver-baseline.sh`); the harness captures stdout/stderr and the
   driver's exit code, and treats a non-zero driver exit as task failure, not
-  harness failure.
+  harness failure. Relative driver paths are resolved against the caller's
+  cwd before the runner enters the worktree.
 
 ## Verification
 

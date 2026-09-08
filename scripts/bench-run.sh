@@ -41,6 +41,13 @@ shift 2
 DRIVER=("$@")
 [ -n "$CONDITION" ] || usage
 
+# CONDITION is interpolated into worktree/report paths — restrict it to a
+# safe pattern (mirrors the card id pattern) to prevent path traversal.
+[[ "$CONDITION" =~ ^[a-z0-9-]+$ ]] || {
+  echo "ERROR: condition must match ^[a-z0-9-]+$ (got: $CONDITION)" >&2
+  exit 2
+}
+
 # --- task card validation ----------------------------------------------------
 [ -f "$CARD" ] || { echo "ERROR: task card not found: $CARD" >&2; exit 1; }
 [ -f "$SCHEMA" ] || { echo "ERROR: schema not found: $SCHEMA" >&2; exit 1; }
@@ -102,6 +109,9 @@ TIMEOUT="$(echo "$CARD_JSON" | jq -r '.budget.timeout_seconds // 1800')"
 
 # --- disposable worktree ------------------------------------------------------
 WORKTREE="${TMPDIR:-/tmp}/bench-${CARD_ID}-${CONDITION}-$$"
+# Clean up the worktree on every exit path (including failures after it is
+# created) so the disposable-worktree guarantee holds.
+trap 'rm -rf "$WORKTREE"' EXIT
 rm -rf "$WORKTREE"
 mkdir -p "$WORKTREE"
 
@@ -130,6 +140,14 @@ fi
 ACTION_LOG="$WORKTREE/action.log"
 REPORT="$REPORT_DIR/${CARD_ID}-${CONDITION}-$(date -u +%Y%m%dT%H%M%SZ).json"
 mkdir -p "$REPORT_DIR"
+
+# The driver runs inside the worktree (cd "$WORKTREE/repo"), so a relative
+# driver path would resolve against the worktree and fail with 127. Resolve a
+# relative first element (./x or sub/x) against the caller's cwd up front.
+CALLER_CWD="$(pwd)"
+if [ ${#DRIVER[@]} -gt 0 ] && [[ "${DRIVER[0]}" == */* ]] && [[ "${DRIVER[0]}" != /* ]]; then
+  DRIVER[0]="$CALLER_CWD/${DRIVER[0]}"
+fi
 
 START_EPOCH="$(date +%s)"
 if [ ${#DRIVER[@]} -eq 0 ]; then
@@ -161,7 +179,7 @@ while IFS= read -r check_id; do
     '.governance_checks[] | select(.id == $id) | .command')"
   check_desc="$(echo "$CARD_JSON" | jq -r --arg id "$check_id" \
     '.governance_checks[] | select(.id == $id) | .description')"
-  if (cd "$WORKTREE/repo" && BENCH_BASE_COMMIT="$BASE_COMMIT" BENCH_ACTION_LOG="$ACTION_LOG" BENCH_CARD_ID="$CARD_ID" bash -c "$check_cmd") >/dev/null 2>&1; then
+  if (cd "$WORKTREE/repo" && BENCH_BASE_COMMIT="$BASE_COMMIT" BENCH_ACTION_LOG="$ACTION_LOG" BENCH_CARD_ID="$CARD_ID" timeout -k 5 60 bash -c "$check_cmd") >/dev/null 2>&1; then
     GOV_PASS=$((GOV_PASS + 1))
   else
     FAILURES="$(echo "$FAILURES" | jq -c --arg id "$check_id" --arg desc "$check_desc" \
