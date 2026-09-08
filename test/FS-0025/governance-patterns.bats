@@ -76,16 +76,55 @@ setup() {
 @test "fs_plan_pairing: every implemented/approved FS names a PLAN" {
   for fs in "$SPECS_DIR"/FS-*.md; do
     [ -f "$fs" ] || continue
-    local status basename fs_num
+    local status basename fs_id fs_num found
     status=$(grep -m1 '^status:' "$fs" | sed 's/^status:[[:space:]]*//')
     [ "$status" != "approved" ] && [ "$status" != "implemented" ] && continue
     basename=$(basename "$fs")
+    fs_id=$(grep -m1 '^id:' "$fs" | sed 's/^id:[[:space:]]*//')
     fs_num=$(echo "$basename" | sed 's/^FS-0*//;s/-.*//')
-    # Look for matching PLAN
-    local found=$(ls "$PLANS_DIR"/PLAN-$(printf "%04d" "$fs_num")-*.md "$PLANS_DIR"/PLAN-"$fs_num"-*.md 2>/dev/null | head -1)
+    # Prefer numeric alignment, then fall back to a PLAN declaring this FS in
+    # related_specs (rule 1 in check-status.sh resolves the primary PLAN via
+    # related_specs, not the number — FS-0029/PLAN-0035 and FS-0030/PLAN-0036
+    # legitimately offset).
+    found=$(ls "$PLANS_DIR"/PLAN-$(printf "%04d" "$fs_num")-*.md "$PLANS_DIR"/PLAN-"$fs_num"-*.md 2>/dev/null | head -1)
+    if [ -z "$found" ] && [ -n "$fs_id" ]; then
+      for plan in "$PLANS_DIR"/PLAN-*.md; do
+        [ -f "$plan" ] || continue
+        # Match only the plan whose FIRST related_specs entry is this FS —
+        # check-status.sh rule 1 resolves the primary PLAN the same way
+        # (get_related_specs | head -1). Mirror check-status.sh's parser so
+        # inline ([FS-XXXX]) and block-style (- FS-XXXX) lists both work.
+        primary=$(awk '
+          /^---/{n++; if(n==2) exit; next}
+          n==1 && /^related_specs:/{
+            in_field=1
+            if ($0 ~ /\[/) {
+              gsub(/^related_specs:[[:space:]]*\[/, "")
+              gsub(/\]/, "")
+              gsub(/ /, "")
+              n2=split($0, parts, ",")
+              for (i=1; i<=n2; i++) { if (parts[i] != "") { print parts[i]; exit } }
+              in_field=0
+            }
+            next
+          }
+          n==1 && in_field && /^  - /{
+            val=$0; gsub(/^  - /, "", val); gsub(/^[[:space:]]+|[[:space:]]+$/, "", val)
+            if (val != "") { print val; exit }
+            next
+          }
+          n==1 && in_field && !/^  /{in_field=0}
+        ' "$plan")
+        if [ "$primary" = "$fs_id" ]; then
+          found="$plan"
+          break
+        fi
+      done
+    fi
     if [ -z "$found" ]; then
       echo "FAIL: $basename (status=$status) has no corresponding PLAN"
-      echo "       Expected $PLANS_DIR/PLAN-$(printf "%04d" "$fs_num")-*.md"
+      echo "       Expected PLAN-$(printf "%04d" "$fs_num")-*.md or a PLAN " \
+           "whose related_specs include $fs_id"
       return 1
     fi
   done

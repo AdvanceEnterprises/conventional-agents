@@ -2,7 +2,7 @@
 type: change-plan
 role: implementer
 language: bash
-status: in-progress
+status: implemented
 related_specs: [FS-0029]
 approved_by: "Joey Clark <administrator@ajoeofalltrades.dev>"
 related_adrs: [ADR-0037]
@@ -26,7 +26,7 @@ touches:
   - docs/change-plans/README.md
   - CHANGELOG.md
 created: 2026-09-03
-updated: 2026-09-06
+updated: 2026-09-08
 ---
 
 # PLAN-0035: Implement FS-0029 — Executable Layer for the GitHub Binding
@@ -37,7 +37,8 @@ updated: 2026-09-06
 * Related ADR ID(s): ADR-0037 (governing); ADR-0024, ADR-0007, ADR-0012,
   ADR-0015, ADR-0028, ADR-0032, ADR-0033 (constraining)
 * Issue / PR Reference: #111 (feature work item — created per FS-0018
-  Origination Path 3); implementation PR to be linked on merge
+  Origination Path 3); implemented by **PR #113 (merged 2026-09-06)** —
+  statuses reconciled post-merge by the maintenance tick (issue #125).
 
 ## Approval Routing
 
@@ -49,7 +50,7 @@ recorded human approval regardless of how `FS-0029`'s `interfaces:` are framed.
 Human approval is recorded in this change with matching `Approved-By:` and
 `Approved-Artifacts:` trailers on the approval commit, and the approving human
 is recorded in `approved_by:` above (`ADR-0026`). `ADR-0037` is accepted and
-`FS-0029` is now in progress, so implementation is underway from this plan.
+`FS-0029` was in progress, so implementation proceeded from this plan.
 
 ## 2. Scope of Change
 
@@ -207,6 +208,9 @@ Modified:
 8. **Full gate run.** `npm run lint:docs`, `npm run check:status`,
    `npm run check:freshness`, `npm test`. Resolve every violation before
    proposing merge.
+
+* Shipped in **PR #113 (merged 2026-09-06)**; the governing FS/PLAN pair
+ statuses were reconciled post-merge by the maintenance tick (issue #125).*
 
 ## 6. Constraints and Guardrails
 

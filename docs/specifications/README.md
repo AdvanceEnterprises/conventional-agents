@@ -121,6 +121,6 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0024 | Portable governance gates — vendored checks target the host repository, not the framework | implemented |
 | FS-0026 | ADR and PLAN scaffolding CLI — npm run new:adr and npm run new:plan | implemented |
 | FS-0027 | Workflow and guideline doc freshness gate — enforce updated: frontmatter | implemented |
-| FS-0029 | Executable layer for the GitHub binding — provisioning, initialisation, and audit commands | in-progress |
-| FS-0028 | ADR supersession chain gate — machine-check superseded_by completeness | draft |
-| FS-0030 | Claude Code runtime binding — the first agent-runtime binding under ADR-0039 | draft |
+| FS-0029 | Executable layer for the GitHub binding — provisioning, initialisation, and audit commands | implemented |
+| FS-0028 | ADR supersession chain gate — machine-check superseded_by completeness | implemented |
+| FS-0030 | Claude Code runtime binding — the first agent-runtime binding under ADR-0039 | approved |

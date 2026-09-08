@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0029
-status: in-progress
+status: implemented
 title: Executable layer for the GitHub binding — provisioning, initialisation, and audit commands
 owner: ajoeofalltrades
 test_required: true
@@ -39,7 +39,7 @@ requires:
   - FS-0024
 tags: [github, binding, integrations, substrate, provisioning, ci, exported-surface]
 created: 2026-09-03
-updated: 2026-09-06
+updated: 2026-09-08
 ---
 <!--
 PARSING_HINTS:
@@ -55,20 +55,17 @@ PARSING_HINTS:
 
 ## Status
 
-- **Approval:** Approved by a recorded human act.
-- **Implementation:** In progress under PLAN-0035.
+- Implemented
 
 ## Plan Status
 
-- **PLAN-0035 is approved by a recorded human act** in this change. Its
-  `touches:` set includes `scripts/README.md`,
-  `.github/workflows/lint-docs.yml`, and `package.json` — all reserved paths
-  under `ADR-0027` — so the approval is carried by matching `Approved-By:` and
-  `Approved-Artifacts:` trailers per `ADR-0026`, not by agent judgment.
-  Implementation begins only after that approval record. The Open Questions
-  below are non-blocking; each names its default.
-- `ADR-0037` is accepted and this spec is in progress under PLAN-0035. The
-  implementation has begun after the recorded human approval.
+- **PLAN-0035 is implemented.** Implementation (PR #113 for #111) was merged
+  2026-09-06; the status transition was deferred post-merge and reconciled by
+  the maintenance tick (issue #125). Implementation was gated on a recorded
+  human approval because the plan's `touches:` set includes
+  `scripts/README.md`, `.github/workflows/lint-docs.yml`, and `package.json` —
+  all reserved paths under `ADR-0027` — carried by matching `Approved-By:` and
+  `Approved-Artifacts:` trailers per `ADR-0026`.
 
 ## Summary
 

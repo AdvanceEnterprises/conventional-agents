@@ -2,7 +2,7 @@
 type: change-plan
 role: implementer
 language: bash
-status: draft
+status: implemented
 related_specs: [FS-0028]
 approved_by: ""
 related_adrs: []
@@ -15,7 +15,7 @@ touches:
   - test/FS-0028/adr-supersession-chain.bats
   - CHANGELOG.md
 created: 2026-09-01
-updated: 2026-09-01
+updated: 2026-09-08
 ---
 
 # PLAN-0028: Implement FS-0028 — ADR Supersession Chain Gate
@@ -25,7 +25,7 @@ updated: 2026-09-01
 * Feature Spec ID(s): FS-0028
 * Related ADR ID(s): none (new capability; fills the standing proactive-check
   gap #3, "ADR chain completeness", originating from issue #108)
-* Issue / PR Reference: #108 (draft PR forthcoming)
+* Issue / PR Reference: #108, implemented by **PR #109 (merged 2026-09-06)** — statuses reconciled post-merge by the maintenance tick (issue #125).
 
 ## 2. Scope of Change
 
@@ -88,7 +88,7 @@ updated: 2026-09-01
 4. Write `test/FS-0028/adr-supersession-chain.bats` (fixture ADRs in a
    temp-created directory under `docs/decisions/`, backed up and restored in
    teardown, mirroring the gate-coverage suite's mutate-run-restore pattern).
-5. Register FS-0028/PLAN-0028 in both README indexes (status `draft`).
+5. Register FS-0028/PLAN-0028 in both README indexes.
 6. Run local checks (Section 5).
 7. `CHANGELOG.md`: add an FS-0028 entry under Unreleased.
 8. Push the branch, open a draft PR referencing #108.
@@ -103,6 +103,8 @@ updated: 2026-09-01
 
 ## 6. Rollout
 
+* Shipped in **PR #109 (merged 2026-09-06)**; the governing FS/PLAN pair
+  statuses were reconciled post-merge by the maintenance tick (issue #125).
 * No rollout risk: the gate is additive inside an existing check, the corpus
   is already compliant (37/37 `superseded_by: null`), and consumers who vendor
   the framework adopt it automatically when they run the vendored

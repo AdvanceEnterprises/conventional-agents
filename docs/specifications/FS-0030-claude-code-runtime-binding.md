@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0030
-status: draft
+status: approved
 title: Claude Code runtime binding — the first agent-runtime binding under ADR-0039
 owner: ajoeofalltrades
 test_required: true
@@ -44,7 +44,7 @@ requires:
   - ADR-0038
 tags: [runtime-binding, claude-code, integrations, skills, mcp, exported-surface]
 created: 2026-09-05
-updated: 2026-09-06
+updated: 2026-09-08
 ---
 <!--
 PARSING_HINTS:
@@ -60,16 +60,22 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Approved
+
+Approved 2026-09-08 by Joey Clark, recorded on the commit that flips this status
+with an `Approved-By:` trailer (`ADR-0026`). #112's merge message asserted this
+transition but carried no trailer and left both documents `draft`; issue #122
+detected the gap and this change reconciles it. `ADR-0039` is `accepted`, so the
+spec-first gate (`guidelines/ROLE_CONTRACT.md`) is now satisfied and
+implementation of the Claude Code runtime binding may begin.
 
 ## Plan Status
 
-- **PLAN-0036 is `draft`** in this planning PR and transitions to `approved` on
-  this PR's human merge, carried by an `Approved-By:` trailer per `ADR-0026`. Its
-  `touches:` set includes `package.json`, `.github/workflows/lint-docs.yml`, and
-  `scripts/README.md` — three reserved paths under `ADR-0027` — so it cannot
-  self-approve. **Implementation does not begin before that approval** and before
-  this spec is `approved` (`guidelines/ROLE_CONTRACT.md` spec-first gate).
+- **PLAN-0036 is `approved`**, recorded on the same commit and carried by the same
+  `Approved-By:` trailer (`ADR-0026`). Its `touches:` set includes `package.json`,
+  `.github/workflows/lint-docs.yml`, and `scripts/README.md` — three reserved
+  paths under `ADR-0027` — so it could not self-approve; this is a recorded human
+  act. The implementing PR opens separately, after this one merges.
 
 ## Summary
 
@@ -293,11 +299,9 @@ runs the governed workflow off `AGENTS.md` + `scripts/` + `skills/`.
 - **A consumer runs Claude Code without the plugin, using the `.claude/`
   fragment.** Both paths are supported; the binding README documents both and the
   audit checks whichever is present.
-- **The source skills no longer carry `metadata.hermes.*`.** The `ADR-0038`
-  Category 2 cleanup landed (work item #115), so SC-13's warning allowance has
-  expired by its own terms: the six indexed skills carry only `name`,
-  `description`, and `license`. A `claude plugin validate` warning on a framework
-  skill is now a defect to fix, not an expected condition to record.
+- **The source skills still carry `metadata.hermes.*`.** `claude plugin validate`
+  warns; SC-13 permits the warnings until the `ADR-0038` cleanup lands, and the
+  binding README records that they are expected.
 - **A consumer has their own `.claude/settings.json` hooks.** The binding's hook
   fragment is additive; the README says how to merge rather than overwrite.
 - **`claude` CLI is absent.** The audit and any validate step fail with an
