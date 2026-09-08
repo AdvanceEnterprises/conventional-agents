@@ -72,7 +72,7 @@ For this project (a documentation/standards kit), semver follows the
   and issue #107 (which misreported the skills split as done — the split-target
   skills never existed) is corrected and closed. `check-status.sh` rule 5b
   (FS-0028) machine-checks the resulting chain.
-- **FS-0028: ADR supersession chain gate** (draft) — rule 5b in
+- **FS-0028: ADR supersession chain gate** (implemented) — rule 5b in
   `scripts/check-status.sh` machine-checks the `superseded_by:` front-matter
   field on every ADR: a `superseded` ADR must name a replacement, every
   non-null value must resolve to an existing ADR (by `id:`), and only a
