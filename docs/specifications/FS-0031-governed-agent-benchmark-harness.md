@@ -10,6 +10,7 @@ interfaces:
   - "benchmark/task-card.schema.json"
   - "benchmark/task-cards/**"
   - "test/FS-0031/**"
+  - "package.json"
   - "docs/specifications/README.md"
   - "docs/change-plans/README.md"
   - "scripts/README.md"

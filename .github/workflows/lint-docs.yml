@@ -222,9 +222,11 @@ jobs:
       - name: Install bats and ripgrep
         # ripgrep is not preinstalled on GitHub runners and several suites call it
         # directly (rg -U, rg -A). run-bats.sh fails loudly if it is missing.
+        # python3-yaml (PyYAML) is required by scripts/bench-run.sh's card
+        # validation (FS-0031); ubuntu-latest ships python3 but not PyYAML.
         run: |
           sudo apt-get update
-          sudo apt-get install -y bats ripgrep
+          sudo apt-get install -y bats ripgrep python3-yaml
       - name: Run bats suites
         run: npm test
       - name: Confirm bats passed
