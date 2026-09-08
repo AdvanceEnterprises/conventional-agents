@@ -200,7 +200,10 @@ sed -n '/## 7\./,/^## /p' integrations/github-issues-projects.md
 ## Example 2 — A grep-shape conformance test for a new substrate binding
 
 Modelled on `test/FS-0016/vendor-boundary.bats`. Save as
-`test/<FS-id>/binding-conformance.bats`:
+`test/<FS-id>/binding-conformance.bats`, substituting your binding's governing
+FS id — or use the `test/integrations/` home for a purely declarative substrate
+binding with no governing FS (only an executable layer earns its own FS, as
+`FS-0029` did for GitHub):
 
 ```bash
 #!/usr/bin/env bats
