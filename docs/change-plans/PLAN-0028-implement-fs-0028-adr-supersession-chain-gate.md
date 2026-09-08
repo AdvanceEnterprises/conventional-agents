@@ -88,7 +88,7 @@ updated: 2026-09-08
 4. Write `test/FS-0028/adr-supersession-chain.bats` (fixture ADRs in a
    temp-created directory under `docs/decisions/`, backed up and restored in
    teardown, mirroring the gate-coverage suite's mutate-run-restore pattern).
-5. Register FS-0028/PLAN-0028 in both README indexes (status `draft`).
+5. Register FS-0028/PLAN-0028 in both README indexes.
 6. Run local checks (Section 5).
 7. `CHANGELOG.md`: add an FS-0028 entry under Unreleased.
 8. Push the branch, open a draft PR referencing #108.
