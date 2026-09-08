@@ -90,8 +90,12 @@ setup() {
     if [ -z "$found" ] && [ -n "$fs_id" ]; then
       for plan in "$PLANS_DIR"/PLAN-*.md; do
         [ -f "$plan" ] || continue
-        specs_line=$(grep -m1 '^related_specs:' "$plan" || true)
-        if echo "$specs_line" | grep -qE "(^|\[|[, ])$fs_id([, ]|\]|$)"; then
+        # Match only the plan whose FIRST related_specs entry is this FS —
+        # check-status.sh rule 1 resolves the primary PLAN the same way
+        # (get_related_specs | head -1), so a plan listing the FS in a
+        # non-primary position must not satisfy the pairing.
+        primary=$(grep -m1 '^related_specs:' "$plan" | sed 's/^related_specs:[[:space:]]*//' | tr -d '[]' | cut -d, -f1 | tr -d '[:space:]')
+        if [ "$primary" = "$fs_id" ]; then
           found="$plan"
           break
         fi

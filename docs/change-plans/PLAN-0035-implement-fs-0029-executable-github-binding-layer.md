@@ -209,7 +209,7 @@ Modified:
    `npm run check:freshness`, `npm test`. Resolve every violation before
    proposing merge.
 
-*Shipped in **PR #113 (merged 2026-09-06)**; the governing FS/PLAN pair
+* Shipped in **PR #113 (merged 2026-09-06)**; the governing FS/PLAN pair
  statuses were reconciled post-merge by the maintenance tick (issue #125).*
 
 ## 6. Constraints and Guardrails
