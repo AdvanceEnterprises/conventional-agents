@@ -31,6 +31,25 @@ not duplicate its `--global` credential-rewrite requirement.
 
 ---
 
+## Benchmark harness
+
+`scripts/bench-run.sh` is the governed-agent benchmark harness runner
+(FS-0031). It executes a task card under one named condition in a disposable
+worktree and emits a JSON report with separate functional, governance,
+evidence, overhead, and failure sections. It is registered as `bench:run` in
+`package.json`.
+
+```bash
+npm run bench:run -- benchmark/task-cards/pilot-001.md baseline
+```
+
+The harness never executes tasks in the framework's own checkout — it clones
+the card's pinned base commit into a disposable directory. Task cards live in
+`benchmark/task-cards/` and validate against
+`benchmark/task-card.schema.json` (v1). See FS-0031 for the full contract.
+
+---
+
 ## Running these scripts against a vendored (host) repository
 
 Per `FS-0024`/`ADR-0033`: each script resolves the repository it checks from the

@@ -124,3 +124,4 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0029 | Executable layer for the GitHub binding — provisioning, initialisation, and audit commands | implemented |
 | FS-0028 | ADR supersession chain gate — machine-check superseded_by completeness | implemented |
 | FS-0030 | Claude Code runtime binding — the first agent-runtime binding under ADR-0039 | approved |
+| FS-0031 | Governed-agent benchmark harness — reproducible functional + governance scoring | draft |

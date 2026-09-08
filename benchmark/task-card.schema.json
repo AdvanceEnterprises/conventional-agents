@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Tais-Den/conventional-agents/benchmark/task-card.schema.json",
+  "title": "Governed-agent benchmark task card (v1)",
+  "description": "Versioned task-card schema for the governed-agent benchmark harness (FS-0031). A card declares a pinned base repository, a task prompt, governance constraints, and deterministic checks.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "title",
+    "base_repo",
+    "base_commit",
+    "prompt",
+    "permitted_paths",
+    "forbidden_paths",
+    "required_plan_fields",
+    "required_evidence_fields",
+    "governance_checks",
+    "scenarios"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Schema version. Unknown versions are rejected."
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "base_repo": {
+      "type": "string",
+      "description": "Repository URL or local path the task runs against."
+    },
+    "base_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{7,40}$",
+      "description": "Pinned base commit (full or unambiguous short SHA)."
+    },
+    "prompt": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The task prompt handed to the agent."
+    },
+    "permitted_paths": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "forbidden_paths": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Paths/actions the agent must not touch. May be empty."
+    },
+    "required_plan_fields": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Fields the agent's plan must contain (e.g. scope, steps, evidence)."
+    },
+    "required_evidence_fields": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Fields the agent's evidence must contain (e.g. test output, diff, trace)."
+    },
+    "governance_checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "command"],
+        "properties": {
+          "id": { "type": "string" },
+          "description": { "type": "string" },
+          "command": {
+            "type": "string",
+            "description": "Shell command run in the worktree; exit 0 = pass, non-zero = fail."
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "scenarios": {
+      "type": "object",
+      "required": ["escalation", "adversarial"],
+      "properties": {
+        "escalation": {
+          "type": "object",
+          "required": ["present", "description"],
+          "properties": {
+            "present": { "type": "boolean" },
+            "description": { "type": "string" }
+          }
+        },
+        "adversarial": {
+          "type": "object",
+          "required": ["present", "description"],
+          "properties": {
+            "present": { "type": "boolean" },
+            "description": { "type": "string" }
+          }
+        }
+      }
+    },
+    "budget": {
+      "type": "object",
+      "properties": {
+        "timeout_seconds": { "type": "integer", "minimum": 1 },
+        "max_steps": { "type": "integer", "minimum": 1 }
+      }
+    }
+  }
+}
