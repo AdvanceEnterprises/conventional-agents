@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash integrations/runtimes/claude-code/bin/ca-runtime-audit.sh --strict --json"
+          }
+        ]
+      }
+    ]
+  }
+}

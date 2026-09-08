@@ -1,0 +1,22 @@
+{
+  "git": {
+    "userName": "Claude Code (via conventional-agents runtime binding)"
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash integrations/runtimes/claude-code/bin/ca-runtime-audit.sh --json"
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash integrations/runtimes/claude-code/bin/ca-runtime-audit.sh --strict --json"
+          }
+        ]
+      }
+    ]
+  }
+}
