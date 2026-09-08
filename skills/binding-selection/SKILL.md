@@ -106,7 +106,8 @@ the plugin layout, the `CLAUDE.md` anchor, the advisory hook, the settings
 fragment, and the parameterised MCP example. The binding has **not shipped
 yet** — `FS-0030` / `PLAN-0036` are draft — so do not point the consumer at
 `integrations/runtimes/claude-code/` as if it existed; point them at the spec
-and the work item instead, and do not hand-write a `CLAUDE.md` from memory as a
+(FS-0030) and its tracking work item (issue #114, agent-runtime integration)
+instead, and do not hand-write a `CLAUDE.md` from memory as a
 substitute procedure.
 
 **Example 2 — a consumer asks "can the framework track work in Linear?"** No
