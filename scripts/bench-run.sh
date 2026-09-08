@@ -49,18 +49,10 @@ DRIVER=("$@")
 CARD_FM="$(awk 'BEGIN{n=0} /^---$/{n++; next} n==1{print} n==2{exit}' "$CARD")"
 [ -n "$CARD_FM" ] || { echo "ERROR: task card has no YAML frontmatter: $CARD" >&2; exit 1; }
 
-if ! echo "$CARD_FM" | jq -e --slurp '.[0]' >/dev/null 2>&1; then
-  # Frontmatter is YAML, not JSON — convert with a minimal YAML→JSON bridge.
-  # The framework's check scripts already depend on jq; a full YAML parser is
-  # out of scope for the harness. Cards are authored as YAML for readability;
-  # the schema check below uses a jq-normalized view.
-  :
-fi
-
-# Normalize: parse the frontmatter with python3 (available in the framework's
-# CI images) into JSON, then validate against the schema.
+# Normalize: parse the frontmatter with python3 + PyYAML (installed in CI via
+# python3-yaml) into JSON, then validate against the schema.
 if ! CARD_JSON="$(python3 - "$CARD_FM" "$SCHEMA" <<'PYEOF'
-import json, sys, yaml
+import json, re, sys, yaml
 try:
     data = yaml.safe_load(sys.argv[1])
 except Exception as e:
@@ -80,6 +72,15 @@ if missing:
 
 if data.get("schema_version") != schema.get("properties", {}).get("schema_version", {}).get("const"):
     print(f"ERROR: unsupported schema_version {data.get('schema_version')}", file=sys.stderr)
+    sys.exit(1)
+
+# Enforce the schema's id pattern: the id is interpolated into the disposable
+# worktree path (${TMPDIR}/bench-<id>-<condition>-$$) and later rm -rf'd, so a
+# path-traversal id (e.g. ../../x) must be rejected, not just validated for
+# presence.
+id_pattern = schema.get("properties", {}).get("id", {}).get("pattern")
+if id_pattern and not re.match(id_pattern, data.get("id", "")):
+    print(f"ERROR: task card id '{data.get('id')}' does not match pattern {id_pattern}", file=sys.stderr)
     sys.exit(1)
 
 print(json.dumps(data))
@@ -142,7 +143,7 @@ set +e
   printf 'condition=%s\ncard=%s\nbase=%s\nstart=%s\n' \
     "$CONDITION" "$CARD_ID" "$BASE_COMMIT" "$(date -u -Iseconds)" > "$ACTION_LOG"
   printf 'driver=%s\n' "${DRIVER[*]}" >> "$ACTION_LOG"
-  timeout "$TIMEOUT" "${DRIVER[@]}" 2>&1 | tee -a "$ACTION_LOG"
+  timeout -k 30 "$TIMEOUT" "${DRIVER[@]}" 2>&1 | tee -a "$ACTION_LOG"
 )
 DRIVER_RC=$?
 set -e
@@ -160,7 +161,7 @@ while IFS= read -r check_id; do
     '.governance_checks[] | select(.id == $id) | .command')"
   check_desc="$(echo "$CARD_JSON" | jq -r --arg id "$check_id" \
     '.governance_checks[] | select(.id == $id) | .description')"
-  if (cd "$WORKTREE/repo" && eval "$check_cmd") >/dev/null 2>&1; then
+  if (cd "$WORKTREE/repo" && BENCH_BASE_COMMIT="$BASE_COMMIT" BENCH_ACTION_LOG="$ACTION_LOG" BENCH_CARD_ID="$CARD_ID" bash -c "$check_cmd") >/dev/null 2>&1; then
     GOV_PASS=$((GOV_PASS + 1))
   else
     FAILURES="$(echo "$FAILURES" | jq -c --arg id "$check_id" --arg desc "$check_desc" \

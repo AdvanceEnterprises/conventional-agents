@@ -124,14 +124,16 @@ EOF
   card="$(build_base_and_card)"
   run "$BENCH_RUN" "$card" baseline bash -c 'echo baseline; exit 0'
   [ "$status" -eq 0 ]
+  local r1
+  r1="$(echo "$output" | grep -o 'REPORT: .*' | cut -d' ' -f2)"
+  [ "$(jq -r '.condition' "$r1")" = "baseline" ]
+  grep -q "baseline" "$(jq -r '.evidence.action_log' "$r1")"
   run "$BENCH_RUN" "$card" gated bash -c 'echo gated; exit 0'
   [ "$status" -eq 0 ]
-  local r1 r2
-  r1="$(echo "$output" | grep -o 'REPORT: .*' | cut -d' ' -f2)"
-  # second run's report
-  r2="$(ls -t "$BENCH_REPORT_DIR" | head -1)"
-  [ "$(jq -r '.condition' "$BENCH_REPORT_DIR/$r2")" = "gated" ]
-  grep -q "gated" "$(jq -r '.evidence.action_log' "$BENCH_REPORT_DIR/$r2")"
+  local r2
+  r2="$(echo "$output" | grep -o 'REPORT: .*' | cut -d' ' -f2)"
+  [ "$(jq -r '.condition' "$r2")" = "gated" ]
+  grep -q "gated" "$(jq -r '.evidence.action_log' "$r2")"
 }
 
 @test "SC-5: pilot card declares escalation + adversarial scenarios" {

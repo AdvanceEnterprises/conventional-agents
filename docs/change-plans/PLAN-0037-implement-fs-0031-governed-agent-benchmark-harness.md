@@ -53,8 +53,9 @@ Implements the reproducible benchmark harness defined by FS-0031:
 
 - The runner is a Category 1 governance gate script per ADR-0015: lives under
   `scripts/`, registered in `package.json`, documented in `scripts/README.md`.
-- Schema validation uses `jq` (already a dev dependency of the framework's
-  check scripts) — no new runtime dependencies.
+- Schema validation uses `python3` + PyYAML (installed in CI via
+  `python3-yaml`); the report assembly uses `jq` (already a dev dependency of
+  the framework's check scripts).
 - The runner never executes the task in the framework's own checkout; it
   always clones/worktrees the pinned base commit into a disposable directory
   under `${TMPDIR:-/tmp}`.
