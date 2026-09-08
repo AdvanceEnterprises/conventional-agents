@@ -13,7 +13,7 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
-  - **`binding-authoring` skill.** Operationalises `integrations/README.md`
+- **`binding-authoring` skill.** Operationalises `integrations/README.md`
   § "Writing a binding" plus `ADR-0024` / `ADR-0037` / `ADR-0039` for a
   contributor writing or reviewing a binding — substrate or runtime. Covers the
   step of deciding whether a platform needs a binding at all, mapping the six

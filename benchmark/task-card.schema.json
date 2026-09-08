@@ -108,7 +108,7 @@
       "type": "object",
       "properties": {
         "timeout_seconds": { "type": "integer", "minimum": 1 },
-        "max_steps": { "type": "integer", "minimum": 1 }
+        "max_steps": { "type": "integer", "minimum": 1, "description": "Advisory metadata — the v1 runner enforces timeout_seconds only; step counting is not yet implemented." }
       }
     }
   }
