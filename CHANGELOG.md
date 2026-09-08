@@ -13,6 +13,12 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
+- **Executable GitHub binding layer (`FS-0029`).** Consumers can use the shared
+  submodule initializer, idempotent label provisioner, and read-only Project
+  board audit under `integrations/github/`. Copyable CI and pull-request
+  templates document the required full-history checkout and keep authentication
+  and board reconciliation explicit; the framework's own CI runs the label audit.
+
 - **Agent-runtime integration is now a governed surface** — `ADR-0038` and
   `ADR-0039` (both **accepted** 2026-09-05), plus the new `skills/AUTHORING.md`
   and `integrations/runtimes/` scaffolding, plus the first governing spec
@@ -66,7 +72,7 @@ For this project (a documentation/standards kit), semver follows the
   and issue #107 (which misreported the skills split as done — the split-target
   skills never existed) is corrected and closed. `check-status.sh` rule 5b
   (FS-0028) machine-checks the resulting chain.
-- **FS-0028: ADR supersession chain gate** (draft) — rule 5b in
+- **FS-0028: ADR supersession chain gate** (implemented) — rule 5b in
   `scripts/check-status.sh` machine-checks the `superseded_by:` front-matter
   field on every ADR: a `superseded` ADR must name a replacement, every
   non-null value must resolve to an existing ADR (by `id:`), and only a

@@ -12,10 +12,10 @@ load "../FS-0001/helpers.bash"
 # removed in teardown.
 #
 # Determinism: the stale-count assertions pin DOC_FRESHNESS_NOW (the gate's
-# evaluation date) so they do not depend on the wall clock. The pinned epoch is
-# 2026-08-30 00:00 UTC — shortly after the PR was authored — under which the
-# two Feb-2026 JS guides are stale (203d) and the Jun-2026 JS testing guide
-# (83d) is not, keeping the expected counts stable.
+# evaluation date) so they do not depend on the wall clock. Corpus-level stale
+# counts are asserted with throwaway probe files (created in the test, removed
+# in teardown) rather than pinned corpus dates, so the suite does not break
+# when a governed doc's updated: date is refreshed.
 
 setup() {
   REPO_ROOT="$(repo_root)"
@@ -102,8 +102,11 @@ teardown() {
   run bash "$CHECK"
   [ "$status" -eq 0 ]
   # 10 guideline files are checked (bash/JS/Python guides + ROLE_CONTRACT).
-  # Pinned evaluation date (2026-08-30): only the two Feb-2026 JS guides are
-  # stale under the default 90d threshold.
-  run env DOC_FRESHNESS_NOW=1788048000 bash -c "bash '$CHECK' 2>&1 | grep -c '^STALE: guidelines/' || true"
-  [ "$output" = "2" ]
+  # Probe-file based: a stale probe in a guidelines subdirectory must be
+  # reported, proving recursion without pinning corpus dates (corpus stale
+  # counts change whenever a governed doc's updated: date is refreshed).
+  printf -- '---\nupdated: 2020-01-01\n---\n\n# Probe\n' > "$REPO_ROOT/guidelines/javascript/_freshness_probe.md"
+  run env DOC_FRESHNESS_NOW=1788048000 bash "$CHECK"
+  [ "$status" -eq 0 ]
+  echo "$output" | grep -qF "STALE: guidelines/javascript/_freshness_probe.md"
 }

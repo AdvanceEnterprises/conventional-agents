@@ -2,9 +2,9 @@
 type: change-plan
 role: implementer
 language: bash
-status: draft
+status: approved
 related_specs: [FS-0030]
-approved_by: ""
+approved_by: "Joey Clark <administrator@ajoeofalltrades.dev>"
 related_adrs: [ADR-0039, ADR-0038]
 touches:
   - integrations/runtimes/README.md
@@ -30,7 +30,7 @@ touches:
   - docs/change-plans/README.md
   - CHANGELOG.md
 created: 2026-09-05
-updated: 2026-09-05
+updated: 2026-09-08
 ---
 
 # PLAN-0036: Implement FS-0030 — Claude Code runtime binding
@@ -42,11 +42,13 @@ This plan **cannot self-approve**. Its `touches:` set includes `package.json`,
 `ADR-0027` — so `check-status.sh` rule 6 requires human approval regardless of
 how `FS-0030`'s `interfaces:` are framed.
 
-It is `status: draft` in this planning PR and transitions to `approved` on this
-PR's human merge, carried by an `Approved-By:` trailer on the merge commit
-(`ADR-0026`). **Implementation begins only after that approval and after
-`FS-0030` is `approved`** — the spec-first gate (`guidelines/ROLE_CONTRACT.md`)
-requires both. The implementing PR opens after this PR merges, never inside it.
+It is now `status: approved`. Approval was given by Joey Clark and recorded on the
+commit that flips this status, carried by an `Approved-By:` trailer whose email
+differs from the commit author's (`ADR-0026`). `#112`'s merge asserted this
+transition but left the trailer and the status behind; issue `#122` detected the
+drift and this change reconciles it. `FS-0030` is `approved` on the same commit,
+so the spec-first gate (`guidelines/ROLE_CONTRACT.md`) is satisfied.
+**The implementing PR opens separately, after this one merges — never inside it.**
 
 ## 1. Feature / Issue Reference
 
@@ -177,10 +179,11 @@ As declared in `touches:` above. New trees: `integrations/runtimes/`,
 
 ## 10. Readiness Check
 
-* [ ] FS-0030 is approved
-* [ ] This plan carries an `Approved-By:` trailer (reserved paths)
-* [ ] Tests are defined per SC (section 3)
-* [ ] Scope is the Claude Code binding only — no other runtime
+* [x] FS-0030 is approved (2026-09-08)
+* [x] This plan carries an `Approved-By:` trailer (reserved paths) — on the
+  status-flip commit, per `ADR-0026`
+* [x] Tests are defined per SC (section 3)
+* [x] Scope is the Claude Code binding only — no other runtime
 
 ## Declaration
 

@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0029
-status: draft
+status: implemented
 title: Executable layer for the GitHub binding — provisioning, initialisation, and audit commands
 owner: ajoeofalltrades
 test_required: true
@@ -39,7 +39,7 @@ requires:
   - FS-0024
 tags: [github, binding, integrations, substrate, provisioning, ci, exported-surface]
 created: 2026-09-03
-updated: 2026-09-03
+updated: 2026-09-08
 ---
 <!--
 PARSING_HINTS:
@@ -55,25 +55,17 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Implemented
 
 ## Plan Status
 
-- **PLAN-0035 is `draft`** in this planning PR and transitions to `approved`
-  on this PR's human merge, carried by an `Approved-By:` trailer per
-  `ADR-0026`. Its `touches:` set includes `scripts/README.md`,
-  `.github/workflows/lint-docs.yml`, and `package.json` — all reserved paths
-  under `ADR-0027` — so it cannot self-approve and the transition happens
-  only as a recorded human act. **Implementation does not begin before that
-  approval**: `ROLE_CONTRACT` spec-first requires an approved FS and an
-  approved PLAN before production or test code is written
-  (`guidelines/ROLE_CONTRACT.md:49-54`), and `ADR-0026:179-188` authorizes
-  no implementation under deferred approval. Flipping the PLAN inside a
-  later implementing PR would fail `check-status.sh` rule 6 rather than
-  record an approval that had already occurred.
-- **This spec must be approved before implementation begins**, and `ADR-0037`
-  must be `accepted`. The Open Questions below are non-blocking; each names its
-  default.
+- **PLAN-0035 is implemented.** Implementation (PR #113 for #111) was merged
+  2026-09-06; the status transition was deferred post-merge and reconciled by
+  the maintenance tick (issue #125). Implementation was gated on a recorded
+  human approval because the plan's `touches:` set includes
+  `scripts/README.md`, `.github/workflows/lint-docs.yml`, and `package.json` —
+  all reserved paths under `ADR-0027` — carried by matching `Approved-By:` and
+  `Approved-Artifacts:` trailers per `ADR-0026`.
 
 ## Summary
 
@@ -302,7 +294,8 @@ capability mapping; this layer provides mechanisms it already names.
   (`ADR-0037` §6).
 - **SC-29.** Given `integrations/github/README.md`, when it is inspected, then it records
   the operational hazards this layer works around: the `--global` requirement,
-  the invisible GraphQL secondary limit and its `unknown owner type` symptom,
+  the invisible GraphQL secondary limit, and the distinct `unknown owner type`
+  owner-resolution error that must not be retried as a rate limit,
   `gh pr edit --body` failing on the GraphQL deprecation with `gh api -X PATCH`
   as the working path, `reviewDecision` being null on draft pull requests, and
   the 60-day scheduled-workflow auto-disable already named in the reference
@@ -345,9 +338,10 @@ capability mapping; this layer provides mechanisms it already names.
 - **A shallow clone.** `check-status.sh` already fails loudly and misleadingly
   under `fetch-depth: 1`; SC-26 puts `fetch-depth: 0` in the canonical
   template so a consumer copying it does not rediscover this.
-- **Bash 3.2.** macOS system bash has no associative arrays. The shipped library
-  must not use them, consistent with the constraint `scripts/README.md` already
-  records.
+- **Bash 3.2.** macOS system bash has no associative arrays and treats an empty
+  array expansion as unset under `set -u`. The shipped commands avoid both
+  hazards; the FS-0029 suites can be run with an explicit interpreter via
+  `CA_BASH_FOR_TESTS`, as recorded in `scripts/README.md`.
 
 ## Out of Scope
 

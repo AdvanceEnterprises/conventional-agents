@@ -1,0 +1,22 @@
+# Copy these steps into a consumer job that checks out the framework submodule.
+# This is a fragment, not a reusable workflow, so each consumer controls its
+# own visibility regime and permissions.
+steps:
+  - name: Checkout with complete history
+    uses: actions/checkout@v4
+    with:
+      fetch-depth: 0
+      # Bootstrap the pinned gitlink before invoking the initializer stored
+      # inside it. The initializer still re-runs the update with the binding's
+      # visibility-aware authentication and pacing rules.
+      submodules: true
+      token: ${{ secrets.CA_FRAMEWORK_TOKEN || github.token }}
+      persist-credentials: false
+
+  - name: Initialize framework submodule
+    shell: bash
+    env:
+      GH_TOKEN: ${{ github.token }}
+      CA_FRAMEWORK_REPOSITORY: ${{ vars.CA_FRAMEWORK_REPOSITORY }}
+      CA_FRAMEWORK_TOKEN: ${{ secrets.CA_FRAMEWORK_TOKEN }}
+    run: bash vendor/conventional-agents/integrations/github/bin/gh-submodule-init.sh

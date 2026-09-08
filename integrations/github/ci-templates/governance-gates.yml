@@ -1,0 +1,26 @@
+# Copy these steps into a consumer governance job after the checkout fragment.
+# The commands are explicit so consumers can remove a gate they do not adopt;
+# this fragment does not create a trigger or mutate a work item.
+steps:
+  - name: Set up Node.js for framework npm commands
+    uses: actions/setup-node@v4
+    with:
+      node-version: '20'
+
+  - name: Run status consistency gate
+    shell: bash
+    run: npm run check:status
+
+  - name: Run freshness gate
+    shell: bash
+    run: npm run check:freshness
+
+  - name: Run Bats suites
+    shell: bash
+    run: npm test
+
+  - name: Audit GitHub binding labels
+    shell: bash
+    env:
+      GH_TOKEN: ${{ github.token }}
+    run: bash vendor/conventional-agents/integrations/github/bin/gh-label-provision.sh --audit

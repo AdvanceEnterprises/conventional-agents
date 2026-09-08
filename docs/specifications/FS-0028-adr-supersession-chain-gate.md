@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0028
-status: draft
+status: implemented
 title: ADR supersession chain gate — machine-check superseded_by completeness
 owner: ajoeofalltrades
 test_required: true
@@ -17,7 +17,7 @@ supersedes: []
 requires: []
 tags: [governance, gates, adr, lifecycle]
 created: 2026-09-01
-updated: 2026-09-03
+updated: 2026-09-08
 ---
 
 <!--
@@ -32,11 +32,16 @@ PARSING_HINTS:
 
 # Feature Spec: ADR Supersession Chain Gate
 
+## Status
+
+- Implemented
+
 ## Plan Status
 
-- **PLAN-0028 is `draft`.** It will not advance past approval without a human
-  decision (ADR-0019 Type checkpoint: `feature` may not advance past
-  `Approved` autonomously).
+- **PLAN-0028 is `implemented`.** Implementation (rule 5b in
+  `scripts/check-status.sh`, PR #109 for #108) was merged 2026-09-06; the
+  status transition was deferred post-merge and reconciled by the maintenance
+  tick (issue #125).
 
 ## Summary
 
