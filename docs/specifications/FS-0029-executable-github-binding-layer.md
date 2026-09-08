@@ -39,7 +39,7 @@ requires:
   - FS-0024
 tags: [github, binding, integrations, substrate, provisioning, ci, exported-surface]
 created: 2026-09-03
-updated: 2026-09-06
+updated: 2026-09-08
 ---
 <!--
 PARSING_HINTS:
