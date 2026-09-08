@@ -1,14 +1,7 @@
 ---
 name: testing-guide
-description: "Writes tests from approved specs across Python, JS/TS, and Bash; applies implementer guidance and approved test patterns."
-version: 1.0.0
-author: conventional-agents
+description: "Writes tests from approved specs across Python, JavaScript/TypeScript, and Bash; applies implementer guidance and approved test patterns. Use when translating success criteria into tests, choosing a test layout, practising TDD, or working with pytest, vitest, or bats."
 license: MIT
-platforms: [linux, macos, windows]
-metadata:
-  hermes:
-    tags: [testing, pytest, vitest, bats, tdd, python, javascript, typescript, bash]
-    related_skills: [document-lifecycle, role-aware-session, test-driven-development]
 ---
 
 # Testing Guide Skill
@@ -501,6 +494,13 @@ When reviewing tests, check:
 - [ ] Mocking is done via framework utilities, not manual monkey-patching (JS/TS)
 - [ ] Scripts use `set -euo pipefail` (Bash)
 - [ ] Variables are quoted and properly scoped (Bash)
+
+---
+
+## Related Skills
+
+- `../document-lifecycle/SKILL.md` — the FS `status: approved` gate that must hold before tests are written
+- `../role-aware-session/SKILL.md` — Spec Reader / Test Planner vs Implementer stance
 
 ---
 

@@ -223,6 +223,54 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Changed
 
+#### Skill frontmatter conformed to the Agent Skills base spec (ADR-0038)
+
+- **The six shipped skills' `SKILL.md` frontmatter is now base-spec-clean.**
+  `version`, `author`, and `platforms` — non-spec fields, identical and
+  information-free across all six — are dropped; the nested
+  `metadata.hermes.{tags,related_skills}` map-of-arrays, which is Hermes
+  Agent's runtime dialect, is removed from source per `ADR-0038` rules 4–5.
+  Each skill keeps `name`, `description`, and `license`. Cross-references move
+  to a prose `## Related Skills` section, and the three dangling
+  `related_skills` targets — `test-driven-development`, `github-auth`,
+  `github-pr-workflow`, none of which exist in this repository — are gone. A
+  runtime that needs a dialect gets it from a runtime binding at sync time,
+  never from source (`ADR-0039`).
+- **All six `description` fields rewritten to carry what *and* when.** Removing
+  `metadata.hermes.tags` removed the only keyword surface the skills had, and the
+  spec makes `description` the sole field loaded at startup for discovery — it
+  "should include specific keywords that help agents identify relevant tasks."
+  Each description now states when to use the skill and carries the vocabulary
+  that was in `tags`, so retrieval does not regress. All are far inside the
+  spec's 1024-character limit.
+- **`skills/example-skill/` removed.** It held an empty, unindexed `SKILL.md`
+  that failed the spec's `name`/`description` requirement; `ADR-0038` rule 4's
+  stated position is to remove it. The format reference is
+  [agentskills.io/specification](https://agentskills.io/specification) and
+  `skills/AUTHORING.md`.
+- **`skills/AUTHORING.md` corrected on two points it got wrong.** It told authors
+  `name` was optional ("if present"), where the spec makes it required and
+  directory-matching; and it routed platform constraints to `metadata:` where the
+  spec's field for environment requirements is `compatibility`, which the profile
+  never named. It now enumerates all six permitted frontmatter fields and states
+  that `description` is the entire discovery surface. `ADR-0038` is accepted and
+  append-only, so the correction lands in the current-state document that carries
+  the rule (`ADR-0030` rule 3), not in the ADR.
+- **Known gap, not closed by this change.** `skills/git-gh-workflow/SKILL.md`
+  (554 lines) and `skills/testing-guide/SKILL.md` (517) still breach
+  `skills/AUTHORING.md` rule 4's ~400-line signal and the spec's 500-line
+  recommendation, and no skill yet uses the spec's `references/` remedy. Tracked
+  as work item #115 item B; `ADR-0038` rule 7 names the disposition for the
+  first. Work item #115 does not close on this change.
+- **Consumer impact.** Skills load identically and no body guidance changed, but
+  this deletes a file from the exported surface (`skills/example-skill/SKILL.md`),
+  which `workflows/versioning-and-releases.md` classifies as **major** for a
+  documentation and standards kit. The file was empty and absent from
+  `skills/index.md`, so nothing could have depended on its content; the release
+  classification is a human call at release-cut time, not an agent's.
+  Discharges the `ADR-0038` rule 4 conformance follow-up and removes the
+  precondition `FS-0030` SC-13's warning allowance was written for.
+
 #### History rewrite — identity normalization per ADR-0036 (2026-09-01)
 
 - **Repository history rewritten with `git filter-repo --mailmap .mailmap`

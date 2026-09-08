@@ -1,14 +1,7 @@
 ---
 name: role-aware-session
-description: "Infers session mode, primary/supporting roles, and enforces role boundaries for every interaction."
-version: 1.0.0
-author: conventional-agents
+description: "Infers session mode, primary and supporting roles, and holds role boundaries for every interaction. Use at the start of a session, when the work shifts phase, or when deciding which role may act — covers session modes, the role contract, governance stance, and the non-overridable safety gates."
 license: MIT
-platforms: [linux, macos, windows]
-metadata:
-  hermes:
-    tags: [roles, session-modes, governance, agent-contract, safety-gates]
-    related_skills: [document-lifecycle, git-gh-workflow, framework-health-audit]
 ---
 
 # Role-Aware Session Skill
@@ -203,6 +196,14 @@ The human may declare or override the session mode at any time:
 - "No implementation yet." → Treat any implementation-ready work as out of scope.
 
 Honor overrides without argument. If an override creates ambiguity, ask rather than inferring.
+
+---
+
+## Related Skills
+
+- `../document-lifecycle/SKILL.md` — FS/PLAN/ADR scaffolding, transitions, front matter hygiene
+- `../git-gh-workflow/SKILL.md` — branching, commits, PRs, attribution, the non-overridable gates
+- `../framework-health-audit/SKILL.md` — `check:status`, the document hygiene gate, full audits
 
 ---
 
