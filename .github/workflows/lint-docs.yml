@@ -342,7 +342,6 @@ jobs:
           node-version: '20'
       - name: Validate Claude Code plugin manifest (advisory)
         run: |
-          npx -y @anthropic-ai/claude-code plugin validate integrations/runtimes/claude-code \
-            || echo "ADVISORY: claude plugin validate reported issues (non-blocking)"
+          npx -y @anthropic-ai/claude-code plugin validate integrations/runtimes/claude-code
 
 # noop: retrigger CI
