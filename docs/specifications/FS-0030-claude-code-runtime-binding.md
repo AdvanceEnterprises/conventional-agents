@@ -234,9 +234,10 @@ runs the governed workflow off `AGENTS.md` + `scripts/` + `skills/`.
    other runtime dialect into any `skills/*/SKILL.md` (`ADR-0038` §5).
 - **SC-13.** Given `claude plugin validate` is run against
   `integrations/runtimes/claude-code/`, when it completes, then it reports no
-  errors (warnings on the source skills are permitted and recorded in the
-  binding README; the pre-cleanup allowance ended when the `ADR-0038` Category 2
-  work landed in #116 — source skills now carry only spec fields).
+  errors (warnings originating from the framework's source skills are no longer
+  expected — the `ADR-0038` Category 2 cleanup landed in #116; any remaining
+  warnings would come from a consumer's runtime-dialect extension and are
+  recorded in the binding README).
 
 ### The advisory hook
 

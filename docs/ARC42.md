@@ -329,7 +329,10 @@ Role-as-skill-card format (applies to every role file):
 
 ## 6.5 Scenario: Multi-Agent Coordination
 
-1) Coordination rules are read from guidelines/multi-agent-coordination.md.
+1) Coordination rules are read from the collaboration governance documents
+   (`ADR-0013`, `ADR-0031`, `FS-0019`, `FS-0021`; see §8.4 — the earlier
+   reference to `guidelines/multi-agent-coordination.md` pointed at a file
+   that does not exist).
 2) Handoffs reference shared gates and acceptance checks.
 
 # 7. Deployment View
