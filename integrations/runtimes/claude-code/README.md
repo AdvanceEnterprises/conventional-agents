@@ -52,16 +52,30 @@ and the framework's CI does not run the audit as a blocking check.
 ## Skills
 
 `sync-skills.sh` copies the shipped skills listed in `skills/index.md` into
-this plugin's `skills/`. **Expected plugin warnings:** the source skills still
-carry `metadata.hermes.*` dialect keys, so `claude plugin validate` may warn on
-them until the `ADR-0038` Category 2 conformance cleanup lands. The warnings
-are expected and permitted (`FS-0030` SC-13).
+this plugin's `skills/`. The source skills are conformed to the Agent Skills
+base spec (ADR-0038 Category 2 cleanup, PR #116) and carry no
+`metadata.hermes.*` dialect keys; the copies are byte-identical to source.
 
 ## Identity and attribution
 
 `settings.fragment.json` sets the git identity and `Agent-Attribution:` trailer
 keys (`ADR-0018` / `ADR-0029`). Substitute the placeholder
 `{{ACTOR_EMAIL}}` with your own actor address before merging.
+
+To merge the fragment into an existing `.claude/settings.json`, overlay the
+object rather than replacing it — if you already have hooks or a statusLine,
+keep them:
+
+```bash
+# merge the fragment's keys into your existing settings (jq example):
+jq -s '.[0] * .[1]' .claude/settings.json integrations/runtimes/claude-code/settings.fragment.json \
+  > .claude/settings.json.tmp && mv .claude/settings.json.tmp .claude/settings.json
+```
+
+The framework's own committed `.claude/settings.json` uses the concrete
+actor `Claude Code <claude-code@tais-den.dev>` (per
+`workflows/git-and-gh-conventions.md`); consumers substitute their own actor
+address.
 
 ## MCP
 

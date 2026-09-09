@@ -96,7 +96,7 @@ fi
 # --- hooks.json: the advisory gate runner ------------------------------------
 HOOKS="$CLAUDE_DIR/hooks/hooks.json"
 if [ -f "$HOOKS" ]; then
-  if grep -qE 'check-status|lint:docs|PostToolUse|PreToolUse' "$HOOKS" 2>/dev/null; then
+  if grep -qE 'check-status\.sh|check:status|lint:docs|PostToolUse|PreToolUse' "$HOOKS" 2>/dev/null; then
     ok=$((ok+1))
     report="$report[ok] hooks.json references an advisory gate runner
 "
@@ -114,13 +114,13 @@ fi
 # --- CLAUDE.md: imports AGENTS.md ---------------------------------------------
 CLAUDE_MD="$REPO/CLAUDE.md"
 if [ -f "$CLAUDE_MD" ]; then
-  if grep -qE 'AGENTS\.md' "$CLAUDE_MD" 2>/dev/null; then
+  if grep -qE '^@AGENTS\.md' "$CLAUDE_MD" 2>/dev/null; then
     ok=$((ok+1))
     report="$report[ok] CLAUDE.md imports AGENTS.md
 "
   else
     warn=$((warn+1))
-    report="$report[warn] CLAUDE.md does not reference AGENTS.md
+    report="$report[warn] CLAUDE.md does not import AGENTS.md with the @AGENTS.md form
 "
   fi
 else

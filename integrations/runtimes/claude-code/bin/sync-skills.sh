@@ -20,14 +20,20 @@ SHIPPED_SKILLS_DIR="$ROOT/skills"
 
 # Skills listed in skills/index.md that ship in the plugin. `example-skill`
 # is a template, explicitly excluded from the runtime binding (ADR-0038
-# Category 2 cleanup tracks its fate separately).
+# Category 2 cleanup tracks its fate separately). The deprecated
+# `git-gh-workflow` router is NOT shipped; its five successors are
+# (skills/index.md).
 readonly SKILLS=(
   role-aware-session
   framework-consumer-integration
   framework-health-audit
-  git-gh-workflow
   document-lifecycle
   testing-guide
+  git-commit-identity
+  git-branch-and-commit
+  gh-pr-workflow
+  versioning-and-releases
+  work-item-stance
 )
 
 [ -d "$SHIPPED_SKILLS_DIR" ] || {
@@ -43,18 +49,8 @@ for skill in "${SKILLS[@]}"; do
     echo "WARN: $skill has no SKILL.md — skipping" >&2
     continue
   fi
-  case "$skill" in
-    role-aware-session|framework-consumer-integration|framework-health-audit|git-gh-workflow)
-      # Category-style skills live directly under skills/ in this repo.
-      mkdir -p "$PLUGIN_SKILLS/$skill"
-      cp "$src/SKILL.md" "$PLUGIN_SKILLS/$skill/SKILL.md"
-      ;;
-    document-lifecycle|testing-guide)
-      # These are flat reference docs, not full skill dirs, in this repo.
-      mkdir -p "$PLUGIN_SKILLS/$skill"
-      cp "$src/SKILL.md" "$PLUGIN_SKILLS/$skill/SKILL.md"
-      ;;
-  esac
+  mkdir -p "$PLUGIN_SKILLS/$skill"
+  cp "$src/SKILL.md" "$PLUGIN_SKILLS/$skill/SKILL.md"
 done
 
 n=0
