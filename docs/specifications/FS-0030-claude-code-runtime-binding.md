@@ -44,7 +44,7 @@ requires:
   - ADR-0038
 tags: [runtime-binding, claude-code, integrations, skills, mcp, exported-surface]
 created: 2026-09-05
-updated: 2026-09-08
+updated: 2026-09-09
 ---
 <!--
 PARSING_HINTS:
@@ -138,9 +138,9 @@ runs the governed workflow off `AGENTS.md` + `scripts/` + `skills/`.
   PLAN, and a home in `scripts/`. The framework may run it **advisory**
   (non-blocking) in its own CI; nothing here fails a merge on its exit code.
 - **Restructuring `skills/*/SKILL.md`.** The `ADR-0038` Category 2 conformance
-  cleanup (metadata flattening, dangling cross-references, `example-skill`) is
-  separate work. This binding consumes whatever the source files are and does not
-  edit them.
+  cleanup (metadata flattening, dangling cross-references, `example-skill`)
+  landed in #116/#117/#118; this binding consumes whatever the source files are
+  and does not edit them.
 - **Orchestration of any kind.** No scheduler, watcher, daemon, background
   monitor, `schedule:` trigger, or hook that transitions the status of any FS,
   PLAN, ADR, or work item (`ADR-0007`, `ADR-0039` §3).
@@ -233,9 +233,10 @@ runs the governed workflow off `AGENTS.md` + `scripts/` + `skills/`.
    inspected, then it writes no `metadata.hermes.*`, `metadata.openclaw.*`, or
    other runtime dialect into any `skills/*/SKILL.md` (`ADR-0038` §5).
 - **SC-13.** Given `claude plugin validate` is run against
-   `integrations/runtimes/claude-code/`, when it completes, then it reports no
-   errors (warnings on the not-yet-cleaned source skills are permitted and
-   recorded in the binding README until the `ADR-0038` Category 2 work lands).
+  `integrations/runtimes/claude-code/`, when it completes, then it reports no
+  errors (warnings on the source skills are permitted and recorded in the
+  binding README; the pre-cleanup allowance ended when the `ADR-0038` Category 2
+  work landed in #116 — source skills now carry only spec fields).
 
 ### The advisory hook
 
@@ -299,9 +300,10 @@ runs the governed workflow off `AGENTS.md` + `scripts/` + `skills/`.
 - **A consumer runs Claude Code without the plugin, using the `.claude/`
   fragment.** Both paths are supported; the binding README documents both and the
   audit checks whichever is present.
-- **The source skills still carry `metadata.hermes.*`.** `claude plugin validate`
-  warns; SC-13 permits the warnings until the `ADR-0038` cleanup lands, and the
-  binding README records that they are expected.
+- **Source skills carry a runtime's dialect.** `claude plugin validate` can still
+  warn if a consumer's runtime requires dialect fields; SC-13 permits warnings
+  recorded in the binding README, and the framework's own source skills carry
+  only spec fields since the `ADR-0038` Category 2 cleanup (#116).
 - **A consumer has their own `.claude/settings.json` hooks.** The binding's hook
   fragment is additive; the README says how to merge rather than overwrite.
 - **`claude` CLI is absent.** The audit and any validate step fail with an
