@@ -522,41 +522,16 @@ system."* That was true when written. It is now false, and the change vindicates
 decision while invalidating its reasoning — the framework chose `SKILL.md` to avoid
 Claude-only lock-in, and the format became the cross-vendor standard.
 
-**Conformance is broken in three ways**, measured against the published spec:
+**Largely closed by the `ADR-0038` Category 2 work (2026-09):** `README.md` now
+lists Agent Skills in Upstream References; `ADR-0038` records the profile stance
+and `ADR-0001`'s overtaken premise; PR #116 stripped the non-spec front-matter
+fields (`version`/`author`/`platforms`, the nested `metadata.hermes` map) and
+removed the empty `skills/example-skill/`; PR #118 split `git-gh-workflow` into
+five focused skills plus a deprecated router.
 
-| Issue | Detail |
-| --- | --- |
-| Non-spec top-level fields | All six skills carry `version`, `author` and `platforms`. None are spec fields; the spec's own example places `author` and `version` **under `metadata:`** |
-| `metadata` typing violated | The spec defines `metadata` as *"a map from string keys to string values"*. Ours is `metadata.hermes.tags: [array]` — nested maps containing arrays |
-| Oversize skill | `skills/git-gh-workflow/SKILL.md` is 558 lines, over the spec's *"keep your main SKILL.md under 500 lines"* and over `ADR-0001`'s ~400-line signal |
-
-Clean: every skill's `name` matches its parent directory, which the spec requires.
-
-Unused: the spec's optional `scripts/`, `references/` and `assets/` directories. That
-matters for the oversize skill — the spec's own remedy is moving detail into
-`references/`, not splitting the skill.
-
-**What closing it requires**, in four parts, none belonging to the current PR:
-
-1. Add Agent Skills to `README.md`'s Upstream References with its URL, matching the
-   treatment of the other four.
-2. A **new ADR** — `ADR-0001` is `accepted` and append-only — recording that the
-   framework *profiles* an external standard rather than defining one, that ADR-0001's
-   premise was overtaken, and which rules are the framework's own profile (the minimum
-   content checklist, the no-duplicate-gates rule, standalone-usefulness, the line
-   signal) as distinct from the spec's requirements.
-3. Fix conformance: move `version`/`author`/`platforms` under `metadata` as string
-   values, flatten the `hermes` nesting, and relocate `git-gh-workflow`'s overflow into
-   `references/`.
-4. Adopt `skills-ref validate` as a gate. It is Category 1 under `ADR-0015`, so it
-   needs an approved FS and PLAN before it is written — and it is the mechanical check
-   that would have caught every item above.
-
-**`skills/example-skill/SKILL.md` is empty, and should stay that way or be removed.**
-Filling it as a format reference was considered and rejected: the specification is the
-reference, `skills-ref validate` is the conformance check, and a hand-written local
-example would fork a standard the framework does not own and freeze whatever it
-understood the format to be on the day it was written.
+**Remaining open:** adopt `skills-ref validate` as a gate. It is Category 1 under
+`ADR-0015`, so it needs an approved FS and PLAN before it is written — and it is
+the mechanical check that would have caught the conformance failures above.
 
 **New skills — two landed, four still deferred.** Six were proposed:
 `adr-authoring`, `spec-authoring`, `work-item-lifecycle`,
@@ -583,13 +558,8 @@ entry is the same class of gap as a rule with no ADR.
 
 ### `docs/ARC42.md` is stale
 
-- `status: Draft`, `last_updated: 2026-07-12`.
-- §9 duplicates its "Accepted ADRs" block verbatim and stops at ADR-0009 — every ADR
-  from 0010 onward is missing, including `ADR-0012`'s non-overridable gates.
-- References `guidelines/context-engineering.md` and
-  `guidelines/multi-agent-coordination.md` (§8.3, §8.4). Neither file exists.
-- §5.1 lists `packs/` as a planned building block. It has never been built.
-  `integrations/` was also phantom until this PR created it.
+- `status: Draft` and `last_updated: 2026-07-12` lag the substantive refreshes
+  since (skill split #118, frontmatter conformance #116, binding-authoring #123).
 
 ### Lint coverage is enumerated, not discovered
 

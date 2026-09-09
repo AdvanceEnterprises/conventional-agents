@@ -3,7 +3,7 @@ title: "arc42 Architecture Documentation"
 system: "conventional-agents"
 version: "1.0.0"
 status: "Draft"
-last_updated: "2026-07-12"
+last_updated: "2026-09-09"
 ---
 
 # 1. Introduction and Goals
