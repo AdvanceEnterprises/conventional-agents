@@ -125,3 +125,4 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0028 | ADR supersession chain gate — machine-check superseded_by completeness | implemented |
 | FS-0030 | Claude Code runtime binding — the first agent-runtime binding under ADR-0039 | approved |
 | FS-0031 | Governed-agent benchmark harness — reproducible functional + governance scoring | draft |
+| FS-0033 | Governance CI on stacked and non-trunk pull requests | draft |
