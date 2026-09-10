@@ -35,4 +35,8 @@ skill guidance all function without any runtime-specific configuration. To
 exercise a no-binding repository against this claim, follow the procedure in
 your own repo: run `npm run check:status` (or `./scripts/check`), open a work
 item, and complete it — each step is documented in `workflows/` and needs no
-`.claude/`, `~/.hermes/`, or `openclaw.json` to exist.
+`.claude/`, `~/.hermes/`, or `openclaw.json` to exist. This covers the
+governed workflow only; tool-specific convenience files like `CLAUDE.md` are
+still described in `INTEGRATION.md` §6 even when not required. `check:status`
+exits non-zero on document-hygiene violations; the governed workflow's gate
+scripts are described in `guidelines/ROLE_CONTRACT.md`.

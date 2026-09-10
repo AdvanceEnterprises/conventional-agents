@@ -96,13 +96,14 @@ so the spec-first gate (`guidelines/ROLE_CONTRACT.md`) is satisfied.
 ## 3. Tests Driving This Change
 
 * Test file(s):
-  * `test/FS-0030/runtime-surface.bats` — SC-1..SC-4
-  * `test/FS-0030/binding-shared.bats` — SC-5..SC-8
-  * `test/FS-0030/anchor-and-skills.bats` — SC-9..SC-13
-  * `test/FS-0030/hook-and-identity.bats` — SC-14..SC-17
-  * `test/FS-0030/audit.bats` — SC-18..SC-20
-  * `test/FS-0030/no-binding.bats` — SC-21
-  * `test/FS-0030/docs-and-registration.bats` — SC-22..SC-24
+  * `test/FS-0030/runtime-surface.bats` — SC-1..SC-4 `[planned; covered by §8 manual checks]`
+  * `test/FS-0030/binding-shared.bats` — SC-5..SC-8 `[planned; covered by §8 manual checks]`
+  * `test/FS-0030/anchor-and-skills.bats` — SC-9..SC-13 `[planned; covered by §8 manual checks]`
+  * `test/FS-0030/hook-and-identity.bats` — SC-14..SC-17 `[planned; covered by §8 manual checks]`
+  * `test/FS-0030/audit.bats` — SC-18..SC-20 `[planned; covered by §8 manual checks]`
+  * `test/FS-0030/no-binding.bats` — SC-21 `[planned; covered by §8 manual checks]`
+  * `test/FS-0030/docs-and-registration.bats` — SC-22..SC-24 `[planned; covered by §8 manual checks]`
+  * `test/FS-0030/runtime-binding.bats` — consolidated shipped suite covering SC-18..SC-20 and parts of SC-24 `[shipped]`
 
 ## 4. Files to Be Modified
 

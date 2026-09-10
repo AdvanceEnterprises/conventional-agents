@@ -3,8 +3,8 @@
 #
 # The plugin's skills/ directory mirrors the framework's skills/ (SC-11/SC-12):
 # - Every skill listed in skills/index.md becomes invocable in Claude Code.
-# - The copies carry the runtime dialect the plugin needs (metadata.hermes.*),
-#   applied by THIS binding — never written back to the source skills/.
+# - The copies are byte-identical to source; no dialect transformation is
+#   applied (ADR-0038 §5 — source skills carry only spec fields).
 #
 # Run from the repository root (or with CA_TARGET_REPO set to the repository
 # root — FS-0024/ADR-0033 caller-cwd convention).
