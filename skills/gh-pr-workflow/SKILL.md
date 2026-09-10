@@ -100,6 +100,11 @@ gh pr status
 gh pr view --web
 ```
 
+Stacked PRs (base is a non-`trunk` branch) run the same governance chain as
+trunk-based PRs — the `pull_request` trigger carries no base-branch filter
+(per #139). A green check list on a stacked PR is therefore a real signal;
+do not assume "no checks ran because the base is not trunk".
+
 Do not commit while a test suite is running locally — suites that write
 fixtures into the working tree will otherwise leak them into your next commit.
 
