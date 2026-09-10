@@ -27,8 +27,13 @@ on:
       - "package.json"
       - "scripts/**/*"
       - "test/**/*.bats"
+  # No base-branch filter on pull_request (per #139): stacked PRs whose base is
+  # a non-trunk branch must receive the same governance signal as trunk-based
+  # PRs. A green-looking stacked PR must not mean "no governance checks ran".
+  # Safe for forked/untrusted PRs: this workflow uses no secrets and no
+  # pull_request_target, so removing the filter does not broaden secret
+  # exposure — fork PRs still run with the read-only default token.
   pull_request:
-    branches: [trunk]
     paths:
       - ".github/workflows/lint-docs.yml"
       - "docs/decisions/ADR-*.md"
