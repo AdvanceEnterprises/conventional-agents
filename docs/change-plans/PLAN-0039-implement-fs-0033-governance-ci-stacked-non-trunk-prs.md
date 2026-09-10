@@ -9,6 +9,7 @@ related_adrs: [ADR-0012, ADR-0027]
 touches:
   - ".github/workflows/lint-docs.yml"
   - "skills/gh-pr-workflow/SKILL.md"
+  - "test/FS-0033/**"
   - "docs/specifications/README.md"
   - "docs/change-plans/README.md"
 created: 2026-09-10
@@ -57,9 +58,13 @@ updated: 2026-09-10
      `git fetch --no-tags origin "${{ github.base_ref }}"` (with a fallback
      to `trunk` for push events, where `github.base_ref` is empty).
 2. Edit `skills/gh-pr-workflow/SKILL.md` — add the stacked-PR paragraph.
-3. Add index rows to both READMEs.
-4. Run `npm run check:status` and `npm run lint:docs` locally; confirm green.
-5. Push the branch; CI re-runs the full `lint-docs` chain on the PR itself
+3. Add `test/FS-0033/stacked-pr-ci.bats` — static assertions pinning the
+   no-filter trigger, the base-ref fetch/range agreement, fork-PR safety
+   (no `pull_request_target`, no secrets), and the skill documentation.
+4. Add index rows to both READMEs.
+5. Run `npm run check:status`, `npm run lint:docs`, and the FS-0033 bats
+   suite locally; confirm green.
+6. Push the branch; CI re-runs the full `lint-docs` chain on the PR itself
    (this PR is its own stacked-PR test case once a non-trunk base exists).
 
 ## 4. Verification

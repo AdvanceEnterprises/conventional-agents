@@ -182,7 +182,9 @@ jobs:
         # Fetch the actual base ref, not just trunk: on a stacked PR the base
         # is a non-trunk branch, and COMMIT_RANGE below must resolve against
         # a ref that exists locally. On push events github.base_ref is empty,
-        # so fall back to trunk (the script's default range).
+        # so fall back to trunk; COMMIT_RANGE is left unset and
+        # cross-repo-lint.sh's default range (origin/trunk~20..origin/trunk)
+        # handles that case.
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             git fetch --no-tags origin "${{ github.base_ref }}"
