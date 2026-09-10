@@ -8,6 +8,7 @@ approved_by: ""
 related_adrs: [ADR-0007, ADR-0024, ADR-0026, ADR-0040]
 touches:
   - docs/decisions/ADR-0040-arcops-architecture-intent-checker-boundary.md
+  - docs/specifications/FS-0032-arcops-architecture-intent-checker-boundary.md
   - docs/specifications/README.md
   - docs/change-plans/README.md
   - CHANGELOG.md
@@ -133,6 +134,7 @@ updated: 2026-09-10
 * [x] Tests exist or are clearly defined — the repository gates
 * [x] Scope is minimal and explicit
 * [x] No architectural changes implied — the boundary is documentation
+* [ ] Approved on human merge of the addressing PR
 
 ## Declaration
 

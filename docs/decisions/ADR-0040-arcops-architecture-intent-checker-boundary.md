@@ -65,7 +65,7 @@ not a framework component.
 ### Option A — In-framework script (like `check-conformance.sh`)
 
 Ship the checker as a framework script, registered in `package.json`, in the
-same shape as `FS-0031`'s conformance doctor.
+same shape as the consumer conformance doctor (`FS-0031`, draft — #147).
 
 Uniform and strongly governed. It is a category error: the conformance doctor
 checks *adoption of the framework* and is therefore framework tooling; ArcOps
@@ -153,6 +153,10 @@ repository's obligation is the implementation.
   contract.
 - The framework cannot verify ArcOps conformance from inside its own CI; the
   contract is enforced by review, not by gate.
+- ArcOps consumes the corpus as it stands: a citation to a document whose
+  `updated:` is stale under the FS-0027 freshness gate may still be indexed
+  as effective intent. The framework gate flags the staleness on its own;
+  ArcOps does not duplicate that finding.
 
 ### Neutral
 

@@ -12,7 +12,7 @@ interfaces:
   - "CHANGELOG.md"
 related_adrs: [ADR-0007, ADR-0024, ADR-0026, ADR-0040]
 supersedes: []
-requires: []
+requires: [FS-0028]
 tags: [arcops, architecture-intent, read-only, boundary, contract, benchmark]
 created: 2026-09-10
 updated: 2026-09-10
@@ -102,7 +102,11 @@ experimental arm.
    `vendor/conventional-agents/` reference — illustrative; consumers may
    adopt the framework as a repository/standard per `ADR-0024`), when
    the checker runs, then the framework-presence question is not part of
-   the report (the checker analyzes intent, not adoption).
+   the report (the checker analyzes intent, not adoption). Worked example:
+   a consumer with `vendor/conventional-agents/` present runs the checker
+   and gets a conflict report — the report does not mention the vendor
+   path, and the run's exit code is unaffected by whether the vendor
+   reference exists.
 4. Given a checker run, when the run completes, then no work item is created,
    transitioned, or commented on, and no merge is approved or rejected.
 5. Given a consumer repository, when the consumer runs the framework's

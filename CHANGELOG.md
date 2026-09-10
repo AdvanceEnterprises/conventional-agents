@@ -110,7 +110,8 @@ For this project (a documentation/standards kit), semver follows the
   source citation, and uncertainty; no write path; no governance gate; no
   framework-core implementation). The pilot runs against this repository and
   `pack-protocol` and is measured by `#124` as an independent experimental
-  arm. No consumer must install ArcOps to use the framework.
+  arm against `conventional-agents` and `pack-protocol`. No consumer must
+  install ArcOps to use the framework.
 
 - **Planning-field conventions for the GitHub binding (draft — `ADR-0043`,
   `FS-0036`, `PLAN-0042`).** Defines `Priority`, `Iteration`, and `Milestone`
