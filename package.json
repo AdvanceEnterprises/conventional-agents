@@ -27,6 +27,7 @@
     "ca-runtime-audit": "bash integrations/runtimes/claude-code/bin/ca-runtime-audit.sh",
     "check:status": "bash scripts/check-status.sh",
     "check:freshness": "bash scripts/check-freshness.sh",
+    "check:conformance": "bash scripts/check-conformance.sh",
     "lint:cross-repo": "bash scripts/cross-repo-lint.sh",
     "validate": "bash scripts/run-validation.sh",
     "bench:run": "bash scripts/bench-run.sh",
