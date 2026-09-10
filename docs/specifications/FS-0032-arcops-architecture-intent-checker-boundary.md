@@ -98,9 +98,11 @@ experimental arm.
    checker runs, then the conflict is reported with a severity, an affected
    path, and an uncertainty value — and the checker exits without writing to
    the repository.
-3. Given a repository with no `vendor/conventional-agents/` reference, when
-   the checker runs, then the framework-presence question is not part of the
-   report (the checker analyzes intent, not adoption).
+3. Given a repository that does not vendor the framework (no
+   `vendor/conventional-agents/` reference — illustrative; consumers may
+   adopt the framework as a repository/standard per `ADR-0024`), when
+   the checker runs, then the framework-presence question is not part of
+   the report (the checker analyzes intent, not adoption).
 4. Given a checker run, when the run completes, then no work item is created,
    transitioned, or commented on, and no merge is approved or rejected.
 5. Given a consumer repository, when the consumer runs the framework's
@@ -165,3 +167,6 @@ experimental arm.
 
 - Whether the ArcOps implementation repository should be governed by this
   framework's conventions (its own choice, not a framework requirement).
+  **Follow-up:** record this as a pilot decision in the ArcOps
+  implementation repository when the pilot starts (tracked as a pilot
+  task, not a framework work item).

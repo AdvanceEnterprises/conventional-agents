@@ -129,7 +129,7 @@ updated: 2026-09-10
 
 ## 10. Readiness Check
 
-* [x] Spec is approved — no; this plan is the draft that seeks approval
+* [ ] Spec is approved — no; this plan is the draft that seeks approval
 * [x] Tests exist or are clearly defined — the repository gates
 * [x] Scope is minimal and explicit
 * [x] No architectural changes implied — the boundary is documentation
