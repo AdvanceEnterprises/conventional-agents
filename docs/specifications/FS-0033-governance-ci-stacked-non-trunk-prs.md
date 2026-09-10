@@ -8,6 +8,7 @@ test_required: true
 interfaces:
   - ".github/workflows/lint-docs.yml"
   - "skills/gh-pr-workflow/SKILL.md"
+  - "test/FS-0033/**"
   - "docs/specifications/README.md"
   - "docs/change-plans/README.md"
 related_adrs: [ADR-0012, ADR-0027]
