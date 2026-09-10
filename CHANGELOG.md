@@ -19,7 +19,8 @@ For this project (a documentation/standards kit), semver follows the
   `skills/*/SKILL.md`, an advisory gate-runner hook, a parameterised MCP
   example, an identity/attribution settings fragment, and a report-only
   `ca-runtime-audit.sh` that never mutates `.claude/` and never blocks. The
-  framework adopts its own binding (`CLAUDE.md`, `.claude/settings.json`),
+  framework adopts its own binding's `.claude/settings.json`; `CLAUDE.md`
+  adoption is tracked separately,
   `npm run ca-runtime-audit`/`sync:claude-skills` are registered, and an
   advisory (non-blocking) `claude-plugin-validate` CI job was added.
   Hermes Agent, OpenClaw, and Codex bindings remain planned behind their own

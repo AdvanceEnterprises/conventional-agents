@@ -343,5 +343,3 @@ jobs:
       - name: Validate Claude Code plugin manifest (advisory)
         run: |
           npx -y @anthropic-ai/claude-code plugin validate integrations/runtimes/claude-code
-
-# noop: retrigger CI

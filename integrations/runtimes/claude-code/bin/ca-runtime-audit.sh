@@ -96,7 +96,10 @@ fi
 # --- hooks.json: the advisory gate runner ------------------------------------
 HOOKS="$CLAUDE_DIR/hooks/hooks.json"
 if [ -f "$HOOKS" ]; then
-  if grep -qE 'check-status\.sh|check:status|lint:docs|PostToolUse|PreToolUse' "$HOOKS" 2>/dev/null; then
+  # Verify the hook command actually references a framework gate script.
+  # PostToolUse/PreToolUse are schema keys that always match — they are NOT
+  # sufficient evidence of a gate hook (SC-14).
+  if grep -qE 'check-status\.sh|check:status|lint:docs|ca-runtime-audit\.sh' "$HOOKS" 2>/dev/null; then
     ok=$((ok+1))
     report="$report[ok] hooks.json references an advisory gate runner
 "
@@ -158,10 +161,11 @@ fi
 
 # --- summary ------------------------------------------------------------------
 if [ "$JSON" -eq 1 ]; then
-  printf '{"ok":%d,"warn":%d,"info":%d}\n' "$ok" "$warn" "$info"
+  printf '%s' "$report"
+  ca_json_summary "$ok" "$warn" "$info"
 else
   printf '%s' "$report"
-  printf 'summary: %d ok, %d divergences, %d advisory — audit is report-only\n' "$ok" "$warn" "$info"
+  ca_summary "$ok" "$warn" "$info" "$STRICT"
 fi
 
 if [ "$STRICT" -eq 1 ] && [ "$warn" -gt 0 ]; then

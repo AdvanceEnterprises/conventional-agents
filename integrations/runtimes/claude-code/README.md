@@ -10,7 +10,7 @@ binding; the shared surface it introduces is `integrations/runtimes/` (index:
 | Artefact | Classifies as | Purpose |
 | --- | --- | --- |
 | `.claude-plugin/plugin.json` | provisions | Plugin manifest — the installable form (`claude plugin validate` target) |
-| `skills/` | provisions | Skill discovery — synced copies of `skills/*/SKILL.md` (source of truth stays the originals; `metadata.hermes.*` dialects are applied here, never written back — `ADR-0038` §5) |
+| `skills/` | provisions | Skill discovery — synced copies of `skills/*/SKILL.md` (source of truth stays the originals; copies are byte-identical to source — `ADR-0038` §5) |
 | `hooks/hooks.json` | provisions | Local **advisory** hook that runs the existing `check-status.sh` / `lint:docs` gate scripts at a documented lifecycle event |
 | `.mcp.json.example` | documents | Parameterised MCP configuration example — no real server credentials or endpoints (`ADR-0039` §4) |
 | `settings.fragment.json` | documents | `.claude/settings.json` keys for commit identity and the `Agent-Attribution:` trailer (`ADR-0018` / `ADR-0029`) |

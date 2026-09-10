@@ -1,6 +1,7 @@
 {
   "git": {
-    "userName": "Claude Code <claude-code@tais-den.dev>"
+    "userName": "Opus 5",
+    "userEmail": "claude-code@tais-den.dev"
   },
   "statusLine": {
     "type": "command",
