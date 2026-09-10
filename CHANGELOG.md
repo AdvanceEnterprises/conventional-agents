@@ -100,6 +100,17 @@ For this project (a documentation/standards kit), semver follows the
   references), grounded in the `v2.0.0` rename/renumbering and the additive
   `v2.1.0` release as worked examples. Consumers previously had to infer the
   policy from `CHANGELOG.md` alone.
+- **ArcOps architecture-intent checker boundary (`FS-0032` / `ADR-0040`).**
+  The framework now ships the boundary contract for a read-only
+  architecture-intent checker (provisionally ArcOps) instead of the checker
+  itself: `ADR-0040` records the decision that ArcOps is a separate
+  capability — it may explain and flag, while Git and human gates decide —
+  and `FS-0032` defines the read-only pilot contract (structured
+  `check-plan` / `check-diff` output with conflict, severity, affected path,
+  source citation, and uncertainty; no write path; no governance gate; no
+  framework-core implementation). The pilot runs against this repository and
+  `pack-protocol` and is measured by `#124` as an independent experimental
+  arm. No consumer must install ArcOps to use the framework.
 
 - **Planning-field conventions for the GitHub binding (draft — `ADR-0043`,
   `FS-0036`, `PLAN-0042`).** Defines `Priority`, `Iteration`, and `Milestone`

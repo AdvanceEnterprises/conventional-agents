@@ -257,6 +257,7 @@ If validation fails:
 | ADR-0037 | Executable layer for the GitHub binding | accepted |
 | ADR-0038 | Agent Skills as a profiled upstream standard | accepted |
 | ADR-0039 | Agent-runtime integration bindings | accepted |
+| ADR-0040 | ArcOps architecture-intent checker boundary | proposed |
 | ADR-0041 | Narrow direct-to-trunk merge exception for reversible maintenance categories, audited by a maintenance digest | proposed |
 | ADR-0042 | Portable flow-report read-model — visibility profile, not a seventh capability | proposed |
 | ADR-0043 | Planning fields are binding policy, not framework state — authority matrix for Priority, Iteration, and Milestone | proposed |

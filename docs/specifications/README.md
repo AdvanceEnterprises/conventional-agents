@@ -125,6 +125,7 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0028 | ADR supersession chain gate — machine-check superseded_by completeness | implemented |
 | FS-0030 | Claude Code runtime binding — the first agent-runtime binding under ADR-0039 | implemented |
 | FS-0031 | Governed-agent benchmark harness — reproducible functional + governance scoring | implemented |
+| FS-0032 | ArcOps architecture-intent checker boundary — read-only pilot contract | draft |
 | FS-0033 | Governance CI on stacked and non-trunk pull requests | implemented |
 | FS-0034 | Consumer conformance doctor — read-only diagnostics for framework adoption | implemented |
 | FS-0035 | Portable flow-report read-model — substrate-neutral governance visibility without a work-item binding | draft |
