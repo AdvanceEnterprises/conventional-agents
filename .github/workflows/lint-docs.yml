@@ -178,8 +178,17 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Fetch default branch ref
-        run: git fetch --no-tags origin trunk
+      - name: Fetch base branch ref
+        # Fetch the actual base ref, not just trunk: on a stacked PR the base
+        # is a non-trunk branch, and COMMIT_RANGE below must resolve against
+        # a ref that exists locally. On push events github.base_ref is empty,
+        # so fall back to trunk (the script's default range).
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch --no-tags origin "${{ github.base_ref }}"
+          else
+            git fetch --no-tags origin trunk
+          fi
       - name: Cross-repo lint (this repo)
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
