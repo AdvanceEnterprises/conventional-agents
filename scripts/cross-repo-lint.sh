@@ -108,6 +108,12 @@ ATTRIBUTION_RE='^Agent-Attribution:[[:space:]]*actor=[^;]+;[[:space:]]*model=[^;
 # reviews are comment-only (posted under the authenticated user), so that
 # address never authors commits.
 AGENT_EMAILS="${AGENT_EMAILS:-hermes-agent@tais-den.dev hermes-cron@tais-den.dev codex@tais-den.dev codex-cron@tais-den.dev claude-code@tais-den.dev github.marten@fwd.mtnden.org}"
+# Floor for the anchored attribution audit (parity with
+# ATTRIBUTION_MIN_ANCHOR in test/FS-0017/commit-attribution.bats): the
+# audited range never shrinks below this boundary even if a release tag is
+# moved/deleted. Only applies when the floor resolves in the linted repo —
+# untagged consumer repos fall back to their ~20 window.
+ATTRIBUTION_MIN_ANCHOR="${ATTRIBUTION_MIN_ANCHOR:-v2.1.0}"
 TOTAL_BAD=0
 for REPO in "${REPOS[@]}"; do
   REPO_NAME="$(basename "$REPO")"
@@ -118,20 +124,35 @@ for REPO in "${REPOS[@]}"; do
 
   # Resolve default branch and commit range
   DEFAULT_BRANCH="$(_resolve_default_branch "$REPO")"
-  # Anchored audit (work item #141): the default range starts at the newest
-  # v*-tagged release reachable from the default branch when one exists —
-  # a missing trailer outside a fixed ~20-commit window can no longer pass.
-  # `--first-parent` keeps the anchor deterministic on the release line.
-  # Repos without release tags fall back to the ~20 window. On pull_request,
-  # CI overrides COMMIT_RANGE to the PR's own commits (see lint-docs.yml).
+  # Anchored audit (work item #141): the default range starts at the OLDER
+  # of the newest v*-tagged release reachable from the default branch and
+  # the ATTRIBUTION_MIN_ANCHOR floor (when it resolves in this repo) — a
+  # missing trailer outside a fixed ~20-commit window can no longer pass,
+  # and a moved/deleted tag cannot silently shrink the audited set.
+  # `--first-parent` keeps the tag anchor deterministic on the release line.
+  # Repos without release tags or a resolvable floor fall back to the
+  # ~20 window. On pull_request, CI overrides COMMIT_RANGE to the PR's own
+  # commits (see lint-docs.yml).
   if [ -n "${COMMIT_RANGE:-}" ]; then
     RANGE="$COMMIT_RANGE"
   else
     _anchor="$(git -C "$REPO" describe --first-parent --tags --match 'v*' --abbrev=0 "origin/$DEFAULT_BRANCH" 2>/dev/null || true)"
-    if [ -z "$_anchor" ]; then
-      RANGE="origin/$DEFAULT_BRANCH~20..origin/$DEFAULT_BRANCH"
-    else
+    _floor=""
+    if [ -n "$ATTRIBUTION_MIN_ANCHOR" ] && git -C "$REPO" rev-parse --verify --quiet "$ATTRIBUTION_MIN_ANCHOR" >/dev/null 2>&1; then
+      _floor="$ATTRIBUTION_MIN_ANCHOR"
+    fi
+    if [ -n "$_anchor" ] && [ -n "$_floor" ]; then
+      if git -C "$REPO" merge-base --is-ancestor "$_anchor" "$_floor"; then
+        RANGE="$_anchor..origin/$DEFAULT_BRANCH"
+      else
+        RANGE="$_floor..origin/$DEFAULT_BRANCH"
+      fi
+    elif [ -n "$_anchor" ]; then
       RANGE="$_anchor..origin/$DEFAULT_BRANCH"
+    elif [ -n "$_floor" ]; then
+      RANGE="$_floor..origin/$DEFAULT_BRANCH"
+    else
+      RANGE="origin/$DEFAULT_BRANCH~20..origin/$DEFAULT_BRANCH"
     fi
   fi
 

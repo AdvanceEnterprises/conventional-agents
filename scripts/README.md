@@ -350,13 +350,17 @@ when pointed at it explicitly.
 
 **Config.**
 - `COMMIT_RANGE` — git log range for the attribution check. Default:
-  the newest `v*`-tagged release reachable from the default branch (via
-  `git describe --first-parent`, keeping the anchor on the release line)
-  when one exists — the audit is
-  anchored at the release where the convention became binding, so a
-  missing trailer outside a fixed recent-commit window cannot pass
-  (work item #141). Repos without release tags fall back to
-  `origin/<default-branch>~20..origin/<default-branch>`.
+  the OLDER of the newest `v*`-tagged release reachable from the default
+  branch (via `git describe --first-parent`, keeping the anchor on the
+  release line) and the `ATTRIBUTION_MIN_ANCHOR` floor, when either
+  resolves in the linted repo — the audit is anchored so a missing
+  trailer outside a fixed recent-commit window cannot pass, and a
+  moved/re-tagged release cannot silently shrink the audited set
+  (work item #141). Repos with neither a release tag nor a resolvable
+  floor fall back to `origin/<default-branch>~20..origin/<default-branch>`.
+- `ATTRIBUTION_MIN_ANCHOR` — convention-era floor for the audited range
+  (default `v2.1.0`, parity with `test/FS-0017/commit-attribution.bats`).
+  Only applies when the ref resolves in the repo being linted.
 - `STRICT_TOOLS=1` — fail on missing tools instead of warning.
 
 **When it runs.** Manually via `npm run lint:cross-repo`. CI wiring lives in
