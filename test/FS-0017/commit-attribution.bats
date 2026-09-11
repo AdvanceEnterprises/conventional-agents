@@ -4,12 +4,26 @@ load "../FS-0001/helpers.bash"
 
 setup() {
   REPO_ROOT="$(repo_root)"
-  # Resolve the audit anchor (see ATTRIBUTION_ANCHOR above): defaults to the
-  # newest v*-tagged release reachable from HEAD; falls back to a shallow
-  # HEAD~20 window when no release tag exists (no anchor available).
+  # Resolve the audit anchor (declared above — see ATTRIBUTION_ANCHOR):
+  # precedence: full override, then the OLDER of the first-parent v* tag
+  # and the ATTRIBUTION_MIN_ANCHOR floor (so the audited range can never
+  # shrink below the convention-era boundary), then a shallow HEAD~20
+  # window when no release anchor exists.
   if [ -z "$ATTRIBUTION_ANCHOR" ]; then
-    ATTRIBUTION_ANCHOR="$(git -C "$REPO_ROOT" describe --tags --match 'v*' --abbrev=0 2>/dev/null || true)"
-    if [ -z "$ATTRIBUTION_ANCHOR" ]; then
+    _tag_anchor="$(git -C "$REPO_ROOT" describe --first-parent --tags --match 'v*' --abbrev=0 2>/dev/null || true)"
+    if [ -n "$_tag_anchor" ] && [ -n "$ATTRIBUTION_MIN_ANCHOR" ]; then
+      if git -C "$REPO_ROOT" merge-base --is-ancestor "$_tag_anchor" "$ATTRIBUTION_MIN_ANCHOR"; then
+        # tag anchor is older (or equal): it already covers the floored range
+        ATTRIBUTION_ANCHOR="$_tag_anchor"
+      else
+        # floor is older: pin the range back to the convention boundary
+        ATTRIBUTION_ANCHOR="$ATTRIBUTION_MIN_ANCHOR"
+      fi
+    elif [ -n "$_tag_anchor" ]; then
+      ATTRIBUTION_ANCHOR="$_tag_anchor"
+    elif [ -n "$ATTRIBUTION_MIN_ANCHOR" ]; then
+      ATTRIBUTION_ANCHOR="$ATTRIBUTION_MIN_ANCHOR"
+    else
       ATTRIBUTION_ANCHOR="HEAD~20"
     fi
   fi
@@ -39,10 +53,16 @@ ACTOR_EMAILS=(
 # for agent-authored commits. The enforcement suite audits every commit
 # since the anchor, so a missing trailer outside a fixed recent-commit
 # window can no longer pass CI (work item #141).
-# Overridable via the ATTRIBUTION_ANCHOR environment variable (e.g. a
-# release tag) for adopters whose convention starts at a different point.
-# Resolved to its default in setup() (needs $REPO_ROOT).
+# Precedence for ATTRIBUTION_ANCHOR: full override, then
+# ATTRIBUTION_MIN_ANCHOR (the convention-era floor, pinned below so a
+# moved/re-tagged release can never shrink the audited set), then the
+# newest v*-tagged release on the first-parent line. Resolved to its
+# default in setup() (needs $REPO_ROOT).
 ATTRIBUTION_ANCHOR="${ATTRIBUTION_ANCHOR:-}"
+# The convention (ADR-0018 as amended by ADR-0029/ADR-0036) became binding
+# for agent-authored commits at the v2.1.0 release, which followed the
+# ADR-0036 pre-public history rewrite. Audit back to at least this boundary.
+ATTRIBUTION_MIN_ANCHOR="${ATTRIBUTION_MIN_ANCHOR:-v2.1.0}"
 
 # Canonical human identity email for this repo (ADR-0036). Human
 # commits need no trailers; agent-authored commits are identified by
