@@ -277,5 +277,3 @@ Each docs subdirectory has a README.md that serves as an index:
 - Changing a document's status
 
 This is part of the document hygiene gate in ROLE_CONTRACT.
-
-`workflows/does-not-exist-659193.md`

@@ -469,6 +469,31 @@ workflow's `paths:` (any governed doc, `package.json`, `.github/**`,
 trailer on an agent-authored commit, a doc missing from its README index, or
 a duplicate FS/PLAN ID.
 
+## check-conformance.sh
+`npm run check:conformance` runs `bash scripts/check-conformance.sh`.
+**Purpose.** Read-only consumer-conformance doctor (FS-0034, issue #142).
+Diagnoses whether a repository that vendors this framework has adopted it
+correctly: framework presence (`vendor/conventional-agents/`), AGENTS.md
+anchors, dangling vendor references, status-gate runnability, CI wiring, and
+framework version reference. Reports findings; never writes.
+**Assumes the current vendoring layout.** The doctor hardcodes
+`vendor/conventional-agents/` and the framework's current file layout
+(`scripts/check-status.sh`, `AGENTS.md`, `INTEGRATION.md`). If the framework
+later reorganizes its directory shape, the doctor's checks must follow; the
+spec's out-of-scope list flags generalization to other vendor paths or future
+layout changes as future work.
+**Not a Category 1 governance gate.** Per ADR-0015, this script is optional
+tooling, not a gate: it is not wired into CI as a failing check and does not
+gate pull requests. Consumers may run it manually or in their own tooling.
+**Target resolution.** Per FS-0024/ADR-0033, the target repository is
+resolved from the caller's working directory (`git rev-parse
+--show-toplevel`) or `CA_TARGET_REPO`. A vendored copy checks the host
+repository, not the framework. When the target IS the framework itself
+(self-check), the presence check is skipped.
+**Output.** Human-readable by default; `--json` emits machine-readable
+JSON. Exit codes: 0 = conformant, 1 = findings, 2 = usage error.
+**When it runs.** Manually (`npm run check:conformance`) or in consumer
+tooling. Not in CI.
 **Diagnostic (#154).** Check 1 reports two distinct offender modes. `missing`
 means the commit carries no `Agent-Attribution:` line at all — the trailer must
 be written. `malformed` means one is present in the message body but
@@ -477,39 +502,6 @@ value wrapped across continuation lines) — the line must be moved or unwrapped
 Both fail the gate — exit-code semantics are unchanged: any `BAD` line still
 makes the run non-zero, so CI wiring is unaffected. Only the remedy differs.
 The hermetic cases live in `test/FS-0017/attribution-diagnostic.bats`.
-
-## check-conformance.sh
-
-`npm run check:conformance` runs `bash scripts/check-conformance.sh`.
-
-**Purpose.** Read-only consumer-conformance doctor (FS-0031, issue #142).
-Diagnoses whether a repository that vendors this framework has adopted it
-correctly: framework presence (`vendor/conventional-agents/`), AGENTS.md
-anchors, dangling vendor references, status-gate runnability, CI wiring, and
-framework version reference. Reports findings; never writes.
-
-**Assumes the current vendoring layout.** The doctor hardcodes
-`vendor/conventional-agents/` and the framework's current file layout
-(`scripts/check-status.sh`, `AGENTS.md`, `INTEGRATION.md`). If the framework
-later reorganizes its directory shape, the doctor's checks must follow; the
-spec's out-of-scope list flags generalization to other vendor paths or future
-layout changes as future work.
-
-**Not a Category 1 governance gate.** Per ADR-0015, this script is optional
-tooling, not a gate: it is not wired into CI as a failing check and does not
-gate pull requests. Consumers may run it manually or in their own tooling.
-
-**Target resolution.** Per FS-0024/ADR-0033, the target repository is
-resolved from the caller's working directory (`git rev-parse
---show-toplevel`) or `CA_TARGET_REPO`. A vendored copy checks the host
-repository, not the framework. When the target IS the framework itself
-(self-check), the presence check is skipped.
-
-**Output.** Human-readable by default; `--json` emits machine-readable
-JSON. Exit codes: 0 = conformant, 1 = findings, 2 = usage error.
-
-**When it runs.** Manually (`npm run check:conformance`) or in consumer
-tooling. Not in CI.
 
 ## run-bats.sh
 
