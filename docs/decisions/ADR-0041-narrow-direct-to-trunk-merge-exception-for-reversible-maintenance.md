@@ -4,7 +4,8 @@ id: ADR-0041
 status: proposed
 decision_scope: workflow
 reversible: yes
-related_specs: []
+related_specs:
+  - FS-0022
 superseded_by: null
 created: 2026-09-11
 updated: 2026-09-11
