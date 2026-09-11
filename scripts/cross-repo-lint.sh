@@ -121,12 +121,13 @@ for REPO in "${REPOS[@]}"; do
   # Anchored audit (work item #141): the default range starts at the newest
   # v*-tagged release reachable from the default branch when one exists —
   # a missing trailer outside a fixed ~20-commit window can no longer pass.
+  # `--first-parent` keeps the anchor deterministic on the release line.
   # Repos without release tags fall back to the ~20 window. On pull_request,
   # CI overrides COMMIT_RANGE to the PR's own commits (see lint-docs.yml).
   if [ -n "${COMMIT_RANGE:-}" ]; then
     RANGE="$COMMIT_RANGE"
   else
-    _anchor="$(git -C "$REPO" describe --tags --match 'v*' --abbrev=0 "origin/$DEFAULT_BRANCH" 2>/dev/null || true)"
+    _anchor="$(git -C "$REPO" describe --first-parent --tags --match 'v*' --abbrev=0 "origin/$DEFAULT_BRANCH" 2>/dev/null || true)"
     if [ -z "$_anchor" ]; then
       RANGE="origin/$DEFAULT_BRANCH~20..origin/$DEFAULT_BRANCH"
     else
@@ -198,7 +199,7 @@ for REPO in "${REPOS[@]}"; do
       ID=$(awk '/^---$/{f=1; next} f&&/^---$/{exit} f&&/^id:/{print $2; exit}' "$f" 2>/dev/null)
       [ -z "$ID" ] && continue
       if ! grep -qF "$ID" "$readme" 2>/dev/null; then
-        DOC_ID=$(echo "$BASE" | sed 's/\.md$//')
+        DOC_ID="${BASE%.md}"
         if ! grep -qF "$DOC_ID" "$readme" 2>/dev/null; then
           err "$REPO_NAME: $ID ($BASE) has no README index entry in $doc_type/README.md"
         fi
@@ -251,7 +252,7 @@ for REPO in "${REPOS[@]}"; do
       echo "$BASE" | sed -n 's/^\(FS-[0-9][0-9]*\|PLAN-[0-9][0-9]*\).*$/\1/p'
     done | sort | uniq -d)
     if [ -n "$_collisions" ]; then
-      err "$REPO_NAME: duplicate IDs in $spec_dir: $(echo $_collisions | tr '\n' ' ')"
+      err "$REPO_NAME: duplicate IDs in $spec_dir: $(echo "$_collisions" | tr '\n' ' ')"
       UNIQUE_OK=false
     fi
   done

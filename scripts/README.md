@@ -369,8 +369,9 @@ when pointed at it explicitly.
 
 **Config.**
 - `COMMIT_RANGE` — git log range for the attribution check. Default:
-  the newest `v*`-tagged release reachable from the default branch
-  (`<tag>..origin/<default-branch>`) when one exists — the audit is
+  the newest `v*`-tagged release reachable from the default branch (via
+  `git describe --first-parent`, keeping the anchor on the release line)
+  when one exists — the audit is
   anchored at the release where the convention became binding, so a
   missing trailer outside a fixed recent-commit window cannot pass
   (work item #141). Repos without release tags fall back to
