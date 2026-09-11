@@ -2,27 +2,47 @@
 
 load "../FS-0001/helpers.bash"
 
+# Audit anchor for trailer enforcement. ADR-0018/ADR-0036 take effect going
+# forward; the anchor is the release at which the convention became binding
+# for agent-authored commits. The enforcement suite audits every commit
+# since the anchor, so a missing trailer outside a fixed recent-commit
+# window can no longer pass CI (work item #141).
+# Anchor precedence: full override; else the OLDER of the newest v*-tagged
+# release on the first-parent line and the ATTRIBUTION_MIN_ANCHOR floor (so
+# a moved/re-tagged release can never shrink the audited set); else a
+# shallow HEAD~20 window when no usable release anchor exists. Resolved in
+# setup() (needs $REPO_ROOT). The floor is only used when it resolves in
+# this repository — untagged consumer repos fall through to HEAD~20.
+ATTRIBUTION_ANCHOR="${ATTRIBUTION_ANCHOR:-}"
+# The convention (ADR-0018 as amended by ADR-0029/ADR-0036) became binding
+# for agent-authored commits at the v2.1.0 release, which followed the
+# ADR-0036 pre-public history rewrite. Audit back to at least this boundary.
+# Consumer repos without the v2.1.0 tag are unaffected (floor does not
+# resolve there and the HEAD~20 fallback applies).
+ATTRIBUTION_MIN_ANCHOR="${ATTRIBUTION_MIN_ANCHOR:-v2.1.0}"
+
 setup() {
   REPO_ROOT="$(repo_root)"
-  # Resolve the audit anchor (declared above — see ATTRIBUTION_ANCHOR):
-  # precedence: full override, then the OLDER of the first-parent v* tag
-  # and the ATTRIBUTION_MIN_ANCHOR floor (so the audited range can never
-  # shrink below the convention-era boundary), then a shallow HEAD~20
-  # window when no release anchor exists.
   if [ -z "$ATTRIBUTION_ANCHOR" ]; then
     _tag_anchor="$(git -C "$REPO_ROOT" describe --first-parent --tags --match 'v*' --abbrev=0 2>/dev/null || true)"
-    if [ -n "$_tag_anchor" ] && [ -n "$ATTRIBUTION_MIN_ANCHOR" ]; then
-      if git -C "$REPO_ROOT" merge-base --is-ancestor "$_tag_anchor" "$ATTRIBUTION_MIN_ANCHOR"; then
+    _floor=""
+    if [ -n "$ATTRIBUTION_MIN_ANCHOR" ]; then
+      if git -C "$REPO_ROOT" rev-parse --verify --quiet "$ATTRIBUTION_MIN_ANCHOR" >/dev/null 2>&1; then
+        _floor="$ATTRIBUTION_MIN_ANCHOR"
+      fi
+    fi
+    if [ -n "$_tag_anchor" ] && [ -n "$_floor" ]; then
+      if git -C "$REPO_ROOT" merge-base --is-ancestor "$_tag_anchor" "$_floor"; then
         # tag anchor is older (or equal): it already covers the floored range
         ATTRIBUTION_ANCHOR="$_tag_anchor"
       else
         # floor is older: pin the range back to the convention boundary
-        ATTRIBUTION_ANCHOR="$ATTRIBUTION_MIN_ANCHOR"
+        ATTRIBUTION_ANCHOR="$_floor"
       fi
     elif [ -n "$_tag_anchor" ]; then
       ATTRIBUTION_ANCHOR="$_tag_anchor"
-    elif [ -n "$ATTRIBUTION_MIN_ANCHOR" ]; then
-      ATTRIBUTION_ANCHOR="$ATTRIBUTION_MIN_ANCHOR"
+    elif [ -n "$_floor" ]; then
+      ATTRIBUTION_ANCHOR="$_floor"
     else
       ATTRIBUTION_ANCHOR="HEAD~20"
     fi
