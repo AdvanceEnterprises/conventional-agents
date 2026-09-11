@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# check-conformance.sh — consumer-conformance doctor (prototype, FS-0031)
+# check-conformance.sh — consumer-conformance doctor (prototype, FS-0034)
 #
 # Read-only diagnostic for a repository that vendors conventional-agents:
 # checks that the framework reference is present, the required anchors exist,
@@ -184,7 +184,9 @@ fi
 
 # ----- Output -----
 if [ "$JSON_OUT" = "true" ]; then
-  python3 - "$REPO_ROOT" "${FINDINGS[@]}" <<'PYEOF'
+  # set -u-safe full-array expansion (bash 3.2/4.3 compat: empty array under
+  # set -u is not a unbound-variable error with the ${arr[@]+...} idiom).
+  python3 - "$REPO_ROOT" ${FINDINGS[@]+"${FINDINGS[@]}"} <<'PYEOF'
 import json, sys
 root = sys.argv[1]
 findings = []

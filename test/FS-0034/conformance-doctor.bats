@@ -214,19 +214,15 @@ assert d['finding_count'] >= 2, d
 
 @test "conformance: self-check (target == framework) runs without vendor presence finding" {
   # Run from the framework's own root: presence checks are skipped, so the
-  # only possible findings are anchor/status/CI ones — never framework-presence.
-  run bash "$CHECK_CONFORMANCE"
-  [ "$status" -eq 0 ] || {
-    # If the framework itself has findings, they must not include presence.
-    refute_output_contains "framework-presence"
-  }
-}
-
-refute_output_contains() {
-  if grep -F -q -- "$1" <<<"$output"; then
-    echo "expected output NOT to contain: $1"
-    return 1
-  fi
+  # only possible findings are anchor/status/CI ones — never framework-presence,
+  # and the success path must be asserted (exit 0), not left vacuous. The cwd is
+  # pinned so an invocation from outside the repo cannot silently resolve to a
+  # different target.
+  local repo_root
+  repo_root="$(cd "$BATS_TEST_DIRNAME/../.." && pwd)"
+  run bash -c "cd '$repo_root' && bash '$CHECK_CONFORMANCE'"
+  [ "$status" -eq 0 ]
+  refute_output_contains "framework-presence"
 }
 
 # --- argument validation -------------------------------------------------------
