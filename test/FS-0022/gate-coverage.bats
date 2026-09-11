@@ -33,7 +33,13 @@ setup_file() {
 }
 
 teardown_file() {
-  git -C "$REAL_REPO_ROOT" worktree remove --force "$WORKTREE" 2>/dev/null || rm -rf "$WORKTREE"
+  git -C "$REAL_REPO_ROOT" worktree remove --force "$WORKTREE" 2>/dev/null || {
+    # Fallback: git could not remove the worktree (e.g. leftover lock files).
+    # Remove the directory (it is disposable, created by mktemp), then prune
+    # git's registry so no stale .git/worktrees/<id> entry references it.
+    rm -rf "$WORKTREE"
+    git -C "$REAL_REPO_ROOT" worktree prune
+  }
 }
 
 setup() {
@@ -53,6 +59,10 @@ setup() {
 # above — check-status.sh would see REPO_ROOT (real repo) != FRAMEWORK_HOME
 # (worktree) and take the non-self-check path. Route every invocation
 # through this so cwd and script location always agree.
+#
+# NOTE: always route check-status.sh through run_check. A direct
+# `bash "$CHECK"` (or any mutation path not built from $REPO_ROOT) would
+# silently operate on the real repo instead of the disposable worktree.
 run_check() {
   ( cd "$REPO_ROOT" && bash "$CHECK" )
 }
