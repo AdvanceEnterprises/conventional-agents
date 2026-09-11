@@ -2,6 +2,10 @@
 
 load "../FS-0001/helpers.bash"
 
+# Harden the suite: fail loudly on any unguarded command failure instead of
+# continuing with a broken fixture (reviewer finding, round B).
+set -euo pipefail
+
 # Every test below injects a defect into a real tracked file, runs
 # check-status.sh, and asserts on the result. Doing that against the live
 # working tree meant a killed run (CI timeout, Ctrl-C) between mutate and
@@ -29,7 +33,18 @@ setup_file() {
   # here they'd differ by exactly that symlink and every test below would
   # silently run in non-self-check mode. Resolve to the physical path first.
   export WORKTREE="$(cd "$(mktemp -d)" && pwd -P)"
-  git -C "$REAL_REPO_ROOT" worktree add --quiet --detach "$WORKTREE" HEAD
+  # Pinned to HEAD deliberately: the fixture must snapshot exactly what is
+  # under test. CI's test-bats job checks out ref: head.sha (NOT GitHub's
+  # synthetic merge commit), and a local run tests whatever checkout the
+  # developer has — HEAD is the correct snapshot in both cases.
+  if ! git -C "$REAL_REPO_ROOT" worktree add --quiet --detach "$WORKTREE" HEAD; then
+    echo "FS-0022: git worktree add failed for '$WORKTREE'" >&2
+    return 1
+  fi
+  # Safety net: a mid-suite abort (SIGTERM, bats crash) must not orphan the
+  # worktree or leave a stale .git/worktrees/<id> registry entry. Runs at
+  # exit after teardown_file — both are idempotent.
+  trap 'git -C "$REAL_REPO_ROOT" worktree remove --force "$WORKTREE" 2>/dev/null || true; git -C "$REAL_REPO_ROOT" worktree prune || true' EXIT
 }
 
 teardown_file() {
@@ -427,7 +442,7 @@ PLAN_EOF
 @test "current_state: script exists and is sourceable without running" {
   local s="$REPO_ROOT/scripts/check-current-state.sh"
   [ -f "$s" ]
-  run bash -c "source '$s'; echo SOURCED_CLEAN"
+  run bash -c "cd '$REPO_ROOT' && source '$s'; echo SOURCED_CLEAN"
   [ "$status" -eq 0 ]
   echo "$output" | grep -qF "SOURCED_CLEAN"
   # Sourcing must not execute the check.
@@ -437,7 +452,7 @@ PLAN_EOF
 @test "current_state: ADR naming an unmodified current-state doc fails" {
   local adr="docs/decisions/ADR-0025-merge-strategy-preserves-per-commit-attribution.md"
   [ -f "$REPO_ROOT/$adr" ] || skip "ADR-0025 filename changed"
-  run bash -c "source '$REPO_ROOT/scripts/check-current-state.sh'; \
+  run bash -c "cd '$REPO_ROOT' && source '$REPO_ROOT/scripts/check-current-state.sh'; \
     check_links_against_changes 'README.md' '$adr'"
   [ "$status" -ne 0 ]
   echo "$output" | grep -qF "ADR-0030 rule 3"
@@ -447,7 +462,7 @@ PLAN_EOF
 @test "current_state: ADR whose linked doc is modified passes" {
   local adr="docs/decisions/ADR-0025-merge-strategy-preserves-per-commit-attribution.md"
   [ -f "$REPO_ROOT/$adr" ] || skip "ADR-0025 filename changed"
-  run bash -c "source '$REPO_ROOT/scripts/check-current-state.sh'; \
+  run bash -c "cd '$REPO_ROOT' && source '$REPO_ROOT/scripts/check-current-state.sh'; \
     check_links_against_changes 'workflows/git-and-gh-conventions.md' '$adr'"
   [ "$status" -eq 0 ]
 }
@@ -457,7 +472,7 @@ PLAN_EOF
   # never match a changed file path exactly, so prefix matching is required.
   local adr="docs/decisions/ADR-0024-platform-neutral-core-with-shipped-bindings.md"
   [ -f "$REPO_ROOT/$adr" ] || skip "ADR-0024 filename changed"
-  run bash -c "source '$REPO_ROOT/scripts/check-current-state.sh'; \
+  run bash -c "cd '$REPO_ROOT' && source '$REPO_ROOT/scripts/check-current-state.sh'; \
     check_links_against_changes 'integrations/github-issues-projects.md' '$adr'"
   [ "$status" -eq 0 ]
 }
@@ -466,7 +481,7 @@ PLAN_EOF
   # ADR-0031's Links name no workflows/guidelines/skills/templates/integrations path.
   local adr="docs/decisions/ADR-0031-structured-multi-model-collaboration.md"
   [ -f "$REPO_ROOT/$adr" ] || skip "ADR-0031 filename changed"
-  run bash -c "source '$REPO_ROOT/scripts/check-current-state.sh'; \
+  run bash -c "cd '$REPO_ROOT' && source '$REPO_ROOT/scripts/check-current-state.sh'; \
     check_links_against_changes 'README.md' '$adr'"
   [ "$status" -eq 0 ]
 }
@@ -474,7 +489,7 @@ PLAN_EOF
 @test "current_state: only ADRs becoming accepted are in scope" {
   # A status-preserving edit must not drag in an unrelated current-state change.
   # adr_becomes_accepted keys on the diff adding `status: accepted`.
-  run bash -c "source '$REPO_ROOT/scripts/check-current-state.sh'; \
+  run bash -c "cd '$REPO_ROOT' && source '$REPO_ROOT/scripts/check-current-state.sh'; \
     declare -f adr_becomes_accepted"
   [ "$status" -eq 0 ]
   echo "$output" | grep -qF 'status:'
