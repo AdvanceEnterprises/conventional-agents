@@ -2,8 +2,42 @@
 
 load "../FS-0001/helpers.bash"
 
+# Every test below injects a defect into a real tracked file, runs
+# check-status.sh, and asserts on the result. Doing that against the live
+# working tree meant a killed run (CI timeout, Ctrl-C) between mutate and
+# restore left the mutation on disk permanently — corrupting every other
+# suite that reads the same file afterward. This suite instead mutates a
+# disposable `git worktree` checked out at HEAD, so a bad exit loses nothing
+# and concurrent runs (each its own mktemp -d) never collide.
+#
+# check-status.sh's self-check path requires REPO_ROOT (git rev-parse
+# --show-toplevel, from cwd) to equal FRAMEWORK_HOME (derived from the
+# script's own on-disk location) — see is_self_check() in check-status.sh.
+# FS-0024/FS-0026's vendored-symlink scratch-host pattern deliberately makes
+# those differ, to test the *portable*, non-self-check path; FS-0022 needs
+# the opposite; a real worktree checkout gives both, as long as every
+# invocation below cd's into it first (see run_check).
+setup_file() {
+  # setup_file and individual @test bodies don't share shell state — bats
+  # runs each test as its own process — so these must be exported, not just
+  # assigned, to reach setup() below.
+  export REAL_REPO_ROOT="$(repo_root)"
+  # mktemp -d on macOS returns a path under /var/folders/…, which is a
+  # symlink to /private/var/folders/…. `cd … && pwd` (no -P) preserves that
+  # logical form, but `git rev-parse --show-toplevel` always resolves to the
+  # physical path. is_self_check() compares the two verbatim, so without -P
+  # here they'd differ by exactly that symlink and every test below would
+  # silently run in non-self-check mode. Resolve to the physical path first.
+  export WORKTREE="$(cd "$(mktemp -d)" && pwd -P)"
+  git -C "$REAL_REPO_ROOT" worktree add --quiet --detach "$WORKTREE" HEAD
+}
+
+teardown_file() {
+  git -C "$REAL_REPO_ROOT" worktree remove --force "$WORKTREE" 2>/dev/null || rm -rf "$WORKTREE"
+}
+
 setup() {
-  REPO_ROOT="$(repo_root)"
+  REPO_ROOT="$WORKTREE"
   CHECK="$REPO_ROOT/scripts/check-status.sh"
   SCRIPTS_README="$REPO_ROOT/scripts/README.md"
   NPM_TEST="$REPO_ROOT/scripts/run-bats.sh"
@@ -14,10 +48,20 @@ setup() {
   CHANGELOG="$REPO_ROOT/CHANGELOG.md"
 }
 
+# `run bash "$CHECK"` alone would run the worktree's copy of the script from
+# bats' own cwd (the real repo's root), which breaks the self-check match
+# above — check-status.sh would see REPO_ROOT (real repo) != FRAMEWORK_HOME
+# (worktree) and take the non-self-check path. Route every invocation
+# through this so cwd and script location always agree.
+run_check() {
+  ( cd "$REPO_ROOT" && bash "$CHECK" )
+}
+
 teardown() {
   # Clean up PLAN-9999-fake-test.md if a previous test run was interrupted.
-  # This test fixture is created by the plan_touches:* tests and must not
-  # leak onto disk — it breaks check-status.sh and CI (test-bats).
+  # This test fixture is created by the plan_touches:* tests. It lands in the
+  # disposable worktree, not the real tree, but a stray file here can still
+  # confuse the next test in this run.
   rm -f "$REPO_ROOT/docs/change-plans/PLAN-9999-fake-test.md"
 }
 
@@ -33,7 +77,7 @@ teardown() {
   # front matter). Use sed to match the line that starts with "# ADR-0031:".
   sed -i.bak "s|^# ADR-0031:.*|# ADR-0031: A different title|" "$adr"
   rm -f "${adr}.bak"
-  run bash "$CHECK"
+  run run_check
   mv "$backup" "$adr"
   [ "$status" -ne 0 ]
   echo "$output" | grep -F "ADR-0031"
@@ -46,7 +90,7 @@ teardown() {
   cp "$adr" "$backup"
   sed -i.bak "s|^status: accepted\$|status: deprecated|" "$adr"
   rm -f "${adr}.bak"
-  run bash "$CHECK"
+  run run_check
   mv "$backup" "$adr"
   [ "$status" -ne 0 ]
   echo "$output" | grep -F "ADR-0031"
@@ -58,7 +102,7 @@ teardown() {
   backup=$(mktemp)
   cp "$ADR_README" "$backup"
   echo "| ADR-9999 | Fictional ADR | accepted |" >> "$ADR_README"
-  run bash "$CHECK"
+  run run_check
   mv "$backup" "$ADR_README"
   [ "$status" -ne 0 ]
   echo "$output" | grep -F "ADR-9999"
@@ -84,7 +128,7 @@ created: 2026-07-28
 updated: 2026-07-28
 ---
 PLAN_EOF
-  run bash "$CHECK"
+  run run_check
   rm -f "$plan"
   [ "$status" -ne 0 ]
 }
@@ -104,7 +148,7 @@ created: 2026-07-28
 updated: 2026-07-28
 ---
 PLAN_EOF
-  run bash "$CHECK"
+  run run_check
   rm -f "$plan"
   [ "$status" -ne 0 ]
   echo "$output" | grep -F "reserved-path set"
@@ -123,7 +167,7 @@ created: 2026-07-28
 updated: 2026-07-28
 ---
 PLAN_EOF
-  run bash "$CHECK"
+  run run_check
   rm -f "$plan"
   [ "$status" -ne 0 ]
   echo "$output" | grep -F "no touches: field"
@@ -232,7 +276,7 @@ PLAN_EOF
   cp "$CHANGELOG" "$backup"
   sed -i.bak 's/FS-0023/FS-XXXX/g' "$CHANGELOG"
   rm -f "${CHANGELOG}.bak"
-  run bash "$CHECK"
+  run run_check
   cp "$backup" "$CHANGELOG"; rm -f "$backup"
   [ "$status" -ne 0 ]
   echo "$output" | grep -qF "FS-0023"
@@ -247,7 +291,7 @@ PLAN_EOF
   cp "$FS_README" "$backup"
   sed -i.bak 's/^| FS-0023 | [^|]*|/| FS-0023 | COMPLETELY WRONG TITLE |/' "$FS_README"
   rm -f "${FS_README}.bak"
-  run bash "$CHECK"
+  run run_check
   cp "$backup" "$FS_README"; rm -f "$backup"
   [ "$status" -ne 0 ]
   echo "$output" | grep -qF "FS-0023 front matter title"
@@ -258,7 +302,7 @@ PLAN_EOF
   backup=$(mktemp)
   cp "$PLAN_README" "$backup"
   echo "| PLAN-9999 | Nonexistent plan | FS-0001 | approved |" >> "$PLAN_README"
-  run bash "$CHECK"
+  run run_check
   cp "$backup" "$PLAN_README"; rm -f "$backup"
   [ "$status" -ne 0 ]
   echo "$output" | grep -qF "PLAN-9999 has a row"
@@ -267,7 +311,7 @@ PLAN_EOF
 @test "index_titles: PLAN rows are not title-compared" {
   # PLANs carry no title: field (templates/core/change-plan.md defines none). Comparing
   # them reports all 23 as drifted. Guard the scoping decision, not just the behaviour.
-  run bash "$CHECK"
+  run run_check
   ! echo "$output" | grep -qE "PLAN-[0-9]+ front matter title"
 }
 
@@ -292,7 +336,7 @@ PLAN_EOF
   ifaces=$(awk '/^interfaces:/{f=1;next} f&&/^[a-z_]+:/{exit} f' "$fs")
   # Premise: no exported-surface path is named.
   ! echo "$ifaces" | grep -qE '(guidelines|roles|skills|templates|workflows|integrations|runbooks)/|INTEGRATION\.md|AGENTS\.md'
-  run bash "$CHECK"
+  run run_check
   if echo "$output" | grep -F "FS-0012 (status="; then
     echo "FAIL: FS-0012 was incorrectly flagged for consumer-impact"
     return 1
@@ -307,7 +351,7 @@ PLAN_EOF
   backup=$(mktemp)
   cp "$doc" "$backup"
   printf '\n`workflows/does-not-exist-%s.md`\n' "$$" >> "$doc"
-  run bash "$CHECK"
+  run run_check
   cp "$backup" "$doc"; rm -f "$backup"
   [ "$status" -ne 0 ]
   echo "$output" | grep -F "does-not-exist"
@@ -320,7 +364,7 @@ PLAN_EOF
   backup=$(mktemp)
   cp "$doc" "$backup"
   printf '\n`scripts/check-status.sh`\n' >> "$doc"
-  run bash "$CHECK"
+  run run_check
   cp "$backup" "$doc"; rm -f "$backup"
   # Assert the specific error is absent rather than global exit 0 — this test must not
   # fail because some unrelated check is red.
@@ -337,7 +381,7 @@ PLAN_EOF
   backup=$(mktemp)
   cp "$adr" "$backup"
   printf '\n`docs/decisions/never-existed-%s.md`\n' "$$" >> "$adr"
-  run bash "$CHECK"
+  run run_check
   cp "$backup" "$adr"; rm -f "$backup"
   ! echo "$output" | grep -F "never-existed"
 }
@@ -346,7 +390,7 @@ PLAN_EOF
   # `tsconfig.json` in a guideline names a file in the reader's repo, not ours.
   local doc="$REPO_ROOT/guidelines/javascript/JS_STYLE_GUIDE.md"
   [ -f "$doc" ] || skip "guideline moved"
-  run bash "$CHECK"
+  run run_check
   ! echo "$output" | grep -F "references 'tsconfig.json'"
 }
 
@@ -446,7 +490,7 @@ PLAN_EOF
   cp "$adr" "$backup"
   sed -i.bak -E 's/^(#{2,3}) Consequences$/\1 Consequences-renamed/' "$adr"
   rm -f "${adr}.bak"
-  run bash "$CHECK"
+  run run_check
   cp "$backup" "$adr"; rm -f "$backup"
   [ "$status" -ne 0 ]
   echo "$output" | grep -qF "missing required section"
@@ -463,6 +507,6 @@ PLAN_EOF
     fi
   done
   [ "$nested" -gt 0 ]          # the situation this guards actually exists
-  run bash "$CHECK"
+  run run_check
   ! echo "$output" | grep -qF "missing required section: ## Consequences"
 }
