@@ -14,7 +14,7 @@ touches:
   - docs/specifications/README.md
   - docs/change-plans/README.md
 created: 2026-09-10
-updated: 2026-09-10
+updated: 2026-09-11
 ---
 
 # PLAN-0040: Implement FS-0034 — Consumer Conformance Doctor
@@ -55,7 +55,7 @@ updated: 2026-09-10
 ## 3. Implementation Plan
 
 1. Author `scripts/check-conformance.sh` (bash, `set -uo pipefail`,
-   self-locating `FRAMEWORK_HOME`, caller-relative `REPO_ROOT`).
+   caller-relative `REPO_ROOT`).
 2. Register `check:conformance` in `package.json` scripts.
 3. Document the command in `scripts/README.md` under the governance-gate
    scripts contract (noting it is NOT a Category 1 gate).
@@ -69,7 +69,11 @@ updated: 2026-09-10
 * **Reserved paths:** `scripts/` and `package.json` are reserved
   (ADR-0027) — this plan's `touches:` stays within FS-0034's declared
   `interfaces:` so the containment rule passes; human approval is still
-  required before the plan may advance past draft.
+  required before the plan may advance past draft. **Reserved-path contact
+  blocks self-approval under ADR-0027:** the plan cannot be self-approved
+  even with `interfaces:` containment satisfied, because `scripts/` and
+  `package.json` are reserved regardless of `interfaces:`. Human approval
+  (ADR-0026) is the only path past draft.
 * **False positives on real consumers:** the doctor reports, never
   rewrites; findings are diagnostics for the human.
 * **Self-check noise:** self-check mode skips the presence check so the

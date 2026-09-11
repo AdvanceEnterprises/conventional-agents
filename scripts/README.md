@@ -488,6 +488,13 @@ correctly: framework presence (`vendor/conventional-agents/`), AGENTS.md
 anchors, dangling vendor references, status-gate runnability, CI wiring, and
 framework version reference. Reports findings; never writes.
 
+**Assumes the current vendoring layout.** The doctor hardcodes
+`vendor/conventional-agents/` and the framework's current file layout
+(`scripts/check-status.sh`, `AGENTS.md`, `INTEGRATION.md`). If the framework
+later reorganizes its directory shape, the doctor's checks must follow; the
+spec's out-of-scope list flags generalization to other vendor paths or future
+layout changes as future work.
+
 **Not a Category 1 governance gate.** Per ADR-0015, this script is optional
 tooling, not a gate: it is not wired into CI as a failing check and does not
 gate pull requests. Consumers may run it manually or in their own tooling.
