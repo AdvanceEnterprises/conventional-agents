@@ -9,7 +9,8 @@
 # (bats-provided, auto-cleaned per test) and COPIES the script into it.
 # The script resolves its target from the caller's cwd (FS-0024/ADR-0033),
 # so tests run it from the scratch root. Copying, not symlinking, matters:
-# a symlinked copy would resolve FRAMEWORK_HOME to the real repository.
+# a symlink would resolve the script's own location into the real
+# repository, defeating the caller-relative target resolution.
 
 load "../FS-0001/helpers.bash"
 
@@ -24,6 +25,13 @@ setup() {
 }
 
 # --- fixture helpers ----------------------------------------------------------
+
+refute_output_contains() {
+  if grep -F -q -- "$1" <<<"$output"; then
+    echo "expected output NOT to contain: $1"
+    return 1
+  fi
+}
 
 # Scratch repo with the doctor script copied in and a minimal consumer layout.
 build_scratch() {
@@ -123,6 +131,31 @@ EOF
   [ "$status" -eq 1 ]
   assert_file_contains <(printf '%s' "$output") "dangling-reference"
   assert_file_contains <(printf '%s' "$output") "DOES_NOT_EXIST.md"
+}
+
+# --- criterion 3b: prose-only mentions are NOT dangling references -------------
+
+@test "conformance: prose-only vendor mention is not a dangling reference" {
+  local scratch
+  scratch="$(mktemp -d "${BATS_TEST_TMPDIR}/prose.XXXXXX")"
+  build_scratch "$scratch"
+  write_conformant_fixture "$scratch"
+  # The framework is mentioned only in prose — an intent note, not a declared
+  # local reference. Only markdown links and list items are checked.
+  cat > "$scratch/AGENTS.md" <<'EOF'
+# Agent Instructions
+
+## Read First
+- vendor/conventional-agents/guidelines/ROLE_CONTRACT.md
+
+For precedence rules see vendor/conventional-agents/INTEGRATION.md (the
+consumer may reference vendor/conventional-agents/roles/ROLE_CONTRACT.md
+as documentation intent without vendoring that path).
+EOF
+
+  run bash -c "cd '$scratch' && bash scripts/check-conformance.sh"
+  [ "$status" -eq 0 ]
+  refute_output_contains "dangling-reference"
 }
 
 # --- criterion 4: missing AGENTS.md anchor is reported -------------------------

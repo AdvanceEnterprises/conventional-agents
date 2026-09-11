@@ -12,12 +12,16 @@ interfaces:
   - "test/FS-0034/**"
   - "docs/specifications/README.md"
   - "docs/change-plans/README.md"
+  # NOTE: `interfaces:` lists the affected surface — it is NOT approval
+  # routing. This spec touches reserved paths (scripts/, package.json per
+  # ADR-0027 / FS-0024), so its PLAN requires human approval and cannot
+  # self-approve, regardless of interfaces: containment.
 related_adrs: [ADR-0015, ADR-0033]
 supersedes: []
 requires: []
 tags: [conformance, consumer, diagnostics, adoption, read-only]
 created: 2026-09-10
-updated: 2026-09-10
+updated: 2026-09-11
 ---
 
 <!--

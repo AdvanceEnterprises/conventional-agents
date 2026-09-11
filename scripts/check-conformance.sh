@@ -25,9 +25,6 @@
 
 set -uo pipefail
 
-# ----- Paths -----
-FRAMEWORK_HOME="$(cd "$(dirname "$0")/.." && pwd)"
-
 if [ -n "${CA_TARGET_REPO:-}" ]; then
   REPO_ROOT="$(cd "$CA_TARGET_REPO" 2>/dev/null && pwd)"
   if [ -z "$REPO_ROOT" ]; then
@@ -111,10 +108,14 @@ else
 fi
 
 # ----- Check 3: dangling references to vendored paths -----
-# Scan AGENTS.md and INTEGRATION.md for vendor/conventional-agents/<path>
-# references and verify each referenced file exists. Skipped in self-check:
-# the framework's own AGENTS.md references vendor/conventional-agents/* as
-# consumer-facing instructions, not as local paths.
+# Scan AGENTS.md and INTEGRATION.md for declared vendor/conventional-agents/<path>
+# references and verify each referenced file exists. Only DECLARED references
+# are checked: markdown link targets ([text](vendor/...)) and explicit list
+# items (- vendor/... or * vendor/...). Prose mentions (e.g. "see
+# vendor/conventional-agents/INTEGRATION.md") document intent, not a local
+# file reference, and are not flagged. Skipped in self-check: the framework's
+# own AGENTS.md references vendor/conventional-agents/* as consumer-facing
+# instructions, not as local paths.
 if [ "$SELF_CHECK" = "false" ] && [ -n "$VENDOR_AGENTS" ]; then
   REF_FILES=("$AGENTS_MD")
   [ -f "$REPO_ROOT/INTEGRATION.md" ] && REF_FILES+=("$REPO_ROOT/INTEGRATION.md")
@@ -127,7 +128,12 @@ if [ "$SELF_CHECK" = "false" ] && [ -n "$VENDOR_AGENTS" ]; then
         add_finding "major" "dangling-reference" \
           "$(basename "$ref_file") references $ref but the file does not exist"
       fi
-    done < <(grep -oE 'vendor/conventional-agents/[A-Za-z0-9_./-]+' "$ref_file" | sort -u)
+    done < <({
+        grep -oE '\]\(vendor/conventional-agents/[A-Za-z0-9_./-]+' "$ref_file" \
+          | sed 's/^](//'
+        grep -E '^[[:space:]]*[-*+][[:space:]]+vendor/conventional-agents/' "$ref_file" \
+          | grep -oE 'vendor/conventional-agents/[A-Za-z0-9_./-]+'
+      } | sort -u)
   done
 fi
 
