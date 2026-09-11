@@ -13,6 +13,21 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
+- **ADR-0041: Narrow direct-to-trunk merge exception for reversible
+  maintenance categories** (proposed) — exercises `ADR-0012`'s
+  project-level-exception mechanism for issue #151's scaling problem
+  (per-PR human approval ceremony scaling linearly with consumer-repo
+  count). Rejects the staging-branch shape (multiplies ceremony per repo,
+  degrades `ADR-0025` per-commit attribution granularity) in favor of a
+  phased, path-based eligible-category set (Category 2 skill work under
+  `ADR-0015`, mechanical README index syncs) gated by a new required
+  `eligibility-gate` status check — diff-based, not actor-based, since
+  `ADR-0018` collapsed the agent/human GitHub identity split `ADR-0011`
+  introduced. Notes that `trunk` currently has no GitHub branch protection
+  at all (verified live) and requires a minimal maintenance digest, shipped
+  now rather than blocked on issue #146's flow-report read-model, as the
+  human audit surface. Decision record only; implementation needs a
+  companion FS/PLAN.
 - **`binding-authoring` skill.** Operationalises `integrations/README.md`
   § "Writing a binding" plus `ADR-0024` / `ADR-0037` / `ADR-0039` for a
   contributor writing or reviewing a binding — substrate or runtime. Covers the
