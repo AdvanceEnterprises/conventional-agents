@@ -4,6 +4,15 @@ load "../FS-0001/helpers.bash"
 
 setup() {
   REPO_ROOT="$(repo_root)"
+  # Resolve the audit anchor (see ATTRIBUTION_ANCHOR above): defaults to the
+  # newest v*-tagged release reachable from HEAD; falls back to a shallow
+  # HEAD~20 window when no release tag exists (no anchor available).
+  if [ -z "$ATTRIBUTION_ANCHOR" ]; then
+    ATTRIBUTION_ANCHOR="$(git -C "$REPO_ROOT" describe --tags --match 'v*' --abbrev=0 2>/dev/null || true)"
+    if [ -z "$ATTRIBUTION_ANCHOR" ]; then
+      ATTRIBUTION_ANCHOR="HEAD~20"
+    fi
+  fi
 }
 
 # Known actor emails for this repository. Update this list when adding
@@ -25,9 +34,15 @@ ACTOR_EMAILS=(
   "github.marten@fwd.mtnden.org"
 )
 
-# How many recent commits to enforce the convention on. ADR-0018
-# takes effect going forward; we don't enforce on legacy history.
-RECENT_COMMIT_COUNT=5
+# Audit anchor for trailer enforcement. ADR-0018/ADR-0036 take effect going
+# forward; the anchor is the release at which the convention became binding
+# for agent-authored commits. The enforcement suite audits every commit
+# since the anchor, so a missing trailer outside a fixed recent-commit
+# window can no longer pass CI (work item #141).
+# Overridable via the ATTRIBUTION_ANCHOR environment variable (e.g. a
+# release tag) for adopters whose convention starts at a different point.
+# Resolved to its default in setup() (needs $REPO_ROOT).
+ATTRIBUTION_ANCHOR="${ATTRIBUTION_ANCHOR:-}"
 
 # Canonical human identity email for this repo (ADR-0036). Human
 # commits need no trailers; agent-authored commits are identified by
@@ -106,6 +121,9 @@ agent_attribution_pattern() {
 
 @test "recent commits have known actor emails" {
   local sha email
+  # Anchored audit: every commit since the release anchor (see setup()).
+  # An unknown actor email anywhere in the anchored range fails — a fixed
+  # recent-commit window can no longer mask drift (work item #141).
   while read -r sha; do
     [[ -z "$sha" ]] && continue
     email="$(git -C "$REPO_ROOT" log -1 --format='%ae' "$sha")"
@@ -121,7 +139,7 @@ agent_attribution_pattern() {
       git -C "$REPO_ROOT" log -1 --format='  subject: %s' "$sha"
       return 1
     fi
-  done < <(git -C "$REPO_ROOT" log -n "$RECENT_COMMIT_COUNT" --format='%H')
+  done < <(git -C "$REPO_ROOT" log "$ATTRIBUTION_ANCHOR"..HEAD --format='%H')
 }
 
 @test ".mailmap maps human aliases to the canonical identity" {
@@ -146,6 +164,9 @@ agent_attribution_pattern() {
   # Commits authored by an agent email must include at least one
   # well-formed Agent-Attribution: trailer recording actor, model,
   # role, and session mode.
+  # Anchored audit: every commit since the release anchor (see setup());
+  # a missing trailer outside a fixed recent-commit window no longer
+  # passes (work item #141).
   local sha email message trailer_lines pattern
   pattern="$(agent_attribution_pattern)"
   while read -r sha; do
@@ -167,5 +188,5 @@ agent_attribution_pattern() {
         fi
         ;;
     esac
-  done < <(git -C "$REPO_ROOT" log -n "$RECENT_COMMIT_COUNT" --format='%H')
+  done < <(git -C "$REPO_ROOT" log "$ATTRIBUTION_ANCHOR"..HEAD --format='%H')
 }

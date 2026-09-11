@@ -160,7 +160,8 @@ jobs:
   lint-cross-repo:
     # cross-repo-lint.sh, wired per #85. On pull_request this audits the
     # PR's own commits for FS-0017 attribution-trailer conformance; on push
-    # to trunk it audits the last 20 trunk commits (script default range).
+    # to trunk it audits the anchored post-release commits (newest v* tag,
+    # per #141) or the last 20 trunk commits when no release tag exists.
     #
     # CA_REPO_DIRS is restricted to the workspace because the default
     # GITHUB_TOKEN cannot check out sibling repos — the full three-repo
