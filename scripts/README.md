@@ -349,14 +349,20 @@ explicit via `CA_REPO_DIRS` (colon-separated repo roots) and `CA_TARGET_REPO`
 when pointed at it explicitly.
 
 **Config.**
-- `COMMIT_RANGE` — git log range for the attribution check (default
-  `origin/<default-branch>~20..origin/<default-branch>`).
+- `COMMIT_RANGE` — git log range for the attribution check. Default:
+  the newest `v*`-tagged release reachable from the default branch
+  (`<tag>..origin/<default-branch>`) when one exists — the audit is
+  anchored at the release where the convention became binding, so a
+  missing trailer outside a fixed recent-commit window cannot pass
+  (work item #141). Repos without release tags fall back to
+  `origin/<default-branch>~20..origin/<default-branch>`.
 - `STRICT_TOOLS=1` — fail on missing tools instead of warning.
 
 **When it runs.** Manually via `npm run lint:cross-repo`. CI wiring lives in
 `.github/workflows/lint-docs.yml` (the `lint-cross-repo` job): on `pull_request`
 it audits the PR's own commits (`COMMIT_RANGE=origin/<base>..HEAD`), on push to
-trunk the last 20 trunk commits. The workflow sets `CA_REPO_DIRS` to the runner
+trunk the anchored post-release commits (release-tagged repos) or the last 20
+trunk commits (untagged repos). The workflow sets `CA_REPO_DIRS` to the runner
 workspace only — the runner holds one repository (all three repos are private),
 so the job is the fail-closed enforcement point for the calling repository. The
 full three-repo sweep runs in the maintenance tick, which holds all three

@@ -118,7 +118,21 @@ for REPO in "${REPOS[@]}"; do
 
   # Resolve default branch and commit range
   DEFAULT_BRANCH="$(_resolve_default_branch "$REPO")"
-  RANGE="${COMMIT_RANGE:-"origin/$DEFAULT_BRANCH~20..origin/$DEFAULT_BRANCH"}"
+  # Anchored audit (work item #141): the default range starts at the newest
+  # v*-tagged release reachable from the default branch when one exists —
+  # a missing trailer outside a fixed ~20-commit window can no longer pass.
+  # Repos without release tags fall back to the ~20 window. On pull_request,
+  # CI overrides COMMIT_RANGE to the PR's own commits (see lint-docs.yml).
+  if [ -n "${COMMIT_RANGE:-}" ]; then
+    RANGE="$COMMIT_RANGE"
+  else
+    _anchor="$(git -C "$REPO" describe --tags --match 'v*' --abbrev=0 "origin/$DEFAULT_BRANCH" 2>/dev/null || true)"
+    if [ -z "$_anchor" ]; then
+      RANGE="origin/$DEFAULT_BRANCH~20..origin/$DEFAULT_BRANCH"
+    else
+      RANGE="$_anchor..origin/$DEFAULT_BRANCH"
+    fi
+  fi
 
   # Fetch default branch if we can
   git -C "$REPO" fetch origin "$DEFAULT_BRANCH" 2>/dev/null || true
