@@ -152,8 +152,10 @@ content, not just changed paths — deferred until that tooling exists):**
   a different risk profile (supply-chain surface) that a green test suite
   does not fully cover; they stay human-reviewed regardless of category.
 - `guidelines/ROLE_CONTRACT.md`, `docs/decisions/` content changes (status
-  transitions and decision content remain human-approved), and any change to
-  an enforcement path or safety/control document.
+  transitions, ADR body content, and decision-content edits remain
+  human-approved — mechanical README index syncs of new rows remain Phase-1
+  eligible), and any change to an enforcement path or safety/control
+  document.
 - Any PR whose Issue Type is `feature`, or that touches a reserved path under
   ADR-0027.
 - Work-item Type remains human-classified. An agent cannot lower a Type to
@@ -169,9 +171,12 @@ content, not just changed paths — deferred until that tooling exists):**
    deletion/non-fast-forward protections (already active), plus the new
    required status check `eligibility-gate`, gating every merge.
 3. `eligibility-gate` passes iff `(diff fully within an eligible Phase-1/2
-   category AND CI green)` OR `(PR carries a human review approval AND CI
-   green)`. Anything outside the category list still requires the
-   human-approval branch of that OR — unchanged from today.
+   category AND CI green)` OR `(the PR carries an explicit human review
+   approval AND CI green)`. The human-approval branch means a review
+   submitted by a human account — never CI green alone — and the ruleset in
+   control 2 must require it for every merge that does not satisfy the
+   eligible-category branch. Anything outside the category list still
+   requires the human-approval branch of that OR — unchanged from today.
 4. Merge strategy is rebase-merge per ADR-0025 (merge-commit fallback only if
    rebase is blocked). Squash is not permitted for eligible-category
    auto-merges, so per-commit `Agent-Attribution:` trailers land on `trunk`
@@ -227,6 +232,11 @@ content, not just changed paths — deferred until that tooling exists):**
 
 **Neutral:**
 
+- Accepting this ADR creates a binding project-level exception per
+  ADR-0012's override mechanism; revoking it requires a later ADR or explicit
+  human sign-off. `reversible: yes` in the frontmatter describes that the
+  gate can be disabled without rewriting history, not that acceptance is
+  costless to unwind.
 - Staging (Option A) remains documented as a deferred fallback, to be
   revisited only if Option C cannot sustain its fail-closed controls in
   practice, or the digest proves inadequate.
@@ -242,6 +252,12 @@ content, not just changed paths — deferred until that tooling exists):**
   and any `workflows/git-and-gh-conventions.md` updates — requires a
   companion FS/PLAN per the ADR-0012 override mechanism, and is out of scope
   for this PR.
+- **Current-state obligation (ADR-0030 rule 3):** acceptance of this ADR
+  changes the operative rule stated in
+  `guidelines/ROLE_CONTRACT.md` § Non-Overridable Safety Gates, so that
+  section's super-gate text must be updated to record the project-level
+  exception. Per ADR-0030 the edit is held until this ADR is `accepted` and
+  ships with the companion FS/PLAN, not with this decision record.
 - The companion FS must define: the exact category-matching logic (path
   globs for Phase 1; diff-content predicates for Phase 2), the digest schema
   and its storage location, the sunset cadence, and the halt/rollback
