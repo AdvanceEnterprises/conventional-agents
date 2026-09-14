@@ -54,7 +54,8 @@ Implements the portable flow-report read-model contract defined by FS-0035:
   doc-only until the human approves; the generator is a future work item
   under the same FS (SC-6 example outputs ship with the implementation once
   approved).
-- The Git-native work-item binding decision (FS-0035 AC-7).
+- The Git-native work-item binding decision (issue #146's Git-native
+  work-item decision acceptance bullet; out of scope for FS-0035).
 
 ## Open Questions
 

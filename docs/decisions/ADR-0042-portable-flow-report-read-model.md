@@ -26,9 +26,10 @@ would overclaim pure-Git conformance; treating it as the next substrate
 capability would put a read-only artifact on par with capabilities that
 actually hold state.
 
-`FS-0018` defines six substrate capabilities a work-item binding must
-provide: origin, classification, phase state, parked state, approval record,
-and transition record. A read-model provides none of them — it consumes them.
+`FS-0018` requires the six substrate capabilities a work-item binding must
+provide (current statement: `integrations/README.md`): Work item, Type,
+Phase, Parked state, Activity record, and Enumerability. A read-model
+provides none of them — it consumes them.
 
 ## Decision
 
@@ -46,8 +47,9 @@ and transition record. A read-model provides none of them — it consumes them.
 5. `human_decisions_required` is a read-only queue; human interaction remains
    the binding's responsibility.
 6. The **Git-native work-item decision** is recorded separately from this
-   contract and is NOT decided here (AC-7 of FS-0035). No branch-name or
-   commit-message inference of lifecycle state.
+   contract and is NOT decided here (the Git-native work-item decision
+   acceptance bullet in issue #146, tracked as FS-0035's out-of-scope item).
+   No branch-name or commit-message inference of lifecycle state.
 7. A neutral report fixture is extracted from a consumer digest shape without
    importing the consumer's cadence, field names, repository rotation, or
    other policy.
