@@ -94,16 +94,9 @@ For this project (a documentation/standards kit), semver follows the
   drives any command; wiring real agents is a later pilot concern.
 
 - **FS-0035: Portable flow-report read-model (draft)** — substrate-neutral
-  governance visibility for issue #146. Defines the `flow-report` contract as a
-  versioned, read-only visibility profile over any conforming work-item binding
-  plus Git evidence: a mandatory envelope (schema version, scope, source
-  binding, policy version), a mandatory governance profile (verbatim lifecycle
-  state, evidence-backed findings, read-only `human_decisions_required` queue),
-  an optional advisory planning profile, lossless unset/invalid rendering, and
-  a consumer-conformance statement tying FS-0018's six substrate capabilities
-  to the named binding. Git alone is explicitly not a work-item binding; the
-  Git-native work-item decision is recorded separately (ADR-0042, proposed).
-  Contract only — no generator ships until human approval.
+  governance visibility for issue #146: a versioned, read-only visibility
+  profile over any conforming work-item binding plus Git evidence. Contract
+  only — no generator ships until human approval (ADR-0042, proposed).
 
 - **Executable GitHub binding layer (`FS-0029`).** Consumers can use the shared
   submodule initializer, idempotent label provisioner, and read-only Project

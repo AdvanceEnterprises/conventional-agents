@@ -43,8 +43,8 @@ that choice *visible* in every report, not accidental.
 This spec defines the report contract only. The Git-native work-item decision
 (native Git *creation* and *transition* of work items — branch-name and
 commit-message inference) is **not** part of this contract and is decided
-separately (see Acceptance criterion 7 and the boundary rationale in
-`ADR-0042`).
+separately (see issue #146's Git-native work-item decision acceptance bullet
+and the boundary rationale in `ADR-0042`).
 
 ## Goals
 
@@ -91,8 +91,9 @@ A conforming flow-report starts with an envelope containing, **mandatorily**:
 
 ### SC-2: Governance profile (mandatory)
 
-The report MUST include a governance section containing, for each work item
-in scope:
+The report MUST include a governance section containing, for each governed
+artifact in scope (work items, or governed-document exceptions when the
+report's `source_binding` is `none`):
 
 - Identifier and external reference (URL or binding-native handle) when the
   item exists in a binding.
@@ -104,8 +105,9 @@ in scope:
 - `evidence` — for each reported state, the exact artifact and location
   (file, section, commit, binding record) that backs the claim.
 - `human_decisions_required` — a READ-ONLY queue of items awaiting a human
-  decision (e.g. Approval checkpoint, `question` states). The report never
-  acts on this queue; human interaction remains the binding's responsibility.
+  decision (e.g. items parked at the `Approved` phase awaiting human action,
+  or `question`-labelled items per `ADR-0020`). The report never acts on this
+  queue; human interaction remains the binding's responsibility.
 
 ### SC-3: Planning profile (optional)
 
@@ -131,10 +133,11 @@ may be required for FS-0018 conformance claims.
 
 A conforming report contains, or directly accompanies, an explicit statement
 of which substrate capabilities the named source binding provides (per
-`FS-0018`'s six capabilities: origin, classification, phase state, parked
-state, approval record, transition record). A consumer may claim full
-FS-0018 lifecycle conformance ONLY when all six are provided by the named
-binding; a Git-only report MUST claim partial conformance at most.
+`integrations/README.md`, the current statement of the six capabilities:
+Work item, Type, Phase, Parked state, Activity record, Enumerability). A
+consumer may claim full FS-0018 lifecycle conformance ONLY when all six are
+provided by the named binding; a Git-only report MUST claim partial
+conformance at most.
 
 ### SC-6: Human-readable and machine-readable examples
 
@@ -151,8 +154,19 @@ Tais-Den field names, no Tais-Den policy values).
 
 - Work-item creation, transition, approval, or closure BY the report.
 - Inference of lifecycle state from branch names or commit messages.
-- A Git-native work-item binding — decided separately (SC/Acceptance 7).
+- A Git-native work-item binding — decided separately (the Git-native
+  work-item decision acceptance bullet in issue #146; out of scope for this
+  contract).
 - Any new gate or CI dependency on the report contract.
+
+## Interfaces
+
+- `docs/decisions/ADR-0042-portable-flow-report-read-model.md` — the
+  architecture decision this spec depends on (boundary rationale: visibility
+  profile, not a seventh capability, not a work-item binding).
+- `docs/specifications/README.md`, `docs/change-plans/README.md` — index
+  rows for this spec and its plan.
+- `CHANGELOG.md` — consumer-facing entry for the draft contract.
 
 ## Plan Status
 
