@@ -258,3 +258,4 @@ If validation fails:
 | ADR-0038 | Agent Skills as a profiled upstream standard | accepted |
 | ADR-0039 | Agent-runtime integration bindings | accepted |
 | ADR-0041 | Narrow direct-to-trunk merge exception for reversible maintenance categories, audited by a maintenance digest | proposed |
+| ADR-0042 | Portable flow-report read-model — visibility profile, not a seventh capability | proposed |
