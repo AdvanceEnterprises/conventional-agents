@@ -10,7 +10,7 @@ interfaces:
   - "docs/specifications/README.md"
   - "docs/change-plans/README.md"
   - "CHANGELOG.md"
-related_adrs: [ADR-0024, ADR-0026, ADR-0037, ADR-0042]
+related_adrs: [ADR-0024, ADR-0026, ADR-0030, ADR-0037, ADR-0042]
 supersedes: []
 requires: []
 tags: [flow-report, read-model, portability, substrate-neutrality, git, governance, visibility]
@@ -87,7 +87,9 @@ A conforming flow-report starts with an envelope containing, **mandatorily**:
   binding used (or literal `none` when the report covers Git evidence only,
   with the conformance claim adjusted accordingly).
 - `policy_version` — which framework version's gates and phase definitions
-  the report interprets.
+  the report interprets (a single framework semver; ADR-level amendments
+  such as `ADR-0028`'s capability-6 redefinition are included in the pinned
+  version's interpretation).
 
 ### SC-2: Governance profile (mandatory)
 
@@ -103,7 +105,8 @@ report's `source_binding` is `none`):
 - `type_classification` — the item's Type axis (feature/bug/task/other) plus
   Phase axis, reported as stored.
 - `evidence` — for each reported state, the exact artifact and location
-  (file, section, commit, binding record) that backs the claim.
+  (file, section, commit, binding record) that backs the claim; approval
+  state is evidenced per `ADR-0026` (approval is a recorded act).
 - `human_decisions_required` — a READ-ONLY queue of items awaiting a human
   decision (e.g. items parked at the `Approved` phase awaiting human action,
   or `question`-labelled items per `ADR-0020`). The report never acts on this
@@ -127,7 +130,9 @@ may be required for FS-0018 conformance claims.
 - Unset and invalid states are rendered losslessly; the report does not
   coerce them into a value that could be mistaken for a real state.
 - The report is deterministic for a fixed input: the same scope, binding
-  snapshot, and revision produce byte-identical output.
+  snapshot, and revision produce byte-identical output, with the sole
+  exception of `generated_at`, which by construction records the generation
+  moment.
 
 ### SC-5: Consumer conformance claim
 
@@ -148,7 +153,11 @@ spec):
 - one machine-readable example (e.g. JSON shape),
 
 both free of consumer-specific identifiers (no Tais-Den repo names, no
-Tais-Den field names, no Tais-Den policy values).
+Tais-Den field names, no Tais-Den policy values). The example outputs are
+extracted from a consumer digest shape without importing the consumer's
+cadence, field names, repository rotation, or other policy (ADR-0042,
+Decision 7); the extraction method is recorded in the implementing work
+item.
 
 ## Out of Scope (explicit)
 
@@ -174,3 +183,5 @@ Tais-Den field names, no Tais-Den policy values).
   `workflows/document-lifecycle.md` places PLAN *creation* at "initial
   creation" and constrains only PLAN *approval* to come after the governing
   FS has been reviewed. The PLAN (PLAN-0041) is `draft`.
+- Implementation is blocked until this spec reaches `status: approved`
+  (PARSING_HINTS: "Do NOT implement unless status == approved").

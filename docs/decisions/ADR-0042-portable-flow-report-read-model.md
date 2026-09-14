@@ -43,7 +43,8 @@ provides none of them — it consumes them.
    advisory.
 4. Reproducible scope metadata, lossless rendering of unset/invalid state,
    evidence-backed findings, and traceability distinguish *linked work items*
-   from *governed-document exceptions* (SC-4, SC-5).
+   from *governed-document exceptions* (SC-4); SC-5 states the conformance
+   claim rule.
 5. `human_decisions_required` is a read-only queue; human interaction remains
    the binding's responsibility.
 6. The **Git-native work-item decision** is recorded separately from this
@@ -76,3 +77,6 @@ provides none of them — it consumes them.
 - FS-0035's SC-1..SC-6 success criteria are the acceptance measure for the
   contract once implemented; this ADR introduces no code, so validation is
   document-level (lint + status) until the approved implementation ships.
+- Review checkpoint: at the first implementation PR; if the capability list
+  or the report's boundary changes, this ADR is revisited before that PR
+  lands (house style per ADR-0024/ADR-0027).
