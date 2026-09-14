@@ -20,10 +20,10 @@ updated: 2026-09-14
 ## Approval Routing
 
 This plan **cannot self-approve**. Its `touches:` set includes
-`docs/change-plans/README.md` and `docs/decisions/README.md`, which per
-ADR-0027 are reserved paths a PLAN may never self-approve. Human approval
-required before implementation proceeds past the Approved checkpoint
-(ADR-0019: `feature` may not advance past Approved without human approval).
+`docs/decisions/README.md`, which per ADR-0027 is a reserved path a PLAN may
+never self-approve. Human approval required before implementation proceeds
+past the Approved checkpoint (ADR-0019: `feature` may not advance past
+Approved without human approval).
 
 ## Summary
 
