@@ -30,6 +30,13 @@ PARSING_HINTS:
 
 # Feature Spec: Planning-field conventions for the GitHub binding
 
+> **Normative language:** `MUST`, `MUST NOT`, `SHALL`, `SHOULD`, and
+> `MAY` are used per RFC 2119. Where the body uses sentence-case normative
+> phrasing instead (e.g. "the binding defines", "items are untouched"),
+> it states the same requirement in prose form for readability; the
+> all-caps forms in SC-2/SC-5 are the authoritative statement of those
+> requirements. A future lint pass may normalize the remainder.
+
 ## Summary
 
 The GitHub Projects v2 binding (`integrations/github-issues-projects.md`,
@@ -51,8 +58,9 @@ of Milestone and Priority, and no planning field is a lifecycle axis.
 - Make planning authority explicit and machine-checkable via the audit
   layer: humans create/assign Milestones and arbitrate Priority; agents may
   backfill UNSET Priority from a documented evidence-based mapping, assign
-  iterations only under the scheduling contract, and never create/assign/
-  close Milestones.
+  iterations only under the scheduling contract (whose pull-forward cap and
+  ordering are consumer policy, defaulting to 3-with-priority-first), and
+  never create/assign/close Milestones.
 - Provide a read-only flow report (the `github:board-audit` extension)
   that reports unranked ready work, invalid current-Iteration assignments,
   protected-field changes by agents, missing P0/P1 rationale, and repeated
@@ -134,9 +142,15 @@ The binding defines the iteration scheduling contract the tick implements:
 - Calendar roll-forward: when today advances into a new active iteration,
   OPEN items still in an expired iteration re-home to the active one.
 - Pull-forward on completion: when the ACTIVE iteration holds zero open
-  non-human-blocked items, promote up to 3 unfinished items from the NEXT
-  defined iteration (highest priority first, skip human-blocked) into the
-  ACTIVE iteration, same day, logged per promotion.
+  non-human-blocked items, the binding MAY promote unfinished items from
+  the NEXT defined iteration (highest priority first, skip human-blocked)
+  into the ACTIVE iteration, same day, logged per promotion. The concrete
+  cap ("up to 3") and the ordering are **consumer policy defaulting to
+  3-with-priority-first**, not core framework policy (ADR-0043 Decision 1:
+  cadence and replenishment policy belongs to the consumer or a higher-level
+  convention); the binding ships the *mechanism* only — an item may be
+  re-homed across iterations, and every promotion is attributable + logged
+  per SC-2.
 - If today is outside ALL defined iterations, items are untouched and the
   operator is warned ("iteration config exhausted — extend in the board
   UI"; iteration CRUD is UI-only, no API).
