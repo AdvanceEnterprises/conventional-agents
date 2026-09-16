@@ -81,6 +81,18 @@ For this project (a documentation/standards kit), semver follows the
   `v2.1.0` release as worked examples. Consumers previously had to infer the
   policy from `CHANGELOG.md` alone.
 
+- **Planning-field conventions for the GitHub binding (draft — `ADR-0043`,
+  `FS-0036`, `PLAN-0042`).** Defines `Priority`, `Iteration`, and `Milestone`
+  as binding policy, not framework state: the authority matrix (humans
+  create/assign Milestones and arbitrate Priority; agents read/recommend and
+  may only backfill UNSET Priority from a documented mapping, assign
+  iterations under the scheduling contract, and idempotently clear
+  closed-item iterations), the cross-repository Milestone limitation (a
+  project spanning repositories cannot uniformly milestone items), and the
+  read-only `--flow` drift report for the board audit. Architecture
+  mechanism is separated from consumer planning policy per `ADR-0043`; the
+  flow-report boundary from `ADR-0042`/`FS-0035` is inherited. Tracks issue
+  #145.
 - **`binding-authoring` skill.** Operationalises `integrations/README.md`
   § "Writing a binding" plus `ADR-0024` / `ADR-0037` / `ADR-0039` for a
   contributor writing or reviewing a binding — substrate or runtime. Covers the
