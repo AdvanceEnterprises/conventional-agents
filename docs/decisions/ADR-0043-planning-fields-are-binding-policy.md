@@ -41,6 +41,35 @@ an agent writes must be evidenced and traceable. The missing piece is an
 explicit, substrate-neutral statement of *who may set which planning field,
 and what evidence an agent write must carry*.
 
+## Considered Options
+
+1. **Leave planning fields ungoverned** (status quo). Agents keep mutating
+   `Priority`/`Iteration` under ad-hoc tick rules with no documented
+   authority or evidence requirement. *Rejected*: the tick already assigns
+   iterations and backfills priorities; silent, unattributable writes to
+   planning state are exactly the drift the audit layer is meant to catch,
+   and no rule today says what evidence such writes must carry.
+2. **Enforce planning-field permissions at the substrate level.** *Rejected
+   at write-up*: GitHub Projects v2 exposes no per-field ACL — a token that
+   can edit a Project can edit `Priority`/`Iteration` as well as `Status`
+   and `Issue Type` (research recorded in issue #145). The binding cannot
+   claim permission-level prevention it does not have.
+3. **Promote planning fields to lifecycle axes (extend FS-0018).** *Rejected*:
+   `Type`/`Phase`/`Parked` are identity and safety-gate axes with
+   checkpoint semantics (ADR-0019); ranking and scheduling are continuous
+   flow state, not lifecycle state. Doing this would also force every
+   consumer to adopt planning fields to stay conforming, contradicting the
+   substrate-neutral posture (ADR-0016).
+4. **Model planning fields only inside the portable flow-report
+   (ADR-0042/FS-0035).** *Partially adopted*: the flow-report stays the
+   substrate-neutral planning-visibility surface; a GitHub binding still
+   needs concrete field semantics and write authority for the live boards.
+5. **Adopt the mechanism/policy split with an explicit authority matrix**
+   (chosen). The framework ships the *mechanism* (field mapping,
+   read/write contract, attribution and logging) and an explicit authority
+   matrix; *policy* (cadence, WIP limits, pull-forward thresholds) belongs
+   to the consumer or a higher-level convention, never to the core.
+
 ## Decision
 
 1. **Planning fields are policy, not framework state.** `Priority`,
