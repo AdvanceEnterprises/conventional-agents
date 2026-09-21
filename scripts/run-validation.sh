@@ -94,7 +94,11 @@ export PATH="$SANDBOX/bin:$PATH"
 unset GH_TOKEN GITHUB_TOKEN 2>/dev/null || true
 
 # The log captures the full runner output; the path is intentionally printed so
-# callers can archive it as a baseline artifact.
+# callers can archive it as a baseline artifact. The process-substituted `tee`
+# runs asynchronously, so a `tee` failure (e.g. a full log filesystem) cannot be
+# observed through `pipefail`. The log is an archival artifact only — the
+# verdict is computed from the step exit statuses, not read back from the log —
+# so the trade-off is documented rather than fatal.
 exec > >(tee "$LOG_FILE") 2>&1
 
 STARTED=$SECONDS

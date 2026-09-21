@@ -76,6 +76,10 @@ validation_run_with_timeout() {
     pid=$!
   fi
   started=$SECONDS
+  # The fallback polls once per second: a child that exits just after the
+  # timeout check can be collected up to ~1s late. Callers that carry a global
+  # budget (run-validation.sh) still catch gross overruns; the coarse tick is
+  # deliberate so the loop stays Bash 3.2-compatible.
   while kill -0 "$pid" 2>/dev/null; do
     elapsed=$((SECONDS - started))
     if [ "$elapsed" -ge "$seconds" ]; then

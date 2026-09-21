@@ -71,14 +71,19 @@ updated: 2026-09-21
 
 * Target tests:
 
-  * `test_validate__runs_the_five_commands_in_order`
-  * `test_validate__rejects_invalid_timeout_before_running`
-  * `test_validate__uses_an_isolated_network_guard`
-  * `test_run_bats__reports_suite_progress_and_timeout`
-  * `test_cross_repo_lint__does_not_fetch_and_fails_on_missing_range`
-  * `test_ci__invokes_the_canonical_runner_with_full_history`
-  * `test_scripts_readme__documents_contract_and_defaults`
-  * `test_baseline__records_revision_log_and_timings`
+  * `validate: runs the five commands in order through one entry point`
+  * `validate: rejects an invalid timeout before executing a command`
+  * `validate: blocks network-capable commands in the canonical environment`
+  * `run-bats: reports per-suite progress and fails closed on timeout`
+  * `cross-repo-lint: does not fetch and fails on an unavailable range`
+  * `CI: invokes the canonical runner with full history and pinned dependencies`
+  * `documentation: records the reproducibility contract and fail-closed defaults`
+  * `baseline: records a revision, timings, log, and final verdict`
+  * `reproducibility: serial runs keep the verdict and target clean`
+  * `reproducibility: concurrent fresh checkouts do not share state`
+
+  The test names above are the shipped Bats test names (the plan initially
+  carried snake_case working titles; the suite ships descriptive names).
 
 ## 4. Files to Be Modified
 
