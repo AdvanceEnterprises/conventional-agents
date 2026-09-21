@@ -19,7 +19,7 @@
 #   1  harness failure (bad card, schema violation, setup failure)
 #   2  usage error
 #
-# Agent-Attribution: actor=hermes-agent; model=deepseek-v4-flash; role=implementer; session=conventional-agents-maintenance
+# Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implementer; session=conventional-agents-maintenance
 
 set -euo pipefail
 

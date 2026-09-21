@@ -27,7 +27,7 @@ requires:
   - FS-0018
 tags: [consensus, multi-model, workflow-gates, optional-feature]
 created: 2026-07-27
-updated: 2026-08-01
+updated: 2026-09-21
 ---
 
 <!--
@@ -201,7 +201,7 @@ agreement but are noise dressed as consensus.
 Concretely:
 
 - Each participant must use a different model identifier (e.g.,
-  `kimi-k2.7-code`, `deepseek-v4-flash`, `claude-sonnet-4`).
+  `kimi-k2.7-code`, `deepseek-v4.1-flash`, `claude-sonnet-4`).
   Different versions of the same model family do not count as
   different models.
 - Each participant's invocation must be *independent*: no shared
@@ -339,7 +339,7 @@ consensus:
       failure_mode: null
   models:                           # available models for consensus
     - kimi-k2.7-code
-    - deepseek-v4-flash
+    - deepseek-v4.1-flash
     - claude-sonnet-4
   min_models: 2                     # minimum different models per round
 ```
