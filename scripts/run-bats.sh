@@ -3,13 +3,9 @@
 # and emits progress/timing output so a stalled suite is visible.
 set -uo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
-# shellcheck source=/dev/null
-. "$SCRIPT_DIR/validation-common.sh"
-
-# Per FS-0024/ADR-0033: target the repository containing the caller's working
-# directory, unless CA_TARGET_REPO explicitly selects another repository.
-REPO_ROOT="$(validation_resolve_repo_root)" || exit 1
+SCRIPT_DIR="${BASH_SOURCE[0]%/*}"
+[ "$SCRIPT_DIR" = "${BASH_SOURCE[0]}" ] && SCRIPT_DIR="."
+SCRIPT_DIR="$(cd "$SCRIPT_DIR" && pwd -P)"
 
 # Re-entrancy guard. This script runs every suite under test/, and a suite that
 # invokes it again forks without bound. A test that deliberately exercises this
@@ -41,6 +37,13 @@ if ! command -v rg >/dev/null 2>&1; then
   echo "       On Debian/Ubuntu: apt-get install ripgrep" >&2
   exit 1
 fi
+
+# shellcheck source=/dev/null
+. "$SCRIPT_DIR/validation-common.sh"
+
+# Per FS-0024/ADR-0033: target the repository containing the caller's working
+# directory, unless CA_TARGET_REPO explicitly selects another repository.
+REPO_ROOT="$(validation_resolve_repo_root)" || exit 1
 
 BATS_TIMEOUT_RAW="${BATS_SUITE_TIMEOUT:-900}"
 BATS_TIMEOUT="$(validation_normalize_positive_integer "$BATS_TIMEOUT_RAW")" || {
