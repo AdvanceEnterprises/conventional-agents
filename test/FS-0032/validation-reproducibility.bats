@@ -26,6 +26,32 @@ make_clean_repo() {
   git -C "$repo" commit -q -m "fixture"
 }
 
+make_fake_npm() {
+  local fakebin="$1"
+  mkdir -p "$fakebin"
+  cat > "$fakebin/npm" <<'EOF'
+#!/usr/bin/env bash
+printf '%s\n' "$PWD|$*" >> "$CA_REPRO_TRACE_DIR/$(basename "$PWD").trace"
+exit 0
+EOF
+  chmod +x "$fakebin/npm"
+}
+
+run_fixture_validation() {
+  local repo="$1" log="$2" fakebin="$3" trace_dir="$4"
+  env -u RUN_BATS_ACTIVE \
+    CA_TARGET_REPO="$repo" \
+    CA_VALIDATION_LOG="$log" \
+    CA_VALIDATION_TEST_TIMEOUT=5 \
+    CA_VALIDATION_GATE_TIMEOUT=5 \
+    CA_VALIDATION_BUDGET=30 \
+    BATS_SUITE_TIMEOUT=1 \
+    CA_REPRO_TRACE_DIR="$trace_dir" \
+    COMMIT_RANGE=HEAD..HEAD \
+    PATH="$fakebin:$PATH" \
+    bash "$RUNNER"
+}
+
 @test "validate: runs the five commands in order through one entry point" {
   local repo="$BATS_TEST_TMPDIR/repo"
   local fakebin="$BATS_TEST_TMPDIR/bin"
@@ -60,6 +86,27 @@ EOF
   [ "$(sed -n '5p' "$trace")" = "run lint:cross-repo" ]
   assert_file_contains "$log" "VALIDATION PASS"
   assert_file_contains "$log" "STEP 1/5 PASS npm test"
+}
+
+@test "reproducibility: serial runs keep the verdict and target clean" {
+  local repo="$BATS_TEST_TMPDIR/repo"
+  local fakebin="$BATS_TEST_TMPDIR/bin"
+  local trace_dir="$BATS_TEST_TMPDIR/traces"
+  local log_a="$BATS_TEST_TMPDIR/serial-a.log"
+  local log_b="$BATS_TEST_TMPDIR/serial-b.log"
+  mkdir -p "$trace_dir"
+  make_clean_repo "$repo"
+  make_fake_npm "$fakebin"
+
+  run run_fixture_validation "$repo" "$log_a" "$fakebin" "$trace_dir"
+  [ "$status" -eq 0 ]
+  run run_fixture_validation "$repo" "$log_b" "$fakebin" "$trace_dir"
+  [ "$status" -eq 0 ]
+
+  assert_file_contains "$log_a" "VALIDATION PASS"
+  assert_file_contains "$log_b" "VALIDATION PASS"
+  [ "$(wc -l < "$trace_dir/$(basename "$repo").trace" | tr -d ' ')" -eq 10 ]
+  [ -z "$(git -C "$repo" status --porcelain --untracked-files=all)" ]
 }
 
 @test "validate: rejects an invalid timeout before executing a command" {
@@ -138,6 +185,42 @@ EOF
   [ "$status" -ne 0 ]
   [[ "$output" == *"BATS 1/1 BEGIN test/hangs.bats"* ]]
   [[ "$output" == *"BATS 1/1 TIMEOUT test/hangs.bats"* ]]
+}
+
+@test "reproducibility: concurrent fresh checkouts do not share state" {
+  local source="$BATS_TEST_TMPDIR/source"
+  local repo_a="$BATS_TEST_TMPDIR/repo-a"
+  local repo_b="$BATS_TEST_TMPDIR/repo-b"
+  local fakebin="$BATS_TEST_TMPDIR/bin"
+  local trace_dir="$BATS_TEST_TMPDIR/traces"
+  local log_a="$BATS_TEST_TMPDIR/concurrent-a.log"
+  local log_b="$BATS_TEST_TMPDIR/concurrent-b.log"
+  local output_a="$BATS_TEST_TMPDIR/concurrent-a.out"
+  local output_b="$BATS_TEST_TMPDIR/concurrent-b.out"
+  local pid_a pid_b rc_a rc_b
+  mkdir -p "$trace_dir"
+  make_clean_repo "$source"
+  git clone -q --no-hardlinks "$source" "$repo_a"
+  git clone -q --no-hardlinks "$source" "$repo_b"
+  make_fake_npm "$fakebin"
+
+  run_fixture_validation "$repo_a" "$log_a" "$fakebin" "$trace_dir" >"$output_a" 2>&1 &
+  pid_a=$!
+  run_fixture_validation "$repo_b" "$log_b" "$fakebin" "$trace_dir" >"$output_b" 2>&1 &
+  pid_b=$!
+  if wait "$pid_a"; then rc_a=0; else rc_a=$?; fi
+  if wait "$pid_b"; then rc_b=0; else rc_b=$?; fi
+
+  [ "$rc_a" -eq 0 ]
+  [ "$rc_b" -eq 0 ]
+  assert_file_contains "$log_a" "VALIDATION PASS"
+  assert_file_contains "$log_b" "VALIDATION PASS"
+  assert_file_contains "$output_a" "STEP 5/5 PASS npm run lint:cross-repo"
+  assert_file_contains "$output_b" "STEP 5/5 PASS npm run lint:cross-repo"
+  [ "$(wc -l < "$trace_dir/$(basename "$repo_a").trace" | tr -d ' ')" -eq 5 ]
+  [ "$(wc -l < "$trace_dir/$(basename "$repo_b").trace" | tr -d ' ')" -eq 5 ]
+  [ -z "$(git -C "$repo_a" status --porcelain --untracked-files=all)" ]
+  [ -z "$(git -C "$repo_b" status --porcelain --untracked-files=all)" ]
 }
 
 @test "cross-repo-lint: does not fetch and fails on an unavailable range" {
