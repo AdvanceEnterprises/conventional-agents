@@ -180,6 +180,9 @@ EOF
   # network-capable verbs. The git stubs in the sandbox cover `gh`/`curl`/…,
   # but git itself can fetch remotes, so the hermeticity claim needs its own
   # assertion at the acceptance surface.
+  # NOTE: the heredoc delimiter is unquoted on purpose — $trace and $real_git
+  # are evaluated at stub-write time and baked into the stub. Both are assigned
+  # above; if you reorder this block, keep the assignments before the heredoc.
   cat > "$fakebin/git" <<EOF
 #!/usr/bin/env bash
 printf '%s\n' "\$*" >> "$trace"

@@ -78,11 +78,14 @@ real rather than advisory.
 `CA_TARGET_REPO`. The runner requires a clean target, uses a disposable
 `TMPDIR`, `HOME`, Git global config, and npm cache, sets npm offline mode, and
 places fail-closed stubs for `gh`, `curl`, `wget`, `ssh`, `scp`, and `nc` at the
-front of `PATH`. It never calls a remote itself: Git is used only for local
-reads (`rev-parse`, `status`, `log`), `GIT_TERMINAL_PROMPT=0` plus an empty
-private global config (`GIT_CONFIG_GLOBAL`, `GIT_CONFIG_NOSYSTEM=1`) strip
-ambient credential helpers, and `COMMIT_RANGE` must already exist locally — an
-unavailable range fails closed instead of fetching. Set `CA_VALIDATION_LOG` to an
+front of `PATH`. It never invokes a network-capable Git subcommand: `git` is
+used for local reads only, `GIT_TERMINAL_PROMPT=0` plus an empty private global
+config (`GIT_CONFIG_GLOBAL`, `GIT_CONFIG_NOSYSTEM=1`) strip ambient credential
+helpers, and `COMMIT_RANGE` must already exist locally — an unavailable range
+fails closed instead of fetching. The hermeticity assertion in the FS-0032
+suite is the *negative* form (`fetch|pull|push|ls-remote|clone|remote` are
+rejected and traced), so it does not rot when a future patch adds another local
+read. Set `CA_VALIDATION_LOG` to an
 absolute path outside the target checkout to archive a specific log; otherwise
 a temporary log under `/tmp` is printed. The log is an archival artifact: the
 verdict comes from the step exit statuses, not from reading the log back. CI
