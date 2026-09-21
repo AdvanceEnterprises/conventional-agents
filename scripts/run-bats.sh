@@ -1,39 +1,19 @@
 #!/usr/bin/env bash
-# Run all bats suites under test/. Fails with an install hint when bats is absent
-# — silent skip is worse than failure, since `ROLE_CONTRACT`'s pre-commit testing gate
-# has nothing to run otherwise.
-set -e
+# Run all Bats suites under test/. Each suite has a bounded wall-clock budget
+# and emits progress/timing output so a stalled suite is visible.
+set -uo pipefail
 
-# Per FS-0024/ADR-0033: the git repository containing the caller's working
-# directory, not the script's own location — so a vendored copy runs the host's
-# own test/ suites, not this repository's. `npm test` and every CI job invoke this
-# with their working directory already at the repository they mean to run, so
-# resolution is unchanged for every invocation this repository makes of itself.
-# CA_TARGET_REPO overrides both, for a caller whose working directory is not
-# inside the repository it means to run.
-#
-# Canonicalized via `cd ... && pwd`, not used as-is — `find "$REPO_ROOT/test" ...`
-# below would otherwise resolve a relative CA_TARGET_REPO against whatever the
-# caller's working directory is, not against the target. A CA_TARGET_REPO that
-# isn't a real directory fails loudly rather than silently falling back.
-if [ -n "${CA_TARGET_REPO:-}" ]; then
-  REPO_ROOT="$(cd "$CA_TARGET_REPO" 2>/dev/null && pwd)"
-  if [ -z "$REPO_ROOT" ]; then
-    echo "ERROR: CA_TARGET_REPO='$CA_TARGET_REPO' is not a directory." >&2
-    exit 1
-  fi
-else
-  REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-fi
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+# shellcheck source=/dev/null
+. "$SCRIPT_DIR/validation-common.sh"
+
+# Per FS-0024/ADR-0033: target the repository containing the caller's working
+# directory, unless CA_TARGET_REPO explicitly selects another repository.
+REPO_ROOT="$(validation_resolve_repo_root)" || exit 1
 
 # Re-entrancy guard. This script runs every suite under test/, and a suite that
-# invokes it again forks without bound — each level re-runs every suite, including
-# itself. That happened: a test exercising the missing-bats path sanitised PATH to
-# /usr/bin:/bin, which excludes Homebrew's bats on macOS but includes apt's
-# /usr/bin/bats on Linux, so CI recursed until it exhausted the runner.
-#
-# A test that deliberately exercises this script's own behaviour must unset the
-# variable (`env -u RUN_BATS_ACTIVE`), which is explicit rather than accidental.
+# invokes it again forks without bound. A test that deliberately exercises this
+# script must unset RUN_BATS_ACTIVE explicitly.
 if [ -n "${RUN_BATS_ACTIVE:-}" ]; then
   echo "ERROR: run-bats.sh invoked recursively — a bats suite is running it." >&2
   echo "       This would fork without bound. If a test means to exercise this" >&2
@@ -51,11 +31,8 @@ if ! command -v bats >/dev/null 2>&1; then
   exit 1
 fi
 
-# Several suites call `rg` (ripgrep) directly, including with -U (multiline) and
-# -A (context), which have no clean POSIX equivalent. Check for it explicitly: a
-# missing rg previously surfaced as every assertion failing with "expected <file>
-# to contain pattern", naming files that plainly contained it, because the helper
-# swallowed the command-not-found error. Fail loudly instead.
+# Several suites call rg (ripgrep) directly, including with -U and -A. Check
+# explicitly so missing rg cannot masquerade as assertion failures.
 if ! command -v rg >/dev/null 2>&1; then
   echo "ERROR: 'rg' (ripgrep) is not installed or not on PATH." >&2
   echo "       Several suites call it directly. Without it, assertions fail with" >&2
@@ -65,22 +42,47 @@ if ! command -v rg >/dev/null 2>&1; then
   exit 1
 fi
 
-# Run every .bats file under test/. Subdirectories are intentional (FS-NNNN/*).
-failures=0
-total=0
-for suite in $(find "$REPO_ROOT/test" -name '*.bats' -type f | sort); do
-  echo "# $suite"
-  if ! bats "$suite"; then
-    failures=$((failures+1))
-  fi
-  total=$((total+1))
-done
+BATS_TIMEOUT_RAW="${BATS_SUITE_TIMEOUT:-900}"
+BATS_TIMEOUT="$(validation_normalize_positive_integer "$BATS_TIMEOUT_RAW")" || {
+  echo "ERROR: BATS_SUITE_TIMEOUT must be a positive integer (got '$BATS_TIMEOUT_RAW')." >&2
+  exit 2
+}
 
-if [ "$failures" -gt 0 ]; then
-  echo ""
-  echo "FAILED: $failures of $total bats suites reported failures."
+suites=()
+while IFS= read -r suite; do
+  [ -n "$suite" ] && suites[${#suites[@]}]="$suite"
+done < <(find "$REPO_ROOT/test" -type f -name '*.bats' -print | sort)
+
+total=${#suites[@]}
+if [ "$total" -eq 0 ]; then
+  echo "ERROR: no Bats suites found under '$REPO_ROOT/test'." >&2
   exit 1
 fi
 
-echo ""
-echo "All $total bats suites passed."
+printf 'BATS START suites=%s suite_timeout=%ss repo=%s\n' "$total" "$BATS_TIMEOUT" "$REPO_ROOT"
+failures=0
+index=0
+for suite in "${suites[@]}"; do
+  index=$((index + 1))
+  relative="${suite#"$REPO_ROOT/"}"
+  started=$SECONDS
+  printf 'BATS %s/%s BEGIN %s timeout=%ss\n' "$index" "$total" "$relative" "$BATS_TIMEOUT"
+  validation_run_with_timeout "$BATS_TIMEOUT" bats "$suite"
+  status=$?
+  elapsed=$((SECONDS - started))
+  if [ "$status" -eq 0 ]; then
+    printf 'BATS %s/%s PASS %s elapsed=%ss\n' "$index" "$total" "$relative" "$elapsed"
+  elif [ "$status" -eq 124 ] || [ "$status" -eq 137 ]; then
+    printf 'BATS %s/%s TIMEOUT %s elapsed=%ss status=%s\n' "$index" "$total" "$relative" "$elapsed" "$status" >&2
+    failures=$((failures + 1))
+  else
+    printf 'BATS %s/%s FAIL %s elapsed=%ss status=%s\n' "$index" "$total" "$relative" "$elapsed" "$status" >&2
+    failures=$((failures + 1))
+  fi
+done
+
+if [ "$failures" -gt 0 ]; then
+  echo "FAILED: $failures of $total Bats suites reported failures." >&2
+  exit 1
+fi
+printf 'BATS PASS: all %s suites passed.\n' "$total"

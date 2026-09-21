@@ -71,8 +71,7 @@ and records a machine-readable-enough summary plus the complete log.
 - Apply a bounded timeout to each validation command and a bounded timeout to
 each individual Bats suite, with explicit progress and timing output.
 - Resolve the target repository explicitly and run fixture-backed tests in
-
-temp-dir-scoped state rather than in the caller's checkout or configuration.
+  temp-dir-scoped state rather than in the caller's checkout or configuration.
 - Make cross-repository linting network-free by requiring already-available Git
 refs and failing closed when the requested commit range is unavailable.
 - Have CI invoke the same `npm run validate` path used locally, with full history

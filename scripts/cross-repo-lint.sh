@@ -17,7 +17,8 @@
 #   CA_REPO_DIRS     — colon-separated list of repo roots (defaults to heuristics)
 #   CA_TARGET_REPO   — single repo path override (takes precedence over CA_REPO_DIRS)
 #   STRICT_TOOLS     — set to 1 to fail on missing tools (default: 0)
-#   COMMIT_RANGE     — git log range for attribution check (default: origin/trunk~20..origin/trunk)
+#   COMMIT_RANGE     — git log range for attribution check. The range must already
+#                      exist locally; this script never fetches a remote.
 set -euo pipefail
 
 FRAMEWORK_HOME="$(cd "$(dirname "$0")/.." && pwd)"
@@ -130,7 +131,8 @@ for REPO in "${REPOS[@]}"; do
     continue
   fi
 
-  # Resolve default branch and commit range
+  # Resolve default branch and commit range. The validation surface is
+  # hermetic: callers must prepare any remote refs before invoking this script.
   DEFAULT_BRANCH="$(_resolve_default_branch "$REPO")"
   # Anchored audit (work item #141): the default range starts at the OLDER
   # of the newest v*-tagged release reachable from the default branch and
@@ -164,15 +166,12 @@ for REPO in "${REPOS[@]}"; do
     fi
   fi
 
-  # Fetch default branch if we can
-  git -C "$REPO" fetch origin "$DEFAULT_BRANCH" 2>/dev/null || true
-
-  # Test range endpoints separately (git rev-parse --verify only accepts single revs)
+  # Test range endpoints separately (git rev-parse --verify only accepts single revs).
   RANGE_START="${RANGE%..*}"
   RANGE_END="${RANGE##*..}"
   if ! git -C "$REPO" rev-parse --verify "$RANGE_START" >/dev/null 2>&1 || \
      ! git -C "$REPO" rev-parse --verify "$RANGE_END" >/dev/null 2>&1; then
-    echo "  SKIP  $REPO_NAME (commit range $RANGE unavailable)"
+    err "$REPO_NAME: commit range $RANGE is unavailable locally; fetch or prepare the refs before running cross-repo lint"
     continue
   fi
 

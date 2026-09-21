@@ -50,6 +50,47 @@ the card's pinned base commit into a disposable directory. Task cards live in
 
 ---
 
+## run-validation.sh — canonical reproducibility runner
+
+`npm run validate` runs the five-command validation surface in this fixed order:
+
+1. `npm test`
+2. `npm run lint:docs`
+3. `npm run check:status`
+4. `npm run check:freshness`
+5. `npm run lint:cross-repo`
+
+**Purpose.** FS-0032 / issue #132 makes this the single local and CI entry point
+for the framework's own acceptance signal. The runner prints progress, records
+whole-second timings, writes the complete output to a log, and exits non-zero on
+any command failure or timeout. It continues after a fast failure so the log
+contains the state of every gate; a timeout is terminated and remains fatal.
+
+**Default budgets.** `npm test` has 1800 seconds, each other gate has 120
+seconds, each individual Bats suite has 900 seconds, and the complete run has
+1800 seconds. Override with `CA_VALIDATION_TEST_TIMEOUT`,
+`CA_VALIDATION_GATE_TIMEOUT`, `BATS_SUITE_TIMEOUT`, and
+`CA_VALIDATION_BUDGET`. Values must be positive integers. The runner clips a
+step to the remaining global budget, so the documented wall-clock bound is
+real rather than advisory.
+
+**Hermeticity.** The target is the caller's Git worktree or an explicit
+`CA_TARGET_REPO`. The runner requires a clean target, uses a disposable
+`TMPDIR`, `HOME`, Git global config, and npm cache, sets npm offline mode, and
+places fail-closed stubs for `gh`, `curl`, `wget`, `ssh`, `scp`, and `nc` at the
+front of `PATH`. It never calls a remote itself. Set `CA_VALIDATION_LOG` to an
+absolute path outside the target checkout to archive a specific log; otherwise
+a temporary log under `/tmp` is printed. CI prepares
+full history, dependencies, and the pull-request base ref, then invokes this
+same command.
+
+**Prerequisites.** Run `npm ci --ignore-scripts` before validation, and install
+`bats` and `rg`. Markdownlint scripts use the pinned local binary, not `npx`;
+missing dependencies therefore fail instead of downloading an unreviewed
+package during a gate run.
+
+---
+
 ## Running these scripts against a vendored (host) repository
 
 Per `FS-0024`/`ADR-0033`: each script resolves the repository it checks from the
@@ -368,7 +409,9 @@ explicit via `CA_REPO_DIRS` (colon-separated repo roots) and `CA_TARGET_REPO`
 when pointed at it explicitly.
 
 **Config.**
-- `COMMIT_RANGE` — git log range for the attribution check. Default:
+- `COMMIT_RANGE` — git log range for the attribution check. Explicit ranges
+  must already exist locally; the script never fetches a remote and fails
+  closed if either endpoint is unavailable. Without an override, the default is
   the OLDER of the newest `v*`-tagged release reachable from the default
   branch (via `git describe --first-parent`, keeping the anchor on the
   release line) and the `ATTRIBUTION_MIN_ANCHOR` floor, when either
@@ -382,11 +425,15 @@ when pointed at it explicitly.
   Only applies when the ref resolves in the repo being linted.
 - `STRICT_TOOLS=1` — fail on missing tools instead of warning.
 
-**When it runs.** Manually via `npm run lint:cross-repo`. CI wiring lives in
-`.github/workflows/lint-docs.yml` (the `lint-cross-repo` job): on `pull_request`
+**When it runs.** Manually via `npm run lint:cross-repo`, or as step 5 of
+`npm run validate`. The canonical runner sets an explicit range
+(`HEAD~20..HEAD` locally, or the pull-request base range in CI). CI wiring
+lives in `.github/workflows/lint-docs.yml` (the `lint-cross-repo` job): on `pull_request`
 it audits the PR's own commits (`COMMIT_RANGE=origin/<base>..HEAD`), on push to
 trunk the anchored post-release commits (release-tagged repos) or the last 20
-trunk commits (untagged repos). The workflow sets `CA_REPO_DIRS` to the runner
+trunk commits (untagged repos) for the standalone job. The workflow prepares
+the refs before invoking either entry point; the script itself never fetches.
+The workflow sets `CA_REPO_DIRS` to the runner
 workspace only — the runner holds one repository (all three repos are private),
 so the job is the fail-closed enforcement point for the calling repository. The
 full three-repo sweep runs in the maintenance tick, which holds all three
@@ -419,9 +466,12 @@ documented macOS system-bash baseline, for example:
 CA_BASH_FOR_TESTS=/path/to/bash-3.2 bats test/FS-0029
 ```
 
-**Purpose.** Executes every `.bats` suite under `test/`. Per `FS-0022` §6,
-"a missing `bats` binary fails loudly with an install hint, rather than
-passing vacuously."
+**Purpose.** Executes every `.bats` suite under `test/`. Suites are discovered
+by sorted path, announced as `BEGIN`, bounded by `BATS_SUITE_TIMEOUT` (default
+900 seconds), and reported with an elapsed whole-second timing and a `PASS`,
+`FAIL`, or `TIMEOUT` verdict. A timeout is a failed suite; an empty `test/`
+directory is also a failure. Per `FS-0022` §6, "a missing `bats` binary fails
+loudly with an install hint, rather than passing vacuously."
 
 **When it runs.**
 
