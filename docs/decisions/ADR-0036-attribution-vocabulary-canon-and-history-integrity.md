@@ -8,7 +8,7 @@ related_specs:
   - FS-0017
 superseded_by: null
 created: 2026-09-01
-updated: 2026-09-01
+updated: 2026-09-21
 ---
 
 # ADR-0036: Attribution vocabulary canon and history-integrity policy
@@ -118,7 +118,7 @@ gates protect the future.
    | Field | Canonical form | Valid examples | Invalid examples |
    | --- | --- | --- | --- |
    | `actor=` | Lowercase slug naming the agent persona | `hermes-agent`, `claude-code`, `codex`, `marten` | `Hermes Agent`, `Claude Code` (cased display forms; per ADR-0029 the author `user.name` carries the model display form, and the trailer's `actor=` is the persona slug regardless) |
-   | `model=` | Provider-qualified `provider/vendor/model[:variant]` | `ollama-cloud/deepseek-v4-flash:0731`, `anthropic/claude-opus-5`, `anthropic/claude-sonnet-5` | `Opus 5`, `MiniMax-M3`, `deepseek-v4-flash` (bare display names) |
+   | `model=` | Provider-qualified `provider/vendor/model[:variant]` | `ollama-cloud/deepseek-v4.1-flash`, `anthropic/claude-opus-5`, `anthropic/claude-sonnet-5` | `Opus 5`, `MiniMax-M3`, `deepseek-v4.1-flash` (bare display names) |
    | `role=` | ROLE_CONTRACT role in title case | `Implementer`, `Head Architect`, `Document Author`, `Reviewer` | `implementer`, `document-author` |
    | `session=` | Lowercase kebab-case session name | `architecture-planning`, `conventional-agents-maintenance` | `Architecture Planning` |
    | `mode=` | Optional terminal field; `autonomous` per ADR-0021 for unattended actors | `mode=autonomous` | `mode=hybrid` (session modes are not mode values) |
@@ -156,11 +156,11 @@ gates protect the future.
   and deliberately not claimed here — the current regex is structural,
   and a vocabulary gate over legacy history would fail on pre-canon
   commits.
-- The maintenance-loop cron prompt still writes a bare
-  `model=deepseek-v4-flash`; updating it is tracked separately as a
-  "found, not fixed" item. Enforcement scope in this ADR's first
-  revision is interactive-agent commits; the cron gap is documented, not
-  silent.
+- The maintenance-loop cron prompt writes `model=deepseek-v4.1-flash`
+  (bare, without the `ollama-cloud/` provider qualifier); aligning it to
+  the canonical qualified form is tracked separately as a "found, not
+  fixed" item. Enforcement scope in this ADR's first revision is
+  interactive-agent commits; the cron gap is documented, not silent.
 - The identity table in `workflows/git-and-gh-conventions.md` corrects
   the never-used `taisden@tais-den.dev` row to the canonical human
   identity. Consumers substitute their own identities per ADR-0032's
