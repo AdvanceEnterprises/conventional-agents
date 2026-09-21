@@ -1,3 +1,443 @@
-VALIDATION PASS
-BATS PASS: all suites passed.
-Baseline log placeholder; replace with the complete canonical validation output after the implementation commit is recorded.
+VALIDATION START repo=/tmp/ca-132 revision=bbd7a587a1d63dfe7d38a536cf752937ca9e8c25
+VALIDATION CONTRACT steps=5 test_timeout=1800s gate_timeout=120s bats_suite_timeout=900s budget=1800s
+VALIDATION LOG /tmp/ca-132-validation-bbd7a58.log
+VALIDATION COMMIT_RANGE HEAD~20..HEAD
+STEP 1/5 BEGIN npm test timeout=1800s
+
+> conventional-agents@2.1.0 test
+> bash scripts/run-bats.sh
+
+BATS START suites=21 suite_timeout=900s repo=/tmp/ca-132
+BATS 1/21 BEGIN test/FS-0001/adr-linting.bats timeout=900s
+1..7
+ok 1 config exists and matches MADR baseline when submodule is initialised
+ok 2 config disables MD013 and MD024
+ok 3 workflow exists and pins markdownlint-cli2 action
+ok 4 workflow targets trunk and ADR globs only
+ok 5 package.json defines markdownlint-cli2 and lint:adrs script
+ok 6 docs include local setup and troubleshooting for linting
+ok 7 linting scope excludes non-ADR markdown in decisions directory
+BATS 1/21 PASS test/FS-0001/adr-linting.bats elapsed=2s
+BATS 2/21 BEGIN test/FS-0016/vendor-boundary.bats timeout=900s
+1..3
+ok 1 only vendor/madr remains as framework submodule
+ok 2 no consumer-facing file references concrete nested vendor submodule paths
+ok 3 framework docs cite upstream URLs for removed submodules
+BATS 2/21 PASS test/FS-0016/vendor-boundary.bats elapsed=1s
+BATS 3/21 BEGIN test/FS-0017/commit-attribution.bats timeout=900s
+1..10
+ok 1 workflow doc teaches the single-identity convention
+ok 2 skill teaches the single-identity convention
+ok 3 PR body template includes Agent Attribution section
+ok 4 ADR-0018 exists with accepted status
+ok 5 ADR-0011 cross-references ADR-0018
+ok 6 roles/ contains README.md and a delegating ROLE_CONTRACT.md
+ok 7 FS-0017 and PLAN-0017 exist with implemented status
+ok 8 recent commits have known actor emails
+ok 9 .mailmap maps human aliases to the canonical identity
+ok 10 recent commits with agent emails carry Agent-Attribution trailers
+BATS 3/21 PASS test/FS-0017/commit-attribution.bats elapsed=2s
+BATS 4/21 BEGIN test/FS-0018/issue-lifecycle.bats timeout=900s
+1..19
+ok 1 FS-0018 exists with approved status
+ok 2 FS-0018 declares three-axis work item schema
+ok 3 FS-0018 lists six labels
+ok 4 FS-0018 lists three Types
+ok 5 FS-0018 lists five phase values
+ok 6 FS-0018 agent-stance regex matches positive cases
+ok 7 FS-0018 agent-stance regex rejects negative cases
+ok 8 FS-0018 agent-stance regex is format-only, not value validation
+ok 9 FS-0018 enumerated mode values are all valid
+ok 10 FS-0018 declares Type human-mutable only
+ok 11 FS-0018 declares autonomous gate by Type
+ok 12 FS-0018 declares three origination paths
+ok 13 FS-0018 lists ADR dependencies
+ok 14 FS-0018 has Plan Status section naming its PLAN
+ok 15 PLAN-0018 exists and is not approved ahead of its FS
+ok 16 FS-0018 cron-identity precondition is resolved by ADR-0021
+ok 17 FS-0018 is platform-neutral: no GitHub product nouns in body
+ok 18 FS-0018 declares the six ADR-0024 substrate capabilities
+ok 19 FS-0018 references FS-0019 as a follow-on
+BATS 4/21 PASS test/FS-0018/issue-lifecycle.bats elapsed=3s
+BATS 5/21 BEGIN test/FS-0019/consensus-schema.bats timeout=900s
+1..15
+ok 1 FS-0019 exists with approved status
+ok 2 FS-0019 declares consensus disabled by default
+ok 3 FS-0019 declares different-models requirement
+ok 4 FS-0019 defines three failure modes
+ok 5 FS-0019 defines two gates
+ok 6 FS-0019 defines consensus round artifact schema
+ok 7 FS-0019 consensus round escalation creates Type task Issue
+ok 8 config/consensus.yml template exists with all-defaults state
+ok 9 config/consensus.yml has per-gate configuration
+ok 10 config/consensus.yml models list starts empty
+ok 11 FS-0019 lists dependencies on FS-0018 and ADR-0018
+ok 12 FS-0019 has Plan Status section naming its PLAN
+ok 13 PLAN-0019 exists and is not approved ahead of its FS
+ok 14 FS-0019 has test-harness note about consumer-repo fixtures
+ok 15 FS-0019 same-model consensus is forbidden
+BATS 5/21 PASS test/FS-0019/consensus-schema.bats elapsed=2s
+BATS 6/21 BEGIN test/FS-0020/sdlc-workflows.bats timeout=900s
+1..11
+ok 1 spine: both workflows name seven phases
+ok 2 spine: leading role matches across workflows
+ok 3 gates: FS approval stated as human-held in both
+ok 4 gates: merge stated as human-held in both
+ok 5 gates: draft spec is not implementable in both
+ok 6 single-model: collaboration rounds are excluded
+ok 7 single-model: exclusion cites ADR-0023
+ok 8 multi-model: declares touches: as artifact scope
+ok 9 multi-model: collaboration placements named
+ok 10 handoff: contract table present in multi-model
+ok 11 neutrality: no platform nouns in either workflow
+BATS 6/21 PASS test/FS-0020/sdlc-workflows.bats elapsed=3s
+BATS 7/21 BEGIN test/FS-0021/review-board.bats timeout=900s
+1..20
+ok 1 default: review-board.yml ships disabled
+ok 2 default: FS-0021 declares review boards disabled by default
+ok 3 default: per-placement configuration is independently disabled
+ok 4 default: seats list starts empty
+ok 5 composition: min_models floor is 2
+ok 6 composition: min_roles floor is 2 (board distinguishing constraint)
+ok 7 composition: identical-models rejection is asserted in FS
+ok 8 composition: identical-roles rejection is asserted in FS
+ok 9 findings: contradictions are both recorded (template)
+ok 10 findings: contradicts is a list, not a scalar
+ok 11 findings: duplicate observations merge with all raising seats
+ok 12 findings: rejected requires reason
+ok 13 findings: deferred requires reason
+ok 14 findings: every finding is dispositioned
+ok 15 coverage: every seat accounted for per dimension
+ok 16 gate: evaluator not in seats
+ok 17 gate: absent when no independent evaluator
+ok 18 gate: no override flag for gate independence
+ok 19 advisory: blocking severity performs no transition
+ok 20 advisory: severity taxonomy is the four FS values
+BATS 7/21 PASS test/FS-0021/review-board.bats elapsed=3s
+BATS 8/21 BEGIN test/FS-0022/gate-coverage.bats timeout=900s
+1..33
+ok 1 adr_index: title mismatch is detected by check-status.sh
+ok 2 adr_index: status mismatch is detected by check-status.sh
+ok 3 adr_index: missing ADR file (orphan row) is detected
+ok 4 plan_touches: outside interfaces: is detected
+ok 5 plan_touches: reserved path is detected
+ok 6 plan_touches: absent field fails
+ok 7 lint: covered directories carry active lint configs
+ok 8 lint: orchestration exempt passes
+ok 9 npm_test: runs all suites
+ok 10 npm_test: missing bats fails loudly with install hint
+ok 11 npm_test: run-bats.sh refuses to run recursively
+ok 12 scripts_readme: documents every check
+ok 13 scripts_readme: documents run-bats.sh purpose
+ok 14 consumer_impact: exported interfaces require changelog entry
+ok 15 index_titles: FS title drift is detected
+ok 16 index_titles: an orphan README row is detected
+ok 17 index_titles: PLAN rows are not title-compared
+ok 18 resolve_doc_by_id: resolves both bare and suffixed filenames
+ok 19 consumer_impact: internal-only spec is not flagged
+ok 20 ref_paths: a dangling path in a current-state document is detected
+ok 21 ref_paths: a resolving path is not flagged
+ok 22 ref_paths: decision records are out of scope
+ok 23 ref_paths: bare filenames are not treated as repository paths
+ok 24 ref_paths: REF_EXEMPT entries are documented with the consumer-side reason
+ok 25 current_state: script exists and is sourceable without running
+ok 26 current_state: ADR naming an unmodified current-state doc fails
+ok 27 current_state: ADR whose linked doc is modified passes
+ok 28 current_state: a directory link is satisfied by any change beneath it
+ok 29 current_state: an ADR naming no current-state document is out of scope
+ok 30 current_state: only ADRs becoming accepted are in scope
+ok 31 current_state: the CI job exists and runs on pull_request
+ok 32 adr_structure: a renamed required section is detected
+ok 33 adr_structure: MADR's H3-nested Consequences is accepted
+BATS 8/21 PASS test/FS-0022/gate-coverage.bats elapsed=787s
+BATS 9/21 BEGIN test/FS-0023/runbook-convention.bats timeout=900s
+1..14
+ok 1 runbooks: directory exists with a README index
+ok 2 runbooks: README states the RB-NNNN convention and carries an index table
+ok 3 runbook template: front matter carries the verification fields
+ok 4 runbook template: carries all five required sections
+ok 5 lifecycle: document-lifecycle.md defines the runbook status vocabulary
+ok 6 lifecycle: no runbook status row uses the FS/PLAN vocabulary
+ok 7 exported surface: check-status.sh EXPORTED_PREFIXES contains runbooks/
+ok 8 exported surface: README.md surface table lists runbooks/
+ok 9 exported surface: AGENTS.md surface table lists runbooks/
+ok 10 exported surface: docs/specifications/README.md consumer-impact rule names runbooks/
+ok 11 lint: package.json defines lint:runbooks and lint:docs invokes it
+ok 12 lint: CI triggers on runbooks in both push and pull_request path lists
+ok 13 lint: runbooks/ inherits the root markdownlint config
+ok 14 check_status: passes with runbooks/ registered as exported surface
+BATS 9/21 PASS test/FS-0023/runbook-convention.bats elapsed=34s
+BATS 10/21 BEGIN test/FS-0024/portable-gates.bats timeout=900s
+1..35
+ok 1 target_resolution: the pre-FS-0024 formula does not resolve to the host root
+ok 2 target_resolution: vendored check-status.sh detects host drift the pre-fix formula would have missed
+ok 3 target_resolution: resolution holds from a subdirectory of the host, not only its root
+ok 4 target_resolution: CA_TARGET_REPO overrides both the caller's cwd and the script's location
+ok 5 target_resolution: a relative CA_TARGET_REPO is canonicalized, not used as-is
+ok 6 target_resolution: a CA_TARGET_REPO that is not a real directory fails loudly
+ok 7 target_resolution: this repository's own invocation is unaffected
+ok 8 self_check: framework checking itself uses its own hardcoded reserved paths
+ok 9 self_check: a vendored copy does not fall back to this repository's hardcoded values
+ok 10 rule6: no config/gates.yml at all refuses to certify self-approval
+ok 11 rule6: config/gates.yml present but missing the reserved_paths key also refuses
+ok 12 rule6: explicit reserved_paths: [] is honored — plan self-approves via interfaces containment
+ok 13 rule6: a configured reserved path is enforced exactly as the hardcoded set is for self-check
+ok 14 rule6: an inline-list reserved_paths (with quotes) is enforced, not silently ignored
+ok 15 rule7: no config/gates.yml skips visibly, distinct from a clean pass
+ok 16 rule7: explicit exported_prefixes: [] also skips, same as absent
+ok 17 rule7: a configured exported prefix is enforced — missing CHANGELOG entry fails
+ok 18 rule7: a configured exported prefix with a matching CHANGELOG entry passes
+ok 19 no_config: an entirely absent config/gates.yml produces no awk 'can't open file' noise
+ok 20 reclassification: README.md exported-surface table lists scripts/
+ok 21 reclassification: AGENTS.md exported-surface column lists scripts/
+ok 22 reclassification: check-status.sh self-check EXPORTED_PREFIXES includes scripts/
+ok 23 reclassification: docs/specifications/README.md exported-surface list names scripts/
+ok 24 docs: scripts/README.md documents CA_TARGET_REPO
+ok 25 docs: scripts/README.md documents the FRAMEWORK_HOME self-check comparison
+ok 26 docs: scripts/README.md documents config/gates.yml and where it is sourced from
+ok 27 docs: scripts/README.md states which of rules 6/7 fails closed and which skips, and why
+ok 28 docs: config/gates.example.yml does not set reserved_paths live — a straight copy stays fail-closed
+ok 29 rule6: a straight copy of config/gates.example.yml preserves fail-closed behavior
+ok 30 docs: config/gates.example.yml exists and carries the consumer-copy template header
+ok 31 docs: config/gates.example.yml is never referenced as if it were read directly by the scripts
+ok 32 check_current_state: accepts CA_TARGET_REPO and it is documented as symmetry, not a fix
+ok 33 check_current_state: default (no override) behavior is unchanged — still resolves via git rev-parse
+ok 34 run_bats: REPO_ROOT resolution no longer uses dirname "$0"
+ok 35 check_status: REPO_ROOT resolution no longer uses dirname "$0" as the target
+BATS 10/21 PASS test/FS-0024/portable-gates.bats elapsed=68s
+BATS 11/21 BEGIN test/FS-0025/governance-patterns.bats timeout=900s
+1..16
+ok 1 adr_transitions: every ADR status is a recognised value
+ok 2 adr_transitions: deprecated or superseded carries a date
+ok 3 adr_transitions: no ADR filename number mismatches its id: field
+ok 4 fs_plan_pairing: every implemented/approved FS names a PLAN
+ok 5 fs_plan_pairing: every PLAN with related_specs references an existing FS
+ok 6 index_consistency: all ADR docs have an ADR README row
+ok 7 index_consistency: all FS docs have an FS README row
+ok 8 index_consistency: all PLAN docs have a PLAN README row
+ok 9 index_consistency: ADR README rows have corresponding files
+ok 10 frontmatter: FS docs have required frontmatter fields
+ok 11 frontmatter: PLAN docs have required frontmatter fields
+ok 12 frontmatter: ADR decision_scope is a recognised value
+ok 13 frontmatter: no doc has a placeholder YYYY-MM-DD date (log only)
+ok 14 status_consistency: FS README status matches frontmatter status
+ok 15 status_consistency: created: date does not exceed updated: date
+ok 16 governance: no FS or PLAN uses an unapproved status value
+BATS 11/21 PASS test/FS-0025/governance-patterns.bats elapsed=29s
+BATS 12/21 BEGIN test/FS-0026/scaffolding-cli.bats timeout=900s
+1..10
+ok 1 scaffolding: new:adr creates ADR with proposed status, today's dates, and standard headings
+ok 2 scaffolding: new:adr --dry-run prints content and writes no file
+ok 3 scaffolding: new:plan carries related_specs, related_adrs, and Consequences from the ADR
+ok 4 scaffolding: new:adr --title as last argument reports a clear error
+ok 5 scaffolding: new:adr preserves quotes and apostrophes in the title verbatim
+ok 6 scaffolding: next ADR number is base-10 with leading zeros (0009 -> 0010, not 00091)
+ok 7 scaffolding: new:adr rejects unknown arguments with exit 2
+ok 8 scaffolding: new:adr requires a title
+ok 9 scaffolding: new:plan rejects a missing ADR file
+ok 10 scaffolding: new:plan validates --number format
+BATS 12/21 PASS test/FS-0026/scaffolding-cli.bats elapsed=7s
+BATS 13/21 BEGIN test/FS-0027/freshness-gate.bats timeout=900s
+1..10
+ok 1 freshness: every governed doc under workflows/ and guidelines/ carries updated: (corpus green)
+ok 2 freshness: npm run check:freshness is registered
+ok 3 freshness: a governed doc without updated: fails hard and names the file
+ok 4 freshness: an unparseable updated: date fails hard and names the file
+ok 5 freshness: updated: appearing in prose outside the front-matter block is not accepted
+ok 6 freshness: stale docs are reported with path and age but do not fail the run
+ok 7 freshness: non-integer DOC_STALE_DAYS is rejected
+ok 8 freshness: negative DOC_STALE_DAYS is rejected
+ok 9 freshness: README index files are excluded from the gate
+ok 10 freshness: guidelines subdirectories are included recursively
+BATS 13/21 PASS test/FS-0027/freshness-gate.bats elapsed=4s
+BATS 14/21 BEGIN test/FS-0028/adr-supersession-chain.bats timeout=900s
+1..8
+ok 1 supersession: a superseded ADR without a replacement is flagged
+ok 2 supersession: a dangling replacement id is flagged
+ok 3 supersession: a non-superseded ADR declaring a replacement is flagged
+ok 4 supersession: a well-formed chain passes the full check
+ok 5 supersession: list-shaped superseded_by is parsed and resolves
+ok 6 supersession: a double-quoted scalar id is normalised before resolution
+ok 7 supersession: YAML block list shape resolves each entry
+ok 8 supersession: rule is documented in scripts/README.md
+BATS 14/21 PASS test/FS-0028/adr-supersession-chain.bats elapsed=249s
+BATS 15/21 BEGIN test/FS-0029/board-audit.bats timeout=900s
+1..17
+ok 1 SC-18: board audit source contains no mutating project or issue operation
+ok 2 board audit supports the FS-0011 Doc Type compatibility field
+ok 3 SC-19 and SC-22: audit reports three drift categories and exits zero
+ok 4 SC-22: strict mode makes findings fail while default mode stays informational
+ok 5 SC-23: a missing project is a clean, explicit report
+ok 6 SC-20: successive GraphQL calls honor the configurable interval
+ok 7 SC-21: reset timestamp is honored with a buffer before retry
+ok 8 SC-21: Retry-After is honored when no reset timestamp is supplied
+ok 9 SC-21: rate-limit retry uses bounded exponential backoff without a reset
+ok 10 SC-21: reset waits honor the server value beyond the exponential cap
+ok 11 SC-21: Retry-After waits honor the server value beyond the exponential cap
+ok 12 SC-21: excessive server-directed waits fail instead of sleeping unbounded
+ok 13 successful Project content named Rate limited is not retried
+ok 14 unknown owner type is reported as an API error without rate-limit retries
+ok 15 GraphQL progress diagnostics stay on stderr, outside parsed board data
+ok 16 board audit counts non-Issue Project items for field drift
+ok 17 SC-23: API failure is operationally distinct from drift
+BATS 15/21 PASS test/FS-0029/board-audit.bats elapsed=4s
+BATS 16/21 BEGIN test/FS-0029/common-lib.bats timeout=900s
+1..6
+ok 1 SC-1: every binding command documents its interface in --help
+ok 2 SC-2: unauthenticated API commands fail before an API call
+ok 3 SC-3: CA_TARGET_REPO resolves the caller target from outside that repository
+ok 4 SC-4: shipped command sources contain no vendor path reads
+ok 5 SC-5: a visibility API failure names the condition and remediation
+ok 6 repository resolution strips .git from HTTPS and SSH remotes
+BATS 16/21 PASS test/FS-0029/common-lib.bats elapsed=2s
+BATS 17/21 BEGIN test/FS-0029/label-provision.bats timeout=900s
+1..8
+ok 1 SC-12: default mode creates only missing framework labels
+ok 2 SC-13: a second provision run creates nothing
+ok 3 SC-14 and SC-16: audit separates missing and unexpected without mutation
+ok 4 SC-15: dry-run composes with audit and prints the would-create set
+ok 5 SC-17: shipped vocabulary is exactly the FS-0018 six
+ok 6 extension labels come from caller data without changing the framework set
+ok 7 label validation failures do not masquerade as duplicate-label races
+ok 8 the specific duplicate-label response is treated as already existing
+BATS 17/21 PASS test/FS-0029/label-provision.bats elapsed=2s
+BATS 18/21 BEGIN test/FS-0029/submodule-init.bats timeout=900s
+1..10
+ok 1 SC-6: public framework initialises without a credential or warning
+ok 2 SC-7: private framework without a credential fails closed
+ok 3 SC-8: private credential configuration is explicitly global
+ok 4 SC-9: private credential never appears in combined command output
+ok 5 SC-10: a second private initialisation leaves global git config byte-identical
+ok 6 rotating private credentials leaves no token-bearing global entry
+ok 7 credential is not exposed when submodule update fails
+ok 8 submodule failure preserves git's diagnostic stderr
+ok 9 private initialisation restores a pre-existing rewrite exactly
+ok 10 SC-11: indeterminate visibility fails instead of guessing a regime
+BATS 18/21 PASS test/FS-0029/submodule-init.bats elapsed=3s
+BATS 19/21 BEGIN test/FS-0029/templates-and-registration.bats timeout=900s
+1..9
+ok 1 SC-24: shipped templates contain no instance-specific repository data
+ok 2 SC-25: the GitHub integration layer contains no scheduled trigger
+ok 3 SC-26: submodule template uses complete history and the shared initializer
+ok 4 SC-27: framework pull-request template carries every shipped section
+ok 5 SC-28 and SC-29: binding README classifies commands and records hazards
+ok 6 SC-30: each executable is registered and scripts README explains the boundary
+ok 7 SC-31: integration markdown lint is recursive
+ok 8 SC-32: every binding README path resolves
+ok 9 SC-33: all shipped shell files pass bash syntax
+BATS 19/21 PASS test/FS-0029/templates-and-registration.bats elapsed=1s
+BATS 20/21 BEGIN test/FS-0031/bench-harness.bats timeout=900s
+1..8
+ok 1 SC-1: runner sets up worktree, runs driver, captures action log
+ok 2 SC-1b: driver failure is task failure, not harness failure
+ok 3 SC-2: schema validation — unknown version rejected
+ok 4 SC-2b: schema validation — missing required field rejected
+ok 5 SC-3: report separates functional, governance, evidence
+ok 6 SC-4: same card runs under two conditions with distinct drivers
+ok 7 SC-5: pilot card declares escalation + adversarial scenarios
+ok 8 SC-6: report includes overhead and failures fields
+BATS 20/21 PASS test/FS-0031/bench-harness.bats elapsed=4s
+BATS 21/21 BEGIN test/FS-0032/validation-reproducibility.bats timeout=900s
+1..10
+ok 1 validate: runs the five commands in order through one entry point
+ok 2 reproducibility: serial runs keep the verdict and target clean
+ok 3 validate: rejects an invalid timeout before executing a command
+ok 4 validate: blocks network-capable commands in the canonical environment
+ok 5 run-bats: reports per-suite progress and fails closed on timeout
+ok 6 reproducibility: concurrent fresh checkouts do not share state
+ok 7 cross-repo-lint: does not fetch and fails on an unavailable range
+ok 8 CI: invokes the canonical runner with full history and pinned dependencies
+ok 9 documentation: records the reproducibility contract and fail-closed defaults
+ok 10 baseline: records a revision, timings, log, and final verdict
+BATS 21/21 PASS test/FS-0032/validation-reproducibility.bats elapsed=4s
+BATS PASS: all 21 suites passed.
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 12.0.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+npm notice To update run: npm install -g npm@12.0.2
+npm notice
+STEP 1/5 PASS npm test elapsed=1215s
+STEP 2/5 BEGIN npm run lint:docs timeout=120s
+
+> conventional-agents@2.1.0 lint:docs
+> npm run -s lint:adrs && npm run -s lint:specs && npm run -s lint:plans && npm run -s lint:workflows && npm run -s lint:guidelines && npm run -s lint:skills && npm run -s lint:templates && npm run -s lint:integrations && npm run -s lint:roles && npm run -s lint:runbooks && npm run -s lint:roots
+
+markdownlint-cli2 v0.13.0 (markdownlint v0.34.0)
+Finding: docs/decisions/ADR-*.md
+Linting: 40 file(s)
+Summary: 0 error(s)
+markdownlint-cli2 v0.13.0 (markdownlint v0.34.0)
+Finding: docs/specifications/FS-*.md
+Linting: 31 file(s)
+Summary: 0 error(s)
+markdownlint-cli2 v0.13.0 (markdownlint v0.34.0)
+Finding: docs/change-plans/PLAN-*.md
+Linting: 32 file(s)
+Summary: 0 error(s)
+markdownlint-cli2 v0.13.0 (markdownlint v0.34.0)
+Finding: workflows/*.md
+Linting: 7 file(s)
+Summary: 0 error(s)
+markdownlint-cli2 v0.13.0 (markdownlint v0.34.0)
+Finding: guidelines/**/*.md
+Linting: 10 file(s)
+Summary: 0 error(s)
+markdownlint-cli2 v0.13.0 (markdownlint v0.34.0)
+Finding: skills/**/*.md
+Linting: 19 file(s)
+Summary: 0 error(s)
+markdownlint-cli2 v0.13.0 (markdownlint v0.34.0)
+Finding: templates/**/*.md
+Linting: 12 file(s)
+Summary: 0 error(s)
+markdownlint-cli2 v0.13.0 (markdownlint v0.34.0)
+Finding: integrations/**/*.md
+Linting: 4 file(s)
+Summary: 0 error(s)
+markdownlint-cli2 v0.13.0 (markdownlint v0.34.0)
+Finding: roles/*.md
+Linting: 2 file(s)
+Summary: 0 error(s)
+markdownlint-cli2 v0.13.0 (markdownlint v0.34.0)
+Finding: runbooks/**/*.md
+Linting: 1 file(s)
+Summary: 0 error(s)
+markdownlint-cli2 v0.13.0 (markdownlint v0.34.0)
+Finding: *.md
+Linting: 8 file(s)
+Summary: 0 error(s)
+STEP 2/5 PASS npm run lint:docs elapsed=39s
+STEP 3/5 BEGIN npm run check:status timeout=120s
+
+> conventional-agents@2.1.0 check:status
+> bash scripts/check-status.sh
+
+All status checks passed.
+STEP 3/5 PASS npm run check:status elapsed=35s
+STEP 4/5 BEGIN npm run check:freshness timeout=120s
+
+> conventional-agents@2.1.0 check:freshness
+> bash scripts/check-freshness.sh
+
+check-freshness: OK — all governed docs under workflows/ and guidelines/ carry updated:
+STEP 4/5 PASS npm run check:freshness elapsed=1s
+STEP 5/5 BEGIN npm run lint:cross-repo timeout=120s
+
+> conventional-agents@2.1.0 lint:cross-repo
+> bash scripts/cross-repo-lint.sh
+
+==> cross-repo-lint: 1 repos = ca-132
+
+─── check 1: Agent-Attribution trailer format (FS-0017) ───
+  OK   ca-132 (all HEAD~20..HEAD commits have correct attribution format)
+
+─── check 2: README index consistency ───
+  OK   All docs referenced in README indexes
+
+─── check 3: FS/PLAN numbering validity within each repo (no duplicates) ───
+  OK   No duplicate IDs within repos
+
+OK: All cross-repo lint checks passed for 1 repos.
+STEP 5/5 PASS npm run lint:cross-repo elapsed=4s
+VALIDATION END elapsed=1294s verdict=PASS
+VALIDATION PASS: all five commands completed within the documented budget.
