@@ -8,8 +8,13 @@ SCRIPT_DIR="${BASH_SOURCE[0]%/*}"
 SCRIPT_DIR="$(cd "$SCRIPT_DIR" && pwd -P)"
 
 # Re-entrancy guard. This script runs every suite under test/, and a suite that
-# invokes it again forks without bound. A test that deliberately exercises this
-# script must unset RUN_BATS_ACTIVE explicitly.
+# invokes it again forks without bound — each level re-runs every suite,
+# including itself. That happened: a test exercising the missing-bats path
+# sanitised PATH to /usr/bin:/bin, which excludes Homebrew's bats on macOS but
+# includes apt's /usr/bin/bats on Linux, so CI recursed until it exhausted the
+# runner. A test that deliberately exercises this script's own behaviour must
+# unset the variable (`env -u RUN_BATS_ACTIVE`), which is explicit rather than
+# accidental.
 if [ -n "${RUN_BATS_ACTIVE:-}" ]; then
   echo "ERROR: run-bats.sh invoked recursively — a bats suite is running it." >&2
   echo "       This would fork without bound. If a test means to exercise this" >&2

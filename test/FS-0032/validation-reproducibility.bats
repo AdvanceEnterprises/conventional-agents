@@ -162,6 +162,54 @@ EOF
   [[ "$output" == *"network-capable command is disabled"* ]]
 }
 
+@test "validate: never invokes a network-capable git subcommand" {
+  local repo="$BATS_TEST_TMPDIR/repo"
+  local fakebin="$BATS_TEST_TMPDIR/bin"
+  local trace="$BATS_TEST_TMPDIR/git.trace"
+  local log="$BATS_TEST_TMPDIR/validation.log"
+  local real_git
+  real_git="$(command -v git)"
+  mkdir -p "$fakebin"
+  make_clean_repo "$repo"
+  cat > "$fakebin/npm" <<'EOF'
+#!/usr/bin/env bash
+exit 0
+EOF
+  chmod +x "$fakebin/npm"
+  # Record every git invocation the runner makes and fail closed on the
+  # network-capable verbs. The git stubs in the sandbox cover `gh`/`curl`/…,
+  # but git itself can fetch remotes, so the hermeticity claim needs its own
+  # assertion at the acceptance surface.
+  cat > "$fakebin/git" <<EOF
+#!/usr/bin/env bash
+printf '%s\n' "\$*" >> "$trace"
+case "\$1" in
+  fetch|pull|push|ls-remote|clone|remote) exit 86 ;;
+esac
+exec "$real_git" "\$@"
+EOF
+  chmod +x "$fakebin/git"
+
+  run env -u RUN_BATS_ACTIVE \
+    CA_TARGET_REPO="$repo" \
+    CA_VALIDATION_LOG="$log" \
+    CA_VALIDATION_TEST_TIMEOUT=5 \
+    CA_VALIDATION_GATE_TIMEOUT=5 \
+    CA_VALIDATION_BUDGET=30 \
+    COMMIT_RANGE=HEAD..HEAD \
+    PATH="$fakebin:$PATH" \
+    bash "$RUNNER"
+
+  [ "$status" -eq 0 ]
+  assert_file_contains "$log" "VALIDATION PASS"
+  assert_file_exists "$trace"
+  if grep -E -q '^(fetch|pull|push|ls-remote|clone|remote)( |$)' "$trace"; then
+    echo "runner invoked a network-capable git subcommand:"
+    cat "$trace"
+    return 1
+  fi
+}
+
 @test "run-bats: reports per-suite progress and fails closed on timeout" {
   local repo="$BATS_TEST_TMPDIR/repo"
   local fakebin="$BATS_TEST_TMPDIR/bin"

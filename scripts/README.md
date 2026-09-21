@@ -78,9 +78,15 @@ real rather than advisory.
 `CA_TARGET_REPO`. The runner requires a clean target, uses a disposable
 `TMPDIR`, `HOME`, Git global config, and npm cache, sets npm offline mode, and
 places fail-closed stubs for `gh`, `curl`, `wget`, `ssh`, `scp`, and `nc` at the
-front of `PATH`. It never calls a remote itself. Set `CA_VALIDATION_LOG` to an
+front of `PATH`. It never calls a remote itself: Git is used only for local
+reads (`rev-parse`, `status`, `log`), `GIT_TERMINAL_PROMPT=0` plus an empty
+private global config (`GIT_CONFIG_GLOBAL`, `GIT_CONFIG_NOSYSTEM=1`) strip
+ambient credential helpers, and `COMMIT_RANGE` must already exist locally — an
+unavailable range fails closed instead of fetching. Set `CA_VALIDATION_LOG` to an
 absolute path outside the target checkout to archive a specific log; otherwise
-a temporary log under `/tmp` is printed. CI prepares
+a temporary log under `/tmp` is printed. The log is an archival artifact: the
+verdict comes from the step exit statuses, not from reading the log back. CI
+prepares
 full history, dependencies, and the pull-request base ref, then invokes this
 same command.
 
@@ -406,7 +412,9 @@ assertions stable.
 **Repo discovery.** Heuristic sibling lookup from the framework home, or
 explicit via `CA_REPO_DIRS` (colon-separated repo roots) and `CA_TARGET_REPO`
 (single repo, takes precedence). A vendored copy checks the host repository
-when pointed at it explicitly.
+when pointed at it explicitly. In a single-repo context (a CI runner, or a
+checkout without siblings) the heuristic resolves to the repository present;
+finding zero repositories is a hard failure, never a silent pass.
 
 **Config.**
 - `COMMIT_RANGE` — git log range for the attribution check. Explicit ranges
