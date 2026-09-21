@@ -2,7 +2,7 @@
 type: change-plan
 role: implementer
 language: bash
-status: approved
+status: implemented
 related_specs: [FS-0032]
 approved_by: "Joey Clark <taisden@tais-den.dev>"
 related_adrs: [ADR-0015, ADR-0027, ADR-0030, ADR-0033]

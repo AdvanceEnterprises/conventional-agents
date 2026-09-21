@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0032
-status: approved
+status: implemented
 title: Validation reproducibility contract — bounded, hermetic, and CI-parity framework checks
 owner: ajoeofalltrades
 test_required: true
@@ -45,7 +45,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Approved
+- Implemented
 
 ## Summary
 
