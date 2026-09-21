@@ -143,7 +143,7 @@ run_step() {
 }
 
 run_step "npm test" "$TEST_TIMEOUT" \
-  env CA_TARGET_REPO="$REPO_ROOT" BATS_SUITE_TIMEOUT="$BATS_TIMEOUT" npm test
+  env -u CA_TARGET_REPO BATS_SUITE_TIMEOUT="$BATS_TIMEOUT" npm test
 run_step "npm run lint:docs" "$GATE_TIMEOUT" \
   env CA_TARGET_REPO="$REPO_ROOT" npm run lint:docs
 run_step "npm run check:status" "$GATE_TIMEOUT" \
