@@ -280,6 +280,8 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Changed
 
+- **DeepSeek model migration** — canonical/example model identifiers updated from the retired `deepseek-v4-flash:0731` tag to `deepseek-v4.1-flash` (Ollama Cloud retirement notice, 2026-09-21) in FS-0019 and `workflows/git-and-gh-conventions.md`. Historical examples inside accepted ADRs (ADR-0018) are deliberately unchanged — accepted ADRs are append-only.
+
 #### `testing-guide` overflow moved into `references/` (AUTHORING rule 4)
 
 - **`skills/testing-guide/SKILL.md` goes 517 → 231 lines.** The three

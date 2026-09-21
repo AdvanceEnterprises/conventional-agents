@@ -71,9 +71,9 @@ ALLOWED_MODES=(
   local pattern
   pattern="$(agent_stance_pattern)"
   local samples=(
-    "agent-stance: mode=architecture-planning; role=Head Architect; model=ollama-cloud/deepseek-v4-flash; session=interactive-001; rationale=elevate enhancement to spec"
-    "agent-stance: mode=autonomous; role=Head Architect; model=ollama-cloud/deepseek-v4-flash; session=check-status-cron; rationale=file bug for drift detected"
-    "agent-stance: mode=document-authoring; role=Document Author; model=ollama-cloud/deepseek-v4-flash; session=impl-002; rationale=draft FS from Issue brief"
+    "agent-stance: mode=architecture-planning; role=Head Architect; model=ollama-cloud/deepseek-v4.1-flash; session=interactive-001; rationale=elevate enhancement to spec"
+    "agent-stance: mode=autonomous; role=Head Architect; model=ollama-cloud/deepseek-v4.1-flash; session=check-status-cron; rationale=file bug for drift detected"
+    "agent-stance: mode=document-authoring; role=Document Author; model=ollama-cloud/deepseek-v4.1-flash; session=impl-002; rationale=draft FS from Issue brief"
   )
   for s in "${samples[@]}"; do
     if ! echo "$s" | grep -Eq "$pattern"; then
