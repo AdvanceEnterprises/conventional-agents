@@ -132,6 +132,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Install pinned Node dependencies
+        run: npm ci --ignore-scripts
       - name: Run widened markdownlint chain
         run: npm run lint:docs
       - name: Confirm widened lint passed
@@ -282,5 +284,41 @@ jobs:
         run: npm test
       - name: Confirm bats passed
         run: test $? -eq 0
+
+  validation:
+    # FS-0032 / issue #132: the hermetic local validation contract is the
+    # benchmark prerequisite. This job invokes the exact npm entry point used
+    # by maintainers locally; setup prepares dependencies and Git refs first.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # Test the real branch head, not GitHub's synthetic merge commit.
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install bats and ripgrep
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bats ripgrep
+      - name: Install pinned Node dependencies
+        run: npm ci --ignore-scripts
+      - name: Prepare pull-request base ref
+        if: github.event_name == 'pull_request'
+        run: git fetch --no-tags origin "${{ github.base_ref }}"
+      - name: Run canonical validation surface
+        run: npm run validate
+        env:
+          CA_VALIDATION_LOG: ${{ runner.temp }}/conventional-agents-validation.log
+          COMMIT_RANGE: ${{ github.event_name == 'pull_request' && format('origin/{0}..HEAD', github.base_ref) || 'HEAD~20..HEAD' }}
+      - name: Upload canonical validation log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: conventional-agents-validation-log
+          path: ${{ runner.temp }}/conventional-agents-validation.log
+          if-no-files-found: error
 
 # noop: retrigger CI

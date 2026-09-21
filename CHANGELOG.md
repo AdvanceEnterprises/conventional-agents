@@ -13,6 +13,12 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
+- **Bounded, hermetic validation runner (`FS-0032`, issue #132).** Framework
+  maintainers and consumers can run `npm run validate` to execute the five
+  documented acceptance gates through one ordered, timed, fail-closed entry
+  point. Bats suites report progress and enforce per-suite bounds; the default
+  path isolates temporary state and does not fetch Git or call GitHub. CI uses
+  the same runner after preparing full history and dependencies.
 - **ADR-0041: Narrow direct-to-trunk merge exception for reversible
   maintenance categories** (proposed) — exercises `ADR-0012`'s
   project-level-exception mechanism for issue #151's scaling problem
