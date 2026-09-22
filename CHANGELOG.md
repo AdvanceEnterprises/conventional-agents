@@ -333,9 +333,15 @@ For this project (a documentation/standards kit), semver follows the
   removes the private-repo minutes multiplier, these guards shrink the spend
   itself.
 - **No `paths:` filter is introduced.** The governance gates are whole-corpus
-  (`check-status.sh` reads every FS/PLAN/ADR regardless of the diff), so a
-  filter would re-open the gate-with-a-hole shape ADR-0004 exists to close.
-  The guards bound spend without weakening any gate.
+  (`check-status.sh` reads every FS/PLAN/ADR regardless of the diff; gate
+  coverage is FS-0022's subject, gate target resolution is ADR-0033's), so a
+  filter that skips the workflow on non-matching diffs would re-open the
+  fail-open shape FS-0024 was written to remove. The guards bound spend without
+  weakening any gate.
+- **The concurrency group key separates event kinds without special-casing.**
+  `${{ github.ref }}` is `refs/heads/<branch>` on push and `refs/pull/N/merge`
+  on pull_request, so a push run and a PR run never cancel each other and each
+  PR's own superseded generations collapse.
 - **DeepSeek model migration** — canonical/example model identifiers updated from the retired `deepseek-v4-flash:0731` tag to `deepseek-v4.1-flash` (Ollama Cloud retirement notice, 2026-09-21) in FS-0019, `workflows/git-and-gh-conventions.md`, and ADR-0036 (proposed — its binding-vocabulary table is not yet append-only). Historical examples inside accepted ADRs (ADR-0018) are deliberately unchanged — accepted ADRs are append-only.
 
 #### `testing-guide` overflow moved into `references/` (AUTHORING rule 4)

@@ -67,10 +67,17 @@ on:
 # `timeout-minutes` on every job bounds a hung install step, which otherwise
 # runs against GitHub's 360-minute default.
 #
+# The group key separates event kinds correctly without special-casing:
+# `${{ github.ref }}` is `refs/heads/<branch>` on push and `refs/pull/N/merge`
+# on pull_request, so a push and a PR run never cancel each other, and each
+# PR's own superseded generations collapse.
+#
 # Deliberately NOT a `paths:` filter here: the governance gates are whole-corpus
-# (check-status.sh reads every FS/PLAN/ADR regardless of the diff), so a filter
-# re-opens the gate-with-a-hole shape ADR-0004 exists to close. The guards below
-# bound spend without weakening any gate.
+# (`check-status.sh` reads every FS/PLAN/ADR regardless of the diff; gate
+# coverage is FS-0022's subject, gate target resolution is ADR-0033's), so a
+# filter that skips the workflow on non-matching diffs re-opens the exact
+# fail-open shape FS-0024 was written to remove (see the setup note above).
+# The guards below bound spend without weakening any gate.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
