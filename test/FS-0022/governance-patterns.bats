@@ -1,11 +1,15 @@
 #!/usr/bin/env bats
 #
-# FS-0025: Bats test coverage for cross-cutting governance patterns.
+# FS-0022: Bats test coverage for cross-cutting governance patterns.
 #
-# Validates governance consistency rules that are enforced by
-# check-status.sh but also have explicit Bats coverage so CI can
-# report them independently and development can reproduce them
-# locally without running the full check suite.
+# Originally introduced under a directory named for spec ID FS-0025 — an ID
+# that never existed (it was the next free number at the time, but the spec
+# that landed took FS-0024 and the next shipped took FS-0026). The suite's
+# actual scope — governance consistency patterns enforced by
+# `check-status.sh` — belongs to `FS-0022` (gate coverage), which already owns
+# `test/FS-0022/gate-coverage.bats`. Renamed here per #168 so the directory
+# number again names a spec that exists; a guard for the general
+# `test/FS-NNNN/` ⇄ spec correspondence lives in this suite's sibling.
 
 load "../FS-0001/helpers.bash"
 

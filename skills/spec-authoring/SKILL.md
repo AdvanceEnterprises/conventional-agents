@@ -178,7 +178,7 @@ And the slow one: `FS-0002` sat `approved` for five months while a different set
 | FS/PLAN index title sync | rule 4 |
 | PLAN `touches:` containment against reserved paths | rule 6 (`ADR-0027`) |
 | CHANGELOG entry when an exported prefix changes | rule 7 |
-| Front-matter fields present; no placeholder dates | `test/FS-0025/governance-patterns.bats` |
+| Front-matter fields present; no placeholder dates | `test/FS-0022/governance-patterns.bats` |
 
 Nothing checks whether a Success Criterion is testable, whether a Non-Goal is honoured by the implementation, whether the body's `## Status` agrees with front matter, or whether a merged spec was ever marked `implemented`.
 
