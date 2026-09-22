@@ -717,8 +717,8 @@ Solutions:
 An existing integration does not stay put: consumers vendor this framework at a
 pinned tag and move between tags deliberately. The support policy:
 
-- **One line, tag-to-tag.** Releases are cut from the framework's default branch
-  and tagged; there are no maintenance or long-term-support branches. The
+- **One line, tag-to-tag.** Releases are cut from the framework's `trunk`
+  branch and tagged; there are no maintenance or long-term-support branches. The
   supported upgrade path is from your pinned tag to a newer tag.
 - **Breaking changes ship only in major versions.** For a documentation and
   standards kit, "breaking" means a file in the exported surface was removed or
@@ -737,7 +737,7 @@ pinned tag and move between tags deliberately. The support policy:
   cumulative: review every `### Breaking Changes` entry between your old tag and
   the new one, not only the latest.
 
-Upgrade procedure:
+Upgrade procedure (run from your consumer repository root):
 
 ```bash
 # 1) Review what changed between your pin and the target tag.
