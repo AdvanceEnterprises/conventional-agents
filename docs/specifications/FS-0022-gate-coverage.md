@@ -18,6 +18,7 @@ interfaces:
   - "CONTRIBUTING.md"
   - "INTEGRATION.md"
   - "test/FS-0022/gate-coverage.bats"
+  - "test/FS-0022/governance-patterns.bats"
   - "skills/framework-health-audit/SKILL.md"
   - "skills/git-gh-workflow/SKILL.md"
 related_adrs:
@@ -29,7 +30,7 @@ supersedes: []
 requires: []
 tags: [quality-gates, ci, enforcement]
 created: 2026-07-28
-updated: 2026-08-01
+updated: 2026-09-22
 ---
 
 <!--
@@ -352,6 +353,15 @@ explanation of what it wanted is a gate people work around.
 - Given a failing assertion in any suite, when CI runs, then the job fails.
 - Given a machine with no `bats` installed, when `npm test` runs, then it
   fails with a message naming the missing dependency.
+
+**Suite ↔ spec traceability**:
+
+- Given a `test/FS-NNNN/` directory, when the check runs, then a spec
+  `docs/specifications/FS-NNNN-*.md` exists — a directory named after an
+  ID with no spec is reported (`test/FS-0022/gate-coverage.bats`,
+  `suite_traceability`).
+- Given a current-state document citing `test/FS-NNNN/`, when the check
+  runs, then the cited directory exists.
 
 ## Edge Cases
 

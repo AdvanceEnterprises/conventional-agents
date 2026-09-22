@@ -194,8 +194,8 @@ State rules in the tense the change delivers. If the PR does not perform the wor
 | Mechanically enforced | Gate |
 | --- | --- |
 | `superseded` ADR names a replacement; `superseded_by` resolves; only a `superseded` ADR declares one | `check:status` rule 5b |
-| Filename number matches the `id:` field | `test/FS-0025/governance-patterns.bats` |
-| `decision_scope` is one of: `architecture`, `workflow`, `convention`, `infrastructure`, `process`, `system`, `cross-cutting` | `test/FS-0025` |
+| Filename number matches the `id:` field | `test/FS-0022/governance-patterns.bats` |
+| `decision_scope` is one of: `architecture`, `workflow`, `convention`, `infrastructure`, `process`, `system`, `cross-cutting` | `test/FS-0022/governance-patterns.bats` |
 | Markdown formatting | `npm run lint:adrs` |
 
 Nothing checks: whether your Considered Options are steel-manned, whether Validation is falsifiable, whether a cited ADR's status is stated correctly, whether an enforcement claim is true, or whether the rule belongs in a current-state document instead.

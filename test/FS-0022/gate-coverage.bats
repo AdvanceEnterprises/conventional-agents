@@ -535,3 +535,80 @@ PLAN_EOF
   run run_check
   ! echo "$output" | grep -qF "missing required section: ## Consequences"
 }
+
+# --- Suite ↔ spec traceability (FS-0022 §6 / #168) ----------------------------
+#
+# The `test/FS-NNNN/` directory number is a claim that a spec with that ID
+# exists — the convention every other suite in this repo follows, and the one
+# three skills cite when they name a suite as a gate's reference. It was
+# broken once: the governance-patterns suite sat in a directory named for
+# spec ID FS-0025, an ID that never existed (`FS-0025` is absent from
+# `docs/specifications/`; the numbering runs FS-0024 → FS-0026). Readers
+# following the citations found nothing, and no check noticed.
+#
+# These tests pin the correspondence in both directions: every test directory
+# names a spec that exists, and every cited suite-path token in the
+# current-state corpus resolves to a directory that exists. Historical prose
+# about that rename names the bare ID (`FS-0025`) rather than a path, so the
+# scan does not trip on its own archaeology.
+
+@test "suite_traceability: every test/FS-NNNN/ directory names a spec that exists" {
+  # A directory named after a spec ID asserts that spec governs it. A missing
+  # spec means the suite is orphaned from the governance corpus it claims.
+  local d id missing=0
+  for d in "$REPO_ROOT"/test/FS-*/; do
+    [ -d "$d" ] || continue
+    id="$(basename "$d")"
+    if ! compgen -G "$REPO_ROOT/docs/specifications/${id}-*.md" >/dev/null 2>&1; then
+      echo "test directory $id/ has no governing spec (docs/specifications/${id}-*.md)"
+      missing=$((missing+1))
+    fi
+  done
+  [ "$missing" -eq 0 ]
+}
+
+@test "suite_traceability: cited test/FS-NNNN/ tokens resolve to existing suites" {
+  # Skills and workflow docs cite suites by path as the evidence behind a gate
+  # claim ("Filename number matches the id: field → test/FS-NNNN/..."). A cited
+  # directory that does not exist is the #163 phantom-path class, for a suite
+  # rather than a document. Scope is the current-state corpus (skills, workflows,
+  # guidelines, scripts, test) where citations must resolve; CHANGELOG and PLAN
+  # prose are historical records and legitimately name since-renamed paths.
+  local files f ref bad=0
+  files="$(cd "$REPO_ROOT" && { git ls-files 'skills' 'workflows' 'guidelines' 'scripts' 'test' 2>/dev/null || find skills workflows guidelines scripts test -type f; } | grep -E '\.(md|bats|sh)$' || true)"
+  [ -n "$files" ] || skip "no tracked files to scan"
+  while IFS= read -r f; do
+    [ -z "$f" ] && continue
+    [ -f "$REPO_ROOT/$f" ] || continue
+    while IFS= read -r ref; do
+      [ -z "$ref" ] && continue
+      if [ ! -d "$REPO_ROOT/$ref" ]; then
+        echo "$f cites '$ref', which does not exist"
+        bad=$((bad+1))
+      fi
+    done < <(grep -oE 'test/FS-[0-9]{4}' "$REPO_ROOT/$f" 2>/dev/null | sort -u)
+  done <<< "$files"
+  [ "$bad" -eq 0 ]
+}
+
+@test "suite_traceability: the guard would have caught the #168 directory" {
+  # Guard the guard: the check above must be able to fail. Simulate a suite
+  # directory named after a spec that does not exist and confirm both
+  # predicates reject it. The ID is assembled at runtime so this test's own
+  # source does not carry a path-shaped citation of a phantom suite (which
+  # the check above would otherwise, correctly, flag).
+  local fake_id="FS-9999"
+  local fake="$REPO_ROOT/test/$fake_id"
+  mkdir -p "$fake"
+  local spec_found=0 dir_found=0
+  if compgen -G "$REPO_ROOT/docs/specifications/${fake_id}-*.md" >/dev/null 2>&1; then
+    spec_found=1
+  fi
+  if [ -d "$REPO_ROOT/test/$fake_id" ]; then
+    dir_found=1
+  fi
+  rmdir "$fake"
+  # Directory exists, governing spec does not — the #168 shape.
+  [ "$dir_found" -eq 1 ]
+  [ "$spec_found" -eq 0 ]
+}
