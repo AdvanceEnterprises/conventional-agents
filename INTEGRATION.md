@@ -711,3 +711,62 @@ Solutions:
 1. Fork conventional-agents
 2. Point submodule URL to your fork
 3. Sync upstream intentionally
+
+### Version-to-version upgrades
+
+An existing integration does not stay put: consumers vendor this framework at a
+pinned tag and move between tags deliberately. The support policy:
+
+- **One line, tag-to-tag.** Releases are cut from the framework's default branch
+  and tagged; there are no maintenance or long-term-support branches. The
+  supported upgrade path is from your pinned tag to a newer tag.
+- **Breaking changes ship only in major versions.** For a documentation and
+  standards kit, "breaking" means a file in the exported surface was removed or
+  renamed, the vendored mount path changed, or a directory consumers reference in
+  their `AGENTS.md` or tool configs was restructured — the definition in
+  `workflows/versioning-and-releases.md` § "Documentation and Standards Kits".
+- **Minor and patch upgrades are additive.** Minor releases add to the exported
+  surface and patch releases fix it; an upgrade that stays within a major is
+  drop-in for consumers using the patterns above.
+- **Framework-internal paths may change in any release.** `docs/`
+  (specifications, change plans, decisions), `BACKLOG.md`, `test/`, and
+  `package.json` are framework-internal (see the exported-surface table in the
+  framework's `AGENTS.md`); consumers must not reference them — the
+  "Nested vendor path leak" note above is the same boundary.
+- **Skipped majors still require the intervening upgrade notes.** The upgrade is
+  cumulative: review every `### Breaking Changes` entry between your old tag and
+  the new one, not only the latest.
+
+Upgrade procedure:
+
+```bash
+# 1) Review what changed between your pin and the target tag.
+cd vendor/conventional-agents
+git fetch --tags origin
+git log --oneline <old-tag>..<new-tag>
+git diff <old-tag>..<new-tag> -- guidelines/ roles/ skills/ templates/ \
+  workflows/ integrations/ runbooks/ scripts/ INTEGRATION.md AGENTS.md
+cd ../..
+
+# 2) Bump the pin to the reviewed tag — its own commit, per
+#    workflows/versioning-and-releases.md § "Submodule Versioning".
+git -C vendor/conventional-agents checkout <new-tag>
+git add vendor/conventional-agents
+git commit -m "chore: bump conventional-agents <old-tag> -> <new-tag>"
+
+# 3) Re-run the gates your integration wires up. Vendored copies check the
+#    invoking repository, not the framework (FS-0024).
+bash vendor/conventional-agents/scripts/check-status.sh
+
+# 4) Re-verify stub references. Every vendor/conventional-agents/<path> a
+#    consumer file cites must still resolve in the new tag — a renamed file
+#    in a major release is exactly what the diff in step 1 surfaces.
+```
+
+Worked examples: `v2.0.0`'s breaking set was the `agentic-dev-kit` →
+`conventional-agents` rename (mount path `vendor/agentic-dev-kit/` →
+`vendor/conventional-agents/`) plus the `ROLE_CONTRACT` renumbering (roles 1–3
+became 2–4 within the six-role set). `v2.1.0` was additive — no consumer was
+forced to migrate, and each new surface (for example the work-item layer) is
+opt-in with its governing ADR named in the release notes. Both are recorded in
+`CHANGELOG.md`, which is the authoritative list for any given tag.
