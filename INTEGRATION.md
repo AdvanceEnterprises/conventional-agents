@@ -754,8 +754,9 @@ git -C vendor/conventional-agents checkout <new-tag>
 git add vendor/conventional-agents
 git commit -m "chore: bump conventional-agents <old-tag> -> <new-tag>"
 
-# 3) Re-run the gates your integration wires up. Vendored copies check the
-#    invoking repository, not the framework (FS-0024).
+# 3) Re-run the gates your integration wires up — e.g. check-status.sh, shown
+#    here. Vendored copies check the invoking repository, not the framework
+#    (FS-0024).
 bash vendor/conventional-agents/scripts/check-status.sh
 
 # 4) Re-verify stub references. Every vendor/conventional-agents/<path> a
@@ -765,8 +766,11 @@ bash vendor/conventional-agents/scripts/check-status.sh
 
 Worked examples: `v2.0.0`'s breaking set was the `agentic-dev-kit` →
 `conventional-agents` rename (mount path `vendor/agentic-dev-kit/` →
-`vendor/conventional-agents/`) plus the `ROLE_CONTRACT` renumbering (roles 1–3
-became 2–4 within the six-role set). `v2.1.0` was additive — no consumer was
-forced to migrate, and each new surface (for example the work-item layer) is
-opt-in with its governing ADR named in the release notes. Both are recorded in
+`vendor/conventional-agents/`) plus the `ROLE_CONTRACT` restructure — the role
+set grew from three roles (1–3) to six (0–5), with Role 1 (Spec Reader) becoming
+Role 2, Role 2 (Implementer) becoming Role 3, and Role 3 (Reviewer) becoming
+Role 4; a consumer that only shifts the old numbers still has to account for the
+new roles at 0, 1, and 5. `v2.1.0` was additive — no consumer was forced to
+migrate, and each new surface (for example the work-item layer) is opt-in with
+its governing ADR named in the release notes. Both are recorded in
 `CHANGELOG.md`, which is the authoritative list for any given tag.

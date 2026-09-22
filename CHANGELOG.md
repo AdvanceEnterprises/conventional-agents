@@ -67,9 +67,11 @@ For this project (a documentation/standards kit), semver follows the
 - **`INTEGRATION.md` documents the version-to-version upgrade path.** The
   Migration Guides carried "no standards → framework", "copy-in → submodule",
   and "submodule → fork" transitions, but nothing for a consumer already
-  vendoring the framework that wants to move its pin — the gap flagged in #140
-  (sequence item 3 of #138; Tier-1 of #136). The new § "Version-to-version
-  upgrades" states the support policy — one tag-to-tag line, breaking changes
+  vendoring the framework that wants to move its pin — the gap flagged in
+  [#140](https://github.com/Tais-Den/conventional-agents/issues/140) (sequence
+  item 3 of [#138](https://github.com/Tais-Den/conventional-agents/issues/138);
+  Tier-1 of [#136](https://github.com/Tais-Den/conventional-agents/issues/136)).
+  The new § "Version-to-version upgrades" states the support policy — one tag-to-tag line, breaking changes
   only in majors per `workflows/versioning-and-releases.md` § "Documentation and
   Standards Kits", additive minors/patches, framework-internal paths excluded
   from any stability promise, and cumulative review when skipping majors — plus
