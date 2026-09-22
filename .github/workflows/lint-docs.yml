@@ -59,9 +59,26 @@ on:
       - "scripts/**/*"
       - "test/**/*.bats"
 
+# Spend guards (CI-refactor mitigation for the recurring Actions billing
+# condition — feral-fleet #207). `concurrency` cancels a superseded generation
+# when the same ref is pushed again while a run is in flight: without it, every
+# rapid reviewer-feedback push launched a full 11-job workflow whose outcome the
+# next push immediately superseded, consuming included Actions minutes in full.
+# `timeout-minutes` on every job bounds a hung install step, which otherwise
+# runs against GitHub's 360-minute default.
+#
+# Deliberately NOT a `paths:` filter here: the governance gates are whole-corpus
+# (check-status.sh reads every FS/PLAN/ADR regardless of the diff), so a filter
+# re-opens the gate-with-a-hole shape ADR-0004 exists to close. The guards below
+# bound spend without weakening any gate.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint-adrs:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: davidanson/markdownlint-cli2-action@v17
@@ -70,6 +87,7 @@ jobs:
 
   lint-specs:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: davidanson/markdownlint-cli2-action@v17
@@ -78,6 +96,7 @@ jobs:
 
   lint-change-plans:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: davidanson/markdownlint-cli2-action@v17
@@ -86,6 +105,7 @@ jobs:
 
   lint-workflows:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: davidanson/markdownlint-cli2-action@v17
@@ -99,6 +119,7 @@ jobs:
     # code-fence languages, and structural problems that the original four-glob chain
     # would not.
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -111,6 +132,7 @@ jobs:
 
   check-status:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
@@ -132,6 +154,7 @@ jobs:
     # contents and packages only (no issues), so the label audit's read of
     # repos/{repo}/labels 403s without an explicit issues:read grant here.
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
       issues: read
@@ -157,6 +180,7 @@ jobs:
     # an updated: front-matter field (hard); docs older than 90d are reported
     # (soft, DOC_STALE_DAYS override). Additive gate — see scripts/README.md.
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - name: Check workflow/guideline doc freshness
@@ -174,6 +198,7 @@ jobs:
     # on disk. This job is the fail-closed enforcement point for the
     # calling repo's own agent-authored commits.
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
@@ -210,6 +235,7 @@ jobs:
     # no base to compare against that means anything.
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
@@ -221,6 +247,7 @@ jobs:
     # Per FS-0022 §6, npm test runs the bats suites that were inert since the
     # repo's beginning. ROLE_CONTRACT's pre-commit testing gate relies on this.
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:

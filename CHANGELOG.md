@@ -314,6 +314,28 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Changed
 
+#### `lint-docs` workflow gains spend guards (concurrency + job timeouts)
+
+- **`.github/workflows/lint-docs.yml` now sets `concurrency` (workflow + ref,
+  `cancel-in-progress: true`) and a bounded `timeout-minutes` on every job.**
+  Rapid successive pushes to the same ref — a PR receiving reviewer-feedback
+  pushes while its previous run is still in flight — previously launched a full
+  11-job workflow generation each time; the superseded runs cannot change the
+  newest run's outcome, but consumed included Actions minutes in full. Every
+  job also ran against GitHub's 360-minute default, so a hung install step
+  (the `test-bats` job installs bats/ripgrep/pyyaml; `lint-docs-widened` runs
+  the widened npm lint chain) could silently consume hours. Timeouts are 10
+  minutes for gate jobs and 20 for `test-bats` (observed ~5–7 minutes).
+- **This is the CI-refactor mitigation for the recurring Actions billing
+  condition** (feral-fleet #207), which blocks every workflow org-wide at
+  job-start while the monthly included-minutes limit is hit. It is the
+  complement of the public-release track (#136): moving the repos public
+  removes the private-repo minutes multiplier, these guards shrink the spend
+  itself.
+- **No `paths:` filter is introduced.** The governance gates are whole-corpus
+  (`check-status.sh` reads every FS/PLAN/ADR regardless of the diff), so a
+  filter would re-open the gate-with-a-hole shape ADR-0004 exists to close.
+  The guards bound spend without weakening any gate.
 - **DeepSeek model migration** — canonical/example model identifiers updated from the retired `deepseek-v4-flash:0731` tag to `deepseek-v4.1-flash` (Ollama Cloud retirement notice, 2026-09-21) in FS-0019, `workflows/git-and-gh-conventions.md`, and ADR-0036 (proposed — its binding-vocabulary table is not yet append-only). Historical examples inside accepted ADRs (ADR-0018) are deliberately unchanged — accepted ADRs are append-only.
 
 #### `testing-guide` overflow moved into `references/` (AUTHORING rule 4)
