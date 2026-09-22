@@ -64,6 +64,20 @@ For this project (a documentation/standards kit), semver follows the
   per `FS-0022` §1d — the spec names `scripts/` — and staged with the draft
   package rather than held back, so reviewers see the consumer impact while
   the spec is under review.)
+- **`INTEGRATION.md` documents the version-to-version upgrade path.** The
+  Migration Guides carried "no standards → framework", "copy-in → submodule",
+  and "submodule → fork" transitions, but nothing for a consumer already
+  vendoring the framework that wants to move its pin — the gap flagged in #140
+  (sequence item 3 of #138; Tier-1 of #136). The new § "Version-to-version
+  upgrades" states the support policy — one tag-to-tag line, breaking changes
+  only in majors per `workflows/versioning-and-releases.md` § "Documentation and
+  Standards Kits", additive minors/patches, framework-internal paths excluded
+  from any stability promise, and cumulative review when skipping majors — plus
+  a four-step procedure (diff the exported surface between tags, bump the pin as
+  its own commit, re-run the vendored gates per `FS-0024`, re-verify stub
+  references), grounded in the `v2.0.0` rename/renumbering and the additive
+  `v2.1.0` release as worked examples. Consumers previously had to infer the
+  policy from `CHANGELOG.md` alone.
 
 - **`binding-authoring` skill.** Operationalises `integrations/README.md`
   § "Writing a binding" plus `ADR-0024` / `ADR-0037` / `ADR-0039` for a
