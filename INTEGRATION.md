@@ -28,8 +28,7 @@ This document is the canonical source for how conventional-agents integrates wit
 
 ```bash
 # 1) Add submodule
-# Note: replace with the actual repository URL when known
-git submodule add <REPO_URL> vendor/conventional-agents
+git submodule add https://github.com/Tais-Den/conventional-agents.git vendor/conventional-agents
 
 git submodule update --init
 
@@ -39,14 +38,11 @@ cat > AGENTS.md << 'EOF'
 
 ## Read First
 - vendor/conventional-agents/guidelines/ROLE_CONTRACT.md
+- vendor/conventional-agents/INTEGRATION.md
 - vendor/conventional-agents/workflows/session-modes.md
 
 ## Universal Gates
 - vendor/conventional-agents/roles/ROLE_CONTRACT.md
-
-## Minimum Quality Gates
-- vendor/conventional-agents/guidelines/tests.md
-- vendor/conventional-agents/guidelines/commit-and-pr.md
 
 ## Precedence Rules
 See vendor/conventional-agents/INTEGRATION.md
@@ -435,7 +431,7 @@ Minimal stub:
 # Agent Instructions
 
 ## Foundation Standards
-- vendor/conventional-agents/guidelines/index.md
+- vendor/conventional-agents/guidelines/ROLE_CONTRACT.md
 - vendor/conventional-agents/roles/ROLE_CONTRACT.md
 
 ## Project Context
@@ -455,7 +451,7 @@ Purpose: Claude-specific additions. Must defer to AGENTS.md.
 Defer to AGENTS.md.
 
 Foundation:
-- vendor/conventional-agents/guidelines/index.md
+- vendor/conventional-agents/guidelines/ROLE_CONTRACT.md
 - vendor/conventional-agents/roles/ROLE_CONTRACT.md
 
 Precedence: vendor/conventional-agents/INTEGRATION.md
@@ -497,11 +493,11 @@ Example CODEX_CONTEXT.md:
 # Codex Context
 
 Foundation:
-- vendor/conventional-agents/guidelines/index.md
+- vendor/conventional-agents/guidelines/ROLE_CONTRACT.md
 - vendor/conventional-agents/roles/ROLE_CONTRACT.md
 
 Role:
-- vendor/conventional-agents/roles/test-writer.md
+- vendor/conventional-agents/roles/ROLE_CONTRACT.md
 
 Precedence:
 - vendor/conventional-agents/INTEGRATION.md
@@ -516,12 +512,14 @@ Recommended hook: .specify/memory/constitution.md
 ```text
 ## Article IX: Code Quality Standards
 
-Reference: vendor/conventional-agents/integrations/spec-kit.md
+Reference: vendor/conventional-agents/integrations/github-issues-projects.md
+(the framework's reference substrate binding; see also
+`integrations/README.md` for the binding model)
 
 Mandatory:
 - Universal gates: vendor/conventional-agents/roles/ROLE_CONTRACT.md
-- Testing: vendor/conventional-agents/guidelines/tests.md
-- PR hygiene: vendor/conventional-agents/guidelines/commit-and-pr.md
+- Testing: vendor/conventional-agents/skills/testing-guide/SKILL.md
+- PR hygiene: vendor/conventional-agents/workflows/git-and-gh-conventions.md
 ```
 
 ⸻
