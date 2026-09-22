@@ -28,6 +28,22 @@ For this project (a documentation/standards kit), semver follows the
   now rather than blocked on issue #146's flow-report read-model, as the
   human audit surface. Decision record only; implementation needs a
   companion FS/PLAN.
+- **FS-0037: Vendor-prefixed reference resolution (draft — `FS-0037`,
+  `PLAN-0043`).** Closes a blind spot in the `FS-0022` §1c referenced-path
+  check: references of the form `vendor/conventional-agents/<path>` — how
+  consumers are instructed to cite framework files — are blanket-skipped by
+  the `vendor/*` exclusion before any resolution is attempted, so the
+  strip-prefix fallback the script already carries is unreachable for them.
+  Measured on trunk: a phantom **bare** reference fails the gate (rc=1) while
+  a phantom **prefixed** reference passes (rc=0). The spec also extends the
+  extractor for the three exported-surface documents (`INTEGRATION.md`,
+  `README.md`, `AGENTS.md`) to non-backticked occurrences of the same prefix,
+  because the `INTEGRATION.md` phantoms repaired by PR #164 carried no
+  backticks. Third-party submodule paths (`vendor/madr/`) keep today's skip
+  behaviour. Tracks issue #165; consumer impact is a framework-citation that
+  currently cannot fail — a public adopter following the documented
+  integration path is the party who hits a dead reference.
+
 - **`binding-authoring` skill.** Operationalises `integrations/README.md`
   § "Writing a binding" plus `ADR-0024` / `ADR-0037` / `ADR-0039` for a
   contributor writing or reviewing a binding — substrate or runtime. Covers the
