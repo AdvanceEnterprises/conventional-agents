@@ -100,6 +100,14 @@ echo "─── check 1: Agent-Attribution trailer format (FS-0017) ───"
 # "Hermes Agent (cron)"); ADR-0021 adds an optional `; mode=autonomous`
 # field for unattended actors. The structural regex accepts both.
 ATTRIBUTION_RE='^Agent-Attribution:[[:space:]]*actor=[^;]+;[[:space:]]*model=[^;]+;[[:space:]]*role=[^;]+;[[:space:]]*session=[^;]+(;[[:space:]]*mode=[^;]+)?$'
+# Body-scan pattern for the MALFORMED diagnosis (#154). A commit whose
+# trailer-parser result is empty is MALFORMED only when the message body
+# genuinely carries the canonical trailer — this pattern recognises that
+# shape. It MUST stay a strict prefix of ATTRIBUTION_RE's required-key
+# sequence: if a key is ever added ahead of `actor=` in ATTRIBUTION_RE,
+# update this pattern too, or MALFORMED commits silently re-classify as
+# MISSING (the wrong remedy). The #170 review pinned this contract.
+BODY_TRAILER_RE='^Agent-Attribution:[[:space:]]*actor='
 # Known agent emails that must carry an Agent-Attribution trailer.
 # Must stay in sync with the actor table in workflows/git-and-gh-conventions.md
 # and the allowlist in test/FS-0017/commit-attribution.bats.
@@ -198,7 +206,7 @@ for REPO in "${REPOS[@]}"; do
       # is still "write it". Only a line that IS the canonical trailer but that
       # git's parser cannot reach is MALFORMED: the remedy is "move it".
       if $_is_agent; then
-        if git -C "$REPO" log -1 --format=%B "$COMMIT_HASH" 2>/dev/null | grep -qE '^Agent-Attribution:[[:space:]]*actor='; then
+        if git -C "$REPO" log -1 --format=%B "$COMMIT_HASH" 2>/dev/null | grep -qE "$BODY_TRAILER_RE"; then
           MALFORMED_COUNT=$((MALFORMED_COUNT + 1))
           TOTAL_BAD=$((TOTAL_BAD + 1))
           echo "  BAD  $REPO_NAME <$COMMIT_HASH> malformed Agent-Attribution trailer (present in the message body but unreachable by git's trailer parser — displaced by a following paragraph, or wrapped across lines)"
