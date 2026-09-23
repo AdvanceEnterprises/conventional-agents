@@ -571,11 +571,14 @@ PLAN_EOF
   # Skills and workflow docs cite suites by path as the evidence behind a gate
   # claim ("Filename number matches the id: field → test/FS-NNNN/..."). A cited
   # directory that does not exist is the #163 phantom-path class, for a suite
-  # rather than a document. Scope is the current-state corpus (skills, workflows,
-  # guidelines, scripts, test) where citations must resolve; CHANGELOG and PLAN
-  # prose are historical records and legitimately name since-renamed paths.
+  # rather than a document. Scope is the current-state corpus — every tracked
+  # doc/script/test file except the historical records, which legitimately
+  # name since-renamed or not-yet-created paths. Driven from the tracked file
+  # list rather than a hand-maintained directory allowlist, so a new corpus
+  # category (templates/, runbooks/, …) is covered the day it lands (MM3
+  # round-B finding).
   local files f ref bad=0
-  files="$(cd "$REPO_ROOT" && { git ls-files 'skills' 'workflows' 'guidelines' 'scripts' 'test' 2>/dev/null || find skills workflows guidelines scripts test -type f; } | grep -E '\.(md|bats|sh)$' || true)"
+  files="$(cd "$REPO_ROOT" && { git ls-files 2>/dev/null || find . -type f; } | grep -E '\.(md|bats|sh)$' | grep -vE '^(docs/|CHANGELOG\.md$|BACKLOG\.md$)' || true)"
   [ -n "$files" ] || skip "no tracked files to scan"
   while IFS= read -r f; do
     [ -z "$f" ] && continue
@@ -598,16 +601,20 @@ PLAN_EOF
   # source does not carry a path-shaped citation of a phantom suite (which
   # the check above would otherwise, correctly, flag).
   local fake_id="FS-9999"
-  local fake="$REPO_ROOT/test/$fake_id"
-  mkdir -p "$fake"
+  FAKE_SUITE_DIR="$REPO_ROOT/test/$fake_id"
+  mkdir -p "$FAKE_SUITE_DIR"
+  # Cleanup must survive an early assertion failure, or a failed run orphans
+  # test/FS-9999/ and the next run's mkdir -p is a no-op (MM3 round-B
+  # finding). Not `local` — the EXIT trap fires after the function scope ends.
+  trap 'rmdir "$FAKE_SUITE_DIR" 2>/dev/null || rm -rf "$FAKE_SUITE_DIR"' EXIT
   local spec_found=0 dir_found=0
   if compgen -G "$REPO_ROOT/docs/specifications/${fake_id}-*.md" >/dev/null 2>&1; then
     spec_found=1
   fi
-  if [ -d "$REPO_ROOT/test/$fake_id" ]; then
+  if [ -d "$FAKE_SUITE_DIR" ]; then
     dir_found=1
   fi
-  rmdir "$fake"
+  rmdir "$FAKE_SUITE_DIR"
   # Directory exists, governing spec does not — the #168 shape.
   [ "$dir_found" -eq 1 ]
   [ "$spec_found" -eq 0 ]
