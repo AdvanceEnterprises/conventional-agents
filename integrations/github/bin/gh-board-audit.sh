@@ -78,6 +78,14 @@ elif ((.data.repositoryOwner | objects | has("projectV2")) | not) or .data.repos
   "__NO_PROJECT__"
 else
   "__PROJECT_PRESENT__",
+    # Row serialisation: the delimiter is ASCII Unit Separator (\u001f), chosen
+    # because tab — the previous delimiter — is IFS *whitespace*, so empty
+    # middle cells (a PullRequest has neither number nor repository) collapse
+    # and shift every later field (#171). Cell values are sanitised before
+    # joining: U+001F is flattened to a space so a value can never forge a
+    # field boundary (GitHub field values are user-visible strings and do not
+    # legitimately carry control characters), and CR/LF are flattened so a
+    # value can never forge a row boundary.
   (.data.repositoryOwner.projectV2.items.nodes[]?
     | [(.id // ""),
        (.content.__typename // ""),
