@@ -398,6 +398,14 @@ workflow's `paths:` (any governed doc, `package.json`, `.github/**`,
 trailer on an agent-authored commit, a doc missing from its README index, or
 a duplicate FS/PLAN ID.
 
+**Diagnostic (#154).** Check 1 reports two distinct offender modes. `missing`
+means the commit carries no `Agent-Attribution:` line at all — the trailer must
+be written. `malformed` means one is present in the message body but
+unreachable by git's trailer parser (displaced by a following paragraph, or a
+value wrapped across continuation lines) — the line must be moved or unwrapped.
+Both fail the gate; only the remedy differs. The hermetic cases live in
+`test/FS-0017/attribution-diagnostic.bats`.
+
 ## run-bats.sh
 
 `npm test` runs `bash scripts/run-bats.sh`.
