@@ -192,8 +192,13 @@ for REPO in "${REPOS[@]}"; do
       # displaced by a following paragraph, and a value wrapped across a
       # continuation line. Body-scan separates them.
       # The failing set is unchanged — only the diagnosis differs (issue #154).
+      # The scan matches the canonical trailer shape — the `actor=` key directly
+      # following the token — so a typo'd or unrelated line (`Agent-Attribution :`,
+      # lowercase, missing actor key) is still reported MISSING: the remedy there
+      # is still "write it". Only a line that IS the canonical trailer but that
+      # git's parser cannot reach is MALFORMED: the remedy is "move it".
       if $_is_agent; then
-        if git -C "$REPO" log -1 --format=%B "$COMMIT_HASH" 2>/dev/null | grep -q '^Agent-Attribution:'; then
+        if git -C "$REPO" log -1 --format=%B "$COMMIT_HASH" 2>/dev/null | grep -qE '^Agent-Attribution:[[:space:]]*actor='; then
           MALFORMED_COUNT=$((MALFORMED_COUNT + 1))
           TOTAL_BAD=$((TOTAL_BAD + 1))
           echo "  BAD  $REPO_NAME <$COMMIT_HASH> malformed Agent-Attribution trailer (present in the message body but unreachable by git's trailer parser — displaced by a following paragraph, or wrapped across lines)"
