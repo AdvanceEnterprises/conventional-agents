@@ -66,8 +66,8 @@ current-state document cites a path that has never existed.
 | `docs/ARC42.md` §8.3/§8.4 (recorded in `BACKLOG.md`) | `guidelines/context-engineering.md`, `guidelines/multi-agent-coordination.md` | Yes — `docs/ARC42.md` is outside the check's document scope |
 
 The referenced-path check (rule 8) exists precisely to catch this class, and
-it does catch the bare form. Measured against trunk `ffa2dad` during the
-2026-09-22 maintenance tick:
+it does catch the bare form. Measured against trunk `ffa2dad` (2026-09-21)
+during the 2026-09-22 maintenance tick:
 
 - Injecting a phantom **bare** reference (`guidelines/NEVER-EXISTED.md`) into
   `INTEGRATION.md` → `check-status.sh` fails, rc=1, naming the path.
@@ -111,6 +111,9 @@ each is a symptom of the same narrowness:
   conventional-agents **3** (feral-fleet 38, pack-protocol 24). The blind spot
   is near-total in this repository precisely because its prefixed references
   are predominantly unbackticked — which is the second clause's whole point.
+  The 3 is reproducible by changing the extractor line above to
+  ``grep -oE '`vendor/conventional-agents/[A-Za-z0-9_./@-]+`'`` and dropping
+  the two trailing filters (the backtick anchors make them unnecessary).
 
 One further measurement shapes the scope: the `INTEGRATION.md` phantoms were
 not backticked. The current extractor only sees backticked tokens
@@ -190,8 +193,10 @@ they are two halves of the same blind spot.
   NON-backticked occurrence of `vendor/conventional-agents/<path>` where
   `<path>` is concrete (has a file extension, no angle brackets, no
   ellipsis, no glob) and does not exist, when the check runs, then it fails
-  and names the reference; the worked check is that reintroducing any one of
-  the six #163 phantoms into `INTEGRATION.md` fails the gate.
+  and names the reference; the worked check is that reintroducing the six
+  #163 phantoms into `INTEGRATION.md` — all six, as enumerated in #163 and
+  tabulated in the Problem/Evidence table above — each fails the gate. The
+  bar is all six, not "any one": the bats case iterates the enumerated list.
 - **SC-6** Given a host repository whose `vendor/conventional-agents`
   submodule is not initialised, when a vendored `check-status.sh` runs in
   non-self-check mode against it, then prefixed references in that host's
