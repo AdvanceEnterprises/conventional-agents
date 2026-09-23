@@ -12,8 +12,6 @@
 # and assert on the script's diagnosis plus its exit code. The failing set is
 # the invariant: a malformed-trailer commit must still fail the gate.
 
-load "../FS-0001/helpers.bash"
-
 LINT_SCRIPT="$BATS_TEST_DIRNAME/../../scripts/cross-repo-lint.sh"
 
 # A scratch repository with the minimum cross-repo-lint needs to reach check 1:
@@ -202,4 +200,27 @@ Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implement
 
   echo "$output" | grep -qF "OK"
   ! echo "$output" | grep -qF "BAD"
+}
+
+@test "malformed: a displaced prose line is not classified as a trailer" {
+  # The body-scan matches the canonical trailer shape (`Agent-Attribution:`
+  # followed by the `actor=` key), not any line with the token. A prose
+  # mention — displaced out of the trailer block, like a real offender — is
+  # still a failing commit, but its remedy is "write the trailer", not
+  # "move the line": it reports MISSING, not MALFORMED.
+  local repo="$BATS_TEST_TMPDIR/prose"
+  build_scratch_repo "$repo"
+  seed_commit "$repo"
+  plant_agent_commit "$repo" "feat: prose mention
+
+Agent-Attribution: see CONTRIBUTING.md for the trailer format
+
+Co-Authored-By: Someone <someone@example.com>
+" "i.txt"
+
+  run_lint "$repo"
+
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "missing Agent-Attribution trailer"
+  ! echo "$output" | grep -qF "malformed Agent-Attribution trailer"
 }
