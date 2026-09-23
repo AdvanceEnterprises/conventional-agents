@@ -79,9 +79,38 @@ The prefix form is not an edge case. It is how this framework's own
 documentation instructs consumers to cite framework files (`INTEGRATION.md`'s
 precedence table, `AGENTS.md`'s "point host-repo agents at
 `vendor/conventional-agents/AGENTS.md`"), and a raw-text scan of the three
-repositories' governed documents finds 155 concrete prefixed references:
-conventional-agents 92, feral-fleet 39, pack-protocol 24 — all currently
+repositories' governed documents finds **127** concrete prefixed references
+(conventional-agents 64, feral-fleet 39, pack-protocol 24), all currently
 resolving, none currently checked.
+
+The count is reproducible. The extractor is a raw-text scan — not the
+backtick-only form rule 8 uses today — over rule 8's current-state document
+set:
+
+```sh
+for doc in $(git ls-files '*.md'); do
+  case "$doc" in
+    README.md|AGENTS.md|INTEGRATION.md|CONTRIBUTING.md) ;;
+    guidelines/*|roles/*|skills/*|templates/*|workflows/*|integrations/*|runbooks/*|scripts/*) ;;
+    *) continue ;;
+  esac
+  grep -oE 'vendor/conventional-agents/[A-Za-z0-9_./@-]+' "$doc"
+done | grep -vE '<|\*|\.\.\.|/$' | grep -E '\.[a-z]+$' | wc -l
+```
+
+Two scope sensitivities are worth recording, because they move the figure and
+each is a symptom of the same narrowness:
+
+- **The `docs/` tree.** Extending the same scan to `docs/` raises
+  conventional-agents to 92 (feral-fleet 66, pack-protocol 47). The
+  conventional-agents tree carries a large governed `docs/` corpus; this
+  spec's scope is rule 8's document set, so 64 is the figure that matches the
+  change being proposed.
+- **The backtick requirement.** Under the *backtick-only* extractor rule 8
+  runs today, the prefixed population in scope collapses to
+  conventional-agents **3** (feral-fleet 38, pack-protocol 24). The blind spot
+  is near-total in this repository precisely because its prefixed references
+  are predominantly unbackticked — which is the second clause's whole point.
 
 One further measurement shapes the scope: the `INTEGRATION.md` phantoms were
 not backticked. The current extractor only sees backticked tokens
