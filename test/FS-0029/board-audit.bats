@@ -8,12 +8,12 @@ setup() {
 }
 
 board_with_drift() {
-    write_graphql_step 1 $'__PROJECT_PRESENT__\nitem-101\tIssue\t101\texample/target\t__UNSET__\tIn Progress\nitem-102\tIssue\t102\texample/target\tfeature\t__UNSET__\n__DONE__'
+    write_graphql_step 1 $'__PROJECT_PRESENT__\nitem-101\x1fIssue\x1f101\x1fexample/target\x1f__UNSET__\x1fIn Progress\nitem-102\x1fIssue\x1f102\x1fexample/target\x1ffeature\x1f__UNSET__\n__DONE__'
     set_fake_issues $'101\thttps://example.invalid/issues/101\n102\thttps://example.invalid/issues/102\n103\thttps://example.invalid/issues/103'
 }
 
 board_with_non_issue_drift() {
-    write_graphql_step 1 $'__PROJECT_PRESENT__\nitem-pr-201\tPullRequest\t\t\t__UNSET__\t__UNSET__\n__DONE__'
+    write_graphql_step 1 $'__PROJECT_PRESENT__\nitem-pr-201\x1fPullRequest\x1f\x1f\x1f__UNSET__\x1f__UNSET__\n__DONE__'
     set_fake_issues ''
 }
 
@@ -58,7 +58,7 @@ board_with_non_issue_drift() {
 }
 
 @test "SC-20: successive GraphQL calls honor the configurable interval" {
-    write_graphql_step 1 $'__PROJECT_PRESENT__\n__NEXT_CURSOR__\tcursor-one'
+    write_graphql_step 1 $'__PROJECT_PRESENT__\n__NEXT_CURSOR__\x1fcursor-one'
     write_graphql_step 2 $'__PROJECT_PRESENT__\n__DONE__'
     export CA_GRAPHQL_MIN_INTERVAL=3
 
@@ -157,7 +157,7 @@ board_with_non_issue_drift() {
 }
 
 @test "GraphQL progress diagnostics stay on stderr, outside parsed board data" {
-    write_graphql_step 1 $'__PROJECT_PRESENT__\n__NEXT_CURSOR__\tcursor-one'
+    write_graphql_step 1 $'__PROJECT_PRESENT__\n__NEXT_CURSOR__\x1fcursor-one'
     write_graphql_step 2 $'__PROJECT_PRESENT__\n__DONE__'
     export CA_GRAPHQL_MIN_INTERVAL=1
 
@@ -175,6 +175,19 @@ board_with_non_issue_drift() {
     [ "$status" -eq 0 ]
     [[ "$output" == *"item:item-pr-201 (PullRequest)"* ]]
     [[ "$output" == *"BOARD SUMMARY: unset-issue-type=1 unset-status=1 absent-from-board=0"* ]]
+}
+
+@test "regression #171: a PullRequest with set fields is not counted as drift" {
+    # Tab is IFS whitespace, so a tab-delimited row with empty middle cells
+    # collapses and shifts every later field — which reported every
+    # PullRequest as both type-unset and status-unset. Rows now use \x1f.
+    write_graphql_step 1 $'__PROJECT_PRESENT__\nitem-pr-301\x1fPullRequest\x1f\x1f\x1ffeature\x1fIn Review\n__DONE__'
+    set_fake_issues ''
+
+    run "$TEST_BASH" "$BOARD_AUDIT" --project 2 --owner example --repository example/target
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"BOARD SUMMARY: unset-issue-type=0 unset-status=0 absent-from-board=0"* ]]
+    [[ "$output" != *"item:item-pr-301"* ]]
 }
 
 @test "SC-23: API failure is operationally distinct from drift" {

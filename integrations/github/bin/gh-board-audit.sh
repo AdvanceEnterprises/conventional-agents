@@ -87,9 +87,10 @@ else
         // ([.fieldValues.nodes[]? | select((.field.name // "") == "Doc Type") | .name] | first)
         // "__UNSET__"),
        (([.fieldValues.nodes[]? | select((.field.name // "") == "Status") | .name] | first) // "__UNSET__")]
-    | @tsv),
+    | map(tostring | gsub("\u001f"; " ") | gsub("\n"; " ") | gsub("\r"; " "))
+    | join("\u001f")),
   (if .data.repositoryOwner.projectV2.items.pageInfo.hasNextPage
-   then "__NEXT_CURSOR__\t" + (.data.repositoryOwner.projectV2.items.pageInfo.endCursor // "")
+   then "__NEXT_CURSOR__\u001f" + (.data.repositoryOwner.projectV2.items.pageInfo.endCursor // "")
    else "__DONE__"
    end)
 end'
@@ -338,13 +339,13 @@ main() {
                     gh_common_error "GitHub owner '$owner' was not found or is not a supported project owner."
                     return 1
                     ;;
-                __NEXT_CURSOR__$'\t'*)
-                    next_cursor="${line#*$'\t'}"
+                __NEXT_CURSOR__$'\x1f'*)
+                    next_cursor="${line#*$'\x1f'}"
                     ;;
                 __DONE__)
                     ;;
                 *)
-                    IFS=$'\t' read -r field_a field_b field_c field_d field_e field_f <<< "$line"
+                    IFS=$'\x1f' read -r field_a field_b field_c field_d field_e field_f <<< "$line"
                     record_board_item "$field_a" "$field_b" "$field_c" "$field_d" "$field_e" "$field_f"
                     ;;
             esac

@@ -543,6 +543,18 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Fixed
 
+- **`gh-board-audit.sh` reported every pull-request item as field drift
+  (#171).** Rows were serialised tab-delimited and parsed with `IFS=$'\t'`.
+  Tab is IFS *whitespace*, so the empty `number`/`repository` cells on
+  non-Issue rows collapsed into one delimiter and shifted every later field:
+  each PullRequest was counted as both `unset-issue-type` and `unset-status`
+  regardless of its real values (live: 38/38 PRs on board #2, 39/39 on #4,
+  58/58 on #1 — all phantom; direct reads showed every one with a set
+  `Status`). Rows now serialise with a non-whitespace delimiter (ASCII Unit
+  Separator, `\u001f`) and the parser splits on it, so empty middle fields
+  survive. `test/FS-0029/board-audit.bats` fixtures emit the new delimiter and
+  carry a regression case: a PullRequest with set fields must produce a
+  zero-drift summary (fails against the pre-fix script).
 - FS-0004 / PLAN-0002 marked `deprecated` — superseded in practice by FS-0018/FS-0019 (agent-stance and role-aware commentary conventions now live in `workflows/git-and-gh-conventions.md`). Frontmatter and body Status sections updated, PLAN-0002 §2 records the deprecation rationale, README indexes synced, lifecycle lists include `deprecated`. Closes #82.
 
 ## [2.1.0] - 2026-08-01
