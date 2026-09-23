@@ -21,6 +21,8 @@ build_scratch_repo() {
   local repo="$1"
   mkdir -p "$repo/docs/specifications" "$repo/docs/change-plans" "$repo/docs/decisions"
   ( cd "$repo" && git init -q -b trunk )
+  # Repo-local identity (not -c overrides): the human-commit scope case below
+  # overrides the identity inline, which takes precedence over this config.
   git -C "$repo" config user.name "Hermes Agent (cron)"
   git -C "$repo" config user.email "hermes-cron@tais-den.dev"
   printf '# Specs\n' > "$repo/docs/specifications/README.md"

@@ -403,8 +403,9 @@ means the commit carries no `Agent-Attribution:` line at all — the trailer mus
 be written. `malformed` means one is present in the message body but
 unreachable by git's trailer parser (displaced by a following paragraph, or a
 value wrapped across continuation lines) — the line must be moved or unwrapped.
-Both fail the gate; only the remedy differs. The hermetic cases live in
-`test/FS-0017/attribution-diagnostic.bats`.
+Both fail the gate — exit-code semantics are unchanged: any `BAD` line still
+makes the run non-zero, so CI wiring is unaffected. Only the remedy differs.
+The hermetic cases live in `test/FS-0017/attribution-diagnostic.bats`.
 
 ## run-bats.sh
 
