@@ -181,6 +181,10 @@ board_with_non_issue_drift() {
     # Tab is IFS whitespace, so a tab-delimited row with empty middle cells
     # collapses and shifts every later field — which reported every
     # PullRequest as both type-unset and status-unset. Rows now use \x1f.
+    # Fixture row columns mirror the production jq row shape: id, typename,
+    # number, repository, Issue Type, Status. The empty number/repository
+    # cells and the set `feature`/`In Review` pair are the regression's
+    # whole point — the pair must survive the empty cells.
     write_graphql_step 1 $'__PROJECT_PRESENT__\nitem-pr-301\x1fPullRequest\x1f\x1f\x1ffeature\x1fIn Review\n__DONE__'
     set_fake_issues ''
 
