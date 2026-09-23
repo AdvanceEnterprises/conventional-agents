@@ -64,7 +64,11 @@ updated: 2026-09-22
 This plan **cannot self-approve**. Its revision implementing the gate will
 declare `scripts/check-status.sh` and `scripts/README.md` in `touches:` —
 both reserved under ADR-0027 (the check that would evaluate the change lives
-in `scripts/`). Human approval is required before implementation proceeds
+in `scripts/`). The same revision also creates
+`test/FS-0037/vendor-ref-resolution.bats` and declares it in `touches:`;
+`test/` is not in ADR-0027's reserved set, and the path is inside this spec's
+`interfaces:` list, so it routes by the ordinary containment rule. Human
+approval is required before implementation proceeds
 past the Approved checkpoint (ADR-0019: `feature` may not advance past
 Approved without human approval). This draft revision ships documentation
 only and is safe to hold in draft.

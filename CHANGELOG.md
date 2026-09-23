@@ -42,7 +42,10 @@ For this project (a documentation/standards kit), semver follows the
   backticks. Third-party submodule paths (`vendor/madr/`) keep today's skip
   behaviour. Tracks issue #165; consumer impact is a framework-citation that
   currently cannot fail — a public adopter following the documented
-  integration path is the party who hits a dead reference.
+  integration path is the party who hits a dead reference. (Consumer-framed
+  per `FS-0022` §1d — the spec names `scripts/` — and staged with the draft
+  package rather than held back, so reviewers see the consumer impact while
+  the spec is under review.)
 
 - **`binding-authoring` skill.** Operationalises `integrations/README.md`
   § "Writing a binding" plus `ADR-0024` / `ADR-0037` / `ADR-0039` for a
