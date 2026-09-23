@@ -170,6 +170,7 @@ for REPO in "${REPOS[@]}"; do
 
   BAD_COUNT=0
   MISSING_COUNT=0
+  MALFORMED_COUNT=0
   while IFS= read -r line; do
     [ -z "$line" ] && continue
     COMMIT_HASH=$(echo "$line" | awk '{print $1}')
@@ -183,10 +184,24 @@ for REPO in "${REPOS[@]}"; do
     done
 
     if [ -z "$RAW" ]; then
+      # In-scope offenders so far were all reported as "missing". Two distinct
+      # failure modes hide behind that word, and they need opposite responses:
+      # a commit that genuinely lacks the trailer needs it written; a commit
+      # whose trailer is syntactically present but unreachable by git's trailer
+      # parser needs it MOVED — the two confirmed shapes are a trailer
+      # displaced by a following paragraph, and a value wrapped across a
+      # continuation line. Body-scan separates them.
+      # The failing set is unchanged — only the diagnosis differs (issue #154).
       if $_is_agent; then
-        MISSING_COUNT=$((MISSING_COUNT + 1))
-        TOTAL_BAD=$((TOTAL_BAD + 1))
-        echo "  BAD  $REPO_NAME <$COMMIT_HASH> missing Agent-Attribution trailer (agent-authored: $AUTHOR_EMAIL)"
+        if git -C "$REPO" log -1 --format=%B "$COMMIT_HASH" 2>/dev/null | grep -q '^Agent-Attribution:'; then
+          MALFORMED_COUNT=$((MALFORMED_COUNT + 1))
+          TOTAL_BAD=$((TOTAL_BAD + 1))
+          echo "  BAD  $REPO_NAME <$COMMIT_HASH> malformed Agent-Attribution trailer (present in the message body but unreachable by git's trailer parser — displaced by a following paragraph, or wrapped across lines)"
+        else
+          MISSING_COUNT=$((MISSING_COUNT + 1))
+          TOTAL_BAD=$((TOTAL_BAD + 1))
+          echo "  BAD  $REPO_NAME <$COMMIT_HASH> missing Agent-Attribution trailer (agent-authored: $AUTHOR_EMAIL)"
+        fi
       fi
     elif ! echo "$RAW" | grep -qE "$ATTRIBUTION_RE"; then
       BAD_COUNT=$((BAD_COUNT + 1))
@@ -194,7 +209,7 @@ for REPO in "${REPOS[@]}"; do
       echo "  BAD  $REPO_NAME <$COMMIT_HASH> wrong format: $RAW"
     fi
   done < <(git -C "$REPO" log --format="%H %s" "$RANGE" 2>/dev/null)
-  if [ "$BAD_COUNT" -eq 0 ] && [ "$MISSING_COUNT" -eq 0 ]; then
+  if [ "$BAD_COUNT" -eq 0 ] && [ "$MISSING_COUNT" -eq 0 ] && [ "$MALFORMED_COUNT" -eq 0 ]; then
     echo "  OK   $REPO_NAME (all $RANGE commits have correct attribution format)"
   fi
 done

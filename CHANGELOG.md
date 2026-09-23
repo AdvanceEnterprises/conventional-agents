@@ -555,6 +555,17 @@ For this project (a documentation/standards kit), semver follows the
   survive. `test/FS-0029/board-audit.bats` fixtures emit the new delimiter and
   carry a regression case: a PullRequest with set fields must produce a
   zero-drift summary (fails against the pre-fix script).
+- **Attribution gate now distinguishes `MISSING` from `MALFORMED` trailers (#154).**
+  `scripts/cross-repo-lint.sh` check 1 reported every unreachable
+  `Agent-Attribution:` line as "missing", so a commit whose trailer is
+  syntactically present but unreachable by git's trailer parser (displaced by a
+  following paragraph, or wrapped across continuation lines) was
+  indistinguishable from one that carries no trailer at all — the two need
+  opposite responses (write it vs move it). When the trailer parser returns
+  empty, the gate now body-scans and reports the two modes distinctly. The
+  failing set is unchanged. New hermetic suite
+  `test/FS-0017/attribution-diagnostic.bats` covers both modes, the positive
+  controls, and the human-commit scope rule. Closes #154.
 - FS-0004 / PLAN-0002 marked `deprecated` — superseded in practice by FS-0018/FS-0019 (agent-stance and role-aware commentary conventions now live in `workflows/git-and-gh-conventions.md`). Frontmatter and body Status sections updated, PLAN-0002 §2 records the deprecation rationale, README indexes synced, lifecycle lists include `deprecated`. Closes #82.
 - **`test/FS-0025/` renamed to `test/FS-0022/` — the directory named a spec that never existed.** `governance-patterns.bats` (the repository's largest governance suite, introduced by PR #89 for #86) sat in a `test/FS-NNNN/` directory whose ID had no `docs/specifications/FS-0025-*.md` — the numbering runs `FS-0024` → `FS-0026`. Two skills cited the phantom path as the reference for real gates (`adr-authoring`, `spec-authoring`), so a reader following the citation found nothing. The suite's scope (governance consistency patterns enforced by `check-status.sh`) belongs to `FS-0022`, which already owns `test/FS-0022/gate-coverage.bats`; the directory was renumbered there, both skill citations updated, and the general correspondence (`test/FS-NNNN/` ⇄ a spec that exists, in both directions) is now pinned by `suite_traceability` cases in `test/FS-0022/gate-coverage.bats`. Closes #168.
 
