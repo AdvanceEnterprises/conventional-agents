@@ -548,9 +548,9 @@ For this project (a documentation/standards kit), semver follows the
   Tab is IFS *whitespace*, so the empty `number`/`repository` cells on
   non-Issue rows collapsed into one delimiter and shifted every later field:
   each PullRequest was counted as both `unset-issue-type` and `unset-status`
-  regardless of its real values (live: 135 phantom findings across the three
-  boards — every one a PullRequest whose fields were set). Rows now serialise
-  with a non-whitespace delimiter (ASCII Unit
+  regardless of its real values — **135 phantom PR-rows** (38 board #2 /
+  39 board #4 / 58 board #1), every one with a set `Status` on direct read.
+  Rows now serialise with a non-whitespace delimiter (ASCII Unit
   Separator, `\u001f`) and the parser splits on it, so empty middle fields
   survive. `test/FS-0029/board-audit.bats` fixtures emit the new delimiter and
   carry a regression case: a PullRequest with set fields must produce a
