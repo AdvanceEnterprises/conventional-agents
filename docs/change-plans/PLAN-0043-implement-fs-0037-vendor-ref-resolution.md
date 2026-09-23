@@ -1,11 +1,11 @@
 ---
 type: change-plan
 role: implementer
-language: bash
+language: markdown
 status: draft
 related_specs: [FS-0037]
 approved_by: ""
-related_adrs: [ADR-0033, ADR-0027]
+related_adrs: [ADR-0033, ADR-0027, ADR-0030]
 touches:
   - docs/specifications/README.md
   - docs/change-plans/README.md
@@ -85,7 +85,7 @@ only and is safe to hold in draft.
   * Inject `vendor/conventional-agents/guidelines/NEVER-EXISTED.md` into
     `INTEGRATION.md` → gate rc≠0 (currently rc=0 — the regression proof).
   * Full local run: `npm run check:status` rc=0 on the clean tree
-    (155 currently-resolving prefixed refs across the three repos produce no
+    (127 currently-resolving prefixed refs across the three repos produce no
     failures).
 
 ## 5. Rollback
