@@ -604,8 +604,9 @@ PLAN_EOF
   FAKE_SUITE_DIR="$REPO_ROOT/test/$fake_id"
   mkdir -p "$FAKE_SUITE_DIR"
   # Cleanup must survive an early assertion failure, or a failed run orphans
-  # test/FS-9999/ and the next run's mkdir -p is a no-op (MM3 round-B
-  # finding). Not `local` — the EXIT trap fires after the function scope ends.
+  # the runtime fixture directory and the next run's mkdir -p is a no-op (MM3
+  # round-B finding). Not `local` — the EXIT trap fires after the function
+  # scope ends.
   trap 'rmdir "$FAKE_SUITE_DIR" 2>/dev/null || rm -rf "$FAKE_SUITE_DIR"' EXIT
   local spec_found=0 dir_found=0
   if compgen -G "$REPO_ROOT/docs/specifications/${fake_id}-*.md" >/dev/null 2>&1; then
