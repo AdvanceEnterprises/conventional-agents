@@ -66,3 +66,4 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | PLAN-0037 | Implement FS-0031 Governed-agent benchmark harness | FS-0031 | draft |
 | PLAN-0039 | Implement FS-0033 Governance CI on stacked and non-trunk PRs | FS-0033 | draft |
 | PLAN-0043 | Implement FS-0037 Vendor-prefixed reference resolution | FS-0037 | draft |
+| PLAN-0044 | Implement FS-0038 Hermes kanban substrate binding | FS-0038 | draft |

@@ -156,6 +156,12 @@ For this project (a documentation/standards kit), semver follows the
     MCP example, and a report-only `ca-runtime-audit.sh`. `PLAN-0036` (draft)
     sequences it library-first; it touches reserved paths and cannot self-approve.
 
+- **FS-0038 / PLAN-0044: Hermes kanban binding candidate (draft).** Documents
+  a proposed peer work-item substrate under `ADR-0024` and tests isolated CLI
+  creation/enumeration in `test/FS-0038/`. It is not yet conforming: Type
+  mutation attribution, human authorization before dispatch, and non-retractable
+  transition history still need verified mechanisms before adoption.
+
 - **ADR-0034 superseded; PLAN-0034 deprecated.** `ADR-0034` (proposed, never
   accepted) bundled the MCP tool-category question with skills consolidation;
   that bundling stalled it for a month (issue #107 shows a reader losing track).
