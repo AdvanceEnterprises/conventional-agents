@@ -148,11 +148,15 @@ setup() {
     if echo "$specs_line" | grep -qE '\[\s*\]'; then
       continue
     fi
-    # Extract all FS-NNNN references from the frontmatter block only
+    # Extract all FS-NNNN references from the frontmatter block only, mirroring
+    # check-status.sh's parser (`n++; if(n==2) exit`). The previous pattern's
+    # exit was unreachable — its first rule matched every `---` line and
+    # `next`ed before the exit rule was evaluated — so it scanned the body and
+    # failed on FS numbers cited in prose (PR #166).
     local refs
-    refs=$(awk '/^---$/{f=1; next} f&&/^---$/{exit} f' "$plan" | grep -oE 'FS-[0-9]{4}' || true)
+    refs=$(awk '/^---/{n++; if(n==2) exit; next} n==1' "$plan" | grep -oE 'FS-[0-9]{4}' || true)
     if [ -z "$refs" ]; then
-      refs=$(awk '/^---$/{f=1; next} f&&/^---$/{exit} f' "$plan" | grep -oE 'FS-[0-9]+' | grep -v 'FS-[0-9]{4}' || true)
+      refs=$(awk '/^---/{n++; if(n==2) exit; next} n==1' "$plan" | grep -oE 'FS-[0-9]+' | grep -v 'FS-[0-9]{4}' || true)
     fi
     [ -n "$refs" ] || continue
     while IFS= read -r ref; do
