@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0037
-status: draft
+status: approved
 title: Vendor-prefixed reference resolution — close the submodule-citation blind spot in referenced-path checking
 owner: ajoeofalltrades
 test_required: true
@@ -17,7 +17,7 @@ supersedes: []
 requires: []
 tags: [quality-gates, references, vendor, submodule, enforcement]
 created: 2026-09-22
-updated: 2026-09-22
+updated: 2026-09-24
 ---
 
 <!--
@@ -31,6 +31,37 @@ PARSING_HINTS:
 -->
 
 # Feature Spec: Vendor-prefixed reference resolution
+
+## Status
+
+- Approved
+
+Approved 2026-09-24 by Joey Clark, recorded on the commit that flips this status
+with an `Approved-By:` trailer (`ADR-0026`). This is a **recorded approval**, the
+shape `ADR-0026` names for a human approving before merge. `scripts/` is a
+reserved path under `ADR-0027`, so the implementing PLAN cannot self-approve; the
+spec-first gate (`guidelines/ROLE_CONTRACT.md`) is now satisfied for this spec and
+implementation of the extended rule may begin against an approved PLAN.
+
+Tracks issue #165. The gap this spec closes is live on trunk: references of the
+form `vendor/conventional-agents/<path>` are skipped before resolution is
+attempted, so a phantom prefixed reference passes the gate today.
+
+## Plan Status
+
+- **PLAN-0043 remains `draft`** in this change. Its current revision ships the
+  governance package (spec + plan + index rows + CHANGELOG entry) and touches
+  only `docs/` paths inside this spec's `interfaces:` set — approving it now
+  would approve a documentation-only revision, not the implementation.
+
+  `PLAN-0043` §"Approval Routing" states that the **implementation revision**
+  declares `scripts/check-status.sh` and `scripts/README.md` in `touches:` —
+  both reserved under `ADR-0027` — and therefore cannot self-approve. That
+  revision needs its own recorded approval covering its own `touches:` set;
+  under `ADR-0026` an approval covers only the set that existed when it was
+  given, so an approval recorded against the current (docs-only) revision would
+  not extend to it. The implementing PR opens separately and records that
+  approval there.
 
 ## Summary
 
