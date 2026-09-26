@@ -160,7 +160,9 @@ For this project (a documentation/standards kit), semver follows the
   a proposed peer work-item substrate under `ADR-0024` and tests isolated CLI
   creation/enumeration in `test/FS-0038/`. It is not yet conforming: Type
   mutation attribution, human authorization before dispatch, and non-retractable
-  transition history still need verified mechanisms before adoption.
+  transition history still need verified mechanisms before adoption. The
+  candidate resides in internal `docs/proposals/`, not the shipped
+  `integrations/` surface; GitHub remains the only published substrate binding.
 
 - **ADR-0034 superseded; PLAN-0034 deprecated.** `ADR-0034` (proposed, never
   accepted) bundled the MCP tool-category question with skills consolidation;

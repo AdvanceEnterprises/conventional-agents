@@ -6,14 +6,15 @@ setup() {
 }
 
 @test "FS-0038: candidate states all six capability mappings" {
-  run grep -cE '^\| [1-6]\. ' "$REPO_ROOT/integrations/hermes-kanban.md"
+  run grep -cE '^\| [1-6]\. ' "$REPO_ROOT/docs/proposals/hermes-kanban-substrate-binding.md"
   [ "$status" -eq 0 ]
   [ "$output" -eq 6 ]
 }
 
 @test "FS-0038: candidate does not claim complete conformance" {
-  run grep -F 'draft**, not a conforming substrate binding' "$REPO_ROOT/integrations/hermes-kanban.md"
+  run grep -F 'internal design candidate' "$REPO_ROOT/docs/proposals/hermes-kanban-substrate-binding.md"
   [ "$status" -eq 0 ]
+  [ ! -e "$REPO_ROOT/integrations/hermes-kanban.md" ]
 }
 
 @test "FS-0038: isolated board can create and enumerate a task" {

@@ -6,6 +6,7 @@ title: Hermes kanban substrate binding for work item lifecycle
 owner: ajoeofalltrades
 test_required: true
 interfaces:
+  - "docs/proposals/hermes-kanban-substrate-binding.md"
   - "integrations/hermes-kanban.md"
   - "integrations/README.md"
   - "workflows/session-modes.md"
@@ -55,10 +56,11 @@ PARSING_HINTS:
 
 ## Summary
 
-Propose a second substrate binding under `ADR-0024`, mapping the six core
+Investigate a second substrate binding under `ADR-0024`, mapping the six core
 workflow capabilities onto the Hermes Agent `kanban` subsystem. Hermes kanban is a
-durable, SQLite-backed task board designed for multi-profile agent collaboration;
-this spec makes it a peer substrate to GitHub Issues + Projects v2.
+durable, SQLite-backed task board designed for multi-profile agent collaboration.
+The incomplete mapping lives in `docs/proposals/hermes-kanban-substrate-binding.md`,
+outside the shipped binding surface until conformance is demonstrated.
 
 The binding is substrate mechanics only. Governance rules (Type mutability,
 autonomous gate, merge prohibition) remain in `FS-0018`, `ADR-0019`,
@@ -108,7 +110,8 @@ explicitly and names the detection mechanism.
   `kanban_link`.
 - SQLite schema surfaced by `hermes kanban`: board, task, task_event, task_link,
   task_attachment, task_run tables.
-- Binding document: `integrations/hermes-kanban.md`.
+- Internal proposal: `docs/proposals/hermes-kanban-substrate-binding.md`.
+- Future binding, **not yet shipped**: `integrations/hermes-kanban.md`.
 
 ## Binding Overview
 
@@ -218,9 +221,10 @@ not part of the stable binding contract.
   automated suppression is not claimed until a dispatcher-level gate is tested.
 - Given a task without a valid Type prefix, the binding treats it as invalid
   rather than silently assigning a lower-safety Type.
-- Given the binding document `integrations/hermes-kanban.md`, when
-  `npm run lint:docs` runs, then the document passes all markdown and
-  cross-reference gates.
+- Given the internal proposal at `docs/proposals/hermes-kanban-substrate-binding.md`,
+  when `npm run lint:docs` runs, then the document passes markdown lint;
+  `integrations/hermes-kanban.md` remains absent until all six capabilities
+  have been demonstrated.
 
 ## Edge Cases
 
@@ -253,7 +257,8 @@ not part of the stable binding contract.
 
 ## Rollout / Migration
 
-- Add `integrations/hermes-kanban.md` and update `integrations/README.md`.
+- Keep the incomplete candidate in `docs/proposals/`; only publish a conforming
+  `integrations/hermes-kanban.md` and index it after proof of all six capabilities.
 - Add `test/FS-0038/hermes-kanban-binding.bats` with static + isolated CLI probes.
 - Update `docs/specifications/README.md` and `docs/change-plans/README.md`.
 - Do not change the framework's default substrate. GitHub remains the substrate
@@ -269,8 +274,8 @@ not part of the stable binding contract.
 
 - Kanban SQLite files live in the Hermes home directory (`~/.hermes/` or the
   active profile). Board access follows filesystem permissions.
-- Type enforcement hooks run with the same privileges as the agent that
-  triggered them; misconfigured hooks can block legitimate work.
+- No Type-enforcement hook is supplied by the candidate. Any future hook needs
+  a verified identity and mutation boundary before it can claim enforcement.
 
 ## Open Questions
 
