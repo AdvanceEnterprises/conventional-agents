@@ -1,6 +1,6 @@
 ---
 type: feature-spec
-id: FS-0032
+id: FS-0039
 status: implemented
 title: Validation reproducibility contract — bounded, hermetic, and CI-parity framework checks
 owner: ajoeofalltrades
@@ -13,7 +13,7 @@ interfaces:
   - "scripts/README.md"
   - "package.json"
   - ".github/workflows/lint-docs.yml"
-  - "test/FS-0032/validation-reproducibility.bats"
+  - "test/FS-0039/validation-reproducibility.bats"
   - "docs/specifications/README.md"
   - "docs/change-plans/README.md"
   - "CHANGELOG.md"

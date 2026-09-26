@@ -60,7 +60,7 @@ the card's pinned base commit into a disposable directory. Task cards live in
 4. `npm run check:freshness`
 5. `npm run lint:cross-repo`
 
-**Purpose.** FS-0032 / issue #132 makes this the single local and CI entry point
+**Purpose.** FS-0039 / issue #132 makes this the single local and CI entry point
 for the framework's own acceptance signal. The runner prints progress, records
 whole-second timings, writes the complete output to a log, and exits non-zero on
 any command failure or timeout. It continues after a fast failure so the log
@@ -82,7 +82,7 @@ front of `PATH`. It never invokes a network-capable Git subcommand: `git` is
 used for local reads only, `GIT_TERMINAL_PROMPT=0` plus an empty private global
 config (`GIT_CONFIG_GLOBAL`, `GIT_CONFIG_NOSYSTEM=1`) strip ambient credential
 helpers, and `COMMIT_RANGE` must already exist locally — an unavailable range
-fails closed instead of fetching. The hermeticity assertion in the FS-0032
+fails closed instead of fetching. The hermeticity assertion in the FS-0039
 suite is the *negative* form (`fetch|pull|push|ls-remote|clone|remote` are
 rejected and traced), so it does not rot when a future patch adds another local
 read. Set `CA_VALIDATION_LOG` to an
