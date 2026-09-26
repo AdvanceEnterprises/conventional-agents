@@ -15,7 +15,6 @@ concluding either is wrong.
 | --- | --- | --- |
 | [`github-issues-projects.md`](./github-issues-projects.md) | GitHub Issues + Projects v2 | Reference binding; the substrate this repository runs on |
 | [`github/README.md`](./github/README.md) | GitHub binding executables | Executable provisioning and audit layer; mechanisms only |
-| [`hermes-kanban.md`](./hermes-kanban.md) | Hermes kanban | **Draft candidate, not yet conforming**; Type attribution and activity retention unproven |
 
 ## The six capabilities
 

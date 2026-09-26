@@ -1,7 +1,8 @@
-# Proposed Binding: Hermes Kanban
+# Hermes Kanban Substrate Binding Candidate (Internal Proposal)
 
-This is a **draft**, not a conforming substrate binding. `ADR-0024` requires all
-six capabilities to be realized before a binding is merged. The mapping below
+This is an **internal design candidate**, not an exported or conforming substrate
+binding. `ADR-0024` requires all six capabilities to be realized before a binding
+is shipped under `integrations/`. The mapping below
 records both the actual Hermes CLI mechanism and the remaining gaps. It does
 not change the GitHub binding or make GitHub a framework dependency.
 
@@ -56,6 +57,10 @@ human-input parked state. A task in `review` is distinct from `running`.
   provide a shared, durable review/approval interface. A binding must describe
   how a human records Type and approvals without confusing worker assignment
   with authorization.
+
+Do not cite this path as a consumer-facing binding or use it as authorization
+to dispatch governed work. Promote a complete, verified mapping to
+`integrations/hermes-kanban.md` only when all six capabilities are demonstrated.
 
 No GitHub↔Hermes synchronization is proposed here. A future Hermes *runtime*
 configuration binding under `ADR-0039` is distinct from this work-item
