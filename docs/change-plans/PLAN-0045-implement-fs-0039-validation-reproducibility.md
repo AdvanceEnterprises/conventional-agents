@@ -3,7 +3,7 @@ type: change-plan
 role: implementer
 language: bash
 status: implemented
-related_specs: [FS-0032]
+related_specs: [FS-0039]
 approved_by: "Joey Clark <taisden@tais-den.dev>"
 related_adrs: [ADR-0015, ADR-0027, ADR-0030, ADR-0033]
 touches:
@@ -14,7 +14,7 @@ touches:
   - scripts/README.md
   - package.json
   - .github/workflows/lint-docs.yml
-  - test/FS-0032/validation-reproducibility.bats
+  - test/FS-0039/validation-reproducibility.bats
   - docs/specifications/README.md
   - docs/change-plans/README.md
   - CHANGELOG.md
@@ -24,11 +24,11 @@ created: 2026-09-21
 updated: 2026-09-21
 ---
 
-# PLAN-0038: Implement FS-0032 — Validation reproducibility contract
+# PLAN-0045: Implement FS-0039 — Validation reproducibility contract
 
 ## 1. Feature / Issue Reference
 
-* Feature Spec ID: FS-0032
+* Feature Spec ID: FS-0039
 * Related ADRs: ADR-0015, ADR-0027, ADR-0030, ADR-0033
 * Issue Reference: [conventional-agents#132](https://github.com/Tais-Den/conventional-agents/issues/132)
 
@@ -67,7 +67,7 @@ updated: 2026-09-21
 
 * Test file:
 
-  * `test/FS-0032/validation-reproducibility.bats`
+  * `test/FS-0039/validation-reproducibility.bats`
 
 * Target tests:
 
@@ -94,7 +94,7 @@ updated: 2026-09-21
 * `scripts/README.md`
 * `package.json`
 * `.github/workflows/lint-docs.yml`
-* `test/FS-0032/validation-reproducibility.bats`
+* `test/FS-0039/validation-reproducibility.bats`
 * `docs/specifications/README.md`
 * `docs/change-plans/README.md`
 * `CHANGELOG.md`
@@ -103,7 +103,7 @@ updated: 2026-09-21
 
 ## 5. Implementation Steps (High-Level)
 
-1. Add the approved FS-0032 and this approved PLAN, update their index rows,
+1. Add the approved FS-0039 and this approved PLAN, update their index rows,
    and commit the recorded human approval before implementation begins.
 2. Implement shared timeout, duration, target-resolution, and isolated-command
    helpers with Bash 3.2-compatible syntax.
@@ -120,14 +120,14 @@ updated: 2026-09-21
 8. Run the full validation twice serially from fresh disposable checkouts and
    once concurrently from separate worktrees; capture a clean baseline log and
    timing summary.
-9. Transition FS-0032 and PLAN-0038 to `implemented` in the completing change
+9. Transition FS-0039 and PLAN-0045 to `implemented` in the completing change
    after every acceptance criterion is verified.
 
 ## 6. Constraints and Guardrails
 
 * Spec constraints:
 
-  * FS-0032 Success Criteria, Non-Goals, and Interfaces are authoritative.
+  * FS-0039 Success Criteria, Non-Goals, and Interfaces are authoritative.
   * FS-0022 remains the governing implemented spec for the existing gate corpus;
     this plan adds the reproducibility contract without changing its rules.
 

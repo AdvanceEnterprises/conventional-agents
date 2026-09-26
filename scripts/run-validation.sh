@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Canonical, bounded validation surface for conventional-agents (#132 / FS-0032).
+# Canonical, bounded validation surface for conventional-agents (#132 / FS-0039).
 # The five commands below are the same entry point used locally and in CI.
 set -uo pipefail
 

@@ -13,7 +13,7 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
-- **Bounded, hermetic validation runner (`FS-0032`, issue #132).** Framework
+- **Bounded, hermetic validation runner (`FS-0039`, issue #132).** Framework
   maintainers and consumers can run `npm run validate` to execute the five
   documented acceptance gates through one ordered, timed, fail-closed entry
   point. Bats suites report progress and enforce per-suite bounds; the default

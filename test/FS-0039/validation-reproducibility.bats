@@ -1,5 +1,5 @@
 #!/usr/bin/env bats
-# FS-0032 — validation reproducibility contract (#132).
+# FS-0039 — validation reproducibility contract (#132).
 # These tests use scratch Git repositories and fake commands. They never invoke
 # GitHub, fetch a remote, or mutate the framework checkout.
 
@@ -19,8 +19,8 @@ make_clean_repo() {
   local repo="$1"
   mkdir -p "$repo"
   git -C "$repo" init -q -b trunk
-  git -C "$repo" config user.name "FS-0032 Fixture"
-  git -C "$repo" config user.email "fs-0032@example.invalid"
+  git -C "$repo" config user.name "FS-0039 Fixture"
+  git -C "$repo" config user.email "fs-0039@example.invalid"
   printf '%s\n' "fixture" > "$repo/README.md"
   git -C "$repo" add README.md
   git -C "$repo" commit -q -m "fixture"
