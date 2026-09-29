@@ -51,6 +51,15 @@ for skill in "${SKILLS[@]}"; do
   fi
   mkdir -p "$PLUGIN_SKILLS/$skill"
   cp "$src/SKILL.md" "$PLUGIN_SKILLS/$skill/SKILL.md"
+  # Supporting files travel with the skill. A skill may keep on-demand material
+  # in a sibling references/ directory and cite it by a path relative to its own
+  # SKILL.md (skills/AUTHORING.md rule 4 relocates overflow there). Copying only
+  # SKILL.md leaves those citations pointing at files that are not in the plugin,
+  # which fails check-status.sh rule 8 (FS-0022 §1c) on the synced tree.
+  if [ -d "$src/references" ]; then
+    mkdir -p "$PLUGIN_SKILLS/$skill/references"
+    cp "$src"/references/*.md "$PLUGIN_SKILLS/$skill/references/" 2>/dev/null || true
+  fi
 done
 
 n=0
@@ -58,6 +67,14 @@ for f in "$PLUGIN_SKILLS"/*/SKILL.md; do
   [ -e "$f" ] && n=$((n+1))
 done
 echo "synced $n skills into $PLUGIN_SKILLS"
+
+# The skill catalog travels with the copies. Each source SKILL.md may cite the
+# catalog as `../index.md` relative to its own directory; that resolves to
+# skills/index.md in the framework checkout, so it must also resolve from
+# integrations/runtimes/claude-code/skills/<skill>/ in the plugin.
+if [ -f "$SHIPPED_SKILLS_DIR/index.md" ]; then
+  cp "$SHIPPED_SKILLS_DIR/index.md" "$PLUGIN_SKILLS/index.md"
+fi
 
 [ "$failures" -eq 0 ] || {
   echo "ERROR: $failures skill(s) failed to sync" >&2

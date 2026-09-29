@@ -1,14 +1,7 @@
 ---
 name: document-lifecycle
-description: "Scaffolds, transitions, and maintains governed documents (FS, PLAN, ADR) with correct front matter and cross-references."
-version: 1.0.0
-author: conventional-agents
+description: "Scaffolds, transitions, and maintains governed documents — feature specs (FS), change plans (PLAN), and architecture decision records (ADR) — with correct front matter and cross-references. Use when creating or updating a governed document, changing its status, working from a template, or resolving a check:status violation."
 license: MIT
-platforms: [linux, macos, windows]
-metadata:
-  hermes:
-    tags: [document-lifecycle, feature-specs, adrs, change-plans, governance, templates]
-    related_skills: [role-aware-session, git-gh-workflow, framework-health-audit]
 ---
 
 # Document Lifecycle Skill
@@ -277,6 +270,15 @@ When updating an existing governed document:
 4. **Update the README index** if the status changed
 5. **Run `npm run check:status`** and resolve any violations
 6. **Commit** with a descriptive message
+
+---
+
+## Related Skills
+
+- `../role-aware-session/SKILL.md` — session mode, primary/supporting roles, when Document Author leads
+- `../git-branch-and-commit/SKILL.md` — branch and commit conventions for landing document changes
+- `../gh-pr-workflow/SKILL.md` — opening the PR that carries a status transition
+- `../framework-health-audit/SKILL.md` — `check:status` interpretation and the document hygiene gate
 
 ---
 
