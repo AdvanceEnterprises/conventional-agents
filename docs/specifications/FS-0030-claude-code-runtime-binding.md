@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0030
-status: approved
+status: implemented
 title: Claude Code runtime binding — the first agent-runtime binding under ADR-0039
 owner: ajoeofalltrades
 test_required: true
@@ -44,7 +44,7 @@ requires:
   - ADR-0038
 tags: [runtime-binding, claude-code, integrations, skills, mcp, exported-surface]
 created: 2026-09-05
-updated: 2026-09-09
+updated: 2026-09-29
 ---
 <!--
 PARSING_HINTS:
@@ -60,22 +60,29 @@ PARSING_HINTS:
 
 ## Status
 
-- Approved
+- Implemented
 
-Approved 2026-09-08 by Joey Clark, recorded on the commit that flips this status
+Approved 2026-09-08 by Joey Clark, recorded on the commit that flipped this status
 with an `Approved-By:` trailer (`ADR-0026`). #112's merge message asserted this
 transition but carried no trailer and left both documents `draft`; issue #122
-detected the gap and this change reconciles it. `ADR-0039` is `accepted`, so the
-spec-first gate (`guidelines/ROLE_CONTRACT.md`) is now satisfied and
-implementation of the Claude Code runtime binding may begin.
+detected the gap and that change reconciled it. `ADR-0039` is `accepted`, so the
+spec-first gate (`guidelines/ROLE_CONTRACT.md`) was satisfied and implementation
+of the Claude Code runtime binding could begin.
+
+Implemented by PR #134, merged 2026-09-29 as `f94609c`. The binding ships under
+`integrations/runtimes/claude-code/`, and `ADR-0039` §5 stage 1 is complete. This
+status was set after the merge; #134 did not carry the transition itself, which
+`workflows/document-lifecycle.md` places in the completing PR.
 
 ## Plan Status
 
-- **PLAN-0036 is `approved`**, recorded on the same commit and carried by the same
-  `Approved-By:` trailer (`ADR-0026`). Its `touches:` set includes `package.json`,
-  `.github/workflows/lint-docs.yml`, and `scripts/README.md` — three reserved
-  paths under `ADR-0027` — so it could not self-approve; this is a recorded human
-  act. The implementing PR opens separately, after this one merges.
+- **PLAN-0036 is `implemented`**, its steps complete and its PR merged (`#134`).
+  Its `touches:` set includes `package.json`, `.github/workflows/lint-docs.yml`,
+  and `scripts/README.md` — three reserved paths under `ADR-0027` — so it could
+  not self-approve; approval was a recorded human act (`ADR-0026`), re-recorded
+  on 2026-09-29 after the review-feedback commits invalidated the original.
+  `check-status.sh` rule 6 applies to plans at `approved` or `in-progress`, so it
+  no longer governs this plan now that it is `implemented`.
 
 ## Summary
 

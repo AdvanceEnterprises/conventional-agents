@@ -2,7 +2,7 @@
 type: change-plan
 role: implementer
 language: bash
-status: approved
+status: implemented
 related_specs: [FS-0030]
 approved_by: "Joey Clark <administrator@ajoeofalltrades.dev>"
 related_adrs: [ADR-0039, ADR-0038]
@@ -62,6 +62,12 @@ problem that agent feedback cycles invalidate an approval record this way.
 **This file must not be edited again before merge.** Under `ADR-0026` any further
 commit touching it invalidates this approval and requires a fresh recorded act.
 **The implementing PR opens separately, after this one merges — never inside it.**
+
+*(Post-merge note, 2026-09-29: the implementing PR was #134, merged as `f94609c`,
+and this plan is now `implemented` — see §Completion. That discharges the freeze
+above: `check-status.sh` rule 6 governs plans at `approved` or `in-progress`, so it
+no longer applies to this plan, and the plan file may be edited again without a new
+approval record. Issue #155 tracks the general trap this caused twice.)*
 
 ## 1. Feature / Issue Reference
 
@@ -198,6 +204,14 @@ As declared in `touches:` above. New trees: `integrations/runtimes/`,
   status-flip commit, per `ADR-0026`
 * [x] Tests are defined per SC (section 3)
 * [x] Scope is the Claude Code binding only — no other runtime
+
+## Completion
+
+Implemented by PR #134, merged 2026-09-29 as `f94609c`; `status: implemented` was
+set in this follow-up change, since #134 itself did not carry the transition that
+`workflows/document-lifecycle.md` places in the completing PR. Rule 6 no longer
+applies to this plan at `implemented` status, so the `Approved-By:` freeze that
+governed the pre-merge state is discharged.
 
 ## Declaration
 
