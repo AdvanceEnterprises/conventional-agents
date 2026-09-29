@@ -334,6 +334,9 @@ jobs:
     # FS-0030 Non-Goals). It runs for signal only; a failure here never blocks
     # a merge.
     runs-on: ubuntu-latest
+    # Per the spend-guard rationale at the top of this file: every job carries a
+    # bound so a hung `npx` install cannot ride GitHub's 360-minute default.
+    timeout-minutes: 10
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
