@@ -30,7 +30,7 @@ touches:
   - docs/change-plans/README.md
   - CHANGELOG.md
 created: 2026-09-05
-updated: 2026-09-08
+updated: 2026-09-29
 ---
 
 # PLAN-0036: Implement FS-0030 — Claude Code runtime binding
@@ -42,12 +42,25 @@ This plan **cannot self-approve**. Its `touches:` set includes `package.json`,
 `ADR-0027` — so `check-status.sh` rule 6 requires human approval regardless of
 how `FS-0030`'s `interfaces:` are framed.
 
-It is now `status: approved`. Approval was given by Joey Clark and recorded on the
-commit that flips this status, carried by an `Approved-By:` trailer whose email
-differs from the commit author's (`ADR-0026`). `#112`'s merge asserted this
+It is `status: approved`. Approval was given by Joey Clark and originally recorded
+on the commit that flipped this status, carried by an `Approved-By:` trailer whose
+email differs from the commit author's (`ADR-0026`). `#112`'s merge asserted this
 transition but left the trailer and the status behind; issue `#122` detected the
-drift and this change reconciles it. `FS-0030` is `approved` on the same commit,
+drift and that change reconciled it. `FS-0030` is `approved` on the same commit,
 so the spec-first gate (`guidelines/ROLE_CONTRACT.md`) is satisfied.
+
+**Re-approved 2026-09-29.** The review-feedback commits that followed the original
+record (`37a37ac`, `8006226`) edited this plan, and `ADR-0026` scopes an approval
+to the content and `touches:` set that existed when it was given — so the original
+record no longer covered the plan, and `check-status.sh` rule 6 correctly rejected
+the branch. Joey Clark re-approved the plan as it now stands; the record is the
+`Approved-By:` trailer on the most recent commit touching this file, whose email
+differs from that commit's author. The `touches:` set is unchanged from trunk's, so
+this re-approval covers the same reserved surface. Issue `#155` tracks the general
+problem that agent feedback cycles invalidate an approval record this way.
+
+**This file must not be edited again before merge.** Under `ADR-0026` any further
+commit touching it invalidates this approval and requires a fresh recorded act.
 **The implementing PR opens separately, after this one merges — never inside it.**
 
 ## 1. Feature / Issue Reference
