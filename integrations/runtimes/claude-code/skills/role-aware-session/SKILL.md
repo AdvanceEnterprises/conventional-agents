@@ -1,14 +1,7 @@
 ---
 name: role-aware-session
-description: "Infers session mode, primary/supporting roles, and enforces role boundaries for every interaction."
-version: 1.0.0
-author: conventional-agents
+description: "Infers session mode, primary and supporting roles, and holds role boundaries for every interaction. Use at the start of a session, when the work shifts phase, or when deciding which role may act — covers session modes, the role contract, governance stance, and the non-overridable safety gates."
 license: MIT
-platforms: [linux, macos, windows]
-metadata:
-  hermes:
-    tags: [roles, session-modes, governance, agent-contract, safety-gates]
-    related_skills: [document-lifecycle, git-gh-workflow, framework-health-audit]
 ---
 
 # Role-Aware Session Skill
@@ -17,9 +10,8 @@ Encodes the conventional-agents role contract and session mode system into actio
 
 ## Source Documents
 
-- `roles/ROLE_CONTRACT.md` — role definitions, authority boundaries, prohibitions, stop conditions
+- `guidelines/ROLE_CONTRACT.md` — role definitions, authority boundaries, prohibitions, stop conditions
 - `workflows/session-modes.md` — five named session modes with primary/supporting role assignments
-- `guidelines/ROLE_CONTRACT.md` — canonical copy of the role contract (identical to `roles/`)
 
 ## Purpose
 
@@ -203,6 +195,16 @@ The human may declare or override the session mode at any time:
 - "No implementation yet." → Treat any implementation-ready work as out of scope.
 
 Honor overrides without argument. If an override creates ambiguity, ask rather than inferring.
+
+---
+
+## Related Skills
+
+- `../document-lifecycle/SKILL.md` — FS/PLAN/ADR scaffolding, transitions, front matter hygiene
+- `../git-commit-identity/SKILL.md` — the commit identity and attribution a session's role is recorded in
+- `../work-item-stance/SKILL.md` — the same role and mode values, declared on a work item
+- `../gh-pr-workflow/SKILL.md` — the non-overridable gates (identity, merge) a session's role must respect
+- `../framework-health-audit/SKILL.md` — `check:status`, the document hygiene gate, full audits
 
 ---
 

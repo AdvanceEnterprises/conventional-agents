@@ -1,14 +1,7 @@
 ---
 name: framework-health-audit
-description: "Runs check:status, performs full framework health audits, and enforces the document hygiene gate."
-version: 1.0.0
-author: conventional-agents
+description: "Runs and interprets check:status, performs full framework health audits, and applies the document hygiene gate. Use before marking a pull request ready for review, when a status or lint gate fails, or when auditing the repository for stale statuses, compliance drift, and README index mismatches."
 license: MIT
-platforms: [linux, macos, windows]
-metadata:
-  hermes:
-    tags: [audit, compliance, status-checks, governance, document-hygiene]
-    related_skills: [document-lifecycle, role-aware-session, git-gh-workflow]
 ---
 
 # Framework Health / Audit Skill
@@ -19,7 +12,7 @@ Encodes the conventional-agents status consistency check, document hygiene gate,
 
 - `scripts/check-status.sh` — the status consistency check script
 - `docs/specifications/FS-0013-status-consistency-check.md` — status consistency check spec
-- `roles/ROLE_CONTRACT.md` — document hygiene gate (7-item checklist)
+- `guidelines/ROLE_CONTRACT.md` — document hygiene gate (7-item checklist)
 - `workflows/document-lifecycle.md` — status transition rules
 - `docs/decisions/ADR-0012-non-overridable-gates.md` — non-overridable safety gates
 
@@ -195,6 +188,14 @@ Produce a summary with:
 | Cross-reference points to non-existent doc | Update the reference or create the missing doc |
 | Approved spec is no longer planned | Set to `deprecated` with a note |
 | Lint errors in governed docs | Run `npm run lint:docs` and fix violations |
+
+---
+
+## Related Skills
+
+- `../document-lifecycle/SKILL.md` — the status transitions and README index rules an audit checks against
+- `../role-aware-session/SKILL.md` — Reviewer vs Head Architect stance when an audit surfaces drift
+- `../gh-pr-workflow/SKILL.md` — the PR lifecycle this skill's hygiene gate runs before
 
 ---
 
