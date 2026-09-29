@@ -286,10 +286,16 @@ jobs:
         run: test $? -eq 0
 
   validation:
-    # FS-0032 / issue #132: the hermetic local validation contract is the
+    # FS-0039 / issue #132: the hermetic local validation contract is the
     # benchmark prerequisite. This job invokes the exact npm entry point used
     # by maintainers locally; setup prepares dependencies and Git refs first.
     runs-on: ubuntu-latest
+    # Bounds the most expensive job in this workflow (7m39s observed on
+    # 598f9af): test-bats' 20 minutes plus headroom for the four setup and
+    # gate steps above. Per the spend-guard rationale at the top of this file,
+    # every job carries one so a hung install step cannot ride GitHub's
+    # 360-minute default.
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
         with:
