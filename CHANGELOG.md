@@ -70,7 +70,8 @@ For this project (a documentation/standards kit), semver follows the
   resolve to the same `FS-NNNN` / `PLAN-NNNN` / `ADR-NNNN` ID — a
   duplicate that passes the portable gate today (measured on trunk: an
   injected FS, PLAN, or ADR duplicate leaves `check:status` at rc=0; the
-  cross-repo sweep catches the FS/PLAN subset only, and ADRs nowhere).
+  cross-repo sweep catches the FS/PLAN subset only, and ADR duplicates
+  nowhere).
   Cross-PR, a new read-only audit in the GitHub binding
   (`npm run github:pr-claim-audit`) reports same-ID / different-path
   claims among open pull requests — drafts included — and claims
