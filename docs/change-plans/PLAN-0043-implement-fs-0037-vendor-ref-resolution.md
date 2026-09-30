@@ -5,7 +5,7 @@ language: bash
 status: draft
 related_specs: [FS-0037]
 approved_by: ""
-related_adrs: [ADR-0033, ADR-0027, ADR-0030]
+related_adrs: [ADR-0026, ADR-0027, ADR-0030, ADR-0033]
 touches:
   - scripts/check-status.sh
   - scripts/README.md
@@ -62,6 +62,9 @@ the record described in §3 exists):
   this plan to `approved` (index row synced); once the implementation is in
   and verified, `FS-0037` and this plan flip to `implemented`, both index
   rows sync, and the CHANGELOG marker updates per rule 7 house practice.
+  Issue #165 resolves with an evidence comment naming the implementing PR
+  and its merge commit once the gate is on trunk — its originating suggest
+  is fully delivered only then.
 
 **This revision will NOT:**
 
@@ -108,12 +111,16 @@ implementation lands.
     the document and the reference.
   * SC-2: resolving prefixed reference → pass on the clean tree (the three
     repositories' currently-resolving prefixed references produce no
-    failures).
+    failures; the count bar is owned by FS-0037 §Problem/Evidence, so the
+    case cites the spec rather than restating the numbers).
   * SC-3: any other `vendor/*` phantom (e.g. `vendor/madr/template.md`) →
     skip, not fail — asserted for self-check and non-self-check modes.
   * SC-4: placeholder forms and prose anti-examples → not flagged.
   * SC-5: non-backticked phantom in `INTEGRATION.md` / `README.md` /
-    `AGENTS.md` → fail; the case iterates all six #163 phantom paths.
+    `AGENTS.md` → fail; the case iterates the full six-item #163
+    enumeration — the five concrete path tokens each fail the gate, and the
+    sixth (`<REPO_URL>`) asserts non-extraction per SC-4's placeholder
+    exemption, so no item in the list is un-testable.
   * SC-6: host repository whose `vendor/conventional-agents` submodule is
     uninitialised (non-self-check mode) → prefixed references in that host's
     in-scope documents do not fail.
@@ -134,9 +141,10 @@ implementation lands.
 
 Revert the implementation commits; the script, `scripts/README.md`, and the
 bats file return to their pre-change state. The plan reverts with this branch
-if unmerged; if merged, a follow-up reconcile reverts the status rows and
-CHANGELOG marker in the same change. No instance data, no npm scripts, and
-no CI jobs are added, so rollback is content-only.
+if unmerged; if merged, rollback is itself a governed change — a new
+reconcile PR reverts the status rows and CHANGELOG marker (a merged plan
+document cannot be un-edited in place). No instance data, no npm scripts,
+and no CI jobs are added, so rollback is content-only.
 
 ## 6. Readiness Check
 
