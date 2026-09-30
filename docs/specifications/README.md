@@ -124,9 +124,9 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0029 | Executable layer for the GitHub binding — provisioning, initialisation, and audit commands | implemented |
 | FS-0028 | ADR supersession chain gate — machine-check superseded_by completeness | implemented |
 | FS-0030 | Claude Code runtime binding — the first agent-runtime binding under ADR-0039 | implemented |
-| FS-0031 | Governed-agent benchmark harness — reproducible functional + governance scoring | draft |
-| FS-0033 | Governance CI on stacked and non-trunk pull requests | draft |
-| FS-0034 | Consumer conformance doctor — read-only diagnostics for framework adoption | draft |
+| FS-0031 | Governed-agent benchmark harness — reproducible functional + governance scoring | implemented |
+| FS-0033 | Governance CI on stacked and non-trunk pull requests | implemented |
+| FS-0034 | Consumer conformance doctor — read-only diagnostics for framework adoption | implemented |
 | FS-0035 | Portable flow-report read-model — substrate-neutral governance visibility without a work-item binding | draft |
 | FS-0036 | Planning-field conventions for the GitHub binding — Priority, Iteration, Milestone semantics and read-only flow checks | draft |
 | FS-0037 | Vendor-prefixed reference resolution — close the submodule-citation blind spot in referenced-path checking | approved |

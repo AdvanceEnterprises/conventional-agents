@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0031
-status: draft
+status: implemented
 title: Governed-agent benchmark harness — reproducible functional + governance scoring
 owner: ajoeofalltrades
 test_required: true
@@ -20,7 +20,7 @@ supersedes: []
 requires: []
 tags: [benchmark, harness, governance, evaluation, reproducibility]
 created: 2026-09-07
-updated: 2026-09-07
+updated: 2026-09-30
 ---
 
 <!--
@@ -34,6 +34,20 @@ PARSING_HINTS:
 -->
 
 # Feature Spec: Governed-Agent Benchmark Harness
+
+## Status
+
+- Implemented
+
+Implemented 2026-09-11 via **PR #128** (governed-agent benchmark harness for
+issue #124). The implementation merged while this spec was `draft`; the status
+transition was deferred post-merge and reconciled by the maintenance tick
+(issue #178 — fourth instance of the #99/#125 fail-open family).
+
+## Plan Status
+
+- **PLAN-0037 is `implemented`** — reconciled in the same change (PR #128,
+  merged 2026-09-11).
 
 ## Summary
 

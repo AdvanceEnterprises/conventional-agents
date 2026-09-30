@@ -110,7 +110,7 @@ For this project (a documentation/standards kit), semver follows the
   step rather than shipped as a separate skill: a reader concluding they *do*
   need a binding immediately needs the authoring content, and the "no" branch is
   a short decision with no natural runnable example of its own.
-- **FS-0031: Governed-agent benchmark harness (draft)** — reproducible
+- **FS-0031: Governed-agent benchmark harness (implemented)** — reproducible
   functional + governance scoring for issue #124. `scripts/bench-run.sh`
   executes a versioned task card under a named condition in a disposable
   worktree and emits a JSON report separating functional success from
@@ -120,6 +120,24 @@ For this project (a documentation/standards kit), semver follows the
   scenarios), the `bench:run` npm script, and bats coverage
   (`test/FS-0031/bench-harness.bats`). No live model calls — the harness
   drives any command; wiring real agents is a later pilot concern.
+- **Governance CI now covers stacked and non-trunk pull requests (`FS-0033`).**
+  The `lint-docs` workflow's `pull_request` trigger no longer filters to
+  `trunk`, so a stacked PR whose base is a non-trunk branch receives the same
+  lint, status, freshness, and Bats signal as a trunk-based PR — previously it
+  silently received none. The `lint-cross-repo` job fetches the PR's actual
+  base ref before computing its commit range, and fork-safety is preserved (no
+  secrets, no `pull_request_target`). `skills/gh-pr-workflow/SKILL.md`
+  documents the behavior for reviewers.
+- **Consumer conformance doctor (`FS-0034`).** `npm run check:conformance`
+  ships `scripts/check-conformance.sh` — a read-only diagnostic that checks a
+  vendoring repository for framework presence (`vendor/conventional-agents/`),
+  AGENTS.md anchors, dangling vendor references, status-gate runnability, CI
+  wiring, and framework version reference. It reports findings and never
+  writes: target resolution follows `FS-0024`/`ADR-0033` (caller's working
+  directory or `CA_TARGET_REPO`), `--json` output is available for tooling,
+  and exit codes are stable (0/1/2). Optional tooling, not a Category 1
+  governance gate (`ADR-0015`) — deliberately not wired into CI as a failing
+  check.
 
 - **FS-0035: Portable flow-report read-model (draft)** — substrate-neutral
   governance visibility for issue #146: a versioned, read-only visibility

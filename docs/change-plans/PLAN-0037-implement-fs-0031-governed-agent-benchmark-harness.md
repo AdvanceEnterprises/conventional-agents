@@ -2,7 +2,7 @@
 type: change-plan
 role: implementer
 language: bash
-status: draft
+status: implemented
 related_specs: [FS-0031]
 approved_by: ""
 related_adrs: []
@@ -17,7 +17,7 @@ touches:
   - package.json
   - CHANGELOG.md
 created: 2026-09-07
-updated: 2026-09-07
+updated: 2026-09-30
 ---
 
 # PLAN-0037: Implement FS-0031 — Governed-agent benchmark harness
@@ -71,3 +71,8 @@ Implements the reproducible benchmark harness defined by FS-0031:
 - `npm test` passes (bats suite, including the new FS-0031 suite).
 - `npm run bench:run -- benchmark/task-cards/pilot-001.md baseline` runs
   end-to-end with a mock driver and produces a valid JSON report.
+
+## 7. Rollout
+
+- Shipped in **PR #128 (merged 2026-09-11)**; the governing FS/PLAN pair
+  statuses were reconciled post-merge by the maintenance tick (issue #178).

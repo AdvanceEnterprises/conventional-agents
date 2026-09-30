@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0034
-status: draft
+status: implemented
 title: Consumer conformance doctor — read-only diagnostics for framework adoption
 owner: ajoeofalltrades
 test_required: true
@@ -21,7 +21,7 @@ supersedes: []
 requires: []
 tags: [conformance, consumer, diagnostics, adoption, read-only]
 created: 2026-09-10
-updated: 2026-09-11
+updated: 2026-09-30
 ---
 
 <!--
@@ -38,7 +38,18 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Implemented
+
+Implemented 2026-09-30 via **PR #147** (read-only conformance doctor for
+issue [#142](https://github.com/Tais-Den/conventional-agents/issues/142)).
+The implementation merged while this spec was `draft`; the status
+transition was deferred post-merge and reconciled by the maintenance tick
+(issue #178 — fourth instance of the #99/#125 fail-open family).
+
+## Plan Status
+
+- **PLAN-0040 is `implemented`** — reconciled in the same change (PR #147,
+  merged 2026-09-30).
 
 ## Summary
 

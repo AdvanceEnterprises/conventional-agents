@@ -2,7 +2,7 @@
 type: change-plan
 role: implementer
 language: bash
-status: draft
+status: implemented
 related_specs: [FS-0034]
 approved_by: ""
 related_adrs: [ADR-0015, ADR-0033]
@@ -14,7 +14,7 @@ touches:
   - docs/specifications/README.md
   - docs/change-plans/README.md
 created: 2026-09-10
-updated: 2026-09-11
+updated: 2026-09-30
 ---
 
 # PLAN-0040: Implement FS-0034 — Consumer Conformance Doctor
@@ -25,7 +25,7 @@ updated: 2026-09-11
 * Related ADR ID(s): ADR-0015 (tool taxonomy and location boundaries),
   ADR-0033 (governance-gate target resolution and configuration)
 * Issue / PR Reference: #142 (feature: define an optional consumer
-  conformance doctor)
+  conformance doctor, implemented in **PR #147, merged 2026-09-30**)
 
 ## 2. Scope of Change
 
@@ -93,5 +93,5 @@ updated: 2026-09-11
 * Draft PR opened against trunk; CI runs the full gate chain.
 * Kimi K2.7 Code and Minimax M3 review sequentially; findings applied by
   the maintenance tick.
-* Human approval (ADR-0026) advances FS-0034/PLAN-0040 to `approved`;
-  implementation is already in the draft PR and lands on merge.
+* Shipped in **PR #147 (merged 2026-09-30)**; the governing FS/PLAN pair
+  statuses were reconciled post-merge by the maintenance tick (issue #178).
