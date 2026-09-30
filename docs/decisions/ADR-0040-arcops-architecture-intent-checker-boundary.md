@@ -65,7 +65,7 @@ not a framework component.
 ### Option A — In-framework script (like `check-conformance.sh`)
 
 Ship the checker as a framework script, registered in `package.json`, in the
-same shape as the consumer conformance doctor (`FS-0031`, draft — #147).
+same shape as the consumer conformance doctor (`FS-0034`, draft — #147).
 
 Uniform and strongly governed. It is a category error: the conformance doctor
 checks *adoption of the framework* and is therefore framework tooling; ArcOps
