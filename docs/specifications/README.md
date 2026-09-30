@@ -132,3 +132,4 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0037 | Vendor-prefixed reference resolution — close the submodule-citation blind spot in referenced-path checking | approved |
 | FS-0038 | Hermes kanban substrate binding for work item lifecycle | draft |
 | FS-0039 | Validation reproducibility contract — bounded, hermetic, and CI-parity framework checks | implemented |
+| FS-0040 | Governed-ID claim audit — local duplicate detection and cross-PR collision reporting | draft |
