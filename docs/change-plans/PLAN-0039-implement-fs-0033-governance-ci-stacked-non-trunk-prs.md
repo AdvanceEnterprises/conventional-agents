@@ -2,7 +2,7 @@
 type: change-plan
 role: implementer
 language: yaml
-status: draft
+status: implemented
 related_specs: [FS-0033]
 approved_by: ""
 related_adrs: [ADR-0012, ADR-0027]
@@ -13,7 +13,7 @@ touches:
   - "docs/specifications/README.md"
   - "docs/change-plans/README.md"
 created: 2026-09-10
-updated: 2026-09-10
+updated: 2026-09-30
 ---
 
 # PLAN-0039: Implement FS-0033 — Governance CI on Stacked and Non-Trunk PRs
@@ -24,7 +24,7 @@ updated: 2026-09-10
 * Related ADR ID(s): ADR-0012 (human merge gate), ADR-0027 (reserved-path
   self-approval rule)
 * Issue / PR Reference: #139 (enhancement: run governance CI on stacked and
-  non-trunk pull requests)
+  non-trunk pull requests, implemented in **PR #149, merged 2026-09-24**)
 
 ## 2. Scope of Change
 
@@ -87,4 +87,6 @@ updated: 2026-09-10
 * ADR-0027 reserves `.github/workflows/` for human approval; this PLAN exists
   to satisfy issue #139's acceptance criterion ("If the implementation changes
   reserved CI paths under ADR-0027, create the required FS/PLAN before
-  implementation") and remains `draft` until human approval.
+  implementation").
+* Shipped in **PR #149 (merged 2026-09-24)**; the governing FS/PLAN pair
+  statuses were reconciled post-merge by the maintenance tick (issue #178).

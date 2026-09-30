@@ -63,9 +63,9 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | PLAN-0035 | Implement FS-0029 Executable layer for the GitHub binding | FS-0029 | implemented |
 | PLAN-0028 | Implement FS-0028 ADR supersession chain gate | FS-0028 | implemented |
 | PLAN-0036 | Implement FS-0030 Claude Code runtime binding | FS-0030 | implemented |
-| PLAN-0037 | Implement FS-0031 Governed-agent benchmark harness | FS-0031 | draft |
-| PLAN-0039 | Implement FS-0033 Governance CI on stacked and non-trunk PRs | FS-0033 | draft |
-| PLAN-0040 | Implement FS-0034 Consumer conformance doctor | FS-0034 | draft |
+| PLAN-0037 | Implement FS-0031 Governed-agent benchmark harness | FS-0031 | implemented |
+| PLAN-0039 | Implement FS-0033 Governance CI on stacked and non-trunk PRs | FS-0033 | implemented |
+| PLAN-0040 | Implement FS-0034 Consumer conformance doctor | FS-0034 | implemented |
 | PLAN-0041 | Implement FS-0035 Portable flow-report read-model | FS-0035 | draft |
 | PLAN-0042 | Implement FS-0036 Planning-field conventions (Priority/Iteration/Milestone) | FS-0036 | draft |
 | PLAN-0043 | Implement FS-0037 Vendor-prefixed reference resolution | FS-0037 | draft |

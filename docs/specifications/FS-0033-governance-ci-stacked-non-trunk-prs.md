@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0033
-status: draft
+status: implemented
 title: Governance CI on stacked and non-trunk pull requests
 owner: ajoeofalltrades
 test_required: true
@@ -16,7 +16,7 @@ supersedes: []
 requires: []
 tags: [governance, ci, stacked-pr, pull-request, gates]
 created: 2026-09-10
-updated: 2026-09-10
+updated: 2026-09-30
 ---
 
 <!--
@@ -33,7 +33,17 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Implemented
+
+Implemented 2026-09-24 via **PR #149** (stacked-PR CI for issue #139). The
+implementation merged while this spec was `draft`; the status transition was
+deferred post-merge and reconciled by the maintenance tick (issue #178 —
+fourth instance of the #99/#125 fail-open family).
+
+## Plan Status
+
+- **PLAN-0039 is `implemented`** — reconciled in the same change (PR #149,
+  merged 2026-09-24).
 
 ## Summary
 
