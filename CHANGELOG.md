@@ -64,6 +64,25 @@ For this project (a documentation/standards kit), semver follows the
   per `FS-0022` §1d — the spec names `scripts/` — and staged with the draft
   package rather than held back, so reviewers see the consumer impact while
   the spec is under review.)
+- **FS-0040: Governed-ID claim audit (draft — `FS-0040`, `PLAN-0046`).**
+  Closes the governed-ID collision class in two layers. Locally,
+  `check-status.sh` learns to fail when two documents in one registry
+  resolve to the same `FS-NNNN` / `PLAN-NNNN` / `ADR-NNNN` ID — a
+  duplicate that passes the portable gate today (measured on trunk: an
+  injected FS, PLAN, or ADR duplicate leaves `check:status` at rc=0; the
+  cross-repo sweep catches the FS/PLAN subset only, and ADRs nowhere).
+  Cross-PR, a new read-only audit in the GitHub binding
+  (`npm run github:pr-claim-audit`) reports same-ID / different-path
+  claims among open pull requests — drafts included — and claims
+  colliding with the default branch under a different path, mirroring
+  the detection posture of the board audit. Tracks issue #179 (from
+  #174's closing recommendation; the last collision, `#148`/`#159` +
+  `#149`/`#173`, was resolved by hand). Consumer impact is the collision
+  class itself: a vendoring repository inherits the local duplicate
+  detection with its gate copy, and a silently-landed duplicate — two
+  `FS-00NN-*` files, an index row lost to merge order — is precisely the
+  drift that reaches downstream adopters. (Consumer-framed per `FS-0022`
+  §1d — the spec names `scripts/` — and staged with the draft package.)
 - **`INTEGRATION.md` documents the version-to-version upgrade path.** The
   Migration Guides carried "no standards → framework", "copy-in → submodule",
   and "submodule → fork" transitions, but nothing for a consumer already
