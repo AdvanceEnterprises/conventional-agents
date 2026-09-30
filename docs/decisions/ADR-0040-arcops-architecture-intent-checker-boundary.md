@@ -8,7 +8,7 @@ related_specs:
   - FS-0032
 superseded_by: null
 created: 2026-09-10
-updated: 2026-09-10
+updated: 2026-09-30
 ---
 
 # ADR-0040: ArcOps architecture-intent checker boundary
