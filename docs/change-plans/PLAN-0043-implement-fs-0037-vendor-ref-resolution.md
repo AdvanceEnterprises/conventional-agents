@@ -10,6 +10,7 @@ touches:
   - scripts/check-status.sh
   - scripts/README.md
   - test/FS-0037/vendor-ref-resolution.bats
+  - docs/specifications/FS-0037-vendor-ref-resolution.md
   - docs/specifications/README.md
   - docs/change-plans/README.md
   - CHANGELOG.md
@@ -56,12 +57,29 @@ the record described in §3 exists):
     (repo root, bare-after-strip, naming document's directory), and Bash 3.2
     compatibility (no new npm script or CI job).
 * Document the extended rule in `scripts/README.md` (rule 8 entry).
+* Reconcile `FS-0037`'s **SC-2 parenthetical** with its own
+  `§Problem/Evidence` measurement: SC-2 quotes `92 / 39 / 24`, but 92 is the
+  `docs/`-extended sensitivity figure for conventional-agents while 39 / 24
+  are the rule-8-set figures for feral-fleet / pack-protocol — the criterion
+  mixes two measurement sets. The revision aligns the parenthetical to the
+  rule-8 set (`64 / 39 / 24`, as measured 2026-09-22) so the bats case and
+  the spec assert against one number; the spec file is declared in
+  `touches:` for this purpose, and the edit is part of the implementation
+  commits, under the §3 record.
 * Add `test/FS-0037/vendor-ref-resolution.bats` covering SC-1..SC-7 on the
   disposable-worktree fixture pattern of `test/FS-0022/gate-coverage.bats`.
 * On the status flips that follow: the revision's recorded approval flips
   this plan to `approved` (index row synced); once the implementation is in
   and verified, `FS-0037` and this plan flip to `implemented`, both index
   rows sync, and the CHANGELOG marker updates per rule 7 house practice.
+  This is a **single-PR implementation**, so the plan transitions
+  `approved → implemented` **directly** —
+  `workflows/document-lifecycle.md` §"Single-PR implementations" permits
+  this, and **no `in-progress` flip commit is written**: any commit touching
+  this plan file after the record would leave the most recent touching
+  commit without the approval trailer and void the record under rule 6,
+  because rule 6 inspects only the most recent commit touching this file
+  while the plan is at `approved`/`in-progress`.
   Issue #165 resolves with an evidence comment naming the implementing PR
   and its merge commit once the gate is on trunk — its originating suggest
   is fully delivered only then.
@@ -92,8 +110,11 @@ not carry an approval forward to this one, and why this revision must be
 approved before the implementation commits are written. The maintainer's
 next act is to approve this revision; the record is an `Approved-By:`
 trailer on the commit that flips `status:` to `approved`, whose email
-differs from that commit's author — the same recorded-approval shape
-`FS-0037`'s own approval used in PR #175.
+differs from that commit's author **and appears in this plan's front-matter
+`approved_by:` field** — rule 6 mechanically requires all three (field,
+trailer, author-mismatch), so the record commit and the front matter are
+edited together. This is the same recorded-approval shape `FS-0037`'s own
+approval used in PR #175.
 
 The implementation commits then follow under that record — `FS-0037`'s
 §"Plan Status" names the shape: "the implementing PR opens separately and
@@ -111,8 +132,10 @@ implementation lands.
     the document and the reference.
   * SC-2: resolving prefixed reference → pass on the clean tree (the three
     repositories' currently-resolving prefixed references produce no
-    failures; the count bar is owned by FS-0037 §Problem/Evidence, so the
-    case cites the spec rather than restating the numbers).
+    failures; the count bar is owned by FS-0037 §Problem/Evidence — the
+    rule-8-set figures, `64 / 39 / 24` as measured 2026-09-22 — and the
+    same change reconciles SC-2's parenthetical to that figure, so the
+    bats case and the spec assert against one number).
   * SC-3: any other `vendor/*` phantom (e.g. `vendor/madr/template.md`) →
     skip, not fail — asserted for self-check and non-self-check modes.
   * SC-4: placeholder forms and prose anti-examples → not flagged.
@@ -130,7 +153,9 @@ implementation lands.
   Fixture pattern: the disposable-worktree shape of
   `test/FS-0022/gate-coverage.bats` (mutate → run gate → assert → restore);
   the non-self-check cases use the scratch-host shape of
-  `test/FS-0024/portable-gates.bats`.
+  `test/FS-0024/portable-gates.bats`, asserting self-check and
+  non-self-check modes as **distinct** cases (the FS-0024 precedent is a
+  one-shot shape, not a paired assertion).
 
 * Manual verification (implementation commits):
   * Inject `vendor/conventional-agents/guidelines/NEVER-EXISTED.md` into
@@ -153,4 +178,6 @@ and no CI jobs are added, so rollback is content-only.
 * [ ] This revision's own recorded approval (reserved paths) — the
   maintainer's next act
 * [x] Tests are defined per SC (section 4)
-* [x] Scope is minimal, explicit, and within `FS-0037`'s `interfaces:` set
+* [x] Scope is explicit; every reserved-path and out-of-union entry in
+  `touches:` (the `scripts/` pair and the FS-0037 spec file) routes
+  approval to the maintainer's recorded act (§3)
