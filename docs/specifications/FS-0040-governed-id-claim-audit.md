@@ -117,15 +117,17 @@ scenario an injected copy of an existing document):
 | Duplicate PLAN token (two files, same token) | **passes** (rc=0 — gap) | fails (rc=1) |
 | Duplicate ADR id (two files, same id) | **passes** (rc=0 — gap) | **passes** (rc=0 — gap) |
 
-So today: ADR duplicates are caught by no layer at all; FS/PLAN duplicates
-are caught only by `cross-repo-lint.sh` check 3, which runs when its
-repo-discovery inputs (`CA_TARGET_REPO` / `CA_REPO_DIRS`) are supplied — a
-bare run from a repository root failed to locate any repos in a clean clone
-(`ERROR: Could not locate any repos`) — and which is not the gate run on
-every commit, while `check:status` is (per `ROLE_CONTRACT`'s pre-commit
-testing gate and the `check-status` CI job). The repository's own corpus has
-no duplicates today in any registry (all 37 FS, 38 PLAN, and 43 ADR IDs
-resolve uniquely), so both layers ship green.
+So today: **ADR duplicates are caught by no layer at all.** FS/PLAN
+duplicates are caught by `cross-repo-lint.sh` check 3 alone — a check that
+runs in this repository's CI (the `lint-cross-repo` job supplies
+`CA_REPO_DIRS`) and that requires repo-discovery inputs or the sibling-repo
+layout for a local run (a bare run from a clean clone failed repo discovery:
+`ERROR: Could not locate any repos`). It is not the portable gate:
+`check:status` is, and it runs on every commit (per `ROLE_CONTRACT`'s
+pre-commit testing gate) and in every consumer that vendors it — a consumer
+wiring only the portable gate has no duplicate protection at all. The
+repository's own corpus has no duplicates today in any registry (all 37 FS,
+38 PLAN, and 43 ADR IDs resolve uniquely), so both layers ship green.
 
 Why the local layer is not optional: the cross-PR audit runs only where a
 consumer wires it. A duplicate introduced by a PR merged without the audit,
