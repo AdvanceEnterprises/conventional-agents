@@ -286,7 +286,9 @@ consumer-impact CHANGELOG entries.
    - In a **consumer run**, it resolves through the host's own
      `vendor/conventional-agents/` checkout — and keeps the skip (not a
      failure) when that submodule is uninitialised, which is the FS-0022 §1c
-     exclusion, now applied at the submodule rather than at the prefix.
+     exclusion, now applied at the submodule rather than at the prefix. The
+     bare-after-strip fallback is self-check-only: a same-named file at the
+     host's own root does not satisfy a vendored citation.
    - The three exported-surface documents (`INTEGRATION.md`, `README.md`,
      `AGENTS.md`) also resolve **non-backticked** occurrences of the prefix,
      with a conservative token shape: a required lowercase file extension

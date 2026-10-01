@@ -220,10 +220,13 @@ they are two halves of the same blind spot.
   NON-backticked occurrence of `vendor/conventional-agents/<path>` where
   `<path>` is concrete (has a file extension, no angle brackets, no
   ellipsis, no glob) and does not exist, when the check runs, then it fails
-  and names the reference; the worked check is that reintroducing the six
-  #163 phantoms into `INTEGRATION.md` — all six, as enumerated in #163 and
-  tabulated in the Problem/Evidence table above — each fails the gate. The
-  bar is all six, not "any one": the bats case iterates the enumerated list.
+  and names the reference; the worked check is that reintroducing the #163
+  phantoms into `INTEGRATION.md` — the five concrete path tokens enumerated in
+  #163 and tabulated in the Problem/Evidence table above — each fails the
+  gate. The bar is all five concrete tokens, not "any one": the bats case
+  iterates the enumerated list. The sixth list item, the `<REPO_URL>`
+  placeholder, is not a path token; the case asserts its non-extraction under
+  SC-4's placeholder exemption.
 - **SC-6** Given a host repository whose `vendor/conventional-agents`
   submodule is not initialised, when a vendored `check-status.sh` runs in
   non-self-check mode against it, then prefixed references in that host's
@@ -250,8 +253,14 @@ they are two halves of the same blind spot.
   double-report.
 - A document in a subdirectory referencing the prefix (e.g.
   `skills/x/SKILL.md` citing `vendor/conventional-agents/...`) keeps the
-  existing three-way resolution order: repo root, bare-after-strip, then the
-  naming document's own directory.
+  existing resolution order: repo root, then the naming document's own
+  directory — with the bare-after-strip step applying in self-check only
+  (see the collision rule below).
+- In a host run, a prefixed reference resolves through the host's own
+  `vendor/conventional-agents/` checkout only. A same-named file at the
+  host's own bare path does not satisfy the citation: the citation is a
+  claim about the framework checkout, not the host's own tree (Copilot
+  review, PR #193).
 
 ## Out of Scope
 

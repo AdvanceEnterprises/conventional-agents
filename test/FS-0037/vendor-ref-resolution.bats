@@ -254,6 +254,27 @@ EOF
   echo "$output" | grep -F "NEVER-EXISTED-HOST"
 }
 
+# --- Edge: host resolution cannot be satisfied by the host's own tree --------
+
+@test "edge: a host file at the bare path does not satisfy a vendored citation (collision)" {
+  # Copilot review, PR #193: the strip-prefix fallback ran in host mode too,
+  # resolving `vendor/conventional-agents/<path>` against the HOST's own root —
+  # so a phantom vendored citation passed whenever the host happened to carry
+  # its own file at the same bare path (`guidelines/tests.md` is one of the
+  # #163 phantoms and a plausible host-local file name). The citation names
+  # the framework file; only the vendored checkout can satisfy it. Pre-fix
+  # this case passed silently (rc=0); post-fix it fails naming the reference.
+  local host="$BATS_TEST_TMPDIR/host-collision"
+  build_scratch_host "$host" initialised
+  mkdir -p "$host/guidelines"
+  printf '# Host-local tests doc — not the framework file\n' > "$host/guidelines/tests.md"
+  printf '# Host\n\nSee vendor/conventional-agents/guidelines/tests.md for details.\n' > "$host/README.md"
+  stage_host "$host"
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -F "vendor/conventional-agents/guidelines/tests.md"
+}
+
 # --- SC-7: REF_EXEMPT / ref_exempt honoured exactly --------------------------
 
 @test "sc7: a self-check REF_EXEMPT entry is honoured for a prefixed reference" {

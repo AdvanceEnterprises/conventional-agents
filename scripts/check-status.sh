@@ -1033,9 +1033,16 @@ while IFS= read -r doc; do
       vendor/*) continue ;;                # uninitialised submodule (FS-0022 §1c)
     esac
     # Consumers reference framework files through vendor/conventional-agents/.
-    bare=${ref#vendor/conventional-agents/}
+    # The prefix strips only for self-check; in a host run the bare form would
+    # resolve against the HOST's own root, so a phantom vendored citation would
+    # pass whenever the host happens to carry its own file at the same bare
+    # path (Copilot review, PR #193). Host runs resolve through the vendored
+    # checkout only.
     [ -e "$REPO_ROOT/$ref" ] && continue
-    [ -e "$REPO_ROOT/$bare" ] && continue
+    if is_self_check; then
+      bare=${ref#vendor/conventional-agents/}
+      [ -e "$REPO_ROOT/$bare" ] && continue
+    fi
     [ "$doc_dir" != "." ] && [ -e "$REPO_ROOT/$doc_dir/$ref" ] && continue
     case "$planned_paths_str" in *$'\n'"$ref"$'\n'*) continue ;; esac
     ref_exempt "$doc" "$ref" && continue
