@@ -202,10 +202,11 @@ Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implement
 
   [ "$status" -ne 0 ]
   echo "$output" | grep -qF "unavailable locally"
-  # Assert on the check-1 success line by its unique phrase, not its literal
-  # "OK   " spacing: the phrase only appears when the attribution check runs
-  # and finds nothing, which is precisely what must not happen here.
-  ! echo "$output" | grep -qF "correct attribution format"
+  # Assert on the check-1 success line for THIS repo by its structural shape
+  # (OK + repo name), not a prose phrase — robust to summary rewording while
+  # still guarding the exact failure mode: pre-fix, the audit loop iterated
+  # zero commits and printed its per-repo OK line.
+  ! echo "$output" | grep -qE "OK[[:space:]]+nullrange"
 }
 
 @test "range: an empty but resolvable range still audits nothing and passes (caller's declaration)" {
@@ -220,7 +221,7 @@ Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implement
 
   run env CA_TARGET_REPO="$repo" COMMIT_RANGE="$head..$head" bash "$LINT_SCRIPT"
 
-  echo "$output" | grep -qF "correct attribution format"
+  echo "$output" | grep -qE "OK[[:space:]]+emptyrange"
   ! echo "$output" | grep -qF "unavailable locally"
 }
 
