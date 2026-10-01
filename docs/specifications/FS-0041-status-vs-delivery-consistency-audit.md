@@ -11,6 +11,8 @@ interfaces:
   - "package.json"
   - ".github/workflows/lint-docs.yml"
   - "test/FS-0041/**"
+  - "docs/specifications/FS-0041-status-vs-delivery-consistency-audit.md"
+  - "docs/change-plans/PLAN-0047-implement-fs-0041-status-vs-delivery-consistency-audit.md"
   - "docs/specifications/README.md"
   - "docs/change-plans/README.md"
   - "CHANGELOG.md"
@@ -70,10 +72,10 @@ The class has recurred in at least five documented forms:
 
 | Instance | Drift | Resolution |
 | --- | --- | --- |
-| #82 | FS-0004 / PLAN-0002 remained draft after delivery | small reconciliation PR |
-| #107 | PLAN-0034 remained stale after ADR-0034 consolidation | small reconciliation PR |
-| #99 | FS-0026/0027 and PLAN-0026/0027 remained draft after PRs #88/#92/#95 | reconciliation in the #100-era work |
-| #125 | FS-0028/0029 and PLAN-0028/0035 remained draft after implementation PRs | reconciliation in the #126-era work |
+| #82 | FS-0004 / PLAN-0002 remained draft after delivery | reconciled by PR #83 |
+| #107 | PLAN-0034 remained stale after ADR-0034 consolidation | dispositioned in PR #112; PLAN-0034 deprecated when ADR-0034 was superseded |
+| #99 | FS-0026/0027 and PLAN-0026/0027 remained draft after PRs #88/#92/#95 | reconciled by PR #100 |
+| #125 | FS-0028/0029 and PLAN-0028/0035 remained draft after implementation PRs | reconciled by PR #126 |
 | #178 | FS-0031/0033/0034 and PLAN-0037/0039/0040 remained draft after delivery | reconciled by PR #180 and its companion merges |
 
 The existing status gate intentionally catches the forward pairing (`implemented`
@@ -181,6 +183,11 @@ is complete and whether the FS/PLAN status should advance.
     tracking surfaces.
 
 ## Success Criteria
+
+*Note: exact numeric exit codes are fixed by the implementation revision
+(PLAN-0047) and asserted there. The criteria below define required behavior —
+non-zero on a finding, a distinct code for unavailable history — not the
+specific numbers.*
 
 - **SC-1 — delivered draft is reported.** Given a disposable repository with a
   non-implemented FS/PLAN pair, a non-document implementation path in the

@@ -85,15 +85,14 @@ For this project (a documentation/standards kit), semver follows the
   drift that reaches downstream adopters. (Consumer-framed per `FS-0022`
   §1d — the spec names `scripts/` — and staged with the draft package.)
 - **FS-0041: Status-vs-delivery consistency audit (draft — `FS-0041`,
-  `PLAN-0047`).** Proposes a conservative, offline report that catches the
-  opposite side of the lifecycle pairing gate: an FS/PLAN pair that remains
-  `draft` or `approved` after every declared implementation-surface path has
-  qualifying post-plan Git history, the applicable test suite, and a
-  consumer-framed CHANGELOG marker. It reports evidence and a remediation
-  candidate without changing document status, calling GitHub, or treating file
-  existence alone as proof. The documentation package tracks issue #188; the
-  executable audit, npm entry, CI wiring, and Bats suite require a separate
-  approved implementation revision because they touch reserved paths.
+  `PLAN-0047`).** Proposes a conservative, offline, report-only audit for the
+  opposite side of the lifecycle pairing gate: a pair that remains `draft` or
+  `approved` after its declared implementation surface has shipped. Findings
+  rest on post-plan Git history, the required test suite, and a CHANGELOG
+  marker — never file existence alone — and never change a document's status.
+  The package tracks issue #188. The executable audit, npm entry, CI wiring,
+  and Bats suite arrive in a separate implementation revision because they
+  touch `ADR-0027` reserved paths and need their own recorded approval.
 - **`INTEGRATION.md` documents the version-to-version upgrade path.** The
   Migration Guides carried "no standards → framework", "copy-in → submodule",
   and "submodule → fork" transitions, but nothing for a consumer already
