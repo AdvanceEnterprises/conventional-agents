@@ -292,7 +292,8 @@ EOF
 @test "target_guard: a bare git repository is rejected with its own message (issue #202)" {
   # A bare repository IS a git repository, just one without a working tree to
   # scaffold into — the error must say so rather than reusing the generic
-  # non-git wording (mirrors the check-freshness.sh diagnostic from #200).
+  # non-git wording (the same diagnostic the sibling #200 fix specifies for
+  # check-freshness.sh; that PR is in review at this commit).
   local scratch="$BATS_TEST_TMPDIR/scratch"
   build_scratch "$scratch"
   write_adr_fixture "$scratch"
@@ -312,7 +313,8 @@ EOF
 @test "target_guard: a missing git binary is named as such, not blamed on the directory (issue #202)" {
   # With git absent from PATH the guard's probes return empty and the directory
   # would be blamed for an environment problem. The environment check must
-  # pre-empt that (mirrors check-freshness.sh, #200).
+  # pre-empt that (the same diagnostic the sibling #200 fix specifies for
+  # check-freshness.sh; that PR is in review at this commit).
   local scratch="$BATS_TEST_TMPDIR/scratch"
   build_scratch "$scratch"
   write_adr_fixture "$scratch"

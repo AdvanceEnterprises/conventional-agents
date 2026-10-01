@@ -108,7 +108,10 @@ fi
 # directory; argument errors keep their precedence over the environment error.
 # A bare repository gets its own message (it is a repository, just one with no
 # working tree to scaffold into); a missing git binary is named as such rather
-# than blamed on the directory (mirrors check-freshness.sh, issue #199).
+# than blamed on the directory — the same two diagnostics the sibling gate
+# fixes specify alongside the work-tree guard (#198 for check-status.sh and
+# cross-repo-lint.sh, #200 for check-freshness.sh; both in review at this
+# commit — this PR lands the write-side guard first).
 if ! command -v git >/dev/null 2>&1; then
   echo "ERROR: 'git' was not found on PATH — new-plan needs git to resolve the target repository." >&2
   exit 1
