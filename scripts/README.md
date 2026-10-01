@@ -160,6 +160,13 @@ to know that one of the three scripts already happened to get it right.
 ADR structural completeness, PLAN `touches:` containment, and
 consumer-impact CHANGELOG entries.
 
+**Target requirement.** The resolved target must be inside a git working tree;
+a run outside one is a hard error naming the directory (issue #194). Before
+this guard, the `pwd` fallback let the script proceed against a directory that
+was not a repository at all — the git-backed rules failed in silence while the
+document checks only warned — and then printed the success line: exit 0 for a
+check that enforced nothing.
+
 **When it runs.**
 
 - On every commit (pre-commit testing gate per `ROLE_CONTRACT`).
@@ -232,6 +239,13 @@ consumer-impact CHANGELOG entries.
    it is a real, honored declaration that this repository has nothing needing
    the protection, and the check evaluates self-approval against `interfaces:`
    containment alone in that case.
+
+   This repository grandfathers its own pre-ADR-0027 plans (`PLAN-0001`–
+   `PLAN-0017`), but **only when checking itself** (issue #195). A consumer
+   repository's identically-numbered plans are evaluated normally — the
+   exemption list names this repository's history, which no host repository
+   inherits, and the first seventeen plan numbers are where a new repository's
+   plans are most likely to propose scope no human sanctioned.
 7. **Consumer-impact CHANGELOG entry.** An FS at `approved` or beyond whose
    `interfaces:` names an exported-surface path must have a `CHANGELOG.md`
    entry naming it. Presence is checked; framing is a review judgment.
@@ -457,7 +471,11 @@ finding zero repositories is a hard failure, never a silent pass.
 **Config.**
 - `COMMIT_RANGE` — git log range for the attribution check. Explicit ranges
   must already exist locally; the script never fetches a remote and fails
-  closed if either endpoint is unavailable. Without an override, the default is
+  closed unless the range resolves (issue #194). The *whole range* is
+  resolved — not its endpoints separately — so a null-hash endpoint (the
+  shape GitHub produces for `github.event.before` on a new-branch push) is
+  rejected rather than silently auditing zero commits and reporting OK.
+  Without an override, the default is
   the OLDER of the newest `v*`-tagged release reachable from the default
   branch (via `git describe --first-parent`, keeping the anchor on the
   release line) and the `ATTRIBUTION_MIN_ANCHOR` floor, when either

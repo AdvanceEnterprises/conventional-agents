@@ -38,6 +38,20 @@ else
   REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 fi
 
+# The resolved root must be a git work tree (issue #194). The `|| pwd` fallback
+# above covers a caller inside a work tree whose top-level resolution needed it;
+# outside one it manufactured a root for a directory that is not a repository at
+# all — every git-backed rule then failed in silence while the document checks
+# warned only, and the script printed the success line: exit 0 for a check that
+# enforced nothing. A CI job or maintainer running from the wrong directory must
+# see a loud error instead.
+if [ "$(git -C "$REPO_ROOT" rev-parse --is-inside-work-tree 2>/dev/null)" != "true" ]; then
+  echo "ERROR: '$REPO_ROOT' is not inside a git working tree." >&2
+  echo "       Run this script from within the repository it should check, or set" >&2
+  echo "       CA_TARGET_REPO to that repository's working tree. (issue #194)" >&2
+  exit 1
+fi
+
 # True when this run is the framework checking itself — every invocation this
 # repository makes of its own scripts, including its own CI and its own bats
 # suites. False when a vendored copy is checking a host repository. Rules 6 and 7
@@ -661,16 +675,26 @@ for plan_file in "$PLAN_DIR"/PLAN-*.md; do
   # could exempt itself by claiming an earlier date. An explicit list cannot be extended
   # from inside a plan file.
   #
+  # Scoped to the self-check path (issue #195). The list names THIS repository's
+  # historical plans, but it applied in every consumer run too — where PLAN-0001 is
+  # not a framework artifact but the first plan a consumer ever writes, so a vendored
+  # copy silently skipped containment and reserved-path checks on the first seventeen
+  # plan numbers of every host repository: the numbers where a new repository's plans
+  # are most likely to propose scope no human sanctioned. A consumer cannot inherit
+  # this repository's history; the safe default is to enforce.
+  #
   # Add an entry only when a real historical approval needs grandfathering, and say why.
-  case "$plan_name" in
-    PLAN-0001-*|PLAN-0002-*|PLAN-0003-*|PLAN-0004-*|PLAN-0005-*|PLAN-0006-*|\
-    PLAN-0007-*|PLAN-0008-*|PLAN-0009-*|PLAN-0010-*|PLAN-0011-*|PLAN-0012-*|\
-    PLAN-0013-*|PLAN-0014-*|PLAN-0015-*|PLAN-0016-*|PLAN-0017-*)
-      # Approved before ADR-0027 existed; these carry no touches: field because the
-      # rule did not exist when they were written.
-      continue
-      ;;
-  esac
+  if is_self_check; then
+    case "$plan_name" in
+      PLAN-0001-*|PLAN-0002-*|PLAN-0003-*|PLAN-0004-*|PLAN-0005-*|PLAN-0006-*|\
+      PLAN-0007-*|PLAN-0008-*|PLAN-0009-*|PLAN-0010-*|PLAN-0011-*|PLAN-0012-*|\
+      PLAN-0013-*|PLAN-0014-*|PLAN-0015-*|PLAN-0016-*|PLAN-0017-*)
+        # Approved before ADR-0027 existed; these carry no touches: field because the
+        # rule did not exist when they were written.
+        continue
+        ;;
+    esac
+  fi
 
   # The PLAN must have a touches: field — absence is a violation.
   touches_lines=$(get_list_field "$plan_file" "touches")

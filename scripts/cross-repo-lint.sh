@@ -166,11 +166,15 @@ for REPO in "${REPOS[@]}"; do
     fi
   fi
 
-  # Test range endpoints separately (git rev-parse --verify only accepts single revs).
-  RANGE_START="${RANGE%..*}"
-  RANGE_END="${RANGE##*..}"
-  if ! git -C "$REPO" rev-parse --verify "$RANGE_START" >/dev/null 2>&1 || \
-     ! git -C "$REPO" rev-parse --verify "$RANGE_END" >/dev/null 2>&1; then
+  # Resolve the range itself, not its two endpoints (issue #194). `git rev-parse
+  # --verify` accepts a single rev, and the null object hash resolves as one —
+  # but `git rev-list "<null>..HEAD"` fails, so an endpoint-wise check passed
+  # while the audit loop iterated zero commits and printed OK, which is exactly
+  # the shape GitHub produces for `github.event.before` on a new-branch push.
+  # Requiring the range to resolve fails whenever either endpoint is unusable;
+  # a genuinely empty range (A == B) still resolves and audits nothing, as the
+  # caller declared.
+  if ! git -C "$REPO" rev-list --max-count=1 "$RANGE" >/dev/null 2>&1; then
     err "$REPO_NAME: commit range $RANGE is unavailable locally; fetch or prepare the refs before running cross-repo lint"
     continue
   fi
