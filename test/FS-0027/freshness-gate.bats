@@ -173,11 +173,19 @@ teardown() {
   # MM3 round-B observation (issue #199): with git absent from PATH the guard's
   # `2>/dev/null` probes return empty and the directory gets blamed for an
   # environment problem. The environment check must pre-empt that.
+  # Copilot review, PR #200: the fake PATH must keep the tools the script uses
+  # BEFORE the git check reachable (`dirname` at the top of the script), or the
+  # run emits an unrelated `dirname: command not found` that the assertion
+  # would sail past; and the assertion must reject the generic work-tree blame
+  # so this case isolates the diagnostic it names.
   local fakebin="$BATS_TEST_TMPDIR/fakebin"
   mkdir -p "$fakebin"
   ln -s "$(command -v bash)" "$fakebin/bash"
+  ln -s "$(command -v dirname)" "$fakebin/dirname"
 
   run env PATH="$fakebin" bash "$CHECK"
   [ "$status" -eq 1 ]
   echo "$output" | grep -qF "git' was not found on PATH"
+  ! echo "$output" | grep -qF "not inside a git working tree"
+  ! echo "$output" | grep -qF "command not found"
 }
