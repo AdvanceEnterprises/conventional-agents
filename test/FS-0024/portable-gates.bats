@@ -142,6 +142,25 @@ EOF
   ! echo "$output" | grep -qF "All status checks passed."
 }
 
+@test "target_resolution: a CA_TARGET_REPO naming a subdirectory maps to the work-tree top level (issue #194 class, Copilot #198)" {
+  # Copilot review, PR #198: a subdirectory path satisfies the
+  # is-inside-work-tree membership check, but every document path roots at
+  # the subdirectory — the loops then audit nothing and the script prints the
+  # success line. Pre-fix this shape exited 0 with "All status checks
+  # passed." against a target whose real documents (here: a broken spec at
+  # the host root) were never examined. Post-fix the subdirectory maps to
+  # the work-tree top level before any path is built.
+  local host="$BATS_TEST_TMPDIR/host-subdir"
+  build_scratch_host "$host"
+  write_broken_spec "$host"
+  mkdir -p "$host/some/nested/dir"
+
+  run bash -c "cd '$REPO_ROOT' && CA_TARGET_REPO='$host/some/nested/dir' bash '$CHECK'"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "FS-9001"
+  ! echo "$output" | grep -qF "All status checks passed."
+}
+
 @test "target_resolution: this repository's own invocation is unaffected" {
   # npm run check:status shape: cwd already at the repository being checked,
   # no override. Must still exit zero on this repository's own (clean) trunk.

@@ -641,8 +641,9 @@ For this project (a documentation/standards kit), semver follows the
 ### Fixed
 
 - **Three vendored-gate fail-open paths now fail closed (issues #194, #195).**
-  Each of these reported success while auditing nothing, so a consumer's CI
-  could receive green from a gate that never ran:
+  Each of these could report success while skipping all or part of the audit
+  it exists to perform, so a consumer's CI could receive green from a gate
+  that never (fully) ran:
   - `scripts/check-status.sh` **exits non-zero when run outside a git working
     tree** (#194, case 1). The `pwd` fallback manufactured a root for a
     non-repository directory, the git-backed rules failed silently, and the
@@ -664,9 +665,14 @@ For this project (a documentation/standards kit), semver follows the
     reserved-path checks on a consumer's first seventeen plan numbers, which
     is exactly where the self-approval rule is most needed. Consumers cannot
     inherit this repository's history; the safe default is to enforce.
-  Regression coverage: three new cases in `test/FS-0024/portable-gates.bats`
-  and two in `test/FS-0017/attribution-diagnostic.bats`, each asserting the
-  loud failure against the pre-fix silent pass.
+  Regression coverage: four new cases in `test/FS-0024/portable-gates.bats`
+  (the non-git-cwd and nested-target loud failures, plus the two consumer
+  PLAN-0001 cases — one against the reserved set, one outside interfaces) and
+  two in `test/FS-0017/attribution-diagnostic.bats` — the null-hash range
+  failing closed, and the empty-but-resolvable range (`A == B`) preserving the
+  caller's declared audit-nothing behavior with an explicit zero-exit
+  assertion; each fail-closed case asserts the loud failure against the
+  pre-fix silent pass.
 - **`gh-board-audit.sh` reported every pull-request item as field drift
   (#171).** Rows were serialised tab-delimited and parsed with `IFS=$'\t'`.
   Tab is IFS *whitespace*, so the empty `number`/`repository` cells on

@@ -165,7 +165,12 @@ a run outside one is a hard error naming the directory (issue #194). Before
 this guard, the `pwd` fallback let the script proceed against a directory that
 was not a repository at all — the git-backed rules failed in silence while the
 document checks only warned — and then printed the success line: exit 0 for a
-check that enforced nothing.
+check that enforced nothing. A target that names a subdirectory of a work tree
+is mapped to that work tree's top level before any document path is built
+(Copilot review, PR #198): a subdirectory satisfies the membership check while
+rooting every path below itself, so the loops would audit nothing and still
+print the success line. Resolution is repository-relative (`ADR-0033`) — the
+target names a repository, not a directory within one.
 
 **When it runs.**
 
