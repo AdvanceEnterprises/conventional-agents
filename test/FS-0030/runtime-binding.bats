@@ -167,6 +167,13 @@ SYNC_ABS="$BATS_TEST_DIRNAME/../../integrations/runtimes/claude-code/bin/sync-sk
     [ "$status" -eq 0 ]
     ! echo "$output" | grep -qF "nothing to audit"
     [[ "$output" == *"[warn]"* ]]   # the root's real .claude/ was audited
+    # Copilot review, PR #205: this fixture also exercises the summary-helper
+    # recovery path (the target has no binding tree, so the probe falls back
+    # to the script's own lib). Assert the promised summary line is emitted
+    # and no command-resolution error appears — otherwise a helper-resolution
+    # regression would still pass this case.
+    [[ "$output" == *"summary:"* ]]
+    ! echo "$output" | grep -qF "command not found"
 }
 
 @test "target: sync fails loudly from a non-git cwd and writes nothing (issue #204)" {
@@ -186,9 +193,26 @@ SYNC_ABS="$BATS_TEST_DIRNAME/../../integrations/runtimes/claude-code/bin/sync-sk
     fakebin="$BATS_TEST_TMPDIR/sync-fakebin"
     mkdir -p "$fakebin"
     ln -s "$(command -v bash)" "$fakebin/bash"
+    ln -s "$(command -v dirname)" "$fakebin/dirname"
     run env PATH="$fakebin" bash "$SYNC_ABS"
     [ "$status" -eq 2 ]
     [[ "$output" == *"git' was not found on PATH"* ]]
+    ! echo "$output" | grep -qF "not inside a git working tree"
+    ! echo "$output" | grep -qF "command not found"
+}
+
+@test "target: sync rejects a bare repository with its own diagnostic (issue #204)" {
+    # Copilot review, PR #205: the sync guard duplicates the bare-repository
+    # branch and had no case of its own — the audit's bare-repo test cannot
+    # catch a regression in sync's copy.
+    bare="$BATS_TEST_TMPDIR/sync-bare.git"
+    ( cd "$BATS_TEST_TMPDIR" && git init -q --bare "$bare" )
+    run env CA_TARGET_REPO="$bare" "$TEST_BASH" "$SYNC"
+    [ "$status" -eq 2 ]
+    [[ "$output" == *"bare git repository"* ]]
+    ! echo "$output" | grep -qF "not inside a git working tree"
+    # nothing was synced into the bare repository
+    [ ! -d "$bare/integrations" ]
 }
 
 @test "target: sync maps a subdirectory target to the work-tree top level (issue #204)" {
