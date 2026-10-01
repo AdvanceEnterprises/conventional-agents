@@ -35,6 +35,9 @@ These commands are **not Category 1 governance gates**. They sync skill copies
 into the binding and audit `.claude/` conformance, both report-only/advisory by
 design — see `integrations/runtimes/claude-code/README.md` for the audit's exit
 semantics (`--strict` is an opt-in signal for scripts, not a CI blocking gate).
+Both resolve their target repository from the caller's working directory
+(`CA_TARGET_REPO` overriding, per `FS-0024`/`ADR-0033`); a target git disclaims
+is a loud error on exit 2, distinct from findings — issue #204.
 
 The canonical CI fragments use full checkout history because the framework's
 status and attribution checks inspect history. In particular, a shallow checkout
