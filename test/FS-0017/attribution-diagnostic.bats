@@ -187,6 +187,40 @@ Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implement
   ! echo "$output" | grep -qF "BAD"
 }
 
+@test "range: a null-hash endpoint fails closed instead of auditing zero commits (issue #194)" {
+  # The endpoint-wise check resolved each endpoint separately; the null object
+  # hash passes `rev-parse --verify` but `rev-list "<null>..HEAD"` fails, so the
+  # audit loop iterated nothing and printed OK. That is exactly the range shape
+  # GitHub produces for github.event.before on a new-branch push. The whole
+  # range must resolve.
+  local repo="$BATS_TEST_TMPDIR/nullrange"
+  build_scratch_repo "$repo"
+  seed_commit "$repo"
+
+  run env CA_TARGET_REPO="$repo" COMMIT_RANGE="0000000000000000000000000000000000000000..HEAD" \
+    bash "$LINT_SCRIPT"
+
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "unavailable locally"
+  ! echo "$output" | grep -qF "OK   "
+}
+
+@test "range: an empty but resolvable range still audits nothing and passes (caller's declaration)" {
+  # A == B is a legitimate declaration (a push with no new commits). Resolution
+  # must distinguish it from an unresolvable range: it yields no output commits
+  # without error.
+  local repo="$BATS_TEST_TMPDIR/emptyrange"
+  build_scratch_repo "$repo"
+  seed_commit "$repo"
+  local head
+  head="$(git -C "$repo" rev-parse HEAD)"
+
+  run env CA_TARGET_REPO="$repo" COMMIT_RANGE="$head..$head" bash "$LINT_SCRIPT"
+
+  echo "$output" | grep -qF "OK   "
+  ! echo "$output" | grep -qF "unavailable locally"
+}
+
 # --- scope: human commits carry no obligation ----------------------------------
 
 @test "scope: a human-authored commit with no trailer is not an offender" {

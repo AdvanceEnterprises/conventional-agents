@@ -640,6 +640,33 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Fixed
 
+- **Three vendored-gate fail-open paths now fail closed (issues #194, #195).**
+  Each of these reported success while auditing nothing, so a consumer's CI
+  could receive green from a gate that never ran:
+  - `scripts/check-status.sh` **exits non-zero when run outside a git working
+    tree** (#194, case 1). The `pwd` fallback manufactured a root for a
+    non-repository directory, the git-backed rules failed silently, and the
+    script printed the success line — a CI job or maintainer in the wrong
+    working directory received green. The resolved target is now required to
+    be inside a work tree.
+  - `scripts/cross-repo-lint.sh` **fails closed on an unresolvable
+    `COMMIT_RANGE`** (#194, case 2). The endpoint-wise `rev-parse --verify`
+    check accepted the null object hash, then `git rev-list "<null>..HEAD"`
+    silently iterated zero commits and the attribution check printed OK —
+    exactly the range shape GitHub produces for `github.event.before` on a
+    new-branch push. The whole range is now resolved before the audit; an
+    empty-but-resolvable range (`A == B`) still audits nothing without error.
+  - The rule-6 **grandfather clause in `check-status.sh` is now
+    self-check-only** (#195). The pre-ADR-0027 allow-list (`PLAN-0001`–
+    `PLAN-0017`) names this repository's historical plans, but it applied in
+    consumer runs too — where `PLAN-0001` is the first plan a host repository
+    ever writes. A vendored copy silently skipped containment and
+    reserved-path checks on a consumer's first seventeen plan numbers, which
+    is exactly where the self-approval rule is most needed. Consumers cannot
+    inherit this repository's history; the safe default is to enforce.
+  Regression coverage: three new cases in `test/FS-0024/portable-gates.bats`
+  and two in `test/FS-0017/attribution-diagnostic.bats`, each asserting the
+  loud failure against the pre-fix silent pass.
 - **`gh-board-audit.sh` reported every pull-request item as field drift
   (#171).** Rows were serialised tab-delimited and parsed with `IFS=$'\t'`.
   Tab is IFS *whitespace*, so the empty `number`/`repository` cells on

@@ -128,6 +128,20 @@ EOF
   echo "$output" | grep -qF "is not a directory"
 }
 
+@test "target_resolution: running outside a git work tree fails loudly instead of certifying nothing (issue #194)" {
+  # Pre-fix, REPO_ROOT fell back to `pwd` outside any repository, the git-backed
+  # rules failed in silence, and the script printed the success line — exit 0
+  # from a directory that is not a repository at all. A CI job or maintainer in
+  # the wrong working directory must see a loud error instead.
+  local nongit="$BATS_TEST_TMPDIR/not-a-repo"
+  mkdir -p "$nongit"
+
+  run bash -c "cd '$nongit' && bash '$CHECK'"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "not inside a git working tree"
+  ! echo "$output" | grep -qF "All status checks passed."
+}
+
 @test "target_resolution: this repository's own invocation is unaffected" {
   # npm run check:status shape: cwd already at the repository being checked,
   # no override. Must still exit zero on this repository's own (clean) trunk.
@@ -281,6 +295,84 @@ EOF
   [ "$status" -ne 0 ]
   echo "$output" | grep -qF "ci/deploy.sh"
   echo "$output" | grep -qF "reserved-path set"
+}
+
+# --- grandfather clause scoping (issue #195) -------------------------------------
+
+@test "grandfather: a consumer PLAN-0001 gets no exemption from the framework's historical allow-list (issue #195)" {
+  # The allow-list names THIS repository's pre-ADR-0027 plans, but it applied in
+  # consumer runs too — silently skipping containment and reserved-path checks on
+  # a host's first seventeen plan numbers, which is where the check is most
+  # needed. Post-fix the clause is self-check-only: the same plan content fails
+  # loudly in a consumer, evaluated against the host's own reserved set.
+  local host="$BATS_TEST_TMPDIR/host"
+  build_scratch_host "$host"
+  mkdir -p "$host/config"
+  printf 'reserved_paths:\n  - "config/"\n' > "$host/config/gates.yml"
+  cat > "$host/docs/specifications/FS-1-test.md" <<'EOF'
+---
+type: feature-spec
+id: FS-1
+status: approved
+title: Test
+owner: test
+interfaces: []
+---
+EOF
+  printf '| FS-1 | Test | approved |\n' >> "$host/docs/specifications/README.md"
+  cat > "$host/docs/change-plans/PLAN-0001-first-consumer-plan.md" <<'EOF'
+---
+type: change-plan
+role: implementer
+status: approved
+related_specs: [FS-1]
+touches:
+  - config/gates.yml
+---
+EOF
+  printf '| PLAN-0001 | First consumer plan | FS-1 | approved |\n' >> "$host/docs/change-plans/README.md"
+
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "PLAN-0001-first-consumer-plan.md"
+  echo "$output" | grep -qF "reserved-path set"
+  ! echo "$output" | grep -qF "All status checks passed."
+}
+
+@test "grandfather: a consumer PLAN-0001 outside its FS interfaces is flagged, not skipped (issue #195)" {
+  # The containment half of the same skip: with an explicit empty reserved set,
+  # the touch must still be evaluated against the governing FS's interfaces.
+  local host="$BATS_TEST_TMPDIR/host"
+  build_scratch_host "$host"
+  mkdir -p "$host/config"
+  printf 'reserved_paths: []\n' > "$host/config/gates.yml"
+  cat > "$host/docs/specifications/FS-1-test.md" <<'EOF'
+---
+type: feature-spec
+id: FS-1
+status: approved
+title: Test
+owner: test
+interfaces:
+  - "ci/"
+---
+EOF
+  printf '| FS-1 | Test | approved |\n' >> "$host/docs/specifications/README.md"
+  cat > "$host/docs/change-plans/PLAN-0001-outside-interfaces.md" <<'EOF'
+---
+type: change-plan
+role: implementer
+status: approved
+related_specs: [FS-1]
+touches:
+  - src/other.sh
+---
+EOF
+  printf '| PLAN-0001 | Outside | FS-1 | approved |\n' >> "$host/docs/change-plans/README.md"
+
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "outside its governing FS's interfaces"
 }
 
 # --- skip-explicit configuration (rule 7) ----------------------------------------
