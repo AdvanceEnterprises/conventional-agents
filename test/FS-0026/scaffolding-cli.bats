@@ -250,6 +250,34 @@ EOF
   echo "$output" | grep -qF "ERROR: --number must be PLAN-NNNN"
 }
 
+@test "scaffolding: --number format validation precedes the target guard (argument errors win from any directory)" {
+  # Copilot review, PR #203: the target guard runs after argument handling so
+  # that argument errors keep their precedence over the environment error.
+  # The format check must therefore live with the other argument validation —
+  # from a non-git cwd with a valid ADR and `--number PLAN-12`, the run must
+  # report the format error, not the work-tree error.
+  local nongit="$BATS_TEST_TMPDIR/not-a-repo"
+  mkdir -p "$nongit/docs/decisions"
+  cat > "$nongit/docs/decisions/ADR-0034-scratch-fixture.md" <<'EOF'
+---
+type: adr
+id: ADR-0034
+status: proposed
+title: Scratch fixture decision
+related_specs: []
+related_adrs: []
+superseded_by: null
+---
+
+# ADR-0034: Scratch fixture decision
+EOF
+
+  run bash -c "cd '$nongit' && bash '$NEW_PLAN' --adr docs/decisions/ADR-0034-scratch-fixture.md --number PLAN-12"
+  [ "$status" -eq 1 ]
+  echo "$output" | grep -qF "ERROR: --number must be PLAN-NNNN"
+  ! echo "$output" | grep -qF "not inside a git working tree"
+}
+
 # --- target guard: non-git cwd fails loudly, writes nothing (issue #202) ------
 
 @test "target_guard: new:plan from a non-git cwd fails loudly and writes nothing (issue #202)" {
@@ -315,25 +343,37 @@ EOF
   # would be blamed for an environment problem. The environment check must
   # pre-empt that (the same diagnostic the sibling #200 fix specifies for
   # check-freshness.sh; that PR is in review at this commit).
+  # Copilot review, PR #203: the fake PATH must keep the tools the script uses
+  # BEFORE the git check reachable (`dirname` at the top), or the run emits an
+  # unrelated `dirname: command not found`; the assertions reject it and the
+  # generic work-tree blame so this case isolates the named diagnostic.
   local scratch="$BATS_TEST_TMPDIR/scratch"
   build_scratch "$scratch"
   write_adr_fixture "$scratch"
   local fakebin="$BATS_TEST_TMPDIR/fakebin"
   mkdir -p "$fakebin"
   ln -s "$(command -v bash)" "$fakebin/bash"
+  ln -s "$(command -v dirname)" "$fakebin/dirname"
 
   run env PATH="$fakebin" bash "$NEW_PLAN" --adr "$scratch/docs/decisions/ADR-0034-scratch-fixture.md"
   [ "$status" -eq 1 ]
   echo "$output" | grep -qF "git' was not found on PATH"
+  ! echo "$output" | grep -qF "not inside a git working tree"
+  ! echo "$output" | grep -qF "command not found"
 }
 
-@test "target_guard: a fresh git work tree still scaffolds (positive control, issue #202)" {
+@test "target_guard: a fresh git work tree with no docs/change-plans/ still scaffolds (positive control, issue #202)" {
   # The distinguishing positive control: a fresh consumer repository IS a git
   # work tree with no docs/change-plans/ yet — the guard must not reject it,
   # and the script still creates the directory and writes the PLAN.
+  # Copilot review, PR #203: build_scratch pre-creates docs/change-plans, so
+  # remove it (and the ADR fixture's copy is fine — the scaffold directory is
+  # what this control is about) to actually exercise the create-a-missing-dir
+  # path rather than a directory that already exists.
   local scratch="$BATS_TEST_TMPDIR/scratch"
   build_scratch "$scratch"
   write_adr_fixture "$scratch"
+  rm -rf "$scratch/docs/change-plans"
 
   run bash -c "cd '$scratch' && bash scripts/new-plan.sh --adr docs/decisions/ADR-0034-scratch-fixture.md"
   [ "$status" -eq 0 ]
