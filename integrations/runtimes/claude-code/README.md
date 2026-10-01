@@ -93,7 +93,14 @@ bash integrations/runtimes/claude-code/bin/ca-runtime-audit.sh --json     # mach
 bash integrations/runtimes/claude-code/bin/ca-runtime-audit.sh --help     # usage, exit 0
 ```
 
-The audit reads `CA_TARGET_REPO` (default: current working directory), makes
-no writes, and does not call mutating `gh`/`git` operations. It is registered
-in `package.json` as a report-only script that CI does not run as a blocking
-check.
+The audit reads `CA_TARGET_REPO` (default: the repository containing the
+current working directory — a subdirectory of a work tree maps to its top
+level), makes no writes, and does not call mutating `gh`/`git` operations. A
+target that cannot be resolved — not a directory, not inside a git working
+tree, a bare repository, or a missing `git` — is a loud error on exit 2,
+distinct from findings (issue #204). It is registered in `package.json` as a
+report-only script that CI does not run as a blocking check.
+
+The same target resolution and diagnostics apply to `sync-skills.sh`, which
+also exits non-zero when a listed source skill is missing its `SKILL.md`
+(a failed copy, not a skip) — issue #204.

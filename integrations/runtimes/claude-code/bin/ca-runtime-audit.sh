@@ -11,7 +11,12 @@
 #   --strict — exit 1 when divergences exist (for scripts that want a signal)
 #
 # Resolves its target repository from the caller's working directory, with
-# CA_TARGET_REPO overriding (FS-0024/ADR-0033). Bash 3.2 compatible — no
+# CA_TARGET_REPO overriding (FS-0024/ADR-0033). The resolved target must be
+# inside a git working tree: a directory git disclaims is a hard error naming
+# it, not a confident "binding not installed" verdict about a directory that
+# is not a repository at all. A subdirectory target maps to the work-tree top
+# level, and a bare repository and a missing git binary get their own
+# diagnostics (issue #204). Bash 3.2 compatible — no
 # associative arrays (macOS system bash, per scripts/README.md).
 
 set -u
@@ -29,7 +34,8 @@ Flags:
   -h, --help print this usage and exit 0
 
 Environment:
-  CA_TARGET_REPO   repository root to audit (default: current working directory)
+  CA_TARGET_REPO   repository to audit (default: the repository containing
+                   the current working directory)
 
 The audit compares a repository's .claude/ against the binding described in
 integrations/runtimes/claude-code/README.md and prints one line per check:
@@ -38,7 +44,10 @@ integrations/runtimes/claude-code/README.md and prints one line per check:
   [info]   — a missing optional artefact (advisory)
 
 Exit code is 0 in default mode regardless of findings; --strict turns any
-divergence into exit 1. The audit never modifies anything.
+divergence into exit 1. Neither is used for target-resolution errors: a
+target that cannot be resolved (not a directory, not inside a git working
+tree, a bare repository, or a missing git) exits 2, distinct from any
+finding. The audit never modifies anything.
 EOF
 }
 
@@ -56,13 +65,69 @@ for arg in "$@"; do
   esac
 done
 
-REPO="${CA_TARGET_REPO:-$PWD}"
+# ----- Target resolution (issue #204) ----------------------------------------
+# Before this guard, the target defaulted to the literal working directory: a
+# run from a non-git cwd — or from a checkout subdirectory — reported a
+# confident "[info] no .claude/ directory — nothing to audit" about a
+# directory that was not the repository at all, even under --strict. A
+# directory git disclaims must be a loud error instead (the #194 fail-open
+# class, runtime-binding edition). Resolution is repository-relative
+# (FS-0024/ADR-0033): the target names a repository, so a subdirectory maps
+# to its work-tree top level.
+if ! command -v git >/dev/null 2>&1; then
+  echo "ERROR: 'git' was not found on PATH — the audit resolves its target with git." >&2
+  exit 2
+fi
+if [ -n "${CA_TARGET_REPO:-}" ]; then
+  REPO="$(cd "$CA_TARGET_REPO" 2>/dev/null && pwd)" || {
+    echo "ERROR: CA_TARGET_REPO='$CA_TARGET_REPO' is not a directory." >&2
+    exit 2
+  }
+else
+  REPO="$PWD"
+fi
+if [ "$(git -C "$REPO" rev-parse --is-inside-work-tree 2>/dev/null)" != "true" ]; then
+  if [ "$(git -C "$REPO" rev-parse --is-bare-repository 2>/dev/null)" = "true" ]; then
+    echo "ERROR: '$REPO' is a bare git repository — it has no working tree to audit." >&2
+  else
+    echo "ERROR: '$REPO' is not inside a git working tree." >&2
+  fi
+  echo "       Run this from within the repository it should audit, or set" >&2
+  echo "       CA_TARGET_REPO to that repository's working tree. (issue #204)" >&2
+  exit 2
+fi
+REPO="$(git -C "$REPO" rev-parse --show-toplevel 2>/dev/null)"
 CLAUDE_DIR="$REPO/.claude"
 BINDING_DIR="$REPO/integrations/runtimes/claude-code"
 
+# Summary-helper sourcing (issue #204). The lib ships next to the script; the
+# probe order is binding-dir first (unchanged for framework invocations),
+# then the script's own location — the one place guaranteed to hold the lib
+# whenever this script runs at all, which is the vendored-copy case — and
+# finally inline definitions, so a summary line always prints instead of
+# "ca_summary: command not found".
+audit_lib=""
 if [ -f "$BINDING_DIR/lib/common.sh" ]; then
+  audit_lib="$BINDING_DIR/lib/common.sh"
+else
+  audit_self_dir="$(cd "$(dirname "${BASH_SOURCE:-$0}")/.." && pwd)"
+  [ -f "$audit_self_dir/lib/common.sh" ] && audit_lib="$audit_self_dir/lib/common.sh"
+fi
+if [ -n "$audit_lib" ]; then
   # shellcheck disable=SC1091
-  . "$BINDING_DIR/lib/common.sh"
+  . "$audit_lib"
+else
+  ca_summary() {
+    printf 'summary: %s ok, %s divergences, %s advisory — audit is report-only\n' \
+      "$1" "$2" "$3"
+    if [ "$4" -eq 1 ] && [ "$2" -gt 0 ]; then
+      return 1
+    fi
+    return 0
+  }
+  ca_json_summary() {
+    printf '{"ok":%s,"warn":%s,"info":%s}\n' "$1" "$2" "$3"
+  }
 fi
 
 [ -d "$CLAUDE_DIR" ] || {
