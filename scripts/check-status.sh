@@ -988,11 +988,15 @@ planned_paths_str=$'\n'"$planned_paths"$'\n'
 # FS-0037: whether a host run can resolve `vendor/conventional-agents/` references
 # at all — its submodule must actually be checked out. git leaves the directory
 # empty when the submodule is not initialised, and that absence is the FS-0022 §1c
-# exclusion, not drift. Probed once, not per reference. Self-check always resolves
-# (the prefix strips against this tree) and does not use this flag.
+# exclusion, not drift. `ls -A` lists hidden entries too, so a partially
+# initialised submodule whose only content is `.git` (an interrupted
+# `git submodule update --init`) would otherwise count as populated while holding
+# no usable checkout — MM3 round-B on PR #193. Probed once, not per reference.
+# Self-check always resolves (the prefix strips against this tree) and does not
+# use this flag.
 host_vendor_ca_populated=""
 if [ -d "$REPO_ROOT/vendor/conventional-agents" ] && \
-   [ -n "$(ls -A "$REPO_ROOT/vendor/conventional-agents" 2>/dev/null)" ]; then
+   [ -n "$(ls -A "$REPO_ROOT/vendor/conventional-agents" 2>/dev/null | grep -v '^\.git$')" ]; then
   host_vendor_ca_populated=1
 fi
 
