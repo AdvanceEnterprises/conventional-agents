@@ -54,11 +54,12 @@ PARSING_HINTS:
 
 The framework currently checks that an `implemented` PLAN is paired with an
 `implemented` FS, but it does not detect the opposite claim: a governing FS and
-PLAN remain `draft` or `approved` after the implementation surface they describe
-has landed on the default branch. This is the delivered-but-draft family recorded
-in issue #188. The failure is operationally misleading rather than cosmetic: a
-consumer or maintenance agent reads the document status as "not yet shipped"
-even though the repository already carries the implementation.
+PLAN remain non-terminal — `draft`, `approved`, or `in-progress` — after the
+implementation surface they describe has landed on the default branch. This is
+the delivered-but-draft family recorded in issue #188. The failure is
+operationally misleading rather than cosmetic: a consumer or maintenance agent
+reads the document status as "not yet shipped" even though the repository
+already carries the implementation.
 
 This spec defines a conservative, offline, report-only audit. It compares the
 status of each FS/primary-PLAN pair with repository-local delivery evidence from
@@ -131,8 +132,8 @@ is complete and whether the FS/PLAN status should advance.
 
 ## Goals
 
-- Detect the delivered-but-draft and delivered-but-approved class with
-  repository-local evidence only.
+- Detect the delivered-but-non-terminal class — `draft`, `approved`, and
+  `in-progress` pairs — with repository-local evidence only.
 - Name the governing FS, primary PLAN, status values, evidence paths, and the
   relevant commit dates in every finding.
 - Require the whole declared implementation surface, rather than treating one
@@ -205,11 +206,12 @@ specific numbers.*
   delivery-candidate rule requires it), when the audit runs, then it exits
   non-zero and names the FS, PLAN, statuses, evidence paths, and a remediation
   to reconcile the pair.
-- **SC-2 — approved drift is reported.** Given the same evidence with the
-  governed pair's status at `approved` rather than `draft` — the pair's own
-  status, however it was reached, including via `ADR-0027` self-approval; this
-  criterion measures delivery lag, not the approval route — when the audit
-  runs, then it reports the candidate without changing either document.
+- **SC-2 — approved and in-progress drift is reported.** Given the same
+  evidence with the governed pair's status at `approved` or `in-progress`
+  rather than `draft` — the pair's own status, however it was reached,
+  including via `ADR-0027` self-approval; this criterion measures delivery
+  lag, not the approval route — when the audit runs, then it reports the
+  candidate without changing either document.
 - **SC-3 — existing files alone do not report.** Given a draft pair whose
   `touches:` paths predate the PLAN and whose test/CHANGELOG evidence is absent,
   when the audit runs, then it exits zero and emits no delivery finding.
@@ -249,8 +251,11 @@ specific numbers.*
   post-`created:` history is present; creation date is not required.
 - A glob that expands to no files is incomplete evidence, not a successful
   delivery.
-- A `test_required: false` document is allowed to have no suite, but the audit
-  still requires the implementation surface and CHANGELOG evidence.
+- A `test_required: false` document is allowed to have no suite; the
+  implementation-surface evidence is still required, and the CHANGELOG marker
+  follows the delivery-candidate rule's conditional — required for an
+  exported surface, corroborating (not disqualifying) for an internal-only
+  one.
 - A shallow clone or missing commit object is an evaluation error, not a pass.
 - A renamed implementation path must be resolved from the current PLAN surface;
   the audit does not follow speculative historical names outside Git's normal

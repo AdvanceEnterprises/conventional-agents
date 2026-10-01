@@ -86,10 +86,11 @@ For this project (a documentation/standards kit), semver follows the
   §1d — the spec names `scripts/` — and staged with the draft package.)
 - **FS-0041: Status-vs-delivery consistency audit (draft — `FS-0041`,
   `PLAN-0047`).** Proposes a conservative, offline, report-only audit for the
-  opposite side of the lifecycle pairing gate: a pair that remains `draft` or
-  `approved` after its declared implementation surface has shipped. Findings
-  rest on post-plan Git history, the required test suite, and a CHANGELOG
-  marker — never file existence alone — and never change a document's status.
+  opposite side of the lifecycle pairing gate: a pair that remains
+  non-terminal — `draft`, `approved`, or `in-progress` — after its declared
+  implementation surface has shipped. Findings rest on post-plan Git history,
+  the required test suite, and a CHANGELOG marker — never file existence
+  alone — and never change a document's status.
   The package tracks issue #188. The executable audit, npm entry, CI wiring,
   and Bats suite arrive in a separate implementation revision because they
   touch `ADR-0027` reserved paths and need their own recorded approval.
