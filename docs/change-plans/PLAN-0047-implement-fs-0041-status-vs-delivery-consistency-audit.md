@@ -20,9 +20,10 @@ updated: 2026-10-01
 
 > **Template note:** this first revision publishes the governance package only:
 > FS-0041, this plan, the two index rows, and the CHANGELOG entry. It does not
-> add the audit script, npm entry, CI step, or tests. Those paths are reserved
-> implementation surfaces and require a separate recorded approval under
-> ADR-0026/ADR-0027.
+> add the audit script, npm entry, CI step, or tests. The later implementation
+> revision touches `ADR-0027` reserved paths (`scripts/`, `package.json`,
+> `.github/workflows/`) and therefore requires a separate recorded approval
+> under ADR-0026/ADR-0027.
 
 ## 1. Feature / Issue Reference
 
@@ -137,8 +138,11 @@ approved boundary and the containment envelope cannot drift apart:**
   * ADR-0024: detection over prevention; no automatic lifecycle transition.
   * ADR-0026: recorded approval is a human act and is scoped to the exact
     implementation `touches:` set.
-  * ADR-0027: `scripts/`, `package.json`, `.github/workflows/`, and test
-    enforcement surfaces require human approval evidence.
+  * ADR-0027: `scripts/`, `package.json`, and `.github/workflows/` are
+    reserved paths; this plan's later revision touches them and requires
+    human approval evidence. (`test/FS-0041/**` is not reserved — it is
+    included in the revision's `touches:` as scope, not as an approval
+    trigger.)
   * ADR-0033 / FS-0024: caller-relative target resolution and worktree support.
 
 * Architecture constraints:
