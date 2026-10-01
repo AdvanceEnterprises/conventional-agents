@@ -120,6 +120,17 @@ SYNC_ABS="$BATS_TEST_DIRNAME/../../integrations/runtimes/claude-code/bin/sync-sk
     ! echo "$output" | grep -qF "nothing to audit"
 }
 
+@test "target: audit --strict from a non-git cwd also exits 2, not 1 (issue #204)" {
+    # Target-resolution errors are distinct from findings: --strict turns
+    # divergences into exit 1, but an unresolvable target is exit 2 in every
+    # mode (Kimi round-A suggestion, PR #205).
+    nongit="$BATS_TEST_TMPDIR/not-a-repo-strict"
+    mkdir -p "$nongit"
+    run "$TEST_BASH" -c "cd '$nongit' && bash '$(audit_abs)' --strict"
+    [ "$status" -eq 2 ]
+    [[ "$output" == *"not inside a git working tree"* ]]
+}
+
 @test "target: audit rejects CA_TARGET_REPO at a non-repo directory (issue #204)" {
     nongit="$BATS_TEST_TMPDIR/not-a-repo-override"
     mkdir -p "$nongit"
