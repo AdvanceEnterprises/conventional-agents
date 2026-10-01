@@ -629,6 +629,7 @@ The framework does not vendor a test runner.
 **Conventions.**
 
 - Per `FS-0024`/`ADR-0033`: the target repository is resolved from the caller's working directory, not from the script's physical location. `CA_TARGET_REPO` overrides. A vendored copy creates the PLAN in the host repo.
+- The resolved target must be inside a git working tree; a run outside one is a hard error naming the directory (issue #202). Before this guard, the `|| pwd` fallback let the script proceed against a directory that was not a repository at all — the next-number scan read an empty tree and the write path created `docs/change-plans/` there, a durable PLAN outside any repository at exit 0 (the `check-status.sh`/`check-freshness.sh` fail-open shape from #194/#199, write side). Two related environments get their own diagnostics instead of the generic wording: a bare repository (a git repository with no working tree to scaffold into) and a missing `git` binary. The guard runs after argument handling, so `--help` and argument errors keep working from any directory.
 - The generated frontmatter follows `templates/core/change-plan.md` (`type: change-plan`, `role: implementer`, `language`, `status: draft`, `related_specs`, `related_adrs`, `touches: []`, `created`, `updated`). No `title:` field — plans carry none per existing convention.
 - Leading zeros on PLAN numbers are stripped safely via `sed` (avoiding bash's octal trap with `set -u`).
 - Generator sections follow the template's numbered structure with placeholders derived from the ADR.

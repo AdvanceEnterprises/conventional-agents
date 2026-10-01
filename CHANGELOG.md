@@ -704,6 +704,21 @@ For this project (a documentation/standards kit), semver follows the
   pre-fix script), the `CA_TARGET_REPO`-override failure, the bare-repository
   discrimination, the missing-git diagnostic, and the fresh-work-tree positive
   control.
+- **`new-plan.sh` no longer scaffolds into a non-git directory (#202).** The
+  target-resolution fallback (`git rev-parse --show-toplevel || pwd`) let the
+  scaffolder proceed when the caller stood outside any repository: the
+  next-number scan read an empty tree, and the write path created
+  `docs/change-plans/PLAN-0001-<slug>.md` under whatever directory the caller
+  happened to be in — even inside a bare repository — exit 0, a durable PLAN
+  outside any repository (the `check-status.sh`/`check-freshness.sh` fail-open
+  shape from #194/#199, write side). The resolved root must now be a git work
+  tree or the run fails loudly and names the directory; a bare repository gets
+  its own message, and a missing `git` binary is named as such. `--help` and
+  argument errors keep working from any directory. `test/FS-0026/scaffolding-cli.bats`
+  gains five cases: non-git cwd (fails loudly, writes nothing — fails against
+  the pre-fix script), `CA_TARGET_REPO` at a non-repo directory, bare-repository
+  diagnostic, missing-git diagnostic, and the fresh-work-tree positive control
+  (still scaffolds). Closes #202.
 - **`gh-board-audit.sh` reported every pull-request item as field drift
   (#171).** Rows were serialised tab-delimited and parsed with `IFS=$'\t'`.
   Tab is IFS *whitespace*, so the empty `number`/`repository` cells on
