@@ -221,6 +221,7 @@ Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implement
 
   run env CA_TARGET_REPO="$repo" COMMIT_RANGE="$head..$head" bash "$LINT_SCRIPT"
 
+  [ "$status" -eq 0 ]
   echo "$output" | grep -qE "OK[[:space:]]+emptyrange"
   ! echo "$output" | grep -qF "unavailable locally"
 }

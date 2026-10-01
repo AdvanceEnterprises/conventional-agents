@@ -51,6 +51,13 @@ if [ "$(git -C "$REPO_ROOT" rev-parse --is-inside-work-tree 2>/dev/null)" != "tr
   echo "       CA_TARGET_REPO to that repository's working tree. (issue #194)" >&2
   exit 1
 fi
+# A CA_TARGET_REPO naming a subdirectory of a work tree satisfies the membership
+# check above while every document path below roots at the subdirectory — the
+# loops then audit nothing and the script prints the success line (Copilot
+# review, PR #198). Resolution is repository-relative (ADR-0033): the target
+# names a repository, so it maps to that work tree's top level, exactly as the
+# working-directory default does.
+REPO_ROOT="$(git -C "$REPO_ROOT" rev-parse --show-toplevel 2>/dev/null)"
 
 # True when this run is the framework checking itself — every invocation this
 # repository makes of its own scripts, including its own CI and its own bats
