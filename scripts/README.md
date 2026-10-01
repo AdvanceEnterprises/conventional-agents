@@ -444,6 +444,15 @@ repository containing the caller's working directory (`git rev-parse
 working directory is not inside the repository it means to check — so a vendored
 copy checks the host's `workflows/` and `guidelines/`, not the framework's own.
 
+The resolved target must be inside a git working tree; a run outside one is a
+hard error naming the directory (issue #199). Before this guard, the `|| pwd`
+fallback let the script proceed against a directory that was not a repository
+at all — both governed directories "didn't exist", the empty-corpus branch
+printed its message, and the gate exited 0 for a run that checked nothing (the
+`check-status.sh` #194 fail-open shape, one script over). A git work tree that
+genuinely has no `workflows/` or `guidelines/` — a fresh consumer repository
+mid-adoption — still gets the empty-corpus message and exit 0.
+
 **Determinism.** `DOC_FRESHNESS_NOW` (epoch seconds) overrides the system clock
 as the evaluation date, so tests can pin the date and keep stale-count
 assertions stable.
