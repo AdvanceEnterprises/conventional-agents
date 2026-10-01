@@ -176,7 +176,7 @@ for REPO in "${REPOS[@]}"; do
   # range (A == B) still exits 0 with no commits, auditing nothing as the
   # caller declared.
   if ! git -C "$REPO" rev-list --max-count=1 "$RANGE" >/dev/null 2>&1; then
-    err "$REPO_NAME: commit range $RANGE is unavailable locally; fetch or prepare the refs before running cross-repo lint"
+    err "$REPO_NAME: commit range $RANGE is unavailable locally — it does not resolve in this checkout; fetch or prepare the refs, or correct the range, before running cross-repo lint"
     continue
   fi
 
