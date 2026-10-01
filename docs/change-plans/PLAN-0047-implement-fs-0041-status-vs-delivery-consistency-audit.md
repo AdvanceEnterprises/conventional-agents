@@ -7,6 +7,8 @@ related_specs: [FS-0041]
 approved_by: ""
 related_adrs: [ADR-0015, ADR-0024, ADR-0026, ADR-0027, ADR-0033]
 touches:
+  - docs/specifications/FS-0041-status-vs-delivery-consistency-audit.md
+  - docs/change-plans/PLAN-0047-implement-fs-0041-status-vs-delivery-consistency-audit.md
   - docs/specifications/README.md
   - docs/change-plans/README.md
   - CHANGELOG.md
@@ -50,7 +52,10 @@ updated: 2026-10-01
 * Add a GitHub or Notion dependency to the portable gate.
 
 **The later implementation revision WILL, only after FS-0041 is approved and
-its own reserved-path approval is recorded:**
+its own reserved-path approval is recorded. Its `touches:` set will mirror
+FS-0041's full `interfaces:` set exactly — including the reserved
+`scripts/`, `.github/workflows/`, and `package.json` entries — so the
+approval boundary and the containment envelope cannot drift apart:**
 
 * Add `scripts/check-delivery-status.sh` with the evidence model and stable
   exit behavior in FS-0041 SC-1 through SC-9.
