@@ -141,3 +141,43 @@ teardown() {
   [ "$status" -eq 0 ]
   echo "$output" | grep -qF "no governed docs found"
 }
+
+@test "target_resolution: CA_TARGET_REPO pointing at a non-repo dir fails loudly" {
+  # The CA_TARGET_REPO branch of the same guard (issue #199): the override
+  # canonicalizes to a directory that is not a repository, and the guard must
+  # reject it even when the caller's own cwd is inside a work tree.
+  local nongit="$BATS_TEST_TMPDIR/not-a-repo"
+  mkdir -p "$nongit"
+
+  run bash -c "cd '$REPO_ROOT' && CA_TARGET_REPO='$nongit' bash '$CHECK'"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "not inside a git working tree"
+  ! echo "$output" | grep -qF "no governed docs found"
+}
+
+@test "target_resolution: a bare git repository is rejected with its own message" {
+  # MM3 round-B observation (issue #199): a bare repository IS a git repository,
+  # just one without a working tree — the error must say so rather than reusing
+  # the generic non-git wording, or a maintainer diagnosing the failure is
+  # misdirected.
+  local bare="$BATS_TEST_TMPDIR/bare.git"
+  ( cd "$BATS_TEST_TMPDIR" && git init -q --bare "$bare" )
+
+  run bash -c "cd '$REPO_ROOT' && CA_TARGET_REPO='$bare' bash '$CHECK'"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "bare git repository"
+  ! echo "$output" | grep -qF "not inside a git working tree"
+}
+
+@test "target_resolution: a missing git binary is named as such, not blamed on the directory" {
+  # MM3 round-B observation (issue #199): with git absent from PATH the guard's
+  # `2>/dev/null` probes return empty and the directory gets blamed for an
+  # environment problem. The environment check must pre-empt that.
+  local fakebin="$BATS_TEST_TMPDIR/fakebin"
+  mkdir -p "$fakebin"
+  ln -s "$(command -v bash)" "$fakebin/bash"
+
+  run env PATH="$fakebin" bash "$CHECK"
+  [ "$status" -eq 1 ]
+  echo "$output" | grep -qF "git' was not found on PATH"
+}

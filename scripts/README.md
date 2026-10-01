@@ -449,9 +449,12 @@ hard error naming the directory (issue #199). Before this guard, the `|| pwd`
 fallback let the script proceed against a directory that was not a repository
 at all — both governed directories "didn't exist", the empty-corpus branch
 printed its message, and the gate exited 0 for a run that checked nothing (the
-`check-status.sh` #194 fail-open shape, one script over). A git work tree that
-genuinely has no `workflows/` or `guidelines/` — a fresh consumer repository
-mid-adoption — still gets the empty-corpus message and exit 0.
+`check-status.sh` #194 fail-open shape, one script over). Two related
+environments get their own diagnostics instead of the generic wording: a bare
+repository (a git repository with no working tree to scan) and a missing `git`
+binary. A git work tree that genuinely has no `workflows/` or `guidelines/` —
+a fresh consumer repository mid-adoption — still gets the empty-corpus message
+and exit 0.
 
 **Determinism.** `DOC_FRESHNESS_NOW` (epoch seconds) overrides the system clock
 as the evaluation date, so tests can pin the date and keep stale-count

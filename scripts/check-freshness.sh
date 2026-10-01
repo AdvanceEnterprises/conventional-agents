@@ -62,8 +62,21 @@ cd "$REPO_ROOT"
 # fail-open class, one script over). A git work tree that genuinely has no
 # workflows/ or guidelines/ — a fresh consumer repository mid-adoption — keeps
 # the empty-corpus message; the guard only rejects directories git disclaims.
+# A bare repository is rejected too, with its own message: it IS a git
+# repository, just one with no working tree to scan, and conflating the two
+# failure modes would misdirect a maintainer diagnosing the error. A missing
+# git binary is likewise named as such — otherwise the guard below would blame
+# the directory for an environment problem (MM3 review).
+if ! command -v git >/dev/null 2>&1; then
+  echo "ERROR: 'git' was not found on PATH — this gate requires git." >&2
+  exit 1
+fi
 if [ "$(git -C "$REPO_ROOT" rev-parse --is-inside-work-tree 2>/dev/null)" != "true" ]; then
-  echo "ERROR: '$REPO_ROOT' is not inside a git working tree." >&2
+  if [ "$(git -C "$REPO_ROOT" rev-parse --is-bare-repository 2>/dev/null)" = "true" ]; then
+    echo "ERROR: '$REPO_ROOT' is a bare git repository — it has no working tree to scan." >&2
+  else
+    echo "ERROR: '$REPO_ROOT' is not inside a git working tree." >&2
+  fi
   echo "       Run this script from within the repository it should check, or set" >&2
   echo "       CA_TARGET_REPO to that repository's working tree. (issue #199)" >&2
   exit 1
