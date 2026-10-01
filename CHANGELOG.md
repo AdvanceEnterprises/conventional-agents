@@ -688,6 +688,18 @@ For this project (a documentation/standards kit), semver follows the
   caller's declared audit-nothing behavior with an explicit zero-exit
   assertion; each fail-closed case asserts the loud failure against the
   pre-fix silent pass.
+- **`check-freshness.sh` no longer certifies a non-git working directory
+  (#199).** The resolved target fell back to `pwd` outside any repository, so
+  both governed directories "didn't exist", the empty-corpus branch printed
+  its message, and the gate exited 0 for a run that checked nothing — the
+  same fail-open shape `check-status.sh` carried in #194, one script over. The
+  resolved root must now be inside a git working tree or the run fails loudly
+  and names the directory. A work tree that genuinely has no `workflows/` or
+  `guidelines/` (a fresh consumer repository mid-adoption) still gets the
+  empty-corpus message — the guard only rejects directories git disclaims.
+  `test/FS-0027/freshness-gate.bats` gains two regression cases: the loud
+  failure from a non-git cwd (fails against the pre-fix script) and the
+  fresh-work-tree positive control.
 - **`gh-board-audit.sh` reported every pull-request item as field drift
   (#171).** Rows were serialised tab-delimited and parsed with `IFS=$'\t'`.
   Tab is IFS *whitespace*, so the empty `number`/`repository` cells on

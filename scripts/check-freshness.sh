@@ -18,6 +18,11 @@
 #   subdirectories), excluding `**/README.md` index files, which are navigation
 #   aids rather than governed docs.
 #
+# Target: the resolved root must be a git work tree (issue #199). A directory
+#   git disclaims is a hard error — the empty-corpus branch would otherwise
+#   certify a run that checked nothing (the #194 fail-open class, one script
+#   over). A work tree with no governed docs keeps the empty-corpus message.
+#
 # Bash 3.2 compatible (macOS default) — no associative arrays.
 set -euo pipefail
 
@@ -48,6 +53,21 @@ else
   REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 fi
 cd "$REPO_ROOT"
+
+# The resolved root must be a git work tree (issue #199). The `|| pwd` fallback
+# above covers a caller inside a work tree whose top-level resolution needed it;
+# outside one it resolves to a directory that is not a repository at all — both
+# governed directories then "don't exist", and the empty-corpus branch below
+# would print its message and exit 0 for a run that checked nothing (the #194
+# fail-open class, one script over). A git work tree that genuinely has no
+# workflows/ or guidelines/ — a fresh consumer repository mid-adoption — keeps
+# the empty-corpus message; the guard only rejects directories git disclaims.
+if [ "$(git -C "$REPO_ROOT" rev-parse --is-inside-work-tree 2>/dev/null)" != "true" ]; then
+  echo "ERROR: '$REPO_ROOT' is not inside a git working tree." >&2
+  echo "       Run this script from within the repository it should check, or set" >&2
+  echo "       CA_TARGET_REPO to that repository's working tree. (issue #199)" >&2
+  exit 1
+fi
 
 STALE_DAYS="${DOC_STALE_DAYS:-90}"
 case "$STALE_DAYS" in

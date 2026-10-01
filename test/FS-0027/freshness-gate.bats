@@ -110,3 +110,34 @@ teardown() {
   [ "$status" -eq 0 ]
   echo "$output" | grep -qF "STALE: guidelines/javascript/_freshness_probe.md"
 }
+
+# --- Target resolution: non-git cwd fails loudly (issue #199) -----------------
+
+@test "target_resolution: running outside a git work tree fails loudly instead of certifying nothing (issue #199)" {
+  # Pre-fix, REPO_ROOT fell back to `pwd` outside any repository, both governed
+  # directories "didn't exist", the empty-corpus branch printed its message and
+  # the gate exited 0 — a run that checked nothing received green (the #194
+  # fail-open class, one script over). A CI job or maintainer in the wrong
+  # working directory must see a loud error instead.
+  local nongit="$BATS_TEST_TMPDIR/not-a-repo"
+  mkdir -p "$nongit"
+
+  run bash -c "cd '$nongit' && bash '$CHECK'"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "not inside a git working tree"
+  ! echo "$output" | grep -qF "no governed docs found"
+}
+
+@test "target_resolution: a work tree with no governed docs still reports empty corpus" {
+  # The distinguishing positive control (issue #199): a fresh consumer
+  # repository mid-adoption is a git work tree that genuinely has no
+  # workflows/ or guidelines/ — the guard must not reject it, and the
+  # empty-corpus message (exit 0) stays the documented behavior for it.
+  local fresh="$BATS_TEST_TMPDIR/fresh-repo"
+  mkdir -p "$fresh"
+  ( cd "$fresh" && git init -q )
+
+  run bash -c "cd '$fresh' && bash '$CHECK'"
+  [ "$status" -eq 0 ]
+  echo "$output" | grep -qF "no governed docs found"
+}
