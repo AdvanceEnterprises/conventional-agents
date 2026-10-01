@@ -213,8 +213,30 @@ EOF
 # --- SC-6: the uninitialised exemption applies at the submodule --------------
 
 @test "sc6: an uninitialised host submodule leaves prefixed references skipped" {
+  # The host has NO vendored script in this scenario (its vendor/conventional-agents
+  # directory is empty by definition), so the framework's own script is invoked
+  # from the host's working directory: REPO_ROOT resolves to the host while
+  # FRAMEWORK_HOME stays this checkout, giving the non-self-check path SC-6 names.
+  # The initialised case below can (and does) use the vendored relative path,
+  # because only then is there a vendored copy to run — the asymmetry is the
+  # scenario's, not the test's (MM3 round-B note, PR #193).
   local host="$BATS_TEST_TMPDIR/host-sc6-uninit"
   build_scratch_host "$host" uninitialised
+  printf '# Host\n\nSee vendor/conventional-agents/guidelines/NEVER-EXISTED-HOST.md for details.\n' > "$host/README.md"
+  stage_host "$host"
+  run bash -c "cd '$host' && bash '$CHECK'"
+  [ "$status" -eq 0 ]
+  ! echo "$output" | grep -F "NEVER-EXISTED-HOST"
+}
+
+@test "sc6: a partially initialised submodule (.git only, no checkout) still skips" {
+  # An interrupted `git submodule update --init` can leave only `.git` behind.
+  # That is not a usable checkout, so the probe must not treat it as populated —
+  # otherwise every prefixed reference would be flagged against an empty tree
+  # (MM3 round-B finding, closed in the same PR as this test).
+  local host="$BATS_TEST_TMPDIR/host-sc6-partial"
+  build_scratch_host "$host" uninitialised
+  printf 'gitdir: ../../.git/modules/conventional-agents\n' > "$host/vendor/conventional-agents/.git"
   printf '# Host\n\nSee vendor/conventional-agents/guidelines/NEVER-EXISTED-HOST.md for details.\n' > "$host/README.md"
   stage_host "$host"
   run bash -c "cd '$host' && bash '$CHECK'"
