@@ -114,9 +114,13 @@ holds:
 1. the governing pair is not `implemented`;
 2. every declared implementation-surface path resolves in the current tree and
    has at least one non-merge commit on or after the PLAN's `created:` date;
-3. `CHANGELOG.md` contains an explicit `FS-0041`-style marker for the governed
-   FS or PLAN identifier, or the implementation commit range contains a
-   consumer-framed entry naming that identifier; and
+3. `CHANGELOG.md` contains an explicit marker for the governed FS or PLAN
+   identifier (or the implementation commit range contains a consumer-framed
+   entry naming it). This evidence is required when the FS's `interfaces:`
+   includes an exported-surface path — the same obligation
+   `scripts/check-status.sh` rule 7 / `FS-0022` §1d enforces. For a pair whose
+   declared surface is internal-only, the marker is corroborating evidence
+   when present, and its absence alone does not disqualify the pair; and
 4. when the FS has `test_required: true`, `test/FS-NNNN/` exists, contains a
    tracked test file, and that suite has history on or after the PLAN's
    `created:` date. A `test_required: false` FS does not require this signal.
@@ -181,6 +185,11 @@ is complete and whether the FS/PLAN status should advance.
     disposable worktrees.
   - The two document indexes and `CHANGELOG.md` — package and consumer-facing
     tracking surfaces.
+- Note: the maintenance tick's skill
+  (`skills/conventional-agents-maintenance/SKILL.md`) is the audit's primary
+  operator, but its integration is explicitly deferred — the skill's drift
+  sweep is updated by a follow-up package after the implementation revision
+  lands, so this revision's front-matter `interfaces:` names no `skills/` path.
 
 ## Success Criteria
 
@@ -192,12 +201,15 @@ specific numbers.*
 - **SC-1 — delivered draft is reported.** Given a disposable repository with a
   non-implemented FS/PLAN pair, a non-document implementation path in the
   PLAN's `touches:`, a post-`created:` commit for every such path, the required
-  `test/FS-NNNN/` suite, and a matching CHANGELOG marker, when the audit runs,
-  then it exits non-zero and names the FS, PLAN, statuses, evidence paths, and
-  a remediation to reconcile the pair.
-- **SC-2 — approved drift is reported.** Given the same evidence with the pair
-  at `approved` rather than `draft`, when the audit runs, then it reports the
-  candidate without changing either document.
+  `test/FS-NNNN/` suite, and matching CHANGELOG evidence (where the
+  delivery-candidate rule requires it), when the audit runs, then it exits
+  non-zero and names the FS, PLAN, statuses, evidence paths, and a remediation
+  to reconcile the pair.
+- **SC-2 — approved drift is reported.** Given the same evidence with the
+  governed pair's status at `approved` rather than `draft` — the pair's own
+  status, however it was reached, including via `ADR-0027` self-approval; this
+  criterion measures delivery lag, not the approval route — when the audit
+  runs, then it reports the candidate without changing either document.
 - **SC-3 — existing files alone do not report.** Given a draft pair whose
   `touches:` paths predate the PLAN and whose test/CHANGELOG evidence is absent,
   when the audit runs, then it exits zero and emits no delivery finding.
