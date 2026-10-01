@@ -251,9 +251,9 @@ consumer-impact CHANGELOG entries.
    all — a pure instance-form repository per `ADR-0032` that nobody vendors,
    the concrete case this rule's design was checked against
    (`feral-fleet`).
-8. **Referenced-path resolution** (`FS-0022` §1c). Every path a current-state
-   document names in backticks must resolve, relative to the repository root
-   or the naming document's own directory.
+8. **Referenced-path resolution** (`FS-0022` §1c, extended by `FS-0037`).
+   Every path a current-state document names in backticks must resolve,
+   relative to the repository root or the naming document's own directory.
 
    *Scope is deliberately narrower than the spec's literal wording, because a
    literal reading fails on correct documents:*
@@ -268,13 +268,33 @@ consumer-impact CHANGELOG entries.
    - **Only tokens containing a directory separator.** A bare `tsconfig.json`
      or `pnpm-lock.yaml` in a guideline names a file in the *reader's*
      repository.
-   - Excluded per `FS-0022` §1c: `vendor/` (uninitialised submodule),
-     `docs/orchestration/` (preserved evidence), and paths an approved PLAN's
-     `touches:` declares as to-be-created.
+   - Excluded per `FS-0022` §1c: `docs/orchestration/` (preserved evidence),
+     paths an approved PLAN's `touches:` declares as to-be-created, and
+     third-party `vendor/` paths (`vendor/madr/` — uninitialised submodule).
    - `REF_EXEMPT` in the script covers what none of the above can: a path the
      framework tells a consumer to create in *their* repo is syntactically
      identical to a reference to one of ours. Entries carry a reason; a bats
      assertion fails if one does not.
+
+   **`FS-0037` extension — the `vendor/conventional-agents/` prefix.** The
+   canonical way a consumer-facing document cites a framework file is
+   `vendor/conventional-agents/<path>`. That form is now **resolved**, not
+   swallowed by the `vendor/*` exclusion:
+
+   - In **self-check**, the prefix strips against this tree
+     (`bare=${ref#vendor/conventional-agents/}`).
+   - In a **consumer run**, it resolves through the host's own
+     `vendor/conventional-agents/` checkout — and keeps the skip (not a
+     failure) when that submodule is uninitialised, which is the FS-0022 §1c
+     exclusion, now applied at the submodule rather than at the prefix.
+   - The three exported-surface documents (`INTEGRATION.md`, `README.md`,
+     `AGENTS.md`) also resolve **non-backticked** occurrences of the prefix,
+     with a conservative token shape: a required lowercase file extension
+     (which also excludes placeholders, ellipses, globs, and directory
+     citations). The `#163` phantoms this clause catches carried no
+     backticks at all.
+   - Third-party submodule paths (`vendor/madr/`) keep today's skip
+     behaviour in every mode.
 
    A failure means a reader following the document looks for a file that is
    not there. Fix the reference, not the check.
