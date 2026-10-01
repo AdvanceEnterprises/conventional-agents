@@ -52,10 +52,11 @@ updated: 2026-10-01
 * Add a GitHub or Notion dependency to the portable gate.
 
 **The later implementation revision WILL, only after FS-0041 is approved and
-its own reserved-path approval is recorded. Its `touches:` set will mirror
-FS-0041's full `interfaces:` set exactly — including the reserved
-`scripts/`, `.github/workflows/`, and `package.json` entries — so the
-approval boundary and the containment envelope cannot drift apart:**
+its own reserved-path approval is recorded. Its `touches:` set MUST equal
+FS-0041's `interfaces:` set at merge time — including the reserved
+`scripts/`, `.github/workflows/`, and `package.json` entries — or, where the
+implementation must deviate, FS-0041's `interfaces:` is revised first, so the
+approved boundary and the containment envelope cannot drift apart:**
 
 * Add `scripts/check-delivery-status.sh` with the evidence model and stable
   exit behavior in FS-0041 SC-1 through SC-9.
