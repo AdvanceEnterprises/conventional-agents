@@ -737,8 +737,9 @@ For this project (a documentation/standards kit), semver follows the
   work-tree top level. `sync-skills.sh` additionally counts a source skill
   missing its `SKILL.md` as a failed copy: the previously unreachable
   `N skill(s) failed to sync` check now fires instead of a run that copied
-  nothing exiting 0. Nine regression cases in `test/FS-0030/runtime-binding.bats`
-  (each fails against the pre-fix scripts — regression-proved).
+  nothing exiting 0. Ten regression cases in `test/FS-0030/runtime-binding.bats`
+  (each of the fail-closed cases fails against the pre-fix scripts —
+  regression-proved).
 - **`gh-board-audit.sh` reported every pull-request item as field drift
   (#171).** Rows were serialised tab-delimited and parsed with `IFS=$'\t'`.
   Tab is IFS *whitespace*, so the empty `number`/`repository` cells on
