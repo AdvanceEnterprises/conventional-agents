@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0037
-status: approved
+status: implemented
 title: Vendor-prefixed reference resolution — close the submodule-citation blind spot in referenced-path checking
 owner: ajoeofalltrades
 test_required: true
@@ -17,7 +17,7 @@ supersedes: []
 requires: []
 tags: [quality-gates, references, vendor, submodule, enforcement]
 created: 2026-09-22
-updated: 2026-09-24
+updated: 2026-10-01
 ---
 
 <!--
@@ -34,7 +34,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Approved
+- Implemented
 
 Approved 2026-09-24 by Joey Clark, recorded on the commit that flips this status
 with an `Approved-By:` trailer (`ADR-0026`). This is a **recorded approval**, the
@@ -43,25 +43,21 @@ reserved path under `ADR-0027`, so the implementing PLAN cannot self-approve; th
 spec-first gate (`guidelines/ROLE_CONTRACT.md`) is now satisfied for this spec and
 implementation of the extended rule may begin against an approved PLAN.
 
+Implemented in this change, under PLAN-0043's recorded approval (PR #191,
+merged 2026-10-01) — the single-PR path of `workflows/document-lifecycle.md`
+§"Single-PR implementations". The extended rule lives in `scripts/check-status.sh`
+rule 8, the suite in `test/FS-0037/vendor-ref-resolution.bats`.
+
 Tracks issue #165. The gap this spec closes is live on trunk: references of the
 form `vendor/conventional-agents/<path>` are skipped before resolution is
 attempted, so a phantom prefixed reference passes the gate today.
 
 ## Plan Status
 
-- **PLAN-0043 remains `draft`** in this change. Its current revision ships the
-  governance package (spec + plan + index rows + CHANGELOG entry) and touches
-  only `docs/` paths inside this spec's `interfaces:` set — approving it now
-  would approve a documentation-only revision, not the implementation.
-
-  `PLAN-0043` §"Approval Routing" states that the **implementation revision**
-  declares `scripts/check-status.sh` and `scripts/README.md` in `touches:` —
-  both reserved under `ADR-0027` — and therefore cannot self-approve. That
-  revision needs its own recorded approval covering its own `touches:` set;
-  under `ADR-0026` an approval covers only the set that existed when it was
-  given, so an approval recorded against the current (docs-only) revision would
-  not extend to it. The implementing PR opens separately and records that
-  approval there.
+- **PLAN-0043 is `implemented`** — flipped in this change, directly from
+  `approved` under the single-PR path. Its recorded approval (PR #191, merged
+  2026-10-01 as `bbaf498`) cleared the reserved-path gate for its own `touches:`
+  set; the implementation revision ships in this change.
 
 ## Summary
 
@@ -209,7 +205,7 @@ they are two halves of the same blind spot.
   reference.
 - **SC-2** Given the same shape whose `<path>` does exist, when the check
   runs in self-check mode, then it passes; specifically the three
-  repositories' currently-resolving prefixed references (92 / 39 / 24 as
+  repositories' currently-resolving prefixed references (64 / 39 / 24 as
   measured on 2026-09-22) produce no failures.
 - **SC-3** Given a reference to any other `vendor/*` path (e.g.
   `vendor/madr/template.md`) that does not exist, when the check runs, then

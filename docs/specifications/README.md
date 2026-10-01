@@ -129,7 +129,7 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0034 | Consumer conformance doctor — read-only diagnostics for framework adoption | implemented |
 | FS-0035 | Portable flow-report read-model — substrate-neutral governance visibility without a work-item binding | draft |
 | FS-0036 | Planning-field conventions for the GitHub binding — Priority, Iteration, Milestone semantics and read-only flow checks | draft |
-| FS-0037 | Vendor-prefixed reference resolution — close the submodule-citation blind spot in referenced-path checking | approved |
+| FS-0037 | Vendor-prefixed reference resolution — close the submodule-citation blind spot in referenced-path checking | implemented |
 | FS-0038 | Hermes kanban substrate binding for work item lifecycle | draft |
 | FS-0039 | Validation reproducibility contract — bounded, hermetic, and CI-parity framework checks | implemented |
 | FS-0040 | Governed-ID claim audit — local duplicate detection and cross-PR collision reporting | draft |

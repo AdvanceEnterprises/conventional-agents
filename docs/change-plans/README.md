@@ -68,7 +68,7 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | PLAN-0040 | Implement FS-0034 Consumer conformance doctor | FS-0034 | implemented |
 | PLAN-0041 | Implement FS-0035 Portable flow-report read-model | FS-0035 | draft |
 | PLAN-0042 | Implement FS-0036 Planning-field conventions (Priority/Iteration/Milestone) | FS-0036 | draft |
-| PLAN-0043 | Implement FS-0037 Vendor-prefixed reference resolution | FS-0037 | approved |
+| PLAN-0043 | Implement FS-0037 Vendor-prefixed reference resolution | FS-0037 | implemented |
 | PLAN-0044 | Implement FS-0038 Hermes kanban substrate binding | FS-0038 | draft |
 | PLAN-0045 | Implement FS-0039 Validation reproducibility contract | FS-0039 | implemented |
 | PLAN-0046 | Implement FS-0040 Governed-ID claim audit | FS-0040 | draft |

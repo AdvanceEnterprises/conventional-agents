@@ -46,7 +46,7 @@ For this project (a documentation/standards kit), semver follows the
   now rather than blocked on issue #146's flow-report read-model, as the
   human audit surface. Decision record only; implementation needs a
   companion FS/PLAN.
-- **FS-0037: Vendor-prefixed reference resolution (draft — `FS-0037`,
+- **FS-0037: Vendor-prefixed reference resolution (implemented — `FS-0037`,
   `PLAN-0043`).** Closes a blind spot in the `FS-0022` §1c referenced-path
   check: references of the form `vendor/conventional-agents/<path>` — how
   consumers are instructed to cite framework files — are blanket-skipped by
@@ -63,7 +63,12 @@ For this project (a documentation/standards kit), semver follows the
   integration path is the party who hits a dead reference. (Consumer-framed
   per `FS-0022` §1d — the spec names `scripts/` — and staged with the draft
   package rather than held back, so reviewers see the consumer impact while
-  the spec is under review.)
+  the spec is under review.) Implemented under PLAN-0043's recorded approval
+  (PR #191): rule 8 in `scripts/check-status.sh`
+  resolves the prefixed form — strip-prefix in self-check, the host's
+  initialised submodule in a consumer run, skipping only when it is
+  uninitialised — and `test/FS-0037/vendor-ref-resolution.bats` covers
+  SC-1..SC-7.
 - **FS-0040: Governed-ID claim audit (draft — `FS-0040`, `PLAN-0046`).**
   Closes the governed-ID collision class in two layers. Locally,
   `check-status.sh` learns to fail when two documents in one registry

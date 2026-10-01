@@ -927,6 +927,14 @@ fi
 # reference to one of ours. There is no syntax that separates them, so they are listed
 # explicitly with reasons rather than the corpus being edited to satisfy the check
 # (FS-0022 §1c is explicit that exclusions are the check's job).
+#
+# FS-0037 extends the rule for the canonical consumer citation form. References of the
+# form `vendor/conventional-agents/<path>` are resolved instead of being caught by the
+# generic `vendor/*` exclusion: strip-prefix in self-check, the initialised submodule in
+# a host. The three exported-surface documents (`README.md`, `AGENTS.md`,
+# `INTEGRATION.md`) additionally carry a non-backticked pass over the same prefix — the
+# `INTEGRATION.md` phantoms that motivated the spec carried no backticks (issue #163).
+# Third-party submodule paths (`vendor/madr/`) keep the exclusion.
 
 # This repository's own exemptions, used only for self-check — each names a
 # specific sentence in a specific document here, per FS-0024/ADR-0033's
@@ -977,6 +985,17 @@ planned_paths=$(collect_planned_paths | sed 's/^[[:space:]]*//; s/"//g' | sort -
 # referenced path made this check the slowest thing in the suite.
 planned_paths_str=$'\n'"$planned_paths"$'\n'
 
+# FS-0037: whether a host run can resolve `vendor/conventional-agents/` references
+# at all — its submodule must actually be checked out. git leaves the directory
+# empty when the submodule is not initialised, and that absence is the FS-0022 §1c
+# exclusion, not drift. Probed once, not per reference. Self-check always resolves
+# (the prefix strips against this tree) and does not use this flag.
+host_vendor_ca_populated=""
+if [ -d "$REPO_ROOT/vendor/conventional-agents" ] && \
+   [ -n "$(ls -A "$REPO_ROOT/vendor/conventional-agents" 2>/dev/null)" ]; then
+  host_vendor_ca_populated=1
+fi
+
 while IFS= read -r doc; do
   [ -f "$REPO_ROOT/$doc" ] || continue
   case "$doc" in
@@ -993,8 +1012,21 @@ while IFS= read -r doc; do
     esac
     case "$ref" in
       *NNNN*|*XXXX*|*'<'*) continue ;;     # template placeholders
-      vendor/*) continue ;;                # uninitialised submodule (FS-0022 §1c)
       docs/orchestration/*) continue ;;    # preserved evidence (FS-0022 §1c)
+    esac
+    # FS-0037: the vendor/conventional-agents/ prefix — the documented way a
+    # consumer cites a framework file — is resolved instead of being swallowed
+    # by the generic vendor/* exclusion below. Self-check strips the prefix and
+    # resolves against this tree; a host run resolves through its own
+    # vendor/conventional-agents/ checkout, and only skips when that submodule
+    # is not initialised (the FS-0022 §1c exclusion this replaces).
+    case "$ref" in
+      vendor/conventional-agents/*)
+        if ! is_self_check && [ -z "$host_vendor_ca_populated" ]; then
+          continue
+        fi
+        ;;
+      vendor/*) continue ;;                # uninitialised submodule (FS-0022 §1c)
     esac
     # Consumers reference framework files through vendor/conventional-agents/.
     bare=${ref#vendor/conventional-agents/}
@@ -1005,7 +1037,20 @@ while IFS= read -r doc; do
     ref_exempt "$doc" "$ref" && continue
     echo "ERROR: $doc references '$ref', which does not resolve (FS-0022 §1c)."
     errors=$((errors+1))
-  done < <(grep -oE '`[A-Za-z0-9_./@-]+\.(md|sh|yml|yaml|json|py|bats)`' "$REPO_ROOT/$doc" 2>/dev/null | tr -d '`' | sort -u)
+  done < <({
+      grep -oE '`[A-Za-z0-9_./@-]+\.(md|sh|yml|yaml|json|py|bats)`' "$REPO_ROOT/$doc" 2>/dev/null | tr -d '`'
+      case "$doc" in
+        README.md|AGENTS.md|INTEGRATION.md)
+          # FS-0037: the three exported-surface documents also resolve
+          # non-backticked prefixed citations — the #163 phantoms carried no
+          # backticks, so a backtick-only extractor cannot see the incident
+          # class this rule exists for. The token shape stays conservative: a
+          # required lowercase file extension also excludes placeholders,
+          # ellipses, globs, and directory citations.
+          grep -oE 'vendor/conventional-agents/[A-Za-z0-9_./@-]+\.[a-z]+' "$REPO_ROOT/$doc" 2>/dev/null
+          ;;
+      esac
+    } | sort -u)
 done < <(git -C "$REPO_ROOT" ls-files '*.md')
 
 # --- result ------------------------------------------------------------------

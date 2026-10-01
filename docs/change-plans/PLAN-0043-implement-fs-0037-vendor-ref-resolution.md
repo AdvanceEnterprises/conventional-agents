@@ -2,7 +2,7 @@
 type: change-plan
 role: implementer
 language: bash
-status: approved
+status: implemented
 related_specs: [FS-0037]
 approved_by: "Joey Clark <administrator@ajoeofalltrades.dev>"
 related_adrs: [ADR-0026, ADR-0027, ADR-0030, ADR-0033]
@@ -175,9 +175,16 @@ and no CI jobs are added, so rollback is content-only.
 
 * [x] FS-0037 is approved (2026-09-24, recorded via PR #175) — the gate that
   held this revision back
-* [ ] This revision's own recorded approval (reserved paths) — the
-  maintainer's next act
+* [x] This revision's own recorded approval (reserved paths) — recorded in
+  PR #191 (merged 2026-10-01 as `bbaf498`)
 * [x] Tests are defined per SC (section 4)
 * [x] Scope is explicit; every reserved-path and out-of-union entry in
   `touches:` (the `scripts/` pair and the FS-0037 spec file) routes
   approval to the maintainer's recorded act (§3)
+
+**Implemented** under the PR #191 record — single-PR path
+(`workflows/document-lifecycle.md` §"Single-PR implementations"): rule 8's
+extension in `scripts/check-status.sh`, the `scripts/README.md` entry, and
+`test/FS-0037/vendor-ref-resolution.bats` (SC-1..SC-7). `FS-0037` and this
+plan flip `approved → implemented` directly in the same change; issue #165
+resolves with the evidence comment naming the implementing PR's merge commit.
