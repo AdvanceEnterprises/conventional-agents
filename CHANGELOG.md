@@ -13,6 +13,14 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
+- **FS-0044: GitHub Pages project website (draft — `FS-0044`,
+  `PLAN-0050`).** Proposes a curated, adopter-facing project site at the
+  repository's GitHub Pages URL, built with a pinned Eleventy toolchain and an
+  explicit content manifest. The repository's existing Markdown remains the
+  canonical framework artifact; the site is a public guide and source index,
+  not a broad mirror. The governance package is draft only — implementation,
+  Pages workflow, and deployment require the later approved plan and recorded
+  reserved-path approval.
 - **Claude Code runtime binding (`FS-0030`).** The framework's first agent-runtime
   binding ships under `integrations/runtimes/claude-code/`: a plugin manifest
   (`claude plugin validate` clean), synced skill copies sourced from
