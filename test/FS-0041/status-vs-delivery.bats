@@ -40,7 +40,6 @@ EOF
   cat > "$repo/docs/change-plans/PLAN-0001-fixture.md" <<EOF
 ---
 type: change-plan
-id: PLAN-0001
 status: $plan_status
 related_specs: [FS-0001]
 created: $created

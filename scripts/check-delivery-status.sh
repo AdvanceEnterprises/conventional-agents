@@ -200,6 +200,7 @@ eligible=0
 
 for plan_file in "${plan_files[@]}"; do
   plan_id="$(get_field "$plan_file" id)"
+  [ -n "$plan_id" ] || plan_id="$(get_id_from_path "$plan_file")"
   plan_status="$(get_field "$plan_file" status)"
   primary_fs="$(get_related_specs "$plan_file" | head -1 | tr -d '[:space:]')"
   [ -n "$plan_id" ] && [ -n "$primary_fs" ] || continue
