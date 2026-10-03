@@ -352,7 +352,7 @@ is normative:
 | `model=` | Provider-qualified `provider/vendor/model[:variant]` | `ollama-cloud/deepseek-v4.1-flash`, `anthropic/claude-opus-5` | `Opus 5`, `deepseek-v4.1-flash` (bare) |
 | `role=` | ROLE_CONTRACT role in title case | `Implementer`, `Head Architect`, `Document Author` | `implementer`, `document-author` |
 | `session=` | Lowercase kebab-case session name | `architecture-planning`, `conventional-agents-maintenance` | `Architecture Planning` |
-| `mode=` | Optional terminal field; `autonomous` per ADR-0021 | `mode=autonomous` | `mode=hybrid` |
+| `mode=` | Conditional terminal field; mandatory `autonomous` for configured cron identities after the adoption boundary (ADR-0021 / FS-0043) | `mode=autonomous` | `mode=hybrid` |
 
 Field order is fixed: `actor; model; role; session; mode?`.
 
@@ -420,6 +420,12 @@ Per `ADR-0021`, an unattended actor — cron, webhook, scheduled detection — c
 - A dedicated `user.email` distinct from both the human and the interactive-agent address.
 - A `mode=autonomous` marker in every stance entry and `Agent-Attribution:` trailer.
 - A `session=<job-name>` value naming the triggering job.
+
+`scripts/cross-repo-lint.sh` enforces the terminal marker for configured cron
+emails after `CRON_ATTRIBUTION_BOUNDARY` (default
+`2026-10-03T00:00:00Z`). Commits at or before that boundary are reported as
+grandfathered rather than rewritten. Consumers with a different adoption date
+must set the variable explicitly; invalid values fail closed.
 
 This makes unattended work distinguishable from supervised work at commit level and at
 work-item-comment level. The autonomous gate (`ADR-0019`) is auditable because the actor

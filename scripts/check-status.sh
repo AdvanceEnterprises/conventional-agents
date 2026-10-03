@@ -466,7 +466,33 @@ if [ -f "$ADR_README" ]; then
   done < <(grep "^| ADR-" "$ADR_README")
 fi
 
-# --- rule 4: FS/PLAN index title sync (FS-0022 §1a) -------------------------
+# --- rule 4: governed-ID duplicate detection (FS-0040 / #179) ----------------
+
+# A descriptive filename can hide a duplicate front-matter claim, so compare
+# the declared IDs and report every file carrying a repeated claim. FS, PLAN,
+# and ADR sequences remain independent: FS-0040 and PLAN-0040 are not a
+# collision. This uses a temporary tab-delimited evidence file rather than
+# associative arrays so the check remains Bash 3.2-compatible.
+duplicate_evidence="$(mktemp "${TMPDIR:-/tmp}/ca-governed-id.XXXXXX")"
+for registry_file in "$FS_DIR"/FS-*.md "$PLAN_DIR"/PLAN-*.md "$ADR_DIR"/ADR-*.md; do
+  [ -f "$registry_file" ] || continue
+  registry_id=$(get_field "$registry_file" "id")
+  [ -n "$registry_id" ] || continue
+  printf '%s\t%s\n' "$registry_id" "$registry_file" >> "$duplicate_evidence"
+done
+
+duplicate_ids="$(awk -F '\t' '{counts[$1]++} END {for (id in counts) if (counts[id] > 1) print id}' "$duplicate_evidence" | sort)"
+if [ -n "$duplicate_ids" ]; then
+  while IFS= read -r duplicate_id; do
+    [ -n "$duplicate_id" ] || continue
+    echo "ERROR: duplicate governed ID $duplicate_id is claimed by:"
+    awk -F '\t' -v wanted="$duplicate_id" '$1 == wanted {print "  " $2}' "$duplicate_evidence"
+    errors=$((errors+1))
+  done <<< "$duplicate_ids"
+fi
+rm -f "$duplicate_evidence"
+
+# --- rule 5: FS/PLAN index title sync (FS-0022 §1a) -------------------------
 
 # For each FS row in docs/specifications/README.md, the title column should match the front
 # matter title field. Likewise for PLAN.

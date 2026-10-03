@@ -167,6 +167,7 @@ jobs:
     permissions:
       contents: read
       issues: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@v4
         with:
@@ -183,6 +184,13 @@ jobs:
           CA_GITHUB_REPOSITORY: ${{ github.repository }}
           CA_GITHUB_PROJECT_NUMBER: ${{ vars.CA_GITHUB_PROJECT_NUMBER }}
         run: bash integrations/github/bin/gh-board-audit.sh
+      - name: Audit open PR governed-ID claims
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CA_GITHUB_REPOSITORY: ${{ github.repository }}
+          CA_REST_MIN_INTERVAL: 0
+        run: bash integrations/github/bin/gh-pr-claim-audit.sh --json
 
   check-freshness:
     # FS-0027: every governed doc under workflows/ and guidelines/** must carry
@@ -192,8 +200,14 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Check workflow/guideline doc freshness
         run: npm run check:freshness
+      - name: Check history-aware workflow/guideline freshness
+        run: npm run check:freshness:history
+      - name: Check status versus delivered implementation
+        run: npm run check:delivery
 
   lint-cross-repo:
     # cross-repo-lint.sh, wired per #85. On pull_request this audits the

@@ -13,8 +13,9 @@ gate people work around. This file is the contract.
 ## GitHub binding executables
 
 The exported GitHub binding lives under `integrations/github/`, not `scripts/`.
-Its three commands are registered as `github:submodule-init`,
-`github:label-provision`, and `github:board-audit` in `package.json`.
+Its commands are registered as `github:submodule-init`,
+`github:label-provision`, `github:board-audit`, and `github:pr-claim-audit` in
+`package.json`.
 
 These commands are **not Category 1 governance gates**. They provision or report
 substrate state, and two of them require repository or project permissions that a
@@ -466,6 +467,50 @@ assertions stable.
 **When it runs.** CI push and `pull_request` (the `check-freshness` job in
 `.github/workflows/lint-docs.yml`), locally via `npm run check:freshness`.
 
+## check-freshness-history.sh
+
+`npm run check:freshness:history` runs `bash scripts/check-freshness-history.sh --strict`.
+
+**Purpose.** This is the FS-0042 companion to the fast FS-0027 presence/age
+check. It compares each tracked Markdown file under `workflows/` and
+`guidelines/` (excluding `README.md`) with its latest reachable non-merge Git
+commit. A commit is substantive when bytes outside the front-matter freshness
+metadata (`updated:`, `last_reviewed:`, or `freshness_checked:`) changed.
+
+Metadata-only commits are printed as `DIAGNOSTIC` and never create a strict
+failure. A substantive commit newer than the declared `updated:` date is
+printed as `DRIFT`; diagnostic mode reports it with exit 0, while `--strict`
+returns exit 1. Missing or invalid dates, no reachable history, and shallow
+checkouts fail closed with exit 2. The script never fetches, edits dates, or
+mutates the worktree. Run it from a full-history checkout; CI explicitly uses
+`fetch-depth: 0`.
+
+**When it runs.** CI push and `pull_request` after `check:freshness` in the
+same full-history job, or locally in diagnostic mode with
+`bash scripts/check-freshness-history.sh`.
+
+## check-delivery-status.sh
+
+`npm run check:delivery` runs `bash scripts/check-delivery-status.sh`.
+
+**Purpose.** FS-0041's offline, report-only audit finds a non-terminal FS and
+primary PLAN pair whose declared implementation surface appears to have
+shipped. It expands tracked `touches:` paths, excludes documentation-only
+entries, requires post-`created:` non-merge history for every remaining path,
+and honors `test_required: true` with a tracked post-`created:` suite. When the
+FS interfaces include an exported surface, a `CHANGELOG.md` marker or a
+consumer-framed implementation commit naming the FS/PLAN is also required.
+
+A complete candidate is printed as `DRIFT` with both statuses, every evidence
+path, commit/date, test signal, and the human remediation. Existing files,
+partial history, documentation-only plans, terminal statuses, and missing
+optional tests are skipped rather than over-claimed. Missing history or a
+shallow checkout returns exit 2; one or more complete candidates returns exit
+1. The audit never changes document status or any repository bytes.
+
+**When it runs.** CI push and `pull_request` after the freshness companions in
+`.github/workflows/lint-docs.yml`, and locally via `npm run check:delivery`.
+
 ## cross-repo-lint.sh
 
 `npm run lint:cross-repo` runs `bash scripts/cross-repo-lint.sh`.
@@ -476,6 +521,10 @@ assertions stable.
 1. **Agent-Attribution trailer format (FS-0017)** across recent commits on
    each repo's default branch
    (`Agent-Attribution: actor=…; model=…; role=…; session=…[; mode=…]`).
+   Configured cron identities are subject to the boundary-aware ADR-0021 rule:
+   after `CRON_ATTRIBUTION_BOUNDARY` their parsed trailer must end in
+   `mode=autonomous`; commits at or before the boundary are reported as
+   grandfathered and are not rewritten.
 2. **README index consistency** — every governed doc under `docs/decisions/`,
    `docs/specifications/`, and `docs/change-plans/` appears in its
    `README.md` index.
@@ -507,6 +556,12 @@ finding zero repositories is a hard failure, never a silent pass.
 - `ATTRIBUTION_MIN_ANCHOR` — convention-era floor for the audited range
   (default `v2.1.0`, parity with `test/FS-0017/commit-attribution.bats`).
   Only applies when the ref resolves in the repo being linted.
+- `CRON_ATTRIBUTION_BOUNDARY` — adoption boundary as UTC ISO-8601
+  (`YYYY-MM-DDTHH:MM:SSZ`) or epoch seconds. Default
+  `2026-10-03T00:00:00Z`; equality is grandfathered. An invalid value is a
+  hard failure.
+- `CRON_AGENT_EMAILS` — space-separated configured unattended actor emails;
+  default `hermes-cron@tais-den.dev codex-cron@tais-den.dev`.
 - `STRICT_TOOLS=1` — fail on missing tools instead of warning.
 
 **When it runs.** Manually via `npm run lint:cross-repo`, or as step 5 of
@@ -526,8 +581,9 @@ workflow's `paths:` (any governed doc, `package.json`, `.github/**`,
 `scripts/**`, `test/**`).
 
 **Failure.** Exits non-zero when any repo has a malformed/missing attribution
-trailer on an agent-authored commit, a doc missing from its README index, or
-a duplicate FS/PLAN ID.
+trailer on an agent-authored commit, a post-boundary cron trailer without
+terminal `mode=autonomous`, a doc missing from its README index, or a duplicate
+FS/PLAN ID. The audit is read-only; it never amends historical commits.
 
 ## check-conformance.sh
 `npm run check:conformance` runs `bash scripts/check-conformance.sh`.
