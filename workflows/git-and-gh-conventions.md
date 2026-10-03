@@ -1,5 +1,5 @@
 ---
-updated: 2026-09-21
+updated: 2026-10-03
 ---
 
 # Git + GitHub (gh) conventions
