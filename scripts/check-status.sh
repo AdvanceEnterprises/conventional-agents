@@ -477,6 +477,10 @@ duplicate_evidence="$(mktemp "${TMPDIR:-/tmp}/ca-governed-id.XXXXXX")"
 for registry_file in "$FS_DIR"/FS-*.md "$PLAN_DIR"/PLAN-*.md "$ADR_DIR"/ADR-*.md; do
   [ -f "$registry_file" ] || continue
   registry_id=$(get_field "$registry_file" "id")
+  if [ -z "$registry_id" ]; then
+    registry_id=$(basename "$registry_file" | sed -nE \
+      's/^(FS|PLAN|ADR)-([0-9][0-9][0-9][0-9])(-.*)?\.md$/\1-\2/p')
+  fi
   [ -n "$registry_id" ] || continue
   printf '%s\t%s\n' "$registry_id" "$registry_file" >> "$duplicate_evidence"
 done

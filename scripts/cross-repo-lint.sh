@@ -111,6 +111,9 @@ _parse_cron_boundary() {
     printf '%s\n' "$value"
     return 0
   fi
+  if ! printf '%s\n' "$value" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$'; then
+    return 1
+  fi
   # GNU/coreutils date (Linux) first.
   parsed="$(date -u -d "$value" +%s 2>/dev/null || true)"
   if [ -z "$parsed" ]; then

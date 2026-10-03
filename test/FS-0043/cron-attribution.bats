@@ -141,6 +141,17 @@ $(cron_trailer missing)" "old.txt"
   echo "$output" | grep -qF "invalid CRON_ATTRIBUTION_BOUNDARY"
 }
 
+@test "date-only boundary is rejected instead of delegated to date parsing" {
+  local repo="$BATS_TEST_TMPDIR/date-only-boundary"
+  build_repo "$repo"
+  plant_human_commit "$repo" "human.txt"
+
+  run_lint "$repo" "2026-10-03"
+
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "invalid CRON_ATTRIBUTION_BOUNDARY"
+}
+
 @test "cron enforcement is report-only" {
   local repo="$BATS_TEST_TMPDIR/read-only"
   build_repo "$repo"
