@@ -13,6 +13,21 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
+- **FS-0042: History-aware freshness audit (draft — `FS-0042`,
+  `PLAN-0048`).** Proposes a companion to the implemented freshness gate that
+  compares `updated:` with the latest substantive Git history while treating
+  date-only metadata commits as diagnostics and missing history as an explicit
+  failure. The audit is offline and report-only; implementation remains
+  approval-gated.
+- **FS-0043: Cron attribution enforcement (draft — `FS-0043`,
+  `PLAN-0049`).** Proposes boundary-aware enforcement of ADR-0021's terminal
+  `mode=autonomous` marker for new cron-authored commits while grandfathering
+  existing history. The audit is read-only and does not rewrite old commits.
+- **FS-0040 now includes the #186 citation-drift complement.** The governed-ID
+  audit package covers local duplicate detection, cross-PR claim collisions,
+  and stale citations of retired IDs when an open PR exposes the corresponding
+  renumber event. It remains a draft until its reserved-path implementation
+  approval is recorded.
 - **Claude Code runtime binding (`FS-0030`).** The framework's first agent-runtime
   binding ships under `integrations/runtimes/claude-code/`: a plugin manifest
   (`claude plugin validate` clean), synced skill copies sourced from

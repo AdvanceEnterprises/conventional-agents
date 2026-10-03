@@ -132,5 +132,7 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0037 | Vendor-prefixed reference resolution — close the submodule-citation blind spot in referenced-path checking | implemented |
 | FS-0038 | Hermes kanban substrate binding for work item lifecycle | draft |
 | FS-0039 | Validation reproducibility contract — bounded, hermetic, and CI-parity framework checks | implemented |
-| FS-0040 | Governed-ID claim audit — local duplicate detection and cross-PR collision reporting | draft |
+| FS-0040 | Governed-ID claim and citation audit — local duplicates, cross-PR collisions, and stale renumber citations | draft |
 | FS-0041 | Status-vs-delivery consistency audit — detect governed documents that lag shipped implementation | draft |
+| FS-0042 | History-aware freshness audit — distinguish substantive document drift from metadata-only updates | draft |
+| FS-0043 | Cron attribution enforcement — require terminal mode=autonomous after the adoption boundary | draft |

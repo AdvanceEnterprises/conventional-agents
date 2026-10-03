@@ -7,23 +7,26 @@ related_specs: [FS-0041]
 approved_by: ""
 related_adrs: [ADR-0015, ADR-0024, ADR-0026, ADR-0027, ADR-0033]
 touches:
+  - scripts/check-delivery-status.sh
+  - scripts/README.md
+  - package.json
+  - .github/workflows/lint-docs.yml
+  - test/FS-0041/**
   - docs/specifications/FS-0041-status-vs-delivery-consistency-audit.md
   - docs/change-plans/PLAN-0047-implement-fs-0041-status-vs-delivery-consistency-audit.md
   - docs/specifications/README.md
   - docs/change-plans/README.md
   - CHANGELOG.md
 created: 2026-10-01
-updated: 2026-10-01
+updated: 2026-10-03
 ---
 
 # PLAN-0047: Implement FS-0041 — Status-vs-delivery consistency audit
 
-> **Template note:** this first revision publishes the governance package only:
-> FS-0041, this plan, the two index rows, and the CHANGELOG entry. It does not
-> add the audit script, npm entry, CI step, or tests. The later implementation
-> revision touches `ADR-0027` reserved paths (`scripts/`, `package.json`,
-> `.github/workflows/`) and therefore requires a separate recorded approval
-> under ADR-0026/ADR-0027.
+> **Template note:** this plan declares the complete implementation surface up
+> front. The executable revision touches `ADR-0027` reserved paths
+> (`scripts/`, `package.json`, `.github/workflows/`) and therefore requires a
+> recorded approval under ADR-0026/ADR-0027 before implementation begins.
 
 ## 1. Feature / Issue Reference
 
@@ -35,25 +38,25 @@ updated: 2026-10-01
 
 ## 2. Scope of Change
 
-**This documentation revision WILL:**
+**This revision WILL:**
 
 * Publish FS-0041 as a draft specification for a conservative, offline,
   report-only status-vs-delivery audit.
 * Publish this draft plan with documentation-only `touches:`.
 * Add FS-0041 and PLAN-0047 to their README indexes with `draft` status.
-* Add a CHANGELOG entry that names the package as draft and does not claim the
-  audit is implemented.
+* Add a CHANGELOG entry that names the package and does not claim the audit is
+  implemented before its implementation commit lands.
 
-**This documentation revision will NOT:**
+**Before the recorded approval, this branch will NOT:**
 
-* Modify `scripts/`, `package.json`, `.github/workflows/`, or `test/`.
+* Modify the executable or workflow surfaces listed in `touches:`.
 * Change any FS, PLAN, or ADR status.
 * Infer that any historical delivered-but-draft instance is fixed by publishing
   this proposal.
 * Add a GitHub or Notion dependency to the portable gate.
 
-**The later implementation revision WILL, only after FS-0041 is approved and
-its own reserved-path approval is recorded. Its `touches:` set MUST equal
+**After FS-0041 is approved and its reserved-path approval is recorded, the
+implementation revision WILL. Its `touches:` set MUST equal
 FS-0041's `interfaces:` set at merge time — including the reserved
 `scripts/`, `.github/workflows/`, and `package.json` entries — or, where the
 implementation must deviate, FS-0041's `interfaces:` is revised first, so the
@@ -79,7 +82,7 @@ approved boundary and the containment envelope cannot drift apart:**
     through SC-10, using a real disposable Git history rather than mocked
     timestamps.
 
-* Documentation-package validation now:
+* Validation before implementation:
 
   * `npm run check:status` — both new rows resolve and the draft pair is
     coherent.
@@ -199,7 +202,7 @@ approved boundary and the containment envelope cannot drift apart:**
 * [ ] Spec is approved
 * [ ] Tests exist or are clearly defined
 * [x] Scope is minimal and explicit
-* [x] No implementation or reserved-path change is included
+* [x] Full implementation surface is declared before approval
 
 ## Declaration
 
