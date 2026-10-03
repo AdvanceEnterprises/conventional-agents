@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0041
-status: draft
+status: approved
 title: Status-vs-delivery consistency audit — detect governed documents that lag shipped implementation
 owner: ajoeofalltrades
 test_required: true
@@ -38,13 +38,14 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Approved
 
 ## Plan Status
 
-- **PLAN-0047 is `draft`.** This first revision is the documentation package
-  only (spec + plan + index rows + CHANGELOG entry). Approval of that package
-  must not be read as approval to add the executable gate.
+- **PLAN-0047 is `approved`.** This package defines the executable audit,
+  fixtures, npm entry, and CI invocation; approval covers the declared
+  implementation surface and does not itself change any historical document
+  status.
 - The implementation revision will declare the executable surface in its own
   `touches:` set. It includes `scripts/` and `.github/workflows/`, which are
   reserved by `ADR-0027`; that revision needs a recorded approval under

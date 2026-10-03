@@ -2,9 +2,9 @@
 type: change-plan
 role: implementer
 language: n/a
-status: draft
+status: approved
 related_specs: [FS-0041]
-approved_by: ""
+approved_by: "Joey Clark <administrator@ajoeofalltrades.dev>"
 related_adrs: [ADR-0015, ADR-0024, ADR-0026, ADR-0027, ADR-0033]
 touches:
   - scripts/check-delivery-status.sh
@@ -199,7 +199,7 @@ approved boundary and the containment envelope cannot drift apart:**
 
 ## 10. Readiness Check
 
-* [ ] Spec is approved
+* [x] Spec is approved
 * [ ] Tests exist or are clearly defined
 * [x] Scope is minimal and explicit
 * [x] Full implementation surface is declared before approval

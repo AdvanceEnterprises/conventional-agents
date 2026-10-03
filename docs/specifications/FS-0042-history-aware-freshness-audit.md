@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0042
-status: draft
+status: approved
 title: History-aware freshness audit — distinguish substantive document drift from metadata-only updates
 owner: ajoeofalltrades
 test_required: true
@@ -36,11 +36,11 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Approved
 
 ## Plan Status
 
-- **PLAN-0048 is `draft`.** This package defines a companion audit to the
+- **PLAN-0048 is `approved`.** This package defines a companion audit to the
   implemented presence/age gate in FS-0027; it does not alter that gate's
   existing behavior.
 - The implementation surface includes `scripts/`, `package.json`, and the

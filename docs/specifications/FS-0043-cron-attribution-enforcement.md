@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0043
-status: draft
+status: approved
 title: Cron attribution enforcement — require terminal mode=autonomous after the adoption boundary
 owner: ajoeofalltrades
 test_required: true
@@ -35,11 +35,11 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Approved
 
 ## Plan Status
 
-- **PLAN-0049 is `draft`.** The historical window before the adoption boundary
+- **PLAN-0049 is `approved`.** The historical window before the adoption boundary
   is grandfathered; this companion enforces the existing ADR-0021 norm for new
   cron-authored commits without rewriting history.
 - The implementation touches `scripts/`, so the final revision needs a recorded

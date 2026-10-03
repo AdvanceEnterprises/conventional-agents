@@ -2,9 +2,9 @@
 type: change-plan
 role: implementer
 language: n/a
-status: draft
+status: approved
 related_specs: [FS-0042]
-approved_by: ""
+approved_by: "Joey Clark <administrator@ajoeofalltrades.dev>"
 related_adrs: [ADR-0024, ADR-0026, ADR-0027, ADR-0033]
 touches:
   - scripts/check-freshness-history.sh
@@ -78,7 +78,7 @@ CHANGELOG entry; FS-0027 remains intact.
 
 ## 7. Readiness Check
 
-- [ ] Spec is approved
+- [x] Spec is approved
 - [x] Full implementation surface is declared
 - [x] Tests and unavailable-history behavior are defined
 - [x] Existing FS-0027 behavior remains unchanged

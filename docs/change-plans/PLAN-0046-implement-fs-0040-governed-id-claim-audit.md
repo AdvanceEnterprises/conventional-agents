@@ -2,9 +2,9 @@
 type: change-plan
 role: implementer
 language: markdown
-status: draft
+status: approved
 related_specs: [FS-0040]
-approved_by: ""
+approved_by: "Joey Clark <administrator@ajoeofalltrades.dev>"
 related_adrs: [ADR-0015, ADR-0024, ADR-0026, ADR-0027, ADR-0033, ADR-0037]
 touches:
   - scripts/check-status.sh
@@ -131,7 +131,7 @@ mutated by the audit, so rollback is content-only.
 ## 6. Readiness Check
 
 * [x] Issue #179 links here and carries the empirical evidence
-* [x] Spec is draft (approval is the human's next act)
+* [x] Spec is approved; recorded approval is in the latest commit
 * [x] Scope is minimal and explicit
 * [x] Full implementation surface is declared before approval
 * [x] No implementation commit precedes the recorded approval

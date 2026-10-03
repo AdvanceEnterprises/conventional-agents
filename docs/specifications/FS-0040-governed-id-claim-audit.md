@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0040
-status: draft
+status: approved
 title: Governed-ID claim and citation audit — local duplicates, cross-PR collisions, and stale renumber citations
 owner: ajoeofalltrades
 test_required: true
@@ -38,11 +38,11 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Approved
 
 ## Plan Status
 
-- **PLAN-0046 is `draft`.** This package defines both the local duplicate and
+- **PLAN-0046 is `approved`.** This package defines both the local duplicate and
   cross-PR claim layers from #179 and the stale-citation complement from #186.
   Under `ADR-0026`, approval covers only the exact `touches:` set recorded at
   the approval boundary.

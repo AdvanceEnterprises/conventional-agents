@@ -2,9 +2,9 @@
 type: change-plan
 role: implementer
 language: n/a
-status: draft
+status: approved
 related_specs: [FS-0043]
-approved_by: ""
+approved_by: "Joey Clark <administrator@ajoeofalltrades.dev>"
 related_adrs: [ADR-0021, ADR-0024, ADR-0026, ADR-0027]
 touches:
   - scripts/cross-repo-lint.sh
@@ -75,7 +75,7 @@ validation and all historical commits remain unchanged.
 
 ## 7. Readiness Check
 
-- [ ] Spec is approved
+- [x] Spec is approved
 - [x] Boundary and grandfathering semantics are explicit
 - [x] Existing structural attribution behavior is preserved
 - [x] No history rewrite is included
