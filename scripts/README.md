@@ -33,6 +33,29 @@ policy. Run it locally with:
 node scripts/check-site-publication.mjs
 ```
 
+The manifest lives at `site/content-manifest.json`. Its page entries declare
+the route, audience, rendered or link-only kind, exact canonical source path,
+and (for rendered pages) the reviewed SHA-256 source digest. The validator
+compares those digests with the current bytes, rejects traversal, globs,
+symlinks, case-folded collisions, denied roots, and unlisted sources, then
+compares `_site/` with the exact route and asset inventory. The full check also
+inspects base-prefixed internal URLs, source-revision links, semantic
+landmarks, skip links, content-kind markers, and the no-JavaScript path.
+
+`npm run site:build` creates the ignored `_site/` artifact. `npm run
+site:check` rebuilds it and runs the full publication gate. Use
+`--manifest-only` when testing manifest policy without a generated artifact;
+this does not bypass source-digest or recorded-approval checks. `--help`
+prints the complete command-line surface.
+
+The manifest's `publication_approval.commit` must resolve to an
+`ADR-0026`-style commit with `Approved-By:` and `Approved-Artifacts:` trailers
+covering `site/**` and every reviewed canonical source. A committed manifest
+revision must directly follow that approval and carry a matching
+`Publication-Approval:` trailer. Changing a source path or reviewed digest
+therefore requires a new recorded publication approval rather than a silent
+manifest edit.
+
 ---
 
 ## GitHub binding executables

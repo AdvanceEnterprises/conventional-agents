@@ -21,3 +21,8 @@ docs/change-plans/PLAN-9999-fake-test.md
 
 # Node
 node_modules/
+
+# GitHub Pages build output and Eleventy caches
+_site/
+site/.cache/
+site/.11ty-cache/

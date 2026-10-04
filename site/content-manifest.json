@@ -1,0 +1,68 @@
+{
+  "manifest_version": 1,
+  "source_repository": "https://github.com/Tais-Den/conventional-agents",
+  "source_revision": "build",
+  "base_path": "/conventional-agents/",
+  "publication_approval": {
+    "commit": "fb3cc6af8bfb935917df95f6c879c62614610878",
+    "approved_by": "Joey Clark",
+    "reviewed_source_paths": [
+      "README.md",
+      "AGENTS.md",
+      "INTEGRATION.md"
+    ]
+  },
+  "pages": [
+    {
+      "route": "/",
+      "title": "Governance for agentic development",
+      "audience": "new adopters",
+      "kind": "rendered",
+      "content_kind": "guide",
+      "template": "index.njk",
+      "source": "README.md",
+      "reviewed_source_digest": "sha256:5cbb2f81c96d35d4df4751833057b14a8b05cd365cb36f5b87cb4da3d469b5b7"
+    },
+    {
+      "route": "/adopt/",
+      "title": "Adopt the framework",
+      "audience": "teams integrating conventional-agents",
+      "kind": "rendered",
+      "content_kind": "guide",
+      "template": "adopt.njk",
+      "source": "INTEGRATION.md",
+      "reviewed_source_digest": "sha256:7e9cebf8804a750d48154c95d3f1555712ca7f41c9b89b5a05cc75efb5cb30a2"
+    },
+    {
+      "route": "/contribute/",
+      "title": "Work with the framework",
+      "audience": "contributors and maintainers",
+      "kind": "rendered",
+      "content_kind": "summary",
+      "template": "contribute.njk",
+      "source": "AGENTS.md",
+      "reviewed_source_digest": "sha256:403c06742a4d937b4300140e6e5b9f2bd94ef8589a5b90cb9cf4668c2c605a2d"
+    },
+    {
+      "route": "/reference/",
+      "title": "Canonical starting points",
+      "audience": "readers choosing what to read next",
+      "kind": "link-only",
+      "template": "reference.njk",
+      "source": "README.md"
+    },
+    {
+      "route": "/404.html",
+      "title": "Page not found",
+      "audience": "visitors following an outdated or mistyped link",
+      "kind": "rendered",
+      "content_kind": "guide",
+      "template": "404.njk",
+      "source": "README.md",
+      "reviewed_source_digest": "sha256:5cbb2f81c96d35d4df4751833057b14a8b05cd365cb36f5b87cb4da3d469b5b7"
+    }
+  ],
+  "assets": [
+    "assets/site.css"
+  ]
+}

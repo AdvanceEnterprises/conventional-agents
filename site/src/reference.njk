@@ -1,0 +1,40 @@
+---
+layout: layout.njk
+title: Canonical starting points
+description: Choose the canonical source that matches your next question.
+route: /reference/
+kind: link-only
+source: README.md
+---
+<section class="page-intro" aria-labelledby="page-title">
+  <p class="eyebrow">Link-only references</p>
+  <h1 id="page-title">Read the source when the summary is not enough.</h1>
+  <p class="lede">This guide is intentionally curated. These links point to the canonical repository documents; the public derivative does not mirror them.</p>
+</section>
+
+<section class="reference-list" aria-labelledby="start-here">
+  <div class="section-heading">
+    <p class="eyebrow">Start here</p>
+    <h2 id="start-here">Three documents orient most adopters.</h2>
+  </div>
+  <ul>
+    <li>
+      <div><span class="reference-number">01</span><h3>Project overview</h3><p>Purpose, exported surface, roles, lifecycle, and the framework's central philosophy.</p></div>
+      <a class="text-link" href="{{ 'README.md' | sourceUrl }}">README.md <span aria-hidden="true">↗</span></a>
+    </li>
+    <li>
+      <div><span class="reference-number">02</span><h3>Agent briefing</h3><p>Repository-specific entry rules, safety gates, internal boundaries, and current operating expectations.</p></div>
+      <a class="text-link" href="{{ 'AGENTS.md' | sourceUrl }}">AGENTS.md <span aria-hidden="true">↗</span></a>
+    </li>
+    <li>
+      <div><span class="reference-number">03</span><h3>Integration guide</h3><p>Submodule, copy-in, precedence, runtime, and multi-agent integration patterns.</p></div>
+      <a class="text-link" href="{{ 'INTEGRATION.md' | sourceUrl }}">INTEGRATION.md <span aria-hidden="true">↗</span></a>
+    </li>
+  </ul>
+</section>
+
+<section class="notice" aria-labelledby="access-boundary">
+  <p class="eyebrow">Access boundary</p>
+  <h2 id="access-boundary">The repository source may require authorization.</h2>
+  <p>The derivative is designed to be useful without anonymous source access. A source link identifies the exact repository path and revision; it does not claim that private source is public.</p>
+</section>

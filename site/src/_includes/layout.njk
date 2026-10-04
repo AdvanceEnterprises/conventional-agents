@@ -1,0 +1,62 @@
+{% set marker_kind = 'link-only' if kind == 'link-only' else (content_kind or 'guide') %}
+<!doctype html>
+<html lang="en" data-content-kind="{{ marker_kind }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{ description or 'A curated guide to conventional-agents.' }}">
+    <meta name="conventional-agents:content-kind" content="{{ marker_kind }}">
+    <meta name="conventional-agents:source-path" content="{{ source }}">
+    <meta name="conventional-agents:source-revision" content="{{ site.sourceRevision }}">
+    <title>{{ title }} · conventional-agents</title>
+    <link rel="stylesheet" href="{{ site.basePath }}assets/site.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="site-shell">
+      <header class="site-header">
+        <div class="header-inner">
+          <a class="wordmark" href="{{ site.basePath }}" aria-label="conventional-agents home">
+            <span class="wordmark-mark" aria-hidden="true">ca</span>
+            <span>conventional-agents</span>
+          </a>
+          <p class="tagline">Governance for agentic development</p>
+          <nav aria-label="Primary navigation">
+            <ul class="nav-list">
+              <li><a href="{{ site.basePath }}"{% if route == '/' %} aria-current="page"{% endif %}>Overview</a></li>
+              <li><a href="{{ site.basePath }}adopt/"{% if route == '/adopt/' %} aria-current="page"{% endif %}>Adopt</a></li>
+              <li><a href="{{ site.basePath }}contribute/"{% if route == '/contribute/' %} aria-current="page"{% endif %}>Contribute</a></li>
+              <li><a href="{{ site.basePath }}reference/"{% if route == '/reference/' %} aria-current="page"{% endif %}>Reference</a></li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+
+      <main id="main-content" class="main-content">
+        <div class="content-kind" data-content-kind="{{ marker_kind }}">
+          {% if kind == 'link-only' %}
+            <span class="kind-dot" aria-hidden="true"></span> Link-only reference
+          {% else %}
+            <span class="kind-dot" aria-hidden="true"></span> {{ content_kind | capitalize }}
+          {% endif %}
+        </div>
+        {{ content | safe }}
+        <aside class="source-note" aria-label="Canonical source">
+          <p class="source-label">Source ownership</p>
+          <p>This page is a curated {{ kind or 'guide' }}. The canonical source remains in the repository.</p>
+          <a href="{{ source | sourceUrl }}">View {{ source }} at the pinned source revision <span>(repository access may be required)</span></a>
+        </aside>
+      </main>
+
+      <footer class="site-footer">
+        <div class="footer-inner">
+          <p><strong>conventional-agents</strong> is MIT-licensed and designed to be vendored into host repositories.</p>
+          <ul class="footer-links">
+            <li><a href="{{ site.basePath }}reference/">Canonical starting points</a></li>
+            <li><a href="{{ site.sourceRepository }}">Repository source</a></li>
+          </ul>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

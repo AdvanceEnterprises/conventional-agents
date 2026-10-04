@@ -1,0 +1,17 @@
+{
+  "name": "conventional-agents-site",
+  "version": "2.1.0",
+  "private": true,
+  "description": "Curated public guide for conventional-agents",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "build": "eleventy",
+    "serve": "eleventy --serve",
+    "check": "npm run build && node ../scripts/check-site-publication.mjs"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "3.1.2"
+  }
+}

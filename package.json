@@ -29,6 +29,9 @@
     "check:freshness": "bash scripts/check-freshness.sh",
     "check:conformance": "bash scripts/check-conformance.sh",
     "lint:cross-repo": "bash scripts/cross-repo-lint.sh",
+    "site:build": "npm --prefix site run build",
+    "site:serve": "npm --prefix site run serve",
+    "site:check": "npm --prefix site run check",
     "validate": "bash scripts/run-validation.sh",
     "bench:run": "bash scripts/bench-run.sh",
     "test": "bash scripts/run-bats.sh"

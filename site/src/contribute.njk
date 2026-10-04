@@ -1,0 +1,61 @@
+---
+layout: layout.njk
+title: Work with the framework
+description: Understand roles, session modes, and the gates that shape contributions to conventional-agents.
+route: /contribute/
+kind: rendered
+content_kind: summary
+source: AGENTS.md
+---
+<section class="page-intro" aria-labelledby="page-title">
+  <p class="eyebrow">Contribution model</p>
+  <h1 id="page-title">Move from documents to tests to implementation.</h1>
+  <p class="lede">conventional-agents is documentation-centric by design. A contribution starts with the governing artifact, makes its boundaries explicit, and leaves a verifiable trail.</p>
+</section>
+
+<section class="role-section" aria-labelledby="roles">
+  <div class="section-heading">
+    <p class="eyebrow">Six roles</p>
+    <h2 id="roles">Clear authority at every stage.</h2>
+  </div>
+  <div class="role-list">
+    <article><span>0</span><div><h3>Head Architect</h3><p>Shapes durable boundaries, decisions, and framework health.</p></div></article>
+    <article><span>1</span><div><h3>Document Author</h3><p>Drafts and maintains feature specs, plans, and decision records.</p></div></article>
+    <article><span>2</span><div><h3>Spec Reader and Test Planner</h3><p>Turns approved behavior into executable acceptance coverage.</p></div></article>
+    <article><span>3</span><div><h3>Implementer</h3><p>Makes the tests pass within the approved scope.</p></div></article>
+    <article><span>4</span><div><h3>Reviewer</h3><p>Checks alignment among documents, tests, and implementation.</p></div></article>
+    <article><span>5</span><div><h3>Communications Lead</h3><p>Explains changes to people who depend on the framework.</p></div></article>
+  </div>
+</section>
+
+<section class="mode-section" aria-labelledby="modes">
+  <div>
+    <p class="eyebrow">Session modes</p>
+    <h2 id="modes">Name the work before the work changes shape.</h2>
+  </div>
+  <div class="mode-list">
+    <p><strong>Architecture planning</strong><span>Decide structure and tradeoffs.</span></p>
+    <p><strong>Document authoring</strong><span>Capture the decision in a governed artifact.</span></p>
+    <p><strong>Implementation</strong><span>Execute an approved plan with tests first.</span></p>
+    <p><strong>Review</strong><span>Find mismatches without quietly fixing them.</span></p>
+    <p><strong>Communications</strong><span>Make the result legible to adopters.</span></p>
+  </div>
+</section>
+
+<section class="guardrail-grid" aria-labelledby="gates">
+  <div class="guardrail-card">
+    <p class="card-kicker">Human-held</p>
+    <h2 id="gates">The gates are part of the product.</h2>
+    <ul>
+      <li>Approved spec and plan before substantive implementation.</li>
+      <li>Tests that reflect the approved behavior.</li>
+      <li>Document indexes and status fields kept in sync.</li>
+      <li>Human approval for merge and major governance decisions.</li>
+    </ul>
+  </div>
+  <div class="guardrail-card guardrail-card-dark">
+    <p class="card-kicker">Operating principle</p>
+    <blockquote>Traceability over cleverness.</blockquote>
+    <p>An auditable wrong answer can be corrected. An untraceable right answer cannot be trusted.</p>
+  </div>
+</section>
