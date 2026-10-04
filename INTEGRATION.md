@@ -728,11 +728,13 @@ pinned tag and move between tags deliberately. The support policy:
 - **Minor and patch upgrades are additive.** Minor releases add to the exported
   surface and patch releases fix it; an upgrade that stays within a major is
   drop-in for consumers using the patterns above.
-- **Framework-internal paths may change in any release.** `docs/`
-  (specifications, change plans, decisions), `BACKLOG.md`, `test/`, and
-  `package.json` are framework-internal (see the exported-surface table in the
-  framework's `AGENTS.md`); consumers must not reference them — the
-  "Nested vendor path leak" note above is the same boundary.
+- Framework-internal paths may change in any release. `docs/`
+  (specifications, change plans, decisions), `BACKLOG.md`, `site/`, `test/`,
+  and `package.json` are framework-internal (see the exported-surface table in
+  the framework's `AGENTS.md`); consumers must not reference them — the
+  "Nested vendor path leak" note above is the same boundary. `site/` is the
+  source for the framework's public Pages derivative, not a consumer integration
+  path or a canonical framework document.
 - **Skipped majors still require the intervening upgrade notes.** The upgrade is
   cumulative: review every `### Breaking Changes` entry between your old tag and
   the new one, not only the latest.

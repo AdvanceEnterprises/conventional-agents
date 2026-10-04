@@ -7,21 +7,29 @@ owner: ajoeofalltrades
 test_required: true
 interfaces:
   - "site/**"
+  - "scripts/check-site-publication.mjs"
+  - "scripts/README.md"
   - ".github/workflows/pages.yml"
   - "package.json"
-  - "package-lock.json"
+  - "site/package.json"
+  - "site/package-lock.json"
   - ".gitignore"
   - "test/FS-0044/**"
   - "README.md"
+  - "AGENTS.md"
+  - "INTEGRATION.md"
   - "docs/specifications/README.md"
   - "docs/change-plans/README.md"
+  - "docs/change-plans/PLAN-0050-implement-fs-0044-github-pages-project-website.md"
+  - "docs/decisions/ADR-0044-curated-public-github-pages-derivative.md"
+  - "docs/decisions/README.md"
   - "CHANGELOG.md"
-related_adrs: [ADR-0024, ADR-0026, ADR-0027, ADR-0030]
+related_adrs: [ADR-0024, ADR-0026, ADR-0027, ADR-0030, ADR-0044]
 supersedes: []
-requires: []
+requires: [FS-0022, FS-0039]
 tags: [github-pages, documentation-site, eleventy, public-surface, allowlist, accessibility]
 created: 2026-10-03
-updated: 2026-10-03
+updated: 2026-10-04
 ---
 <!--
 PARSING_HINTS:
@@ -41,13 +49,17 @@ PARSING_HINTS:
 
 ## Plan Status
 
-- **PLAN-0050 is `draft`.** This first revision publishes the governance package
-  only: this spec, the plan, the two index rows, and the CHANGELOG entry.
-- The implementation revision must be created only after human approval. It will
-  declare the full `touches:` set for the site, build toolchain, test suite,
-  README link, and Pages workflow. The workflow and package files are reserved
-  paths under `ADR-0027`, so that revision requires recorded human approval for
-  its exact implementation surface.
+- **PLAN-0050 is `draft`.** This revision resolves review feedback and declares
+  the complete intended implementation `touches:` set, including the reserved
+  validator, workflow, package, and decision paths.
+- FS-0044, PLAN-0050, and ADR-0044 remain draft/proposed. No implementation is
+  authorized until a human approves the final documents and the exact declared
+  `touches:` set. The eventual implementation may remain in this PR (#208), as
+  long as that approval is recorded before implementation files are added.
+- The first launch assumes a private source repository and a public Pages
+  derivative. The required GitHub organization/account capability, trunk
+  protection, and `github-pages` environment reviewers are launch preconditions,
+  not assumptions hidden in the implementation.
 
 ## Summary
 
@@ -83,12 +95,17 @@ be limited to the default branch.
   status using the repository's existing guidance.
 - Keep existing Markdown files in their current locations as the canonical
   framework artifact.
-- Use an explicit content manifest that distinguishes site-authored summaries
-  from canonical-source links and rejects unreviewed or internal paths.
-- Build a deterministic static site locally with Eleventy on Node 20 and a
-  committed lockfile.
+- Use an explicit content manifest that distinguishes rendered summaries from
+  link-only canonical sources and rejects unreviewed or internal paths.
+- Build a deterministic static site locally with Eleventy on Node 24 LTS and a
+  site-scoped committed lockfile.
 - Build and validate on pull requests, but deploy to GitHub Pages only from
   `trunk` through the `github-pages` environment.
+- Keep the source repository private while publishing only the allowlisted
+  derivative, and label repository source links as requiring source access.
+- Treat `site/` as an internal governance build input and the generated Pages
+  artifact as a public derivative; consumers must not treat `site/` as exported
+  framework content.
 - Provide semantic, keyboard-accessible pages that remain readable without
   JavaScript.
 - Keep site validation offline after dependencies are installed, so external
@@ -101,6 +118,8 @@ be limited to the default branch.
   output, orchestration evidence, or other internal paths by default.
 - Adding a CMS, server-side runtime, client-side single-page application, or
   hosted search service in the first release.
+- Changing repository visibility, or claiming that anonymous visitors can read
+  private repository source links.
 - Adding a custom domain, DNS configuration, or `CNAME` file in this feature.
 - Changing the meaning, status, or lifecycle of existing framework documents.
 - Making external-link availability a blocking requirement for the offline site
@@ -119,67 +138,104 @@ be limited to the default branch.
 
 - Type: UI + static build + CI/deployment infrastructure.
 - Details:
-  - `site/**` — Eleventy source, templates, styles, content manifest,
-    navigation data, and offline validation scripts.
+  - `site/**` — internal Eleventy source, templates, styles, content manifest,
+    navigation data, and site-scoped dependency metadata. It is not an
+    exported framework path for consumers.
+  - `scripts/check-site-publication.mjs` — reserved-path validator for manifest
+    entries, source digests, symlink/case-folding safety, and artifact inventory.
+  - `scripts/README.md` — the validator's Category 1 gate contract.
   - `.github/workflows/pages.yml` — pull-request build and `trunk`-only Pages
     deployment using the official GitHub Pages Actions.
-  - `package.json` and `package-lock.json` — pinned site dependencies and
-    `site:build`, `site:serve`, and `site:check` entry points.
+  - `package.json` — root delegating `site:build`, `site:serve`, and `site:check`
+    entry points. `site/package.json` and `site/package-lock.json` hold the
+    Eleventy dependency tree without changing the framework's root lockfile.
   - `.gitignore` — excludes generated `_site/` output and local site caches.
   - `test/FS-0044/**` — fixture-driven validation of the content boundary,
-    generated links, and workflow contract without live GitHub calls.
+    generated links, artifact inventory, and workflow contract without live
+    GitHub calls or an Eleventy install.
   - `README.md` — published-site link added only after the live deployment is
     verified.
+  - `AGENTS.md` and `INTEGRATION.md` — classify `site/` as internal source and
+    state that vendored consumers must not reference it; `check-conformance`
+    continues to inspect only consumer anchors and framework gate wiring.
   - The two document indexes and `CHANGELOG.md` — governance package and
     consumer-facing tracking surfaces.
+  - `docs/decisions/ADR-0044-curated-public-github-pages-derivative.md` and
+    its index row — the proposed architecture decision for the private-source,
+    public-derivative publication channel and Node toolchain.
 
 ## Success Criteria
 
-Each criterion is objectively testable.
+The structural criteria are checked offline; the manual browser criterion is an
+explicit acceptance procedure rather than an assertion hidden in a shell test.
 
 - **SC-1 — clean deterministic build.** Given a clean checkout with the locked
-  Node dependencies installed, when `npm run site:build` runs, then it exits
-  zero, creates `_site/index.html` and `_site/404.html`, and does not modify
-  canonical Markdown or leave generated files tracked by Git.
+  Node 24 dependencies installed under `site/`, when `npm run site:build` runs,
+  then it exits zero, creates `_site/index.html` and `_site/404.html`, and does
+  not modify canonical Markdown or leave generated files tracked by Git.
 - **SC-2 — explicit publication boundary.** Given the site content manifest,
-  when the site validator runs, then every published or rendered source is
-  declared there with a route, title, audience, kind, and repository source
-  path, and no site page is generated from an undeclared source.
+  when the site validator runs, then every page is declared with a route, title,
+  audience, `kind` (`rendered` or `link-only`), and exact repository source
+  path. A `rendered` entry also declares `content_kind` (`guide` or `summary`)
+  and `reviewed_source_digest`; no page is generated from an undeclared source.
 - **SC-3 — unsafe manifest entries fail closed.** Given a manifest containing a
-  missing source, duplicate route, path traversal, or a path under `vendor/`,
-  `test/`, `docs/orchestration/`, generated output, or a log file, when the
-  validator runs, then it exits non-zero and names the offending entry.
-- **SC-4 — project-site paths are correct.** Given
+  missing source, duplicate route, path traversal, a symlink whose target is
+  outside the allowed source roots, a case-folded path collision, or a path
+  under `vendor/`, `test/`, `docs/decisions/`, `docs/specifications/`,
+  `docs/change-plans/`, `docs/proposals/`, `docs/orchestration/`,
+  `docs/validation-baseline*`, `BACKLOG.md`, `.claude/`, `.github/`, `config/`,
+  `benchmark/`, generated output, or a log file, when the validator runs, then
+  it exits non-zero and names the offending entry.
+- **SC-4 — artifact inventory is exact.** Given a successful build, when the
+  validator compares `_site/` with the manifest-derived route set, `404.html`,
+  and the manifest's explicit asset list, then every generated file is expected
+  and every expected file exists; any extra file, passthrough copy, or undeclared
+  asset fails the check.
+- **SC-5 — project-site paths are correct.** Given
   `SITE_BASE_PATH=/conventional-agents/`, when the site builds and the generated
   HTML is checked, then internal links and asset URLs preserve that base path,
-  nested routes work, and no accidental root-relative site link bypasses it.
-- **SC-5 — summaries retain source ownership.** Given a site page that explains
-  framework behavior, when a reader follows its source link, then the link
-  resolves to the exact repository path declared for that page and the page
-  identifies the site text as a guide or summary rather than silently claiming
-  to be canonical.
-- **SC-6 — accessible core layout.** Given the generated home, nested, and 404
-  pages, when their HTML is inspected and navigated with a keyboard, then each
-  has one document title and one H1, semantic landmarks, a skip link, visible
-  focus states, usable headings, and a recovery link from the 404 page; the
-  pages remain usable with JavaScript disabled.
-- **SC-7 — pull requests build without deployment.** Given a pull request that
-  changes the site or its declared source inputs, when the Pages workflow runs,
-  then it checks out Node 20, installs the lockfile, runs `npm run site:check`,
-  and uploads a Pages artifact without invoking the deployment action.
-- **SC-8 — only trunk deploys.** Given a successful build on `trunk`, when the
+  nested routes work, the nested 404 page uses base-prefixed assets, and no
+  accidental root-relative site link bypasses it.
+- **SC-6 — summaries retain source ownership.** Given a site page that explains
+  framework behavior, when the generated HTML is inspected, then its visible
+  and machine-readable marker identifies it as a `guide` or `summary`, its
+  source URL is SHA-pinned to the build revision and uses the exact manifest
+  path, and its page states that repository access may be required. Anonymous
+  access to the private GitHub source URL is not treated as a launch failure;
+  the public page must remain useful without following it.
+- **SC-7a — accessible core structure.** Given the generated home, nested, and
+  404 pages, when their HTML is inspected, then each has one document title and
+  one H1, semantic landmarks, a skip link, a required content-kind marker, and a
+  recovery link from the 404 page; the pages contain no required JavaScript.
+- **SC-7b — accessible browser path.** In a manual browser acceptance check with
+  JavaScript disabled, a reviewer can keyboard-navigate the home, nested route,
+  and 404 page, observe visible focus, and use the headings and recovery link.
+- **SC-8 — pull requests build without deployment.** Given a pull request that
+  is opened or updated, when the Pages workflow runs without a path filter, then
+  it checks out Node 24, installs `site/package-lock.json`, runs
+  `npm run site:check`, and uploads a Pages artifact without invoking the
+  deployment action. Running on every pull request prevents a required check
+  from remaining in an expected-but-skipped state.
+- **SC-9 — only trunk deploys.** Given a successful build on `trunk`, when the
   Pages workflow runs, then the deployment job targets the `github-pages`
   environment and uses only the least-privilege `pages: write` and
   `id-token: write` permissions required by the official Pages actions; given a
-  non-trunk event, then the deployment job is skipped.
-- **SC-9 — existing governance remains green.** Given the completed website
-  change, when `npm run check:status`, `npm run lint:docs`, and `npm test` run,
-  then the existing governance indexes, document lint, and self-test suite pass.
-- **SC-10 — live project site is coherent.** Given the repository Pages setting
-  is configured for GitHub Actions and a successful `trunk` deployment, when a
-  browser requests the project URL, a nested route, and an unknown route, then
-  the home page, CSS/assets, deep link, and custom 404 page load over HTTPS and
-  the source links point to the same repository revision as the deployment.
+  non-trunk push, pull request, or `workflow_dispatch` ref, then the deployment
+  job is skipped. The deployment guard checks the ref, not only the event name.
+- **SC-10 — existing governance remains green without site dependencies.** Given
+  the completed website change, when `npm run check:status`, `npm run lint:docs`,
+  `npm test`, and `npm run validate` run, then the existing governance gates pass.
+  `test/FS-0044/**` exercises the validator with fixtures and does not require
+  Eleventy; only the Pages workflow's site build installs the site dependency
+  tree.
+- **SC-11 — live private-source/public-derivative site is coherent.** Before
+  launch, the organization/account capability for a public Pages site sourced
+  from this private repository is verified, trunk protection requires a PR with
+  the required checks, and the `github-pages` environment requires reviewers.
+  After a successful `trunk` deployment, a browser requests the project URL, a
+  nested route, and an unknown route; the home page, CSS/assets, deep link, and
+  custom 404 page load over HTTPS, and source URLs identify the same deployment
+  revision while honestly requiring repository authorization where applicable.
 
 ## Edge Cases
 
@@ -191,16 +247,25 @@ Each criterion is objectively testable.
   publication requires an explicit, existing source path.
 - A nested route must load its assets and navigation from a direct request, not
   only after navigating from the home page.
+- A `404.html` request from a nested route must still resolve its CSS and
+  recovery link through the project-site base path.
 - External links may be present, but the offline build does not fetch them.
-- GitHub Pages repository visibility and organization policy may make the live
-  site public even when source access differs; launch review must account for
-  that publication behavior.
+- The repository remains private while the site is public only if the selected
+  GitHub organization/account capability is explicitly verified; otherwise the
+  deployment is blocked rather than silently changing repository visibility.
+- A source link may be inaccessible to an anonymous reader because the source
+  repository is private; the rendered page must state that boundary and remain
+  readable without the link.
 
 ## Out of Scope
 
 - Full canonical-document rendering and search across the entire repository.
 - Publishing internal FS, PLAN, ADR, test, orchestration, or vendor history as
   a navigable site section.
+- Treating `site/` or the generated Pages artifact as part of the framework's
+  exported vendoring surface. A submodule consumer may receive the source tree,
+  but consumer guidance must not reference it; archive `export-ignore` is not
+  used as a substitute for that contract.
 - Custom-domain setup, DNS, analytics, comments, or user accounts.
 - Automated semantic review of whether a summary still captures every detail of
   its canonical source.
@@ -209,49 +274,67 @@ Each criterion is objectively testable.
 
 ## Dependencies
 
-- Node 20 and the repository's package-lock file.
+- Node 24 LTS and the site-scoped `site/package-lock.json` file.
 - Eleventy and the minimum pinned build dependencies selected by the
   implementation revision.
-- The canonical `README.md`, `INTEGRATION.md`, exported directories, and
-  selected architecture/status documents.
-- GitHub Actions, the official Pages actions, repository Pages settings, and the
-  `github-pages` environment.
+- The canonical `README.md`, `AGENTS.md`, `INTEGRATION.md`, and explicitly
+  allowlisted exported directories named by the manifest.
+- A verified GitHub organization/account capability for a public Pages site
+  sourced from a private repository, plus the official Pages actions, trunk
+  protection, and the `github-pages` environment with required reviewers.
 - Human review and approval of the FS/PLAN package and the reserved workflow and
   package paths before implementation.
 
 ## Rollout / Migration
 
 - Land the FS/PLAN governance package as a draft and keep the implementation
-  blocked until human approval is recorded.
-- Implement and validate the curated site on a draft PR; review the generated
-  artifact and manifest boundary before enabling deployment.
+  blocked until human approval is recorded for the final full `touches:` set.
+- Implement and validate the curated site in the same draft PR (#208); review
+  the generated artifact, manifest boundary, source-link access behavior, and
+  workflow guard before enabling deployment.
+- Before the first deployment, verify that the private repository's
+  organization/account configuration supports a public GitHub Pages site,
+  protect `trunk` with pull-request review and required CI checks, and configure
+  required reviewers on the `github-pages` environment. If any precondition is
+  unavailable, do not change repository visibility and do not deploy.
 - Configure GitHub Pages to use GitHub Actions and restrict deployment to
-  `trunk` through the `github-pages` environment.
+  `trunk` through the protected `github-pages` environment.
 - Deploy the first release from `trunk`, verify the live root, deep link, 404,
-  assets, and source links, then add the published URL to `README.md`.
+  assets, source-link revision, and the expected private-source access boundary,
+  then add the published URL to `README.md`.
 - Treat selected canonical reference pages, search, and custom domains as
   separate follow-up decisions rather than silently expanding this scope.
 
 ## Observability
 
-- Logs: workflow build, validation, artifact-upload, and deployment logs name
-  the build commit and failing manifest/link entry where applicable.
+- Logs: workflow build, validation, artifact-inventory, upload, and deployment
+  logs name the build commit and failing manifest/source entry where applicable.
 - Metrics: none required for the first release.
 - Traces: none; the generated artifact, workflow run, and Pages deployment URL
   are the evidence chain.
 
 ## Security / Privacy
 
-- Data handled: public framework documentation and Git metadata needed for
-  source links; no credentials or user-submitted data.
-- Threats considered: accidental publication of internal files, stale source
-  links, project-site path confusion, and workflows with broader permissions
-  than required.
-- Mitigations: explicit allowlist validation, excluded-path tests, locked
-  dependencies, no secrets or PAT, `contents: read` defaults, Pages-specific
-  write/OIDC permissions only in the deployment job, and trunk-only deployment.
+- Data handled: allowlisted public-guide content and Git metadata needed for
+  SHA-pinned source links; no credentials or user-submitted data.
+- Threats considered: accidental publication of private files, stale summaries,
+  symlink/case-folding escapes, project-site path confusion, anonymous readers
+  being misled about private source access, and workflows with broader
+  permissions than required.
+- Mitigations: explicit rendered/link-only manifest validation, source-digest
+  checks, exact artifact inventory, rejected paths and symlinks, locked
+  site-scoped dependencies, no secrets or PAT, `contents: read` defaults,
+  Pages-specific write/OIDC permissions only in the deployment job, protected
+  trunk, and required environment reviewers.
 
 ## Open Questions
 
-- None blocking for the governed package. Custom domains, search, and the size
-  of a future canonical-reference corpus require separate scope decisions.
+- **Blocking launch precondition:** does the Tais-Den GitHub organization/account
+  have the Pages capability and access configuration required to publish a
+  public site from this private repository? Verify this before enabling Pages;
+  the fallback is to hold deployment, not to make the repository public.
+- Source links in the public derivative are SHA-pinned and honest about source
+  authorization; changing that to public source links would require a separate
+  repository-visibility decision.
+- Custom domains, search, and the size of a future canonical-reference corpus
+  require separate scope decisions.

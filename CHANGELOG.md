@@ -14,13 +14,19 @@ For this project (a documentation/standards kit), semver follows the
 ### Added
 
 - **FS-0044: GitHub Pages project website (draft — `FS-0044`,
-  `PLAN-0050`).** Proposes a curated, adopter-facing project site at the
-  repository's GitHub Pages URL, built with a pinned Eleventy toolchain and an
-  explicit content manifest. The repository's existing Markdown remains the
-  canonical framework artifact; the site is a public guide and source index,
-  not a broad mirror. The governance package is draft only — implementation,
-  Pages workflow, and deployment require the later approved plan and recorded
-  reserved-path approval.
+  `PLAN-0050`).** Proposes a curated, adopter-facing public derivative at the
+  repository's GitHub Pages URL, sourced from a private repository through a
+  verified organization/account capability. The plan now specifies a Node 24
+  site-scoped toolchain, rendered/link-only manifest, reviewed source digests,
+  exact artifact inventory, and protected trunk plus environment-reviewer
+  launch gates. The repository's existing Markdown remains canonical; the site
+  is not a broad mirror. The governance package remains draft only.
+- **ADR-0044: Curated public GitHub Pages derivative from a private source
+  repository (proposed).** Keeps canonical source private while allowing a
+  public Pages derivative only after the capability and launch controls are
+  verified. Source links are SHA-pinned and may require repository
+  authorization; `site/` remains internal build source rather than exported
+  framework content.
 - **Claude Code runtime binding (`FS-0030`).** The framework's first agent-runtime
   binding ships under `integrations/runtimes/claude-code/`: a plugin manifest
   (`claude plugin validate` clean), synced skill copies sourced from

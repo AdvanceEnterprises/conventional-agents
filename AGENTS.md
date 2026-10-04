@@ -61,6 +61,7 @@ This repo contains no application code. Quality is documentation-centric.
 | `scripts/` (`FS-0024`: vendored copies check the invoking repository, not this one) | `test/` |
 | `INTEGRATION.md` | |
 | `AGENTS.md` | |
+| | `site/` (internal build source; the generated Pages artifact is a public derivative) |
 
 The framework `vendor/` directory is framework-internal. Only `vendor/madr/`
 remains as operational infrastructure for ADR linting. Do not reference
