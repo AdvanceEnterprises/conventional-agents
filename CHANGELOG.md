@@ -18,9 +18,11 @@ For this project (a documentation/standards kit), semver follows the
   repository's GitHub Pages URL, sourced from a private repository through a
   verified organization/account capability. The plan now specifies a Node 24
   site-scoped toolchain, rendered/link-only manifest, reviewed source digests,
-  exact artifact inventory, and protected trunk plus environment-reviewer
-  launch gates. The repository's existing Markdown remains canonical; the site
-  is not a broad mirror. The governance package remains draft only.
+  validator-owned source roots and denials, exact artifact inventory, recorded
+  publication approval, and protected trunk plus environment-reviewer launch
+  gates. The vendored validator skips cleanly when a consumer has no `site/`.
+  The repository's existing Markdown remains canonical; the site is not a broad
+  mirror. The governance package remains draft only.
 - **ADR-0044: Curated public GitHub Pages derivative from a private source
   repository (proposed).** Keeps canonical source private while allowing a
   public Pages derivative only after the capability and launch controls are

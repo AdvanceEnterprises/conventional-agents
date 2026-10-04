@@ -84,12 +84,21 @@ availability.
    a public derivative, not an exported framework path that consumers should
    reference or vendor as canonical content.
 4. The manifest distinguishes `rendered` and `link-only` entries. Every entry
-   names an exact source path; rendered guide/summary entries carry a reviewed
-   source digest. The validator rejects internal paths, traversal, symlink
-   escapes, case-folded collisions, and undeclared artifact files.
+   names an exact source path within the validator's fixed allowed roots; the
+   validator, not the manifest, owns the allowed-root and denied-path policy.
+   Rendered guide/summary entries carry a reviewed source digest that attests to
+   human review for public publication, including private-repository identifiers
+   and access boundaries. The initial set is covered by the full implementation
+   approval; later source-path or digest changes require a new `ADR-0026`
+   recorded approval naming the affected publication artifacts. The validator
+   rejects internal paths, traversal, symlink escapes, case-folded collisions,
+   and undeclared artifact files.
 5. Source URLs are pinned to the deployment commit and visibly state that
    repository authorization may be required. Public pages remain useful without
-   following a private source URL.
+   following a private source URL. The URLs consequently disclose the private
+   repository identity and deployment SHA to public readers; that disclosure is
+   accepted for this launch model and is a revisit trigger if it becomes
+   unacceptable.
 6. The site uses Node 24 LTS through a site-scoped package and lockfile. The root
    package exposes only delegating `site:build`, `site:serve`, and `site:check`
    commands.
@@ -115,6 +124,9 @@ availability.
 
 - Public readers cannot necessarily open the repository source links anonymously.
   The site must explain that boundary rather than pretending the links are public.
+- SHA-pinned source URLs disclose the private repository identity and deployment
+  commit even when the source content remains access-controlled; changing that
+  tradeoff requires revisiting this ADR before launch.
 - The launch depends on a GitHub organization/account capability that must be
   verified outside the repository files.
 - The manifest, source digests, and artifact inventory add maintenance work.
@@ -136,15 +148,22 @@ availability.
 - The FS-0044 validator rejects an undeclared page or asset, an internal source
   path, a traversal or symlink escape, and a case-insensitive collision.
 - The manifest records `rendered` versus `link-only`, `content_kind`, and the
-  reviewed source digest; the build emits the deployment revision in source URLs.
+  reviewed source digest; the build emits the deployment revision in source URLs,
+  and a digest or source-path change without the applicable recorded publication
+  approval fails validation.
+- When the validator is invoked against a caller or vendored consumer target
+  without `site/`, it exits zero with an explicit `SKIP:` result and does not
+  inspect the framework checkout.
 - The Pages workflow structurally proves PR build-without-deploy, trunk-only
   deployment, explicit `workflow_dispatch` ref guarding, least-privilege deploy
   permissions, and the `github-pages` environment.
 - Before launch, a human reads back the GitHub Pages capability, trunk protection,
-  environment reviewers, and the live public site's access behavior.
+  environment reviewers, and the live public site's access behavior, and records
+  that evidence in a top-level PR #208 comment or a linked launch checklist.
 - Revisit this ADR if the private-source/public-derivative capability cannot be
-  verified, if source links are expected to be anonymous, or if the site becomes
-  an exported framework surface.
+  verified, if source links are expected to be anonymous, if public disclosure
+  of the private repository identity or deployment SHA is no longer acceptable,
+  or if the site becomes an exported framework surface.
 
 ## Links
 

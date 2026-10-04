@@ -39,6 +39,12 @@ updated: 2026-10-04
 > human approves that exact set. The complete implementation may then be added
 > to this same draft PR.
 
+The approval record is the status-transition commit defined by
+[`ADR-0026`](../decisions/ADR-0026-approval-is-a-recorded-act.md), with
+`Approved-By:` and `Approved-Artifacts:` trailers naming the exact governed
+artifacts. A PR review or comment is evidence of discussion, not the approval
+record that authorizes implementation.
+
 ## 1. Feature / Issue Reference
 
 * Feature Spec ID(s): FS-0044
@@ -102,9 +108,11 @@ the full declared `touches:` set are human-approved:**
 * Test file(s) in the implementation revision:
 
   * `test/FS-0044/website-content.bats` — fixture-driven validation of the
-    manifest, rejected source paths, duplicate routes, path traversal, symlink
-    and case-folding escapes, source-digest checks, exact artifact inventory,
-    generated project-site links, source-link ownership, and workflow contract.
+    validator-owned allowed roots and denied paths, manifest, rejected source
+    paths, duplicate routes, path traversal, symlink and case-folding escapes,
+    source-digest approval checks, exact artifact inventory, generated
+    project-site links, source-link ownership, workflow contract, and the clean
+    no-site skip for vendored consumer targets.
 
 * Local commands in the implementation revision:
 
@@ -125,7 +133,8 @@ the full declared `touches:` set are human-approved:**
     nested route, nested 404 assets, keyboard path, focus states, no-JavaScript
     path, and narrow layout.
   * Verify the private-repository public-Pages capability, trunk protection,
-    and environment reviewers before enabling the first deployment.
+    and environment reviewers before enabling the first deployment; record the
+    readback in a top-level PR #208 comment or a linked launch checklist.
   * After the human configures Pages, read back the live root, deep link, 404,
     CSS/assets, source-link revision, and expected source authorization boundary
     at the exact project URL.
@@ -161,8 +170,9 @@ the full declared `touches:` set are human-approved:**
 
 1. Add the site-scoped Node 24 Eleventy toolchain and root delegating site
    commands without changing canonical documents or committing generated output.
-2. Define and validate the explicit rendered/link-only content manifest,
-   reviewed source digests, navigation data, excluded-path rules, exact artifact
+2. Define and validate the explicit rendered/link-only content manifest against
+   the validator-owned allowed roots and denied paths, reviewed source digests
+   with recorded-publication-approval evidence, navigation data, exact artifact
    inventory, and project-site base-path configuration.
 3. Build the shared semantic layout, responsive styles, no-JavaScript reading
    path, visible content-kind marker, 404 page, metadata, SHA-pinned source
@@ -194,8 +204,11 @@ the full declared `touches:` set are human-approved:**
   * ADR-0024: keep the public guide portable and distinct from the framework's
     platform-neutral canonical content; do not introduce a CMS or runtime
     dependency for the guide.
-  * ADR-0026: approval is a human act with a locatable record; the implementation
-    revision cannot reuse approval for this documentation-only `touches:` set.
+  * ADR-0026 (`docs/decisions/ADR-0026-approval-is-a-recorded-act.md`): approval
+    is a human act with a locatable record. The implementation revision requires
+    a status-transition commit carrying `Approved-By:` and `Approved-Artifacts:`
+    for the exact full `touches:` set; later manifest or digest changes require
+    a new recorded approval for the affected publication artifacts.
   * ADR-0027: `.github/workflows/` and `package.json` are reserved paths, and
     `scripts/` is also reserved; the implementation revision cannot self-approve
     any of them.
@@ -293,9 +306,10 @@ the full declared `touches:` set are human-approved:**
 * [ ] Spec is approved
 * [ ] ADR-0044 is accepted or its proposed status is explicitly approved as the
   governing architecture record
-* [ ] Human approval covers the complete implementation `touches:` set,
-  including the reserved validator, workflow, scripts, package, and decision
-  paths
+* [ ] A status-transition commit under ADR-0026 records human approval with
+  `Approved-By:` and `Approved-Artifacts:` for the complete implementation
+  `touches:` set, including the reserved validator, workflow, scripts, package,
+  and decision paths
 * [ ] Tests exist or are clearly defined
 * [x] Scope is minimal and explicit for the private-source/public-derivative
   first release

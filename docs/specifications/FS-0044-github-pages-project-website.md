@@ -26,7 +26,7 @@ interfaces:
   - "CHANGELOG.md"
 related_adrs: [ADR-0024, ADR-0026, ADR-0027, ADR-0030, ADR-0044]
 supersedes: []
-requires: [FS-0022, FS-0039]
+requires: [FS-0022, FS-0024, FS-0039]
 tags: [github-pages, documentation-site, eleventy, public-surface, allowlist, accessibility]
 created: 2026-10-03
 updated: 2026-10-04
@@ -52,6 +52,10 @@ PARSING_HINTS:
 - **PLAN-0050 is `draft`.** This revision resolves review feedback and declares
   the complete intended implementation `touches:` set, including the reserved
   validator, workflow, package, and decision paths.
+- The approval record for that exact set is the status-transition commit defined
+  by [`ADR-0026`](../decisions/ADR-0026-approval-is-a-recorded-act.md), carrying
+  `Approved-By:` and `Approved-Artifacts:` trailers that name the governed
+  artifacts. A PR review or comment alone is not the recorded approval.
 - FS-0044, PLAN-0050, and ADR-0044 remain draft/proposed. No implementation is
   authorized until a human approves the final documents and the exact declared
   `touches:` set. The eventual implementation may remain in this PR (#208), as
@@ -143,7 +147,12 @@ be limited to the default branch.
     exported framework path for consumers.
   - `scripts/check-site-publication.mjs` — reserved-path validator for manifest
     entries, source digests, symlink/case-folding safety, and artifact inventory.
-  - `scripts/README.md` — the validator's Category 1 gate contract.
+    It owns the fixed allowed-source-root and denied-path policy; the manifest
+    may select exact files only within that policy and may not redefine it. When
+    run against a caller or vendored consumer target with no `site/`, it exits
+    zero with an explicit skip rather than validating the framework checkout.
+  - `scripts/README.md` — the validator's Category 1 gate contract, including
+    its framework-only and no-site consumer behavior.
   - `.github/workflows/pages.yml` — pull-request build and `trunk`-only Pages
     deployment using the official GitHub Pages Actions.
   - `package.json` — root delegating `site:build`, `site:serve`, and `site:check`
@@ -164,6 +173,26 @@ be limited to the default branch.
     its index row — the proposed architecture decision for the private-source,
     public-derivative publication channel and Node toolchain.
 
+## Publication Policy
+
+The reserved validator, not the site manifest, owns the publication policy.
+Its fixed allowed source roots are the exact root files `README.md`,
+`AGENTS.md`, and `INTEGRATION.md`, plus the exported directories
+`guidelines/`, `roles/`, `skills/`, `templates/`, `workflows/`,
+`integrations/`, and `runbooks/`. The fixed denied set includes `vendor/`,
+`test/`, `docs/decisions/`, `docs/specifications/`, `docs/change-plans/`,
+`docs/proposals/`, `docs/orchestration/`, `docs/validation-baseline*`,
+`BACKLOG.md`, `.claude/`, `.github/`, `config/`, `benchmark/`, `_site/`, and
+log files. `site/` is never an allowed canonical-source root.
+
+The manifest may choose exact existing source files within the fixed allowed
+roots and may not add roots, remove denials, or broaden a path through a glob.
+The initial manifest and its reviewed digests are covered by the recorded
+approval for the full implementation `touches:` set. Any later source-path or
+digest change requires a new `ADR-0026` recorded approval naming the manifest
+and affected source artifacts; a matching hash without that publication review
+is insufficient.
+
 ## Success Criteria
 
 The structural criteria are checked offline; the manual browser criterion is an
@@ -174,13 +203,18 @@ explicit acceptance procedure rather than an assertion hidden in a shell test.
   then it exits zero, creates `_site/index.html` and `_site/404.html`, and does
   not modify canonical Markdown or leave generated files tracked by Git.
 - **SC-2 — explicit publication boundary.** Given the site content manifest,
-  when the site validator runs, then every page is declared with a route, title,
-  audience, `kind` (`rendered` or `link-only`), and exact repository source
-  path. A `rendered` entry also declares `content_kind` (`guide` or `summary`)
-  and `reviewed_source_digest`; no page is generated from an undeclared source.
+  when the reserved validator runs, then its fixed allowed-source-root and
+  denied-path policy is applied before the manifest is read. Every page is
+  declared with a route, title, audience, `kind` (`rendered` or `link-only`),
+  and exact repository source path within that fixed policy. A `rendered` entry
+  also declares `content_kind` (`guide` or `summary`) and
+  `reviewed_source_digest`; no page is generated from an undeclared source.
+  The validator rejects a source-path or digest change without the applicable
+  `ADR-0026` recorded publication approval.
 - **SC-3 — unsafe manifest entries fail closed.** Given a manifest containing a
   missing source, duplicate route, path traversal, a symlink whose target is
-  outside the allowed source roots, a case-folded path collision, or a path
+  outside the validator's fixed allowed source roots, a case-folded path
+  collision, or a path
   under `vendor/`, `test/`, `docs/decisions/`, `docs/specifications/`,
   `docs/change-plans/`, `docs/proposals/`, `docs/orchestration/`,
   `docs/validation-baseline*`, `BACKLOG.md`, `.claude/`, `.github/`, `config/`,
@@ -189,8 +223,9 @@ explicit acceptance procedure rather than an assertion hidden in a shell test.
 - **SC-4 — artifact inventory is exact.** Given a successful build, when the
   validator compares `_site/` with the manifest-derived route set, `404.html`,
   and the manifest's explicit asset list, then every generated file is expected
-  and every expected file exists; any extra file, passthrough copy, or undeclared
-  asset fails the check.
+  and every expected file exists. Only assets explicitly listed in the manifest
+  may be passed through; any extra file, unlisted passthrough copy, or
+  undeclared asset fails the check.
 - **SC-5 — project-site paths are correct.** Given
   `SITE_BASE_PATH=/conventional-agents/`, when the site builds and the generated
   HTML is checked, then internal links and asset URLs preserve that base path,
@@ -200,9 +235,12 @@ explicit acceptance procedure rather than an assertion hidden in a shell test.
   framework behavior, when the generated HTML is inspected, then its visible
   and machine-readable marker identifies it as a `guide` or `summary`, its
   source URL is SHA-pinned to the build revision and uses the exact manifest
-  path, and its page states that repository access may be required. Anonymous
-  access to the private GitHub source URL is not treated as a launch failure;
-  the public page must remain useful without following it.
+  path, and its page states that repository access may be required. The
+  `reviewed_source_digest` attests that a human reviewed the exact source bytes
+  for public publication, including private-repository identifiers and access
+  boundaries, not merely that a summary is accurate. Anonymous access to the
+  private GitHub source URL is not treated as a launch failure; the public page
+  must remain useful without following it.
 - **SC-7a — accessible core structure.** Given the generated home, nested, and
   404 pages, when their HTML is inspected, then each has one document title and
   one H1, semantic landmarks, a skip link, a required content-kind marker, and a
@@ -227,15 +265,25 @@ explicit acceptance procedure rather than an assertion hidden in a shell test.
   `npm test`, and `npm run validate` run, then the existing governance gates pass.
   `test/FS-0044/**` exercises the validator with fixtures and does not require
   Eleventy; only the Pages workflow's site build installs the site dependency
-  tree.
+  tree. The existing FS-0022 suite may exceed a 420-second interactive local
+  limit; repository CI is the acceptance signal for this criterion, and a local
+  timeout must not be reported as a pass.
 - **SC-11 — live private-source/public-derivative site is coherent.** Before
   launch, the organization/account capability for a public Pages site sourced
   from this private repository is verified, trunk protection requires a PR with
   the required checks, and the `github-pages` environment requires reviewers.
-  After a successful `trunk` deployment, a browser requests the project URL, a
-  nested route, and an unknown route; the home page, CSS/assets, deep link, and
-  custom 404 page load over HTTPS, and source URLs identify the same deployment
-  revision while honestly requiring repository authorization where applicable.
+  The capability, protection, and environment readbacks are recorded in a
+  top-level PR #208 comment or a launch checklist linked from that comment
+  before Pages is enabled. After a successful `trunk` deployment, a browser
+  requests the project URL, a nested route, and an unknown route; the home page,
+  CSS/assets, deep link, and custom 404 page load over HTTPS, and source URLs
+  identify the same deployment revision while honestly requiring repository
+  authorization where applicable.
+- **SC-12 — vendored gate skips absent sites.** Given a consumer target that
+  runs the vendored `scripts/check-site-publication.mjs` and has no `site/`
+  directory, when the gate runs, then it exits zero with an explicit `SKIP:`
+  result and does not inspect the framework checkout or fail the consumer. When
+  the caller target does have `site/`, the gate validates that target's site.
 
 ## Edge Cases
 
@@ -277,18 +325,22 @@ explicit acceptance procedure rather than an assertion hidden in a shell test.
 - Node 24 LTS and the site-scoped `site/package-lock.json` file.
 - Eleventy and the minimum pinned build dependencies selected by the
   implementation revision.
-- The canonical `README.md`, `AGENTS.md`, `INTEGRATION.md`, and explicitly
-  allowlisted exported directories named by the manifest.
+- The canonical `README.md`, `AGENTS.md`, `INTEGRATION.md`, and the fixed
+  allowed source roots defined by the reserved validator; the manifest selects
+  exact files within those roots and cannot redefine them.
 - A verified GitHub organization/account capability for a public Pages site
   sourced from a private repository, plus the official Pages actions, trunk
   protection, and the `github-pages` environment with required reviewers.
 - Human review and approval of the FS/PLAN package and the reserved workflow and
   package paths before implementation.
+- A recorded `ADR-0026` approval naming the full implementation `touches:` set
+  and, for later manifest or digest changes, the affected publication artifacts.
 
 ## Rollout / Migration
 
 - Land the FS/PLAN governance package as a draft and keep the implementation
-  blocked until human approval is recorded for the final full `touches:` set.
+  blocked until the `ADR-0026` status-transition commit records human approval
+  for the final full `touches:` set.
 - Implement and validate the curated site in the same draft PR (#208); review
   the generated artifact, manifest boundary, source-link access behavior, and
   workflow guard before enabling deployment.
@@ -319,8 +371,9 @@ explicit acceptance procedure rather than an assertion hidden in a shell test.
   SHA-pinned source links; no credentials or user-submitted data.
 - Threats considered: accidental publication of private files, stale summaries,
   symlink/case-folding escapes, project-site path confusion, anonymous readers
-  being misled about private source access, and workflows with broader
-  permissions than required.
+  being misled about private source access, public disclosure of the private
+  repository identity and deployment SHA through source URLs, and workflows
+  with broader permissions than required.
 - Mitigations: explicit rendered/link-only manifest validation, source-digest
   checks, exact artifact inventory, rejected paths and symlinks, locked
   site-scoped dependencies, no secrets or PAT, `contents: read` defaults,

@@ -10,6 +10,31 @@ gate people work around. This file is the contract.
 
 ---
 
+## check-site-publication.mjs — framework-only publication gate
+
+`check-site-publication.mjs` is the reserved publication-boundary validator for
+this framework's optional `site/` source and generated Pages derivative. It is
+framework-only governance machinery, not a consumer integration path and not a
+canonical document for vendored repositories.
+
+The validator resolves the target repository from the caller's working tree,
+following the same caller-relative rule as the other portable gates. When the
+target has no `site/` directory, it exits zero and prints an explicit `SKIP:`
+result; it does not inspect the framework checkout merely because the script was
+invoked from a vendored copy. When the target has `site/`, it validates that
+target's manifest, fixed source policy, reviewed publication approvals, and
+generated artifact inventory.
+
+The source roots and denied paths are compiled into the reserved validator. The
+site manifest may select exact files within that policy but cannot redefine the
+policy. Run it locally with:
+
+```bash
+node scripts/check-site-publication.mjs
+```
+
+---
+
 ## GitHub binding executables
 
 The exported GitHub binding lives under `integrations/github/`, not `scripts/`.

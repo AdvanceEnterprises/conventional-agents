@@ -1,7 +1,7 @@
 # Integration Guide
 
 Version: 2.0.0
-Last Updated: 2026-06-08
+Last Updated: 2026-10-04
 
 This document is the canonical source for how conventional-agents integrates with host repositories and resolves conflicts between instruction sources.
 
@@ -728,7 +728,7 @@ pinned tag and move between tags deliberately. The support policy:
 - **Minor and patch upgrades are additive.** Minor releases add to the exported
   surface and patch releases fix it; an upgrade that stays within a major is
   drop-in for consumers using the patterns above.
-- Framework-internal paths may change in any release. `docs/`
+- **Framework-internal paths may change in any release.** `docs/`
   (specifications, change plans, decisions), `BACKLOG.md`, `site/`, `test/`,
   and `package.json` are framework-internal (see the exported-surface table in
   the framework's `AGENTS.md`); consumers must not reference them — the
