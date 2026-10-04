@@ -1,7 +1,7 @@
 ---
 type: adr
 id: ADR-0044
-status: proposed
+status: accepted
 decision_scope: architecture
 reversible: yes
 related_specs:
@@ -21,7 +21,11 @@ PARSING_HINTS:
 
 ## Status
 
-- Proposed
+- Accepted
+
+Accepted 2026-10-04 by Joey Clark, recorded on the status-transition commit
+with matching `Approved-By:` and `Approved-Artifacts:` trailers under
+`ADR-0026`.
 
 ## Context and Problem Statement
 

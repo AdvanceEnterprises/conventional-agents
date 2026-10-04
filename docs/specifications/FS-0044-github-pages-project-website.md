@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0044
-status: draft
+status: approved
 title: GitHub Pages project website — curated adopter-facing public guide
 owner: ajoeofalltrades
 test_required: true
@@ -45,21 +45,25 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Approved
+
+Approved 2026-10-04 by Joey Clark, recorded on the status-transition commit
+with matching `Approved-By:` and `Approved-Artifacts:` trailers under
+`ADR-0026`. The approval covers the exact full implementation `touches:` set
+declared by PLAN-0050; implementation may now proceed within that set.
 
 ## Plan Status
 
-- **PLAN-0050 is `draft`.** This revision resolves review feedback and declares
+- **PLAN-0050 is `approved`.** This revision resolves review feedback and declares
   the complete intended implementation `touches:` set, including the reserved
   validator, workflow, package, and decision paths.
 - The approval record for that exact set is the status-transition commit defined
   by [`ADR-0026`](../decisions/ADR-0026-approval-is-a-recorded-act.md), carrying
   `Approved-By:` and `Approved-Artifacts:` trailers that name the governed
   artifacts. A PR review or comment alone is not the recorded approval.
-- FS-0044, PLAN-0050, and ADR-0044 remain draft/proposed. No implementation is
-  authorized until a human approves the final documents and the exact declared
-  `touches:` set. The eventual implementation may remain in this PR (#208), as
-  long as that approval is recorded before implementation files are added.
+- FS-0044, PLAN-0050, and ADR-0044 are now approved/accepted. The eventual
+  implementation may remain in this PR (#208), but it must stay within the
+  approved `touches:` set and preserve the publication boundary described here.
 - The first launch assumes a private source repository and a public Pages
   derivative. The required GitHub organization/account capability, trunk
   protection, and `github-pages` environment reviewers are launch preconditions,

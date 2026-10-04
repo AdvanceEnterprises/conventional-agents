@@ -2,9 +2,9 @@
 type: change-plan
 role: implementer
 language: n/a
-status: draft
+status: approved
 related_specs: [FS-0044]
-approved_by: ""
+approved_by: "Joey Clark <administrator@ajoeofalltrades.dev>"
 related_adrs: [ADR-0024, ADR-0026, ADR-0027, ADR-0030, ADR-0044]
 touches:
   - site/**
@@ -32,18 +32,19 @@ updated: 2026-10-04
 
 # PLAN-0050: Implement FS-0044 — GitHub Pages project website
 
-> **Review-response note:** this revision resolves the publication-boundary,
-> runtime, private-source, launch-control, and ADR-0027 feedback on PR #208. The
-> complete intended implementation `touches:` set is declared above now. The
-> plan and spec remain draft, and the implementation stays blocked until a
-> human approves that exact set. The complete implementation may then be added
-> to this same draft PR.
+> **Approval note:** this revision resolves the publication-boundary, runtime,
+> private-source, launch-control, and ADR-0027 feedback on PR #208. The complete
+> intended implementation `touches:` set is declared above and was approved by
+> the status-transition commit carrying the matching `Approved-By:` and
+> `Approved-Artifacts:` trailers. The complete implementation may now be added
+> to this same draft PR, within that exact set.
 
 The approval record is the status-transition commit defined by
 [`ADR-0026`](../decisions/ADR-0026-approval-is-a-recorded-act.md), with
 `Approved-By:` and `Approved-Artifacts:` trailers naming the exact governed
-artifacts. A PR review or comment is evidence of discussion, not the approval
-record that authorizes implementation.
+artifacts. This commit records the human approval; a PR review or comment alone
+would be evidence of discussion, not the approval record that authorizes
+implementation.
 
 ## 1. Feature / Issue Reference
 
@@ -56,7 +57,7 @@ record that authorizes implementation.
 
 ## 2. Scope of Change
 
-**This governance revision WILL:**
+**This governance-and-approval revision WILL:**
 
 * Revise FS-0044 as a draft specification for a curated, allowlisted,
   adopter-facing GitHub Pages derivative sourced from a private repository.
@@ -66,20 +67,21 @@ record that authorizes implementation.
 * Add the FS-0044 and PLAN-0050 index rows, the ADR-0044 index row, and a
   CHANGELOG entry that names the proposal as draft and does not claim delivery.
 * Classify `site/` as internal build source in `AGENTS.md` and `INTEGRATION.md`.
+* Record human approval for FS-0044, PLAN-0050, and ADR-0044 against the exact
+  implementation `touches:` set.
 
-**This governance revision will NOT:**
+**This approval revision will NOT:**
 
 * Add `site/`, `scripts/check-site-publication.mjs`, `package.json`,
   `site/package.json`, `site/package-lock.json`, `.gitignore`,
   `.github/workflows/pages.yml`, `README.md`, or `test/FS-0044/`.
-* Change any FS, PLAN, or ADR status.
 * Configure GitHub Pages, create an environment, deploy an artifact, or add a
   custom domain.
 * Publish a broad mirror of the repository or expose internal governance and
   test artifacts.
 
-**The later implementation revision WILL, only after FS-0044, ADR-0044, and
-the full declared `touches:` set are human-approved:**
+**The implementation revision WILL, within the approved FS-0044, ADR-0044, and
+full declared `touches:` set:**
 
 * Add the Eleventy source tree under `site/`, including the curated pages,
   shared layout, styles, navigation, rendered/link-only content manifest,
@@ -303,10 +305,10 @@ the full declared `touches:` set are human-approved:**
 
 ## 10. Readiness Check
 
-* [ ] Spec is approved
-* [ ] ADR-0044 is accepted or its proposed status is explicitly approved as the
+* [x] Spec is approved
+* [x] ADR-0044 is accepted or its proposed status is explicitly approved as the
   governing architecture record
-* [ ] A status-transition commit under ADR-0026 records human approval with
+* [x] A status-transition commit under ADR-0026 records human approval with
   `Approved-By:` and `Approved-Artifacts:` for the complete implementation
   `touches:` set, including the reserved validator, workflow, scripts, package,
   and decision paths
@@ -321,7 +323,8 @@ I affirm that:
 
 * This plan reflects the full intended scope of the website implementation,
   including the reserved publication validator and launch controls.
-* This revision is deliberately governance-only and does not authorize code,
-  workflow, package, or site changes before human approval.
+* This revision is deliberately governance-only but records approval for the
+  exact declared implementation surface; implementation may proceed only within
+  that surface.
 * Any deviation or expansion of the public content boundary will require
   revising FS-0044 and this plan before implementation.

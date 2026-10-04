@@ -13,7 +13,7 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
-- **FS-0044: GitHub Pages project website (draft — `FS-0044`,
+- **FS-0044: GitHub Pages project website (approved; implementation pending — `FS-0044`,
   `PLAN-0050`).** Proposes a curated, adopter-facing public derivative at the
   repository's GitHub Pages URL, sourced from a private repository through a
   verified organization/account capability. The plan now specifies a Node 24
@@ -22,9 +22,10 @@ For this project (a documentation/standards kit), semver follows the
   publication approval, and protected trunk plus environment-reviewer launch
   gates. The vendored validator skips cleanly when a consumer has no `site/`.
   The repository's existing Markdown remains canonical; the site is not a broad
-  mirror. The governance package remains draft only.
+  mirror. The governance package is approved; implementation remains pending
+  within the declared `touches:` set.
 - **ADR-0044: Curated public GitHub Pages derivative from a private source
-  repository (proposed).** Keeps canonical source private while allowing a
+  repository (accepted).** Keeps canonical source private while allowing a
   public Pages derivative only after the capability and launch controls are
   verified. Source links are SHA-pinned and may require repository
   authorization; `site/` remains internal build source rather than exported
