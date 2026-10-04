@@ -4,9 +4,6 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
-
-const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 
 const ALLOWED_EXACT_SOURCES = new Set(['README.md', 'AGENTS.md', 'INTEGRATION.md']);
 const ALLOWED_SOURCE_ROOTS = [
