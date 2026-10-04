@@ -168,9 +168,10 @@ NODE
   assert_file_contains "$workflow" "actions/deploy-pages@v4"
   assert_file_contains "$workflow" "name: github-pages"
   assert_file_contains "$workflow" "github.ref == 'refs/heads/trunk'"
-  local configure_pages
-  configure_pages="$(grep -A1 -F -- "- name: Configure GitHub Pages" "$workflow")"
-  [[ "$configure_pages" == *"if: github.ref == 'refs/heads/trunk'"* ]]
+  local deploy_block
+  deploy_block="$(grep -A14 -F -- "  deploy:" "$workflow")"
+  [[ "$deploy_block" == *"if: github.ref == 'refs/heads/trunk'"* ]]
+  [[ "$deploy_block" == *"actions/configure-pages@v5"* ]]
   if grep -qE '^      paths:' "$workflow"; then
     echo "Pages workflow must not path-filter pull requests"
     return 1

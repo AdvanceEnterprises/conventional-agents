@@ -37,9 +37,6 @@ jobs:
         env:
           SITE_BASE_PATH: /conventional-agents/
           SITE_SOURCE_REVISION: ${{ github.sha }}
-      - name: Configure GitHub Pages
-        if: github.ref == 'refs/heads/trunk'
-        uses: actions/configure-pages@v5
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -57,6 +54,8 @@ jobs:
       pages: write
       id-token: write
     steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
