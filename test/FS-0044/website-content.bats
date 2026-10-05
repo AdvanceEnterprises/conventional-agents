@@ -136,6 +136,24 @@ NODE
   [[ "$output" == *"case-folding collision"* ]]
 }
 
+@test "the validator folds case on the denied-exact source list" {
+  # Symmetry lock for the case-fold fix (PR #208, MM3 finding 2 / Kimi delta
+  # suggestion 3): a lowercase variant of a denied-exact source (backlog.md)
+  # must fail closed with the same denied-source diagnostic as BACKLOG.md.
+  local manifest_copy
+  manifest_copy="$(mktemp)"
+  node - "$MANIFEST" "$manifest_copy" <<'NODE'
+const fs = require('node:fs');
+const source = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
+source.pages[0].source = 'backlog.md';
+fs.writeFileSync(process.argv[3], JSON.stringify(source));
+NODE
+  run node "$VALIDATOR" --manifest-only --manifest "$manifest_copy"
+  rm -f "$manifest_copy"
+  [ "$status" -ne 0 ]
+  [[ "$output" == *"denied source backlog.md"* ]]
+}
+
 @test "the validator rejects symlinked canonical sources" {
   local manifest_copy symlink_path
   manifest_copy="$(mktemp)"
