@@ -26,6 +26,8 @@ related_adrs:
   - ADR-0015
   - ADR-0016
   - ADR-0017
+  - ADR-0026
+  - ADR-0027
   - ADR-0030
   - ADR-0033
   - ADR-0037
@@ -209,6 +211,11 @@ and literal. Framework identity/history outside this scan remains unchanged.
 
 - Accepted ADR-0016 places consumer-specific conventions outside the framework.
 - Accepted ADR-0017 keeps the framework's nested vendor paths internal.
+- ADR-0026 requires recorded human approval scoped to the exact `touches:` set;
+  approval of this draft documentation package does not authorize its later
+  implementation.
+- ADR-0027 reserves `scripts/`; changing `scripts/README.md` requires a
+  recorded human approval for that path before implementation.
 - Accepted ADR-0037 governs the parameterized GitHub binding; no proposed ADR is
   required as authority for this spec.
 
