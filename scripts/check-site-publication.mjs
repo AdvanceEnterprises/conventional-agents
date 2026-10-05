@@ -15,7 +15,9 @@ const ALLOWED_SOURCE_ROOTS = [
   'integrations/',
   'runbooks/',
 ];
-const DENIED_EXACT_SOURCES = new Set(['BACKLOG.md']);
+// Stored lowercase; the lookup folds case so `backlog.md` and `BACKLOG.md`
+// both fail closed with the same denied-source diagnostic (MM3 finding 2, PR #208).
+const DENIED_EXACT_SOURCES = new Set(['backlog.md']);
 const DENIED_PREFIXES = [
   'vendor/',
   'test/',
@@ -122,7 +124,10 @@ function isPathSafe(relativePath) {
 
 function deniedReason(relativePath) {
   const normalized = relativePath.toLowerCase();
-  if (DENIED_EXACT_SOURCES.has(relativePath)) return `denied source ${relativePath}`;
+  // Case-fold the denied-exact lookup too, so a case-variant source (e.g.
+  // `backlog.md`) fails closed with the same denied-source diagnostic instead
+  // of falling through to the allowed-roots error (MM3 finding 2, PR #208).
+  if (DENIED_EXACT_SOURCES.has(normalized)) return `denied source ${relativePath}`;
   for (const prefix of DENIED_PREFIXES) {
     if (normalized.startsWith(prefix.toLowerCase())) return `denied path ${relativePath}`;
   }
