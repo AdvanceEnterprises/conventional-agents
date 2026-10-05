@@ -11,6 +11,18 @@ For this project (a documentation/standards kit), semver follows the
 
 ## [Unreleased]
 
+### Fixed
+
+- **`scripts/check-status.sh` now actually parses under Bash 3.2 (issue #214).**
+  The script advertised "Bash 3.2+ compatible" but its rule 8 reference
+  extractor nested a `case` statement (plus multiline comments) directly
+  inside a process substitution — a shape stock macOS `/bin/bash` 3.2 rejects
+  at PARSE time, so the gate died before any check ran. Extraction moved to a
+  top-level `extract_doc_refs()` function; verified against a real GNU Bash
+  3.2.39 binary (parse rc=0, full run rc=0, output identical to Bash 5.x).
+  New `test/FS-0022/bash32-compat.bats` locks the shape out and runs parse+run
+  under a 3.2 binary when one is available (`CA_BASH32`, opt-in).
+
 ### Added
 
 - **FS-0047 (implemented) / PLAN-0053 (implemented): exported consumer-boundary audit.** Implements the standalone-consumable scrub: the exported lint script's sibling-discovery and actor-email defaults are empty (consumers configure `CA_REPO_DIRS`/`CA_TARGET_REPO`/`CA_SIBLING_NAMES`, `AGENT_EMAILS`, and `CRON_AGENT_EMAILS` explicitly; an unconfigured attribution run fails closed and `CA_SKIP_ATTRIBUTION=1` is the explicit opt-out — the OK line disclaims the cron boundary when the cron list is unset), normative actor tables are consumer-selected placeholders with a labeled non-normative appendix, the Claude settings fragment and copy-in examples are parameterized, the instance's agent-email domain moves from `tais-den.dev` to `advance.enterprises` (the historical aliases stay in the commit allowlist and CI exports for anchored-history audits), the Project Board section describes work tracking generically (the instance's board lives at the maintainer's personal account), the benchmark fixture is the placeholder example form (the instance's real pilot card lives in pack-protocol), and a `test/FS-0047/` regression audit enforces the boundary.
