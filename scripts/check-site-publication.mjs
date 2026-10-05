@@ -165,11 +165,13 @@ function ensureRegularFile(root, relativePath, errors, label) {
       errors.push(`${label} uses a symlink, which is not publishable: ${relativePath}`);
       return null;
     }
-  }
-  const stat = fs.statSync(absolutePath);
-  if (!stat.isFile()) {
-    errors.push(`${label} is not a regular file: ${relativePath}`);
-    return null;
+    // The per-segment walk already rejects symlinked directories; the same
+    // loop also covers the leaf, so a final lstatSync here is authoritative
+    // and no symlink-resolving statSync is needed for the regular-file check.
+    if (current === absolutePath && !stat.isFile()) {
+      errors.push(`${label} is not a regular file: ${relativePath}`);
+      return null;
+    }
   }
   return absolutePath;
 }

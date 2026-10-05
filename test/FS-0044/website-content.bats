@@ -163,15 +163,23 @@ NODE
   assert_file_contains "$workflow" "node-version: 24"
   assert_file_contains "$workflow" "npm ci --prefix site"
   assert_file_contains "$workflow" "npm run site:check"
-  assert_file_contains "$workflow" "actions/configure-pages@v5"
+  # Deployment actions are SHA-pinned with the release tag kept as a comment
+  # (Kimi K2.7 review finding 2, PR #208); match either pinned or tag form.
+  if ! grep -qE 'actions/configure-pages@[0-9a-f]{40} # v5' "$workflow"; then
+    assert_file_contains "$workflow" "actions/configure-pages@v5"
+  fi
   assert_file_contains "$workflow" "actions/upload-pages-artifact@v3"
-  assert_file_contains "$workflow" "actions/deploy-pages@v4"
+  if ! grep -qE 'actions/deploy-pages@[0-9a-f]{40} # v4' "$workflow"; then
+    assert_file_contains "$workflow" "actions/deploy-pages@v4"
+  fi
   assert_file_contains "$workflow" "name: github-pages"
   assert_file_contains "$workflow" "github.ref == 'refs/heads/trunk'"
   local deploy_block
   deploy_block="$(grep -A14 -F -- "  deploy:" "$workflow")"
   [[ "$deploy_block" == *"if: github.ref == 'refs/heads/trunk'"* ]]
-  [[ "$deploy_block" == *"actions/configure-pages@v5"* ]]
+  if ! grep -qE 'actions/configure-pages@[0-9a-f]{40} # v5' <<< "$deploy_block"; then
+    [[ "$deploy_block" == *"actions/configure-pages@v5"* ]]
+  fi
   if grep -qE '^      paths:' "$workflow"; then
     echo "Pages workflow must not path-filter pull requests"
     return 1

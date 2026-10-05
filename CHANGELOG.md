@@ -13,17 +13,19 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
-- **FS-0044: GitHub Pages project website (approved; implementation pending — `FS-0044`,
-  `PLAN-0050`).** Proposes a curated, adopter-facing public derivative at the
-  repository's GitHub Pages URL, sourced from a private repository through a
-  verified organization/account capability. The plan now specifies a Node 24
-  site-scoped toolchain, rendered/link-only manifest, reviewed source digests,
-  validator-owned source roots and denials, exact artifact inventory, recorded
-  publication approval, and protected trunk plus environment-reviewer launch
-  gates. The vendored validator skips cleanly when a consumer has no `site/`.
-  The repository's existing Markdown remains canonical; the site is not a broad
-  mirror. The governance package is approved; implementation remains pending
-  within the declared `touches:` set.
+- **FS-0044: GitHub Pages project website (approved; implementation in this
+  revision — `FS-0044`, `PLAN-0050`).** Ships a curated, adopter-facing public
+  derivative at the repository's GitHub Pages URL, sourced from a private
+  repository through a verified organization/account capability. The package
+  specifies a Node 24 site-scoped toolchain, rendered/link-only manifest,
+  reviewed source digests, validator-owned source roots and denials, exact
+  artifact inventory, recorded publication approval, and protected trunk plus
+  environment-reviewer launch gates. The vendored validator skips cleanly when
+  a consumer has no `site/`. The repository's existing Markdown remains
+  canonical; the site is not a broad mirror. The governance package is
+  approved; the implementation is in PR #208 and pending only the
+  human-controlled launch verification (Pages capability, environment
+  reviewers, browser smoke check) recorded on that PR.
 - **ADR-0044: Curated public GitHub Pages derivative from a private source
   repository (accepted).** Keeps canonical source private while allowing a
   public Pages derivative only after the capability and launch controls are

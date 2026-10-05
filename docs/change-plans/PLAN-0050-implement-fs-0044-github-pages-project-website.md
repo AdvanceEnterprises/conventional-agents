@@ -287,6 +287,12 @@ full declared `touches:` set:**
   * Read back the Pages deployment URL, compare its commit to the merged
     `trunk` revision, and verify the expected private-source authorization
     behavior before adding the link to `README.md`.
+  * After merge, confirm the rebase-merge preserves the recorded publication
+    approval relationship: the implementation commit's `Publication-Approval:`
+    trailer must resolve to a commit present in the new `trunk` history with
+    its `Approved-By:`/`Approved-Artifacts:` trailers intact (Kimi K2.7 review
+    finding 1, PR #208). If GitHub's rebase rewrote the approval commit, record
+    a fresh ADR-0026 approval naming the affected artifacts before launch.
 
 ## 9. Explicit Non-Changes
 
