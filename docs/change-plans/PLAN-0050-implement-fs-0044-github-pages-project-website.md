@@ -27,7 +27,7 @@ touches:
   - docs/decisions/README.md
   - CHANGELOG.md
 created: 2026-10-03
-updated: 2026-10-04
+updated: 2026-10-05
 ---
 
 # PLAN-0050: Implement FS-0044 — GitHub Pages project website
