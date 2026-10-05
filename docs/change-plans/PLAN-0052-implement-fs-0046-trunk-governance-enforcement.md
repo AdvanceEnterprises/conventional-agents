@@ -86,6 +86,12 @@ workflow triggers, and current API-visible repository rules must be re-read
 immediately before the external mutation. If any context or rule differs from
 FS-0046, revise this plan before proceeding.
 
+Before any implementation, revise `touches:` from this documentation-only set
+to enumerate the exact tracked-file changes and obtain recorded human approval
+for that complete scope under ADR-0026/ADR-0027. The live ruleset mutation is a
+separate external action requiring its own explicit recorded human approval;
+approval of this draft documentation set authorizes neither change.
+
 Before implementation, re-read the current default branch and open draft PRs
 `#206` and `#208`. PR #206 changes `.github/workflows/lint-docs.yml` and
 `integrations/github/README.md`; its current diff adds audit steps but does not
@@ -245,7 +251,7 @@ the plan before touching shared paths or the live ruleset.
 ## 10. Readiness Check
 
 * [ ] Spec is approved
-* [ ] Tests exist or are clearly defined
+* [x] Tests are clearly defined for the implementation revision
 * [ ] Scope is minimal and explicit
 * [x] No implementation or live-ruleset mutation is included
 
