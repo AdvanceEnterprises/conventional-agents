@@ -1,6 +1,23 @@
 #!/usr/bin/env bats
 # FS-0040 — governed-ID claim audit coverage (issues #179 and #186)
 
+audit_redirects_are_safe() {
+  local audit="$1"
+  local file_redirection='(^|[[:space:]])([0-9]+)?&?>{1,2}[[:space:]]*("|/|[$]|~|[[:alpha:]_.])'
+  local redirection_lines scratch_count grep_status
+
+  redirection_lines="$(grep -E "$file_redirection" "$audit" || true)"
+  scratch_count="$(printf '%s\n' "$redirection_lines" | grep -Ec '>[[:space:]]*"[$](tree_file|open_prs_file|files_file)"')"
+  [ "$scratch_count" -eq 4 ] || return 1
+
+  if printf '%s\n' "$redirection_lines" | grep -Ev '>[[:space:]]*("[$](tree_file|open_prs_file|files_file)"|/dev/null)'; then
+    return 1
+  else
+    grep_status=$?
+  fi
+  [ "$grep_status" -eq 1 ]
+}
+
 setup() {
   # The duplicate is created only for the duration of this test. Using the
   # active worktree keeps local runs honest while the new gate is uncommitted;
@@ -60,8 +77,8 @@ teardown() {
 
 @test "claim audit binding is report-only and exposes strict mode" {
   local audit="$WORKTREE/integrations/github/bin/gh-pr-claim-audit.sh"
-  local redirection_lines file_redirection control_flow_redirect compact_arithmetic_control
-  file_redirection='(^|[[:space:]])([0-9]+)?&?>{1,2}[[:space:]]*("|/|\$|~|[[:alpha:]_.])'
+  local file_redirection control_flow_redirect compact_arithmetic_control
+  file_redirection='(^|[[:space:]])([0-9]+)?&?>{1,2}[[:space:]]*("|/|[$]|~|[[:alpha:]_.])'
   control_flow_redirect='while (( index > 0 )); do : > "$unexpected_file"; done'
   compact_arithmetic_control='if(( index > 0 ))'
 
@@ -78,15 +95,23 @@ teardown() {
   [ "$status" -eq 1 ]
 
   # The audit may redirect API responses only into its mktemp-backed scratch
-  # files; a new persistent-file redirect must be reviewed as a contract change.
-  redirection_lines="$(grep -E "$file_redirection" "$audit" || true)"
-  [ "$(printf '%s\n' "$redirection_lines" | grep -Ec '>[[:space:]]*"\$(tree_file|open_prs_file|files_file)"')" -eq 4 ]
-  run grep -Ev '>[[:space:]]*("\$(tree_file|open_prs_file|files_file)"|/dev/null)' <<< "$redirection_lines"
-  [ "$status" -eq 1 ]
+  # files; /dev/null is harmless, while a persistent-file redirect needs review.
+  run audit_redirects_are_safe "$audit"
+  [ "$status" -eq 0 ]
   [ "$(printf '%s\n' "$control_flow_redirect" | grep -E "$file_redirection" || true)" = "$control_flow_redirect" ]
   [ -z "$(printf '%s\n' "$compact_arithmetic_control" | grep -E "$file_redirection" || true)" ]
 
   run bash "$audit" --help
   [ "$status" -eq 0 ]
   echo "$output" | grep -qF -- "--strict"
+}
+
+@test "claim audit redirect guard rejects an unapproved persistent path" {
+  local audit="$WORKTREE/integrations/github/bin/gh-pr-claim-audit.sh"
+  local fixture="$BATS_TEST_TMPDIR/claim-audit-with-forbidden-redirect.sh"
+  cp "$audit" "$fixture"
+  printf '%s\n' '# Regression fixture: > /tmp/unapproved-output' >> "$fixture"
+
+  run audit_redirects_are_safe "$fixture"
+  [ "$status" -ne 0 ]
 }
