@@ -167,3 +167,41 @@ $(cron_trailer missing)" "readonly.txt"
   [ "$status" -ne 0 ]
   [ "$before" = "$after" ]
 }
+
+@test "an unreadable cron timestamp fails closed instead of grandfathering" {
+  local repo="$BATS_TEST_TMPDIR/unreadable-timestamp"
+  local fake_bin="$BATS_TEST_TMPDIR/fake-bin"
+  build_repo "$repo"
+  plant_cron_commit "$repo" "2026-10-03T01:00:00Z" "feat: unreadable timestamp
+
+$(cron_trailer missing)" "unreadable.txt"
+  local real_git
+  real_git="$(command -v git)"
+  mkdir -p "$fake_bin"
+  cat > "$fake_bin/git" <<EOF
+#!/usr/bin/env bash
+# Shim used only by this fixture: make committer-time (%ct) lookups return an
+# empty value so the audit's numeric validation must reject the commit,
+# exercising the fail-closed branch (Kimi K2.7 finding 1, PR #206). Only the
+# format pattern %ct is intercepted; every other invocation (init, add,
+# commit, rev-parse, trailer reads) passes through to the real binary.
+for arg in "\$@"; do
+  case "\$arg" in
+    *%ct*)
+      exit 0
+      ;;
+  esac
+done
+exec "$real_git" "\$@"
+EOF
+  chmod +x "$fake_bin/git"
+
+  local range
+  range="$(git -C "$repo" rev-parse HEAD~1)..$(git -C "$repo" rev-parse HEAD)"
+  run env PATH="$fake_bin:$PATH" CA_TARGET_REPO="$repo" COMMIT_RANGE="$range" \
+    CRON_ATTRIBUTION_BOUNDARY="$BOUNDARY" bash "$LINT_SCRIPT"
+
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "cron attribution timestamp unreadable"
+  ! echo "$output" | grep -qF "grandfathered"
+}
