@@ -13,21 +13,26 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
-- **FS-0042: History-aware freshness audit (draft — `FS-0042`,
-  `PLAN-0048`).** Proposes a companion to the implemented freshness gate that
-  compares `updated:` with the latest substantive Git history while treating
-  date-only metadata commits as diagnostics and missing history as an explicit
-  failure. The audit is offline and report-only; implementation remains
-  approval-gated.
-- **FS-0043: Cron attribution enforcement (draft — `FS-0043`,
-  `PLAN-0049`).** Proposes boundary-aware enforcement of ADR-0021's terminal
-  `mode=autonomous` marker for new cron-authored commits while grandfathering
-  existing history. The audit is read-only and does not rewrite old commits.
+- **FS-0042: History-aware freshness audit (`FS-0042`,
+  `PLAN-0048`).** The companion to the implemented freshness gate ships in
+  the implementation revision (PR #206): `scripts/check-freshness-history.sh`
+  compares `updated:` with the latest substantive Git history, treats
+  date-only metadata commits (including pure renames) as diagnostics, and
+  fails closed on missing history. Document statuses remain `approved`
+  until a human reconciliation PR advances them (tracked by #183).
+- **FS-0043: Cron attribution enforcement (`FS-0043`,
+  `PLAN-0049`).** Ships in the implementation revision (PR #206): the
+  boundary-aware check in `scripts/cross-repo-lint.sh` requires the terminal
+  `mode=autonomous` marker for configured cron identities after the adoption
+  boundary, grandfathers earlier history, fails closed on unreadable commit
+  timestamps, and never rewrites old commits. Document statuses remain
+  `approved` until a human reconciliation PR advances them (tracked by #187).
 - **FS-0040 now includes the #186 citation-drift complement.** The governed-ID
   audit package covers local duplicate detection, cross-PR claim collisions,
   and stale citations of retired IDs when an open PR exposes the corresponding
-  renumber event. It remains a draft until its reserved-path implementation
-  approval is recorded.
+  renumber event. The implementation ships in PR #206; document statuses
+  remain `approved` until a human reconciliation PR advances them (tracked by
+  #179 and #186).
 - **Claude Code runtime binding (`FS-0030`).** The framework's first agent-runtime
   binding ships under `integrations/runtimes/claude-code/`: a plugin manifest
   (`claude plugin validate` clean), synced skill copies sourced from
@@ -84,7 +89,7 @@ For this project (a documentation/standards kit), semver follows the
   initialised submodule in a consumer run, skipping only when it is
   uninitialised — and `test/FS-0037/vendor-ref-resolution.bats` covers
   SC-1..SC-7.
-- **FS-0040: Governed-ID claim audit (draft — `FS-0040`, `PLAN-0046`).**
+- **FS-0040: Governed-ID claim audit (`FS-0040`, `PLAN-0046`).**
   Closes the governed-ID collision class in two layers. Locally,
   `check-status.sh` learns to fail when two documents in one registry
   resolve to the same `FS-NNNN` / `PLAN-NNNN` / `ADR-NNNN` ID — a
@@ -104,16 +109,17 @@ For this project (a documentation/standards kit), semver follows the
   `FS-00NN-*` files, an index row lost to merge order — is precisely the
   drift that reaches downstream adopters. (Consumer-framed per `FS-0022`
   §1d — the spec names `scripts/` — and staged with the draft package.)
-- **FS-0041: Status-vs-delivery consistency audit (draft — `FS-0041`,
-  `PLAN-0047`).** Proposes a conservative, offline, report-only audit for the
+- **FS-0041: Status-vs-delivery consistency audit (`FS-0041`,
+  `PLAN-0047`).** A conservative, offline, report-only audit for the
   opposite side of the lifecycle pairing gate: a pair that remains
   non-terminal — `draft`, `approved`, or `in-progress` — after its declared
   implementation surface has shipped. Findings rest on post-plan Git history,
   the required test suite, and a CHANGELOG marker — never file existence
-  alone — and never change a document's status.
-  The package tracks issue #188. The executable audit, npm entry, CI wiring,
-  and Bats suite arrive in a separate implementation revision because they
-  touch `ADR-0027` reserved paths and need their own recorded approval.
+  alone — and never change a document's status. The executable audit, npm
+  entry, CI wiring (advisory in CI until the delivered pairs are reconciled),
+  and Bats suite ship in the implementation revision (PR #206); document
+  statuses remain `approved` until a human reconciliation PR advances them
+  (tracked by #188).
 - **`INTEGRATION.md` documents the version-to-version upgrade path.** The
   Migration Guides carried "no standards → framework", "copy-in → submodule",
   and "submodule → fork" transitions, but nothing for a consumer already

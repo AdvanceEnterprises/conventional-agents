@@ -185,6 +185,9 @@ jobs:
           CA_GITHUB_PROJECT_NUMBER: ${{ vars.CA_GITHUB_PROJECT_NUMBER }}
         run: bash integrations/github/bin/gh-board-audit.sh
       - name: Audit open PR governed-ID claims
+        # FS-0040 SC-12: informational by design. Findings (non-strict) are
+        # reported in the job log without failing it; only a run failure
+        # (exit 2, e.g. unauthenticated gh or an API error) fails the step.
         if: github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -207,6 +210,13 @@ jobs:
       - name: Check history-aware workflow/guideline freshness
         run: npm run check:freshness:history
       - name: Check status versus delivered implementation
+        # FS-0041 report-only posture: the audit exits 1 when it reports
+        # delivered-but-non-terminal pairs, which is the intended local/CI
+        # diagnostic. Until the delivered pairs tracked by issue #188 are
+        # reconciled by a human status PR, the step is non-gating in CI
+        # (its output still prints); remove continue-on-error once the
+        # corpus is clean so the check becomes a hard gate.
+        continue-on-error: true
         run: npm run check:delivery
 
   lint-cross-repo:

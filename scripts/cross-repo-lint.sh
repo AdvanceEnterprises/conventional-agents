@@ -279,15 +279,27 @@ for REPO in "${REPOS[@]}"; do
     # cron identities after the adoption boundary must end in the autonomous
     # marker. Equality is intentionally grandfathered so a boundary can be
     # pinned to an exact commit timestamp without an off-by-one surprise.
-    if $_is_cron && [ -n "$RAW" ] && [ "$COMMIT_EPOCH" -gt "$CRON_BOUNDARY_EPOCH" ]; then
-      if ! echo "$RAW" | grep -qE ';[[:space:]]*mode=autonomous$'; then
+    # The timestamp comparison uses committer time (%ct) deliberately: the
+    # audit checks the commit as landed in this repository, and a rebase that
+    # moves a commit across the boundary should be re-evaluated there.
+    if $_is_cron && [ -n "$RAW" ]; then
+      if ! printf '%s\n' "$COMMIT_EPOCH" | grep -qE '^[0-9]+$'; then
+        # Fail closed: a cron commit whose timestamp cannot be read must not
+        # be silently grandfathered by a failed `[` comparison (issue #144
+        # review; the comparison below is numeric and needs a validated value).
         CRON_BAD_COUNT=$((CRON_BAD_COUNT + 1))
         TOTAL_BAD=$((TOTAL_BAD + 1))
-        echo "  BAD  $REPO_NAME <$COMMIT_HASH> cron attribution missing terminal mode=autonomous (boundary: $CRON_ATTRIBUTION_BOUNDARY)"
+        echo "  BAD  $REPO_NAME <$COMMIT_HASH> cron attribution timestamp unreadable (empty committer time) — cannot evaluate the boundary (boundary: $CRON_ATTRIBUTION_BOUNDARY)"
+      elif [ "$COMMIT_EPOCH" -gt "$CRON_BOUNDARY_EPOCH" ]; then
+        if ! echo "$RAW" | grep -qE ';[[:space:]]*mode=autonomous$'; then
+          CRON_BAD_COUNT=$((CRON_BAD_COUNT + 1))
+          TOTAL_BAD=$((TOTAL_BAD + 1))
+          echo "  BAD  $REPO_NAME <$COMMIT_HASH> cron attribution missing terminal mode=autonomous (boundary: $CRON_ATTRIBUTION_BOUNDARY)"
+        fi
+      else
+        CRON_GRANDFATHERED_COUNT=$((CRON_GRANDFATHERED_COUNT + 1))
+        echo "  INFO $REPO_NAME <$COMMIT_HASH> cron attribution grandfathered (commit timestamp: $COMMIT_EPOCH; boundary: $CRON_ATTRIBUTION_BOUNDARY)"
       fi
-    elif $_is_cron && [ -n "$RAW" ]; then
-      CRON_GRANDFATHERED_COUNT=$((CRON_GRANDFATHERED_COUNT + 1))
-      echo "  INFO $REPO_NAME <$COMMIT_HASH> cron attribution grandfathered (commit timestamp: $COMMIT_EPOCH; boundary: $CRON_ATTRIBUTION_BOUNDARY)"
     fi
   done < <(git -C "$REPO" log --format="%H %s" "$RANGE" 2>/dev/null)
   if [ "$BAD_COUNT" -eq 0 ] && [ "$MISSING_COUNT" -eq 0 ] && [ "$MALFORMED_COUNT" -eq 0 ] && [ "$CRON_BAD_COUNT" -eq 0 ]; then

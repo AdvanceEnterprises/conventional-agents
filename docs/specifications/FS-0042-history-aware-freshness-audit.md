@@ -130,6 +130,9 @@ failure, not a clean result.
 - A commit changing both content and `updated:` is substantive.
 - A commit changing only `updated:` or other declared freshness metadata is
   diagnostic-only.
+- A pure rename commit (same content, moved path) is resolved through the
+  commit's own rename record and treated as metadata-only, not as a
+  substantive edit.
 - A document with no reachable history cannot be treated as clean.
 - A shallow checkout must be repaired by the caller or reported as unavailable;
   the script never fetches implicitly.

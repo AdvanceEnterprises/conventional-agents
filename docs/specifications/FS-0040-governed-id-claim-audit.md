@@ -301,6 +301,11 @@ trunk unnoticed until someone ran a registry sweep by hand.
   document (a renumber's old side) does not claim the removed ID; only the
   added side — including a rename target — is a claim. A renumber
   therefore produces no false collision against the ID it is retiring.
+- **Same-ID renames vacate their previous path.** A pull request that
+  renames a governed document without changing its ID vacates the
+  previous path; a default-branch owner at that vacated path is not a
+  collision for that pull request's claim at the new path. A rename that
+  changes the ID remains a renumber event for the citation layer.
 - **One finding per ID.** Multiple claimants for one ID are reported as a
   single finding listing all distinct claimants, not one finding per pair.
 - **A PR touching no governed files claims nothing** and contributes no

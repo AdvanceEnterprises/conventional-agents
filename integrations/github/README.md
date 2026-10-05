@@ -79,7 +79,11 @@ set, including drafts, and compares each changed governed-document path with the
 default-branch tree. It reports one finding per duplicated open-PR claim, per
 default-branch collision, and per stale citation observed in a sibling PR's
 added lines after an open governed-document rename. Removed lines, unchanged
-context, the rename PR itself, and two PRs editing the same path are excluded.
+context, the rename PR itself, a same-ID rename's vacated previous path, and
+two PRs editing the same path are excluded. GitHub also omits the `patch`
+field for very large files, so citation scanning silently skips those files —
+the limitation is accepted: renames of such files still produce the mapping,
+and the scan is a report, not a gate.
 
 The command is read-only and informational by default. `--strict` is the
 explicit consumer opt-in that returns status 1 when findings exist; GitHub API,

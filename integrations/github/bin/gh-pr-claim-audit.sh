@@ -56,7 +56,7 @@ json_escape() {
 
 claim_index() {
     local wanted_id="$1" wanted_pr="$2" wanted_path="$3" index
-    for index in "${!claim_ids[@]}"; do
+    for index in ${claim_ids[@]+"${!claim_ids[@]}"}; do
         if [[ "${claim_ids[$index]}" == "$wanted_id" &&
               "${claim_prs[$index]}" == "$wanted_pr" &&
               "${claim_paths[$index]}" == "$wanted_path" ]]; then
@@ -78,7 +78,7 @@ record_claim() {
 
 rename_index() {
     local old_id="$1" new_id="$2" pr="$3" index
-    for index in "${!rename_old_ids[@]}"; do
+    for index in ${rename_old_ids[@]+"${!rename_old_ids[@]}"}; do
         if [[ "${rename_old_ids[$index]}" == "$old_id" &&
               "${rename_new_ids[$index]}" == "$new_id" &&
               "${rename_prs[$index]}" == "$pr" ]]; then
@@ -101,7 +101,7 @@ record_rename() {
 
 file_index() {
     local wanted_pr="$1" wanted_path="$2" index
-    for index in "${!file_prs[@]}"; do
+    for index in ${file_prs[@]+"${!file_prs[@]}"}; do
         if [[ "${file_prs[$index]}" == "$wanted_pr" &&
               "${file_paths[$index]}" == "$wanted_path" ]]; then
             printf '%s\n' "$index"
@@ -120,11 +120,33 @@ record_file_patch() {
     fi
 }
 
+vacated_index() {
+    local wanted_id="$1" wanted_pr="$2" wanted_path="$3" index
+    for index in ${vacated_ids[@]+"${!vacated_ids[@]}"}; do
+        if [[ "${vacated_ids[$index]}" == "$wanted_id" &&
+              "${vacated_prs[$index]}" == "$wanted_pr" &&
+              "${vacated_paths[$index]}" == "$wanted_path" ]]; then
+            printf '%s\n' "$index"
+            return 0
+        fi
+    done
+    return 1
+}
+
+record_vacated() {
+    local id="$1" pr="$2" path="$3"
+    if ! vacated_index "$id" "$pr" "$path" >/dev/null; then
+        vacated_ids+=("$id")
+        vacated_prs+=("$pr")
+        vacated_paths+=("$path")
+    fi
+}
+
 # Emit one finding in the selected output format and increment FINDING_COUNT.
 emit_claim_finding() {
     local class="$1" id="$2" default_paths="$3" index claims_text="" claims_json="" escaped_path escaped_id
     escaped_id="$(json_escape "$id")"
-    for index in "${!claim_ids[@]}"; do
+    for index in ${claim_ids[@]+"${!claim_ids[@]}"}; do
         [[ "${claim_ids[$index]}" == "$id" ]] || continue
         escaped_path="$(json_escape "${claim_paths[$index]}")"
         if [[ -n "$claims_text" ]]; then claims_text="$claims_text, "; fi
@@ -159,7 +181,7 @@ emit_citation_finding() {
     local old_id="$1" new_id="$2" rename_pr="$3" citations_text="" citations_json="" index escaped_path escaped_old escaped_new
     escaped_old="$(json_escape "$old_id")"
     escaped_new="$(json_escape "$new_id")"
-    for index in "${!citation_prs[@]}"; do
+    for index in ${citation_prs[@]+"${!citation_prs[@]}"}; do
         [[ "${citation_mapping[$index]}" == "$old_id->$new_id#$rename_pr" ]] || continue
         escaped_path="$(json_escape "${citation_paths[$index]}")"
         if [[ -n "$citations_text" ]]; then citations_text="$citations_text, "; fi
@@ -183,6 +205,7 @@ main() {
     local strict=false
     local -a claim_ids=() claim_prs=() claim_paths=()
     local -a rename_old_ids=() rename_new_ids=() rename_prs=() rename_paths=()
+    local -a vacated_ids=() vacated_prs=() vacated_paths=()
     local -a file_prs=() file_paths=() file_patches=()
     local -a citation_prs=() citation_paths=() citation_mapping=()
     local -a default_paths_all=() default_ids=()
@@ -291,9 +314,26 @@ main() {
                 new_id="$(governed_id_for_path "$filename")"
                 if [[ -n "$old_id" && -n "$new_id" && "$old_id" != "$new_id" ]]; then
                     record_rename "$old_id" "$new_id" "$pr_number" "$filename"
+                elif [[ -n "$old_id" && "$old_id" == "$new_id" ]]; then
+                    # Same-ID rename: this PR vacates the previous path, so a
+                    # default-branch owner at that path is not a collision for
+                    # the renaming PR's own claim at the new path.
+                    record_vacated "$old_id" "$pr_number" "$previous_filename"
                 fi
             fi
-            patch_text="$(printf '%b' "${patch_text:-}")"
+            # Decode the @tsv escapes GitHub's payload round-trips through:
+            # only \\, \n, \t, and \r. printf %b would also honour \c
+            # (truncating the scan) and \0nnn octal sequences that can appear
+            # literally in a patch. A 0x01 sentinel marks literal backslashes
+            # while the real escape pairs are translated.
+            patch_text="$(printf '%s' "${patch_text:-}" | awk '{
+                gsub(/\\\\/, "\001");
+                gsub(/\\n/, "\n");
+                gsub(/\\t/, "\t");
+                gsub(/\\r/, "\r");
+                gsub(/\001/, "\\");
+                print
+            }')"
             record_file_patch "$pr_number" "$filename" "$patch_text"
         done < "$files_file"
         rm -f "$files_file"
@@ -303,11 +343,11 @@ main() {
     # Group open-PR claims by ID. A collision exists only when the same ID is
     # claimed under more than one distinct path; two PRs editing the same path
     # are concurrent edits, not a registry collision.
-    for claim_id in "${claim_ids[@]}"; do
+    for claim_id in ${claim_ids[@]+"${claim_ids[@]}"}; do
         [[ -n "$claim_id" ]] || continue
         path_count=0
         default_paths=""
-        for index in "${!claim_ids[@]}"; do
+        for index in ${claim_ids[@]+"${!claim_ids[@]}"}; do
             [[ "${claim_ids[$index]}" == "$claim_id" ]] || continue
             path="${claim_paths[$index]}"
             case $'\n'"${default_paths}"$'\n' in *$'\n'"${path}"$'\n'*) ;; *) path_count=$((path_count + 1)); default_paths="${default_paths}"$'\n'"${path}" ;; esac
@@ -323,11 +363,14 @@ main() {
     done
 
     # Compare each claimed ID with all default-branch owners under a different
-    # path. The same branch path is an in-place update and is intentionally safe.
-    for claim_id in "${claim_ids[@]}"; do
+    # path. The same branch path is an in-place update and is intentionally
+    # safe; a previous_filename this PR itself vacated via a same-ID rename is
+    # also safe, since the rename replaces that owner rather than colliding
+    # with it.
+    for claim_id in ${claim_ids[@]+"${claim_ids[@]}"}; do
         [[ -n "$claim_id" ]] || continue
         default_paths=""
-        for index in "${!default_ids[@]}"; do
+        for index in ${default_ids[@]+"${!default_ids[@]}"}; do
             [[ "${default_ids[$index]}" == "$claim_id" ]] || continue
             path="${default_paths_all[$index]}"
             if [[ -n "$default_paths" ]]; then default_paths="${default_paths}"$'\n'; fi
@@ -340,10 +383,20 @@ main() {
         done <<< "$default_paths"
         [[ "$default_count" -gt 0 ]] || continue
         local has_different=false
-        for index in "${!claim_ids[@]}"; do
+        for index in ${claim_ids[@]+"${!claim_ids[@]}"}; do
             [[ "${claim_ids[$index]}" == "$claim_id" ]] || continue
             while IFS= read -r path; do
-                [[ -n "$path" && "$path" != "${claim_paths[$index]}" ]] && has_different=true
+                [[ -n "$path" && "$path" != "${claim_paths[$index]}" ]] || continue
+                _is_vacated=false
+                for _vindex in ${vacated_ids[@]+"${!vacated_ids[@]}"}; do
+                    if [[ "${vacated_ids[$_vindex]}" == "$claim_id" &&
+                          "${vacated_prs[$_vindex]}" == "${claim_prs[$index]}" &&
+                          "${vacated_paths[$_vindex]}" == "$path" ]]; then
+                        _is_vacated=true
+                        break
+                    fi
+                done
+                [[ "$_is_vacated" == true ]] || has_different=true
             done <<< "$default_paths"
         done
         if [[ "$has_different" == true ]]; then
@@ -358,7 +411,7 @@ main() {
     # For each observed open-PR rename, scan sibling PR added lines only. The
     # rename PR itself is excluded so its removed old side and its own context
     # cannot become a citation finding.
-    for index in "${!rename_old_ids[@]}"; do
+    for index in ${rename_old_ids[@]+"${!rename_old_ids[@]}"}; do
         old_id="${rename_old_ids[$index]}"
         new_id="${rename_new_ids[$index]}"
         citation_pr="${rename_prs[$index]}"
@@ -366,7 +419,7 @@ main() {
         citation_prs=()
         citation_paths=()
         citation_mapping=()
-        for mapped in "${!file_prs[@]}"; do
+        for mapped in ${file_prs[@]+"${!file_prs[@]}"}; do
             [[ "${file_prs[$mapped]}" != "$citation_pr" ]] || continue
             citation_line="$(printf '%s\n' "${file_patches[$mapped]}" | grep -E '^\+[^+]' | grep -E "(^|[^A-Za-z0-9_-])${old_id}([^A-Za-z0-9_-]|$)" || true)"
             [[ -n "$citation_line" ]] || continue
@@ -381,7 +434,7 @@ main() {
 
     if [[ "$OUTPUT_JSON" == true ]]; then
         local joined=""
-        for index in "${!FINDINGS_JSON[@]}"; do
+        for index in ${FINDINGS_JSON[@]+"${!FINDINGS_JSON[@]}"}; do
             [[ -n "$joined" ]] && joined="$joined,"
             joined="${joined}${FINDINGS_JSON[$index]}"
         done

@@ -109,12 +109,22 @@ without_freshness_metadata() {
 }
 
 # Return 0 when the commit changed only freshness metadata for this path.
+# A pure rename (same content, moved path) is not a substantive change: the
+# parent-side read is resolved through the commit's own rename record so the
+# comparison still runs instead of treating the rename commit as an edit.
 metadata_only_commit() {
-  local sha="$1" file="$2" before="$3" after="$4"
+  local sha="$1" file="$2" before="$3" after="$4" prev_path
   : > "$before"
   : > "$after"
   if ! git show "${sha}^:${file}" > "$before" 2>/dev/null; then
-    return 1
+    prev_path="$(git show --name-status --format= --find-renames "${sha}" 2>/dev/null | awk -F '\t' -v new="$file" '$1 ~ /^R/ && $3 == new { print $2; exit }')"
+    if [ -n "$prev_path" ]; then
+      if ! git show "${sha}^:${prev_path}" > "$before" 2>/dev/null; then
+        return 1
+      fi
+    else
+      return 1
+    fi
   fi
   if ! git show "${sha}:${file}" > "$after" 2>/dev/null; then
     return 1
@@ -183,7 +193,7 @@ for file in "${docs[@]}"; do
   before="$tmp_root/before"
   after="$tmp_root/after"
   latest_sha=""
-  latest_epoch=""
+  latest_date=""
   while IFS="$(printf '\t')" read -r sha commit_date; do
     [ -n "$sha" ] || continue
     if metadata_only_commit "$sha" "$file" "$before" "$after"; then

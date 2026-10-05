@@ -474,6 +474,7 @@ fi
 # collision. This uses a temporary tab-delimited evidence file rather than
 # associative arrays so the check remains Bash 3.2-compatible.
 duplicate_evidence="$(mktemp "${TMPDIR:-/tmp}/ca-governed-id.XXXXXX")"
+trap 'rm -f "$duplicate_evidence"' EXIT
 for registry_file in "$FS_DIR"/FS-*.md "$PLAN_DIR"/PLAN-*.md "$ADR_DIR"/ADR-*.md; do
   [ -f "$registry_file" ] || continue
   registry_id=$(get_field "$registry_file" "id")

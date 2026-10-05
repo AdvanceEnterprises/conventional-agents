@@ -508,8 +508,20 @@ optional tests are skipped rather than over-claimed. Missing history or a
 shallow checkout returns exit 2; one or more complete candidates returns exit
 1. The audit never changes document status or any repository bytes.
 
+**Limitations.** The evidence heuristic is intentionally weak on paths that
+change for unrelated reasons: a `touches:` entry like `package.json`,
+`.github/workflows/*.yml`, or a shared script is satisfied by ANY later commit
+touching it, and the CHANGELOG marker is a plain substring match on the FS or
+PLAN identifier. Frequently-edited surfaces therefore produce candidates for
+human review, not proof of delivery — the audit errs toward false negatives
+elsewhere, and this is the acknowledged false-positive edge. All date
+comparisons use author dates (`%as`) so rebases and cherry-picks do not
+change which commits count as evidence.
+
 **When it runs.** CI push and `pull_request` after the freshness companions in
-`.github/workflows/lint-docs.yml`, and locally via `npm run check:delivery`.
+`.github/workflows/lint-docs.yml` (advisory in CI — `continue-on-error` —
+until the delivered pairs tracked by issue #188 are reconciled by a human
+status PR), and locally via `npm run check:delivery`.
 
 ## cross-repo-lint.sh
 

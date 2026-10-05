@@ -124,14 +124,16 @@ is_excluded_path() {
 }
 
 # Global outputs from qualifying_commit; avoids a pipeline subshell so this is
-# portable to Bash 3.2.
+# portable to Bash 3.2. Author date (%as) is used so a rebase or cherry-pick
+# does not change which commit counts as delivery evidence; the
+# changelog_or_commit_marker comparison below uses the same basis.
 QUALIFY_SHA=""
 QUALIFY_DATE=""
 qualifying_commit() {
   local path="$1" created="$2" history sha commit_date
   QUALIFY_SHA=""
   QUALIFY_DATE=""
-  if ! history="$(git log --no-merges --format='%H%x09%cs' -- "$path" 2>/dev/null)"; then
+  if ! history="$(git log --no-merges --format='%H%x09%as' -- "$path" 2>/dev/null)"; then
     return 2
   fi
   while IFS="$(printf '\t')" read -r sha commit_date; do
@@ -151,7 +153,7 @@ changelog_or_commit_marker() {
     printf 'CHANGELOG.md\n'
     return 0
   fi
-  if ! history="$(git log --no-merges --format='%H%x09%as' -- "${evidence_paths[@]}" 2>/dev/null)"; then
+  if ! history="$(git log --no-merges --format='%H%x09%as' -- ${evidence_paths[@]+"${evidence_paths[@]}"} 2>/dev/null)"; then
     return 2
   fi
   while IFS="$(printf '\t')" read -r sha commit_date; do
@@ -198,7 +200,7 @@ reported=0
 unavailable=0
 eligible=0
 
-for plan_file in "${plan_files[@]}"; do
+for plan_file in ${plan_files[@]+"${plan_files[@]}"}; do
   plan_id="$(get_field "$plan_file" id)"
   [ -n "$plan_id" ] || plan_id="$(get_id_from_path "$plan_file")"
   plan_status="$(get_field "$plan_file" status)"
@@ -206,7 +208,7 @@ for plan_file in "${plan_files[@]}"; do
   [ -n "$plan_id" ] && [ -n "$primary_fs" ] || continue
 
   fs_file=""
-  for candidate in "${fs_files[@]}"; do
+  for candidate in ${fs_files[@]+"${fs_files[@]}"}; do
     [ "$(get_field "$candidate" id)" = "$primary_fs" ] || continue
     fs_file="$candidate"
     break
@@ -245,7 +247,7 @@ for plan_file in "${plan_files[@]}"; do
       [ -n "$expanded" ] || continue
       is_excluded_path "$expanded" && continue
       already=false
-      for existing in "${implementation_paths[@]}"; do
+      for existing in ${implementation_paths[@]+"${implementation_paths[@]}"}; do
         [ "$existing" = "$expanded" ] && already=true
       done
       [ "$already" = false ] && implementation_paths+=("$expanded")
@@ -264,7 +266,7 @@ for plan_file in "${plan_files[@]}"; do
 
   if [ "$is_shallow" = "true" ]; then
     echo "ERROR: unavailable delivery history for $primary_fs/$plan_id — checkout is shallow; evidence paths cannot be evaluated:" >&2
-    for path in "${implementation_paths[@]}"; do echo "  $path" >&2; done
+    for path in ${implementation_paths[@]+"${implementation_paths[@]}"}; do echo "  $path" >&2; done
     unavailable=$((unavailable + 1))
     continue
   elif [ "$is_shallow" = "unknown" ]; then
@@ -277,7 +279,7 @@ for plan_file in "${plan_files[@]}"; do
   evidence_shas=()
   evidence_paths=()
   evidence_dates=()
-  for path in "${implementation_paths[@]}"; do
+  for path in ${implementation_paths[@]+"${implementation_paths[@]}"}; do
     if qualifying_commit "$path" "$created"; then
       evidence_paths+=("$path")
       evidence_shas+=("$QUALIFY_SHA")
@@ -307,7 +309,7 @@ for plan_file in "${plan_files[@]}"; do
     fi
     test_has_history=false
     test_history_unavailable=false
-    for test_file in "${test_files[@]}"; do
+    for test_file in ${test_files[@]+"${test_files[@]}"}; do
       if qualifying_commit "$test_file" "$created"; then
         test_has_history=true
         break
@@ -347,7 +349,7 @@ for plan_file in "${plan_files[@]}"; do
 
   echo "DRIFT: $primary_fs / $plan_id — FS status=$fs_status, PLAN status=$plan_status"
   echo "  evidence: implementation surface has post-$created history"
-  for index in "${!evidence_paths[@]}"; do
+  for index in ${evidence_paths[@]+"${!evidence_paths[@]}"}; do
     echo "  path: ${evidence_paths[$index]} — commit ${evidence_shas[$index]} (${evidence_dates[$index]})"
   done
   echo "  changelog evidence: $changelog_marker"

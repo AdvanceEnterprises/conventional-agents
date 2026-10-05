@@ -183,6 +183,11 @@ is complete and whether the FS/PLAN status should advance.
   - `package.json` — `check:delivery` entry point.
   - `.github/workflows/lint-docs.yml` — runs the audit after full-history
     preparation; it must not turn a shallow checkout into a vacuous pass.
+    While the corpus still reports delivered-but-non-terminal pairs
+    (tracked by #188), the CI step is advisory (`continue-on-error`) so a
+    findings exit does not red-gate unrelated pull requests; the exit
+    codes stay as documented for local and strict use, and the step
+    hardens to a hard gate once a human reconciliation PR lands.
   - `test/FS-0041/**` — fixture-driven Bats coverage with real Git history in
     disposable worktrees.
   - The two document indexes and `CHANGELOG.md` — package and consumer-facing

@@ -112,6 +112,11 @@ ends with `mode=autonomous`.
 
 - The comparison uses commit timestamps and an ISO-8601 boundary; equality is
   grandfathered.
+- Committer time (`%ct`) is the comparison basis: the audit checks the commit
+  as landed in the repository, so a rebase that moves a commit across the
+  boundary is re-evaluated at its new position.
+- A cron commit whose timestamp cannot be read is reported as a failure
+  (fail closed), never silently grandfathered by a failed comparison.
 - A cron actor is identified by the configured cron email list, not by a loose
   substring match on commit subject.
 - A commit can be reported for both an existing structural problem and a missing
