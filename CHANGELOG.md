@@ -46,6 +46,14 @@ For this project (a documentation/standards kit), semver follows the
   whole-corpus governance triggers and trunk review enforcement, and a
   regression-audited consumer-boundary cleanup. These documents remain drafts;
   they authorize no implementation or live ruleset changes.
+
+- **Draft governance package for issue #212 (FS-0048, PLAN-0054).** Specifies a
+  bounded reconciliation of the framework's governance metadata contract: one
+  `updated:` policy for ADRs (template, lifecycle text, freshness coverage, and
+  corpus backfill), `package.json` as the single version authority with
+  validated display markers, and one ADR status vocabulary plus a documented
+  FS/PLAN index-ordering rule. The documents remain drafts; they authorize no
+  template, script, corpus, marker, or index change.
 - **Claude Code runtime binding (`FS-0030`).** The framework's first agent-runtime
   binding ships under `integrations/runtimes/claude-code/`: a plugin manifest
   (`claude plugin validate` clean), synced skill copies sourced from
