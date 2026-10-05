@@ -23,6 +23,7 @@ interfaces:
   - "workflows/*.md"
   - "integrations/**/*.md"
   - "runbooks/**/*.md"
+  - "docs/ARC42.md"
   - "docs/specifications/FS-0045-accepted-adr-authority-check.md"
   - "docs/change-plans/PLAN-0051-implement-fs-0045-accepted-adr-authority-check.md"
   - "docs/specifications/README.md"
@@ -40,7 +41,7 @@ supersedes: []
 requires: []
 tags: [adr-authority, current-state, validation]
 created: 2026-10-04
-updated: 2026-10-04
+updated: 2026-10-05
 ---
 <!--
 PARSING_HINTS:

@@ -21,7 +21,7 @@ touches:
   - docs/change-plans/README.md
   - CHANGELOG.md
 created: 2026-10-04
-updated: 2026-10-04
+updated: 2026-10-05
 ---
 
 # PLAN-0051: Implement FS-0045 — Accepted-ADR authority check
@@ -131,6 +131,10 @@ shared-file ownership before editing.
 * The specific current-state documents and generated runtime skill copies found
   by the checker; each correction must stay within FS-0045 `interfaces:`.
 * Read-only validation input: `.github/workflows/lint-docs.yml`.
+* `guidelines/ROLE_CONTRACT.md` — only if the checker surfaces an
+  accepted-ADR authority finding there; it is an ADR-0027 reserved path, so
+  any correction requires separate recorded human approval under
+  ADR-0026/ADR-0027 (MM3 review finding 2, PR #213).
 
 ## 5. Implementation Steps (High-Level)
 
