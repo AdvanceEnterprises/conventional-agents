@@ -21,7 +21,7 @@ touches:
   - docs/change-plans/README.md
   - CHANGELOG.md
 created: 2026-10-04
-updated: 2026-10-04
+updated: 2026-10-05
 ---
 
 # PLAN-0052: Implement FS-0046 — Trunk governance enforcement
@@ -252,7 +252,7 @@ the plan before touching shared paths or the live ruleset.
 
 * [ ] Spec is approved
 * [x] Tests are clearly defined for the implementation revision
-* [ ] Scope is minimal and explicit
+* [x] Scope is minimal and explicit
 * [x] No implementation or live-ruleset mutation is included
 
 ## Declaration
