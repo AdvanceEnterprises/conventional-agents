@@ -52,8 +52,9 @@ json_escape() {
     local value="$1" escaped="" character code hex index
     local LC_CTYPE=C
 
-    # Iterate bytes under the C locale so this remains compatible with the
-    # system Bash 3.2 and does not depend on GNU sed's multiline-label syntax.
+    # Shell variables cannot contain NUL; the remaining JSON control bytes
+    # are escaped below. Iterate bytes under C locale so this remains
+    # compatible with system Bash 3.2 and avoids GNU sed multiline labels.
     for ((index = 0; index < ${#value}; index++)); do
         character="${value:index:1}"
         case "$character" in
