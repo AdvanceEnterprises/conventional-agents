@@ -214,8 +214,8 @@ jobs:
         # delivered-but-non-terminal pairs, which is the intended local/CI
         # diagnostic. Until the delivered pairs tracked by issue #188 are
         # reconciled by a human status PR, the step is non-gating in CI
-        # (its output still prints); remove continue-on-error once the
-        # corpus is clean so the check becomes a hard gate.
+        # (its output still prints); TODO(#188): remove continue-on-error only
+        # after human reconciliation lands and the corpus is clean on trunk.
         continue-on-error: true
         run: npm run check:delivery
 
@@ -308,6 +308,28 @@ jobs:
         run: npm test
       - name: Confirm bats passed
         run: test $? -eq 0
+
+  bash32-audit-compatibility:
+    # Kimi's PR #206 review found Bash 3.2 empty-array regressions in the
+    # delivery and GitHub-binding audits. Exercise their fixtures with the
+    # macOS system Bash (3.2.57), not a newer Homebrew/tool Bash.
+    runs-on: macos-14
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Install bats and jq
+        run: brew install bats-core jq
+      - name: Confirm system Bash version
+        run: /bin/bash -c '[[ ${BASH_VERSINFO[0]} -eq 3 && ${BASH_VERSINFO[1]} -eq 2 ]]'
+      - name: Run audit fixtures under Bash 3.2
+        run: |
+          export PATH="/bin:/usr/bin:$PATH"
+          export BASH32_BIN=/bin/bash
+          bats test/FS-0040/claim-audit-binding.bats \
+            test/FS-0040/claim-audit-rename.bats \
+            test/FS-0041/status-vs-delivery.bats
 
   validation:
     # FS-0039 / issue #132: the hermetic local validation contract is the

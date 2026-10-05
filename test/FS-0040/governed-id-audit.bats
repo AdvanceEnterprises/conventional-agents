@@ -60,9 +60,21 @@ teardown() {
 
 @test "claim audit binding is report-only and exposes strict mode" {
   local audit="$WORKTREE/integrations/github/bin/gh-pr-claim-audit.sh"
+  local redirection_lines
 
   [ -x "$audit" ]
   ! grep -E -q -- 'gh api .*(-X|--method) (POST|PATCH|PUT|DELETE)|gh pr merge|gh project item-edit|gh issue edit' "$audit"
+  ! grep -E -q -- '(^|[[:space:]])(gh[[:space:]]+api|curl|wget)[[:space:]].*(--request|--method|-X|--data|--post-data|--post-file|--body-data|--body-file)' "$audit"
+  ! grep -E -q -- '(^|[[:space:]])gh[[:space:]]+(issue|pr|project)[[:space:]]+(close|comment|create|edit|merge|ready|reopen|transfer|lock|unlock|delete|item-edit|item-create)([[:space:]]|$)' "$audit"
+  ! grep -E -q -- '(^|[[:space:]])(cp|mv|install|touch|truncate|tee|mkdir)[[:space:]]' "$audit"
+  ! grep -E -q -- '(^|[[:space:]])rm[[:space:]]+-[^[:space:]]*[rR]' "$audit"
+
+  # The audit may redirect API responses only into its mktemp-backed scratch
+  # files; a new persistent-file redirect must be reviewed as a contract change.
+  redirection_lines="$(grep -E '(^|[^<])>{1,2}[[:space:]]*' "$audit" | grep -Ev '^[[:space:]]*(if[[:space:]]+|while[[:space:]]+|until[[:space:]]+|for[[:space:]]+)?\(\(' || true)"
+  [ "$(printf '%s\n' "$redirection_lines" | grep -Ec '>[[:space:]]*"\$(tree_file|open_prs_file|files_file)"')" -eq 4 ]
+  ! printf '%s\n' "$redirection_lines" | grep -Ev '>[[:space:]]*"\$(tree_file|open_prs_file|files_file)"'
+
   run bash "$audit" --help
   [ "$status" -eq 0 ]
   echo "$output" | grep -qF -- "--strict"

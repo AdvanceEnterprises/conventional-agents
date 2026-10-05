@@ -62,9 +62,9 @@ add_delivery() {
 }
 
 run_delivery() {
-  local repo="$1"
+  local repo="$1" runner="${BASH32_BIN:-bash}"
   shift
-  run env CA_TARGET_REPO="$repo" bash "$DELIVERY_SCRIPT" "$@"
+  run env CA_TARGET_REPO="$repo" "$runner" "$DELIVERY_SCRIPT" "$@"
 }
 
 @test "complete delivered draft pair is reported with evidence and remediation" {
@@ -186,6 +186,31 @@ run_delivery() {
   [ "$status" -eq 2 ]
   echo "$output" | grep -qF "unavailable delivery history"
   echo "$output" | grep -qF "scripts/impl.sh"
+}
+
+@test "post-rename history on the current PLAN surface counts as delivery evidence" {
+  local repo="$BATS_TEST_TMPDIR/renamed-surface"
+  new_repo "$repo"
+  mkdir -p "$repo/scripts"
+  printf '#!/usr/bin/env bash\n' > "$repo/scripts/impl-old.sh"
+  git -C "$repo" add scripts/impl-old.sh
+  commit_at "$repo" "2026-09-30T01:00:00Z" "chore: add old implementation path"
+
+  write_pair "$repo" draft draft false 2026-10-01 '  - scripts/impl-new.sh'
+  commit_at "$repo" "2026-10-01T01:00:00Z" "docs: declare current implementation path"
+  git -C "$repo" mv scripts/impl-old.sh scripts/impl-new.sh
+  commit_at "$repo" "2026-10-02T01:00:00Z" "chore: rename implementation surface"
+  printf '#!/usr/bin/env bash\nprintf "implemented\\n"\n' > "$repo/scripts/impl-new.sh"
+  printf '### Changed\n\n- FS-0001 / PLAN-0001 renamed-surface delivery.\n' > "$repo/CHANGELOG.md"
+  git -C "$repo" add -A
+  commit_at "$repo" "2026-10-03T01:00:00Z" "feat: deliver FS-0001 on renamed surface"
+
+  run_delivery "$repo"
+
+  [ "$status" -eq 1 ]
+  echo "$output" | grep -qF "DRIFT: FS-0001 / PLAN-0001"
+  echo "$output" | grep -qF "scripts/impl-new.sh"
+  ! echo "$output" | grep -qF "scripts/impl-old.sh"
 }
 
 @test "help and npm registration are present" {

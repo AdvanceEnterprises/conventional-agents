@@ -44,3 +44,41 @@ EOF
   ! echo "$output" | grep -qF "DRIFT:"
   echo "$output" | grep -qF "check-freshness-history: OK"
 }
+
+@test "delete and add without a detected rename remains substantive" {
+  local repo="$BATS_TEST_TMPDIR/replacement"
+  local changes
+  new_repo "$repo"
+  {
+    printf '%s\n' '---' 'updated: 2026-10-01' 'type: workflow' '---' '# Session workflow'
+    i=0
+    while [ "$i" -lt 80 ]; do
+      printf 'legacy-content-%s\n' "$i"
+      i=$((i + 1))
+    done
+  } > "$repo/workflows/session.md"
+  git -C "$repo" add workflows/session.md
+  commit_at "$repo" "2026-10-01T01:00:00Z" "docs: add workflow"
+
+  rm "$repo/workflows/session.md"
+  {
+    printf '%s\n' '---' 'updated: 2026-10-01' 'type: workflow' '---' '# Replacement workflow'
+    i=0
+    while [ "$i" -lt 80 ]; do
+      printf 'replacement-content-%s\n' "$i"
+      i=$((i + 1))
+    done
+  } > "$repo/workflows/session-replaced.md"
+  git -C "$repo" add -A
+  commit_at "$repo" "2026-10-02T01:00:00Z" "docs: replace workflow path"
+
+  changes="$(git -C "$repo" show --format= --name-status --find-renames HEAD)"
+  echo "$changes" | grep -qF $'D\tworkflows/session.md'
+  echo "$changes" | grep -qF $'A\tworkflows/session-replaced.md'
+  ! echo "$changes" | grep -qE '^R[0-9]*[[:space:]]'
+
+  run env CA_TARGET_REPO="$repo" TZ=UTC bash "$HISTORY_SCRIPT" --strict
+
+  [ "$status" -eq 1 ]
+  echo "$output" | grep -qF "DRIFT: workflows/session-replaced.md"
+}

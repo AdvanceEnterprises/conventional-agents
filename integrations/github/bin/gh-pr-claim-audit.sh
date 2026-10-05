@@ -321,11 +321,11 @@ main() {
                     record_vacated "$old_id" "$pr_number" "$previous_filename"
                 fi
             fi
-            # Decode the @tsv escapes GitHub's payload round-trips through:
-            # only \\, \n, \t, and \r. printf %b would also honour \c
-            # (truncating the scan) and \0nnn octal sequences that can appear
-            # literally in a patch. A 0x01 sentinel marks literal backslashes
-            # while the real escape pairs are translated.
+            # Decode only the @tsv escapes GitHub's payload round-trips
+            # through: \\, \n, \t, and \r. Unknown sequences such as a
+            # literal \0 stay literal. printf %b would also honour \c
+            # (truncating the scan) and \0nnn octal sequences. A 0x01 sentinel
+            # marks literal backslashes while the real escape pairs are translated.
             patch_text="$(printf '%s' "${patch_text:-}" | awk '{
                 gsub(/\\\\/, "\001");
                 gsub(/\\n/, "\n");

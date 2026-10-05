@@ -574,6 +574,12 @@ finding zero repositories is a hard failure, never a silent pass.
   hard failure.
 - `CRON_AGENT_EMAILS` — space-separated configured unattended actor emails;
   default `hermes-cron@tais-den.dev codex-cron@tais-den.dev`.
+- **Diagnostic precedence.** If Git's trailer parser returns no trailer
+  material, the missing/malformed-attribution diagnostic is emitted and the
+  cron boundary check is skipped; no separate timestamp diagnostic is emitted.
+  `cron attribution timestamp unreadable` applies once trailer material is
+  parser-reachable. A reachable but wrongly formatted trailer can produce both
+  format and boundary diagnostics.
 - `STRICT_TOOLS=1` — fail on missing tools instead of warning.
 
 **When it runs.** Manually via `npm run lint:cross-repo`, or as step 5 of

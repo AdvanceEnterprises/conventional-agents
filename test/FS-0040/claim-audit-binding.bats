@@ -87,10 +87,11 @@ case "$endpoint" in
     # round-trip exactly: literal backslash (\\), \n, \t, \r. GitHub encodes
     # these as \\, \\n, \\t, \\r in the payload; a %b-style decoder would
     # also honour \c (truncating) and octal sequences (Kimi K2.7 finding 2,
-    # PR #206). The claim line must still be found after decoding.
+    # PR #206). The literal \\0 is deliberately not a @tsv escape; the claim
+    # line must still be found after decoding.
     printf '%s\t%s\t%s\t%s\n' modified \
       'docs/specifications/FS-0040-four.md' '__CA_EMPTY__' \
-      '@@ -1 +1 @@\n+backslash \\ and tab \t and return \r and newline\n+claim FS-0040 here\n'
+      '@@ -1 +1 @@\n+backslash \\ and literal \\0 and tab \t and return \r and newline\n+claim FS-0040 here\n'
     ;;
   *)
     printf 'unexpected fake endpoint: %s\n' "$endpoint" >&2
@@ -105,7 +106,7 @@ EOF
 }
 
 @test "claim audit reports claim collision, default collision, and citation drift" {
-  run bash "$AUDIT" --json --strict
+  run "${BASH32_BIN:-bash}" "$AUDIT" --json --strict
 
   [ "$status" -eq 1 ]
   echo "$output" | jq -e '.repository == "example/target"'
@@ -117,28 +118,41 @@ EOF
   echo "$output" | jq -e '[.findings[] | select(.class == "citation-drift") | .citations[0].pr] == [2]'
 }
 
-@test "the @tsv decoder round-trips literal backslash, tab, and return escapes" {
-  # PR 4's patch carries a literal backslash, \t, and \r alongside \n. Its
-  # claim must still be discovered (and classified) after decoding — proving
-  # the sentinel decoder handles every escape GitHub emits, not just \n
-  # (Kimi K2.7 finding 2, PR #206).
-  run bash "$AUDIT" --json --strict
+@test "the @tsv decoder preserves claim parsing after an octal-looking literal" {
+  # PR 4's patch carries a literal backslash, unknown \0 text, \t, and \r
+  # alongside \n. Its claim must still be discovered after decoding (Kimi
+  # K2.7 finding 2, PR #206).
+  run "${BASH32_BIN:-bash}" "$AUDIT" --json --strict
 
   [ "$status" -eq 1 ]
   echo "$output" | jq -e '[.findings[] | select(.class == "claim-collision") | .claims[] | select(.pr == 4) | .path] == ["docs/specifications/FS-0040-four.md"]'
 }
 
 @test "claim audit is informational without strict mode" {
-  run bash "$AUDIT" --json
+  run "${BASH32_BIN:-bash}" "$AUDIT" --json
 
   [ "$status" -eq 0 ]
   echo "$output" | jq -e '.findings | length == 3'
 }
 
+@test "claim audit leaves the target repository tree and worktree unchanged" {
+  local before_tree before_status after_tree after_status
+  before_tree="$(git -C "$TARGET" rev-parse HEAD^{tree})"
+  before_status="$(git -C "$TARGET" status --porcelain)"
+
+  run "${BASH32_BIN:-bash}" "$AUDIT" --json
+
+  after_tree="$(git -C "$TARGET" rev-parse HEAD^{tree})"
+  after_status="$(git -C "$TARGET" status --porcelain)"
+  [ "$status" -eq 0 ]
+  [ "$before_tree" = "$after_tree" ]
+  [ "$before_status" = "$after_status" ]
+}
+
 @test "claim audit fails closed when GitHub enumeration fails" {
   export FAKE_GH_FAIL=1
 
-  run bash "$AUDIT"
+  run "${BASH32_BIN:-bash}" "$AUDIT"
 
   [ "$status" -eq 2 ]
   echo "$output" | grep -qF "could not enumerate the default-branch tree"
@@ -147,7 +161,7 @@ EOF
 @test "claim audit fails before API access when authentication is unavailable" {
   export FAKE_GH_AUTH=fail
 
-  run bash "$AUDIT"
+  run "${BASH32_BIN:-bash}" "$AUDIT"
 
   [ "$status" -eq 2 ]
   echo "$output" | grep -qF "GitHub CLI is not authenticated"

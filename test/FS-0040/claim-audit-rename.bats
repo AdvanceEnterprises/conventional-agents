@@ -56,6 +56,9 @@ case "$endpoint" in
       'docs/specifications/FS-0050-old.md'
     ;;
   repos/example/target/pulls\?state=open\&per_page=100)
+    if [[ "${FAKE_GH_NO_OPEN_PRS:-false}" == "true" ]]; then
+      exit 0
+    fi
     printf '1\n'
     ;;
   repos/example/target/pulls/1/files\?per_page=100)
@@ -77,7 +80,16 @@ EOF
 }
 
 @test "same-ID rename vacates its previous path (no default-branch collision)" {
-  run bash "$AUDIT" --json --strict
+  run "${BASH32_BIN:-bash}" "$AUDIT" --json --strict
+
+  [ "$status" -eq 0 ]
+  echo "$output" | jq -e '.findings | length == 0'
+}
+
+@test "claim audit handles empty PR arrays under the selected Bash" {
+  export FAKE_GH_NO_OPEN_PRS=true
+
+  run "${BASH32_BIN:-bash}" "$AUDIT" --json --strict
 
   [ "$status" -eq 0 ]
   echo "$output" | jq -e '.findings | length == 0'
