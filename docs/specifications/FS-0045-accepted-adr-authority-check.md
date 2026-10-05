@@ -32,6 +32,7 @@ related_adrs:
   - ADR-0009
   - ADR-0015
   - ADR-0024
+  - ADR-0026
   - ADR-0027
   - ADR-0030
   - ADR-0033

@@ -10,6 +10,7 @@ related_adrs:
   - ADR-0009
   - ADR-0015
   - ADR-0024
+  - ADR-0026
   - ADR-0027
   - ADR-0030
   - ADR-0033
@@ -35,7 +36,7 @@ updated: 2026-10-04
 ## 1. Feature / Issue Reference
 
 * Feature Spec ID(s): FS-0045
-* Related ADR ID(s): ADR-0009, ADR-0015, ADR-0024, ADR-0027, ADR-0030,
+* Related ADR ID(s): ADR-0009, ADR-0015, ADR-0024, ADR-0026, ADR-0027, ADR-0030,
   ADR-0033
 * Issue / PR Reference: #209
 
@@ -221,7 +222,7 @@ shared-file ownership before editing.
 ## 10. Readiness Check
 
 * [ ] Spec is approved
-* [ ] Tests exist or are clearly defined
+* [x] Tests are clearly defined for the implementation revision
 * [x] Scope is minimal and explicit
 * [x] No implementation or reserved-path change is included
 

@@ -239,7 +239,7 @@ the plan and coordinate shared-file ownership first.
 ## 10. Readiness Check
 
 * [ ] Spec is approved
-* [ ] Tests exist or are clearly defined
+* [x] Tests are clearly defined for the implementation revision
 * [x] Scope is minimal and explicit
 * [x] No implementation code or test change is included
 
