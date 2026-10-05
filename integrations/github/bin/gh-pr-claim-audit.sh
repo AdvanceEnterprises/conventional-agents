@@ -49,9 +49,34 @@ governed_id_for_path() {
 }
 
 json_escape() {
-    local value="$1"
-    value="$(printf '%s' "$value" | sed 's/\\/\\\\/g; s/"/\\"/g; :a;N;$!ba;s/\n/\\n/g')"
-    printf '%s' "$value"
+    local value="$1" escaped="" character code hex index
+    local LC_CTYPE=C
+
+    # Iterate bytes under the C locale so this remains compatible with the
+    # system Bash 3.2 and does not depend on GNU sed's multiline-label syntax.
+    for ((index = 0; index < ${#value}; index++)); do
+        character="${value:index:1}"
+        case "$character" in
+            \\) escaped="${escaped}\\\\" ;;
+            '"') escaped="${escaped}\\\"" ;;
+            $'\b') escaped="${escaped}\\b" ;;
+            $'\f') escaped="${escaped}\\f" ;;
+            $'\n') escaped="${escaped}\\n" ;;
+            $'\r') escaped="${escaped}\\r" ;;
+            $'\t') escaped="${escaped}\\t" ;;
+            *)
+                printf -v code '%d' "'${character}"
+                if (( code < 32 )); then
+                    printf -v hex '%04x' "$code"
+                    escaped="${escaped}\\u${hex}"
+                else
+                    escaped="${escaped}${character}"
+                fi
+                ;;
+        esac
+    done
+
+    printf '%s' "$escaped"
 }
 
 claim_index() {

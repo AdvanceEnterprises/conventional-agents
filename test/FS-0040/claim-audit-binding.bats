@@ -88,9 +88,10 @@ case "$endpoint" in
     # these as \\, \\n, \\t, \\r in the payload; a %b-style decoder would
     # also honour \c (truncating) and octal sequences (Kimi K2.7 finding 2,
     # PR #206). The literal \\0 is deliberately not a @tsv escape; the claim
-    # line must still be found after decoding.
+    # line must still be found after decoding. The quote in the filename also
+    # exercises JSON string escaping.
     printf '%s\t%s\t%s\t%s\n' modified \
-      'docs/specifications/FS-0040-four.md' '__CA_EMPTY__' \
+      'docs/specifications/FS-0040-four-quote"name.md' '__CA_EMPTY__' \
       '@@ -1 +1 @@\n+backslash \\ and literal \\0 and tab \t and return \r and newline\n+claim FS-0040 here\n'
     ;;
   *)
@@ -135,7 +136,7 @@ assert_valid_audit_json() {
 
   [ "$status" -eq 1 ]
   assert_valid_audit_json
-  echo "$output" | jq -e '[.findings[] | select(.class == "claim-collision") | .claims[] | select(.pr == 4) | .path] == ["docs/specifications/FS-0040-four.md"]'
+  echo "$output" | jq -e '[.findings[] | select(.class == "claim-collision") | .claims[] | select(.pr == 4) | .path] == ["docs/specifications/FS-0040-four-quote\"name.md"]'
 }
 
 @test "claim audit is informational without strict mode" {
