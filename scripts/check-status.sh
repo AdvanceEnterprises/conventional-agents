@@ -1153,6 +1153,28 @@ if [ -d "$REPO_ROOT/vendor/conventional-agents" ] && \
   host_vendor_ca_populated=1
 fi
 
+# FS-0037: the three exported-surface documents (README.md, AGENTS.md,
+# INTEGRATION.md) also resolve non-backticked prefixed citations — the #163
+# phantoms carried no backticks, so a backtick-only extractor cannot see the
+# incident class this rule exists for. The token shape stays conservative: a
+# required lowercase file extension also excludes placeholders, ellipses,
+# globs, and directory citations.
+#
+# Extraction lives in a function rather than an inline process substitution:
+# Bash 3.2's parser mis-handles a `case` (and multiline comments) nested
+# directly inside `<(...)` — the construct the original rule 8 used — so the
+# script failed to parse on stock macOS Bash 3.2 despite its compatibility
+# claim (issue #214). A top-level function body parses under both 3.2 and 5.x.
+extract_doc_refs() {
+  local doc="$1"
+  grep -oE '`[A-Za-z0-9_./@-]+\.(md|sh|yml|yaml|json|py|bats)`' "$REPO_ROOT/$doc" 2>/dev/null | tr -d '`'
+  case "$doc" in
+    README.md|AGENTS.md|INTEGRATION.md)
+      grep -oE 'vendor/conventional-agents/[A-Za-z0-9_./@-]+\.[a-z]+' "$REPO_ROOT/$doc" 2>/dev/null
+      ;;
+  esac
+}
+
 while IFS= read -r doc; do
   [ -f "$REPO_ROOT/$doc" ] || continue
   case "$doc" in
@@ -1201,20 +1223,7 @@ while IFS= read -r doc; do
     ref_exempt "$doc" "$ref" && continue
     echo "ERROR: $doc references '$ref', which does not resolve (FS-0022 §1c)."
     errors=$((errors+1))
-  done < <({
-      grep -oE '`[A-Za-z0-9_./@-]+\.(md|sh|yml|yaml|json|py|bats)`' "$REPO_ROOT/$doc" 2>/dev/null | tr -d '`'
-      case "$doc" in
-        README.md|AGENTS.md|INTEGRATION.md)
-          # FS-0037: the three exported-surface documents also resolve
-          # non-backticked prefixed citations — the #163 phantoms carried no
-          # backticks, so a backtick-only extractor cannot see the incident
-          # class this rule exists for. The token shape stays conservative: a
-          # required lowercase file extension also excludes placeholders,
-          # ellipses, globs, and directory citations.
-          grep -oE 'vendor/conventional-agents/[A-Za-z0-9_./@-]+\.[a-z]+' "$REPO_ROOT/$doc" 2>/dev/null
-          ;;
-      esac
-    } | sort -u)
+  done < <(extract_doc_refs "$doc" | sort -u)
 done < <(git -C "$REPO_ROOT" ls-files '*.md')
 
 # --- result ------------------------------------------------------------------

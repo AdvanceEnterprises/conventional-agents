@@ -11,6 +11,18 @@ For this project (a documentation/standards kit), semver follows the
 
 ## [Unreleased]
 
+### Fixed
+
+- **`scripts/check-status.sh` now actually parses under Bash 3.2 (issue #214).**
+  The script advertised "Bash 3.2+ compatible" but its rule 8 reference
+  extractor nested a `case` statement (plus multiline comments) directly
+  inside a process substitution — a shape stock macOS `/bin/bash` 3.2 rejects
+  at PARSE time, so the gate died before any check ran. Extraction moved to a
+  top-level `extract_doc_refs()` function; verified against a real GNU Bash
+  3.2.39 binary (parse rc=0, full run rc=0, output identical to Bash 5.x).
+  New `test/FS-0022/bash32-compat.bats` locks the shape out and runs parse+run
+  under a 3.2 binary when one is available (`CA_BASH32`, opt-in).
+
 ### Added
 - **Delivery reconciliation (G8 / C-14): FS-0040/PLAN-0046, FS-0041/PLAN-0047,
   FS-0042/PLAN-0048, FS-0043/PLAN-0049, and FS-0050/PLAN-0056 flip
