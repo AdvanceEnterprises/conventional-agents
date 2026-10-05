@@ -73,3 +73,6 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | PLAN-0045 | Implement FS-0039 Validation reproducibility contract | FS-0039 | implemented |
 | PLAN-0046 | Implement FS-0040 Governed-ID claim audit | FS-0040 | draft |
 | PLAN-0047 | Implement FS-0041 Status-vs-delivery consistency audit | FS-0041 | draft |
+| PLAN-0051 | Implement FS-0045 Accepted-ADR authority check | FS-0045 | draft |
+| PLAN-0052 | Implement FS-0046 Trunk governance enforcement | FS-0046 | draft |
+| PLAN-0053 | Implement FS-0047 Exported consumer-boundary audit | FS-0047 | draft |
