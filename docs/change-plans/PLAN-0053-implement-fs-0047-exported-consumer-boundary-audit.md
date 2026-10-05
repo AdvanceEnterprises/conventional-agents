@@ -11,6 +11,8 @@ related_adrs:
   - ADR-0015
   - ADR-0016
   - ADR-0017
+  - ADR-0026
+  - ADR-0027
   - ADR-0030
   - ADR-0033
   - ADR-0037
@@ -29,13 +31,14 @@ updated: 2026-10-04
 > **Template note:** this first revision publishes the governance package only:
 > FS-0047, this plan, the two index rows, and a draft CHANGELOG entry. It does
 > not edit exported guidance or add tests. Implementation begins only after
-> human approval of the spec and plan.
+> human approval of the spec and plan, an exact implementation `touches:` set,
+> and separate recorded approval for the reserved `scripts/README.md` path.
 
 ## 1. Feature / Issue Reference
 
 * Feature Spec ID(s): FS-0047
-* Related ADR ID(s): ADR-0009, ADR-0015, ADR-0016, ADR-0017, ADR-0030,
-  ADR-0033, ADR-0037
+* Related ADR ID(s): ADR-0009, ADR-0015, ADR-0016, ADR-0017, ADR-0026,
+  ADR-0027, ADR-0030, ADR-0033, ADR-0037
 * Issue / PR Reference: #211
 
 ## 2. Scope of Change
@@ -55,7 +58,8 @@ updated: 2026-10-04
 * Create or select a replacement organization-specific repository or board.
 
 **The later implementation revision WILL, only after FS-0047 and PLAN-0053 are
-approved:**
+approved, the implementation `touches:` set is exact, and recorded human
+approval covers the reserved `scripts/README.md` path:**
 
 * Parameterize the framework source URL in the README, `INTEGRATION.md`, and
   consumer-integration skill using `FRAMEWORK_REPO_URL`; replace fixed temporary
@@ -171,6 +175,11 @@ the plan and coordinate shared-file ownership first.
   * ADR-0016: consumer-specific conventions live outside reusable framework
     guidance.
   * ADR-0017: do not reference nested framework vendor paths.
+  * ADR-0026: approval is a separate recorded act scoped to the exact plan
+    `touches:` set; this draft's documentation-only approval does not authorize
+    implementation.
+  * ADR-0027: `scripts/README.md` is under the reserved `scripts/` path and
+    requires recorded human approval before it is changed.
   * ADR-0030: update current-state docs in place while keeping decision history
     separate.
   * ADR-0033 / FS-0024: configuration names and target-repository behavior must
@@ -239,5 +248,7 @@ the plan and coordinate shared-file ownership first.
 I affirm that:
 
 * This plan reflects the full intended scope of the documentation revision.
-* Implementation remains blocked until FS-0047 and PLAN-0053 are human-approved.
+* Implementation remains blocked until FS-0047 and PLAN-0053 are human-approved,
+  the implementation `touches:` set is approved, and the reserved-path approval
+  for `scripts/README.md` is recorded.
 * Any deviation will require revising this plan before implementation.
