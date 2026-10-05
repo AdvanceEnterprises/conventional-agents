@@ -105,10 +105,19 @@ EOF
   export PATH="$FAKE_BIN:$PATH"
 }
 
+assert_valid_audit_json() {
+  if ! printf '%s\n' "$output" | jq -e 'type == "object"' >/dev/null; then
+    printf 'Expected a JSON object from claim audit (status %s); captured output follows:\n%s\n' \
+      "$status" "$output" >&2
+    return 1
+  fi
+}
+
 @test "claim audit reports claim collision, default collision, and citation drift" {
   run "${BASH32_BIN:-bash}" "$AUDIT" --json --strict
 
   [ "$status" -eq 1 ]
+  assert_valid_audit_json
   echo "$output" | jq -e '.repository == "example/target"'
   echo "$output" | jq -e '.default_branch == "main"'
   echo "$output" | jq -e '[.findings[].class] | sort == ["citation-drift", "claim-collision", "default-branch-collision"]'
@@ -125,6 +134,7 @@ EOF
   run "${BASH32_BIN:-bash}" "$AUDIT" --json --strict
 
   [ "$status" -eq 1 ]
+  assert_valid_audit_json
   echo "$output" | jq -e '[.findings[] | select(.class == "claim-collision") | .claims[] | select(.pr == 4) | .path] == ["docs/specifications/FS-0040-four.md"]'
 }
 
@@ -132,6 +142,7 @@ EOF
   run "${BASH32_BIN:-bash}" "$AUDIT" --json
 
   [ "$status" -eq 0 ]
+  assert_valid_audit_json
   echo "$output" | jq -e '.findings | length == 3'
 }
 
@@ -145,6 +156,7 @@ EOF
   after_tree="$(git -C "$TARGET" rev-parse HEAD^{tree})"
   after_status="$(git -C "$TARGET" status --porcelain)"
   [ "$status" -eq 0 ]
+  assert_valid_audit_json
   [ "$before_tree" = "$after_tree" ]
   [ "$before_status" = "$after_status" ]
 }

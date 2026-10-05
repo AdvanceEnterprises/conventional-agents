@@ -79,10 +79,19 @@ EOF
   export PATH="$FAKE_BIN:$PATH"
 }
 
+assert_valid_audit_json() {
+  if ! printf '%s\n' "$output" | jq -e 'type == "object"' >/dev/null; then
+    printf 'Expected a JSON object from claim audit (status %s); captured output follows:\n%s\n' \
+      "$status" "$output" >&2
+    return 1
+  fi
+}
+
 @test "same-ID rename vacates its previous path (no default-branch collision)" {
   run "${BASH32_BIN:-bash}" "$AUDIT" --json --strict
 
   [ "$status" -eq 0 ]
+  assert_valid_audit_json
   echo "$output" | jq -e '.findings | length == 0'
 }
 
@@ -92,6 +101,7 @@ EOF
   run "${BASH32_BIN:-bash}" "$AUDIT" --json --strict
 
   [ "$status" -eq 0 ]
+  assert_valid_audit_json
   echo "$output" | jq -e '.findings | length == 0'
 }
 
