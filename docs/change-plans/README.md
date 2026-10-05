@@ -73,3 +73,4 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | PLAN-0045 | Implement FS-0039 Validation reproducibility contract | FS-0039 | implemented |
 | PLAN-0046 | Implement FS-0040 Governed-ID claim audit | FS-0040 | draft |
 | PLAN-0047 | Implement FS-0041 Status-vs-delivery consistency audit | FS-0041 | draft |
+| PLAN-0055 | Implement FS-0049 Bash 3.2 status-check compatibility | FS-0049 | approved |

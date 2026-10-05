@@ -13,6 +13,7 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
+- **Bash 3.2 status-gate compatibility contract (`FS-0049` / `PLAN-0055`, approved).** Defines opt-in real Bash 3.2 parse-and-run regression coverage for consumer repositories that run the exported status gate. A missing interpreter is an explicit skip, not compatibility evidence. PR #215 must record successful GNU Bash 3.2.39 and 3.2.57 parse-and-run results against its final head before implementation is complete.
 - **Claude Code runtime binding (`FS-0030`).** The framework's first agent-runtime
   binding ships under `integrations/runtimes/claude-code/`: a plugin manifest
   (`claude plugin validate` clean), synced skill copies sourced from

@@ -134,3 +134,4 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0039 | Validation reproducibility contract — bounded, hermetic, and CI-parity framework checks | implemented |
 | FS-0040 | Governed-ID claim audit — local duplicate detection and cross-PR collision reporting | draft |
 | FS-0041 | Status-vs-delivery consistency audit — detect governed documents that lag shipped implementation | draft |
+| FS-0049 | Bash 3.2 regression coverage for the status consistency gate | approved |
