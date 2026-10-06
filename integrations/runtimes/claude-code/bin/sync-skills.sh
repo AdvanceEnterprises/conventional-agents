@@ -6,15 +6,51 @@
 # - The copies are byte-identical to source; no dialect transformation is
 #   applied (ADR-0038 §5 — source skills carry only spec fields).
 #
-# Run from the repository root (or with CA_TARGET_REPO set to the repository
-# root — FS-0024/ADR-0033 caller-cwd convention).
+# Run from within the repository it should sync (or with CA_TARGET_REPO set to
+# that repository's working tree — the FS-0024/ADR-0033 caller-cwd convention).
+# The resolved target must be inside a git working tree: a run from a
+# directory git disclaims fails loudly instead of writing plugin scaffolding
+# outside any repository (issue #204). A target naming a subdirectory maps to
+# the work-tree top level, and a bare repository and a missing git binary get
+# their own diagnostics.
 #
-# Exits non-zero if any expected skill fails to copy.
+# Exits non-zero if any expected skill fails to copy — a source skill missing
+# its SKILL.md counts as a failed copy, not a silent skip (issue #204).
 
 set -eu
 
-TARGET_DIR="${CA_TARGET_REPO:-$PWD}"
-ROOT="$(cd "$TARGET_DIR" && pwd)"
+# ----- Target resolution (issue #204) ----------------------------------------
+# Before this guard, the target defaulted to the literal working directory:
+# from a non-git cwd the script wrote integrations/runtimes/claude-code/skills
+# scaffolding outside any repository and printed "synced N skills" at exit 0,
+# and from a checkout subdirectory it failed with a misleading "no skills/"
+# error. Resolution is repository-relative now (FS-0024/ADR-0033): the target
+# names a repository.
+if ! command -v git >/dev/null 2>&1; then
+  echo "ERROR: 'git' was not found on PATH — sync-skills needs git to resolve and verify the target repository." >&2
+  exit 2
+fi
+if [ -n "${CA_TARGET_REPO:-}" ]; then
+  TARGET_DIR="$(cd "$CA_TARGET_REPO" 2>/dev/null && pwd)" || {
+    echo "ERROR: CA_TARGET_REPO='$CA_TARGET_REPO' is not a directory." >&2
+    exit 2
+  }
+else
+  TARGET_DIR="$PWD"
+fi
+if [ "$(git -C "$TARGET_DIR" rev-parse --is-inside-work-tree 2>/dev/null)" != "true" ]; then
+  if [ "$(git -C "$TARGET_DIR" rev-parse --is-bare-repository 2>/dev/null)" = "true" ]; then
+    echo "ERROR: '$TARGET_DIR' is a bare git repository — it has no working tree to sync into." >&2
+  else
+    echo "ERROR: '$TARGET_DIR' is not inside a git working tree." >&2
+  fi
+  echo "       Run this script from within the repository it should sync, or set" >&2
+  echo "       CA_TARGET_REPO to that repository's working tree. (issue #204)" >&2
+  exit 2
+fi
+# Repository-relative: a subdirectory target maps to the work-tree top level,
+# exactly as the working-directory default does (ADR-0033).
+ROOT="$(git -C "$TARGET_DIR" rev-parse --show-toplevel 2>/dev/null)"
 PLUGIN_SKILLS="$ROOT/integrations/runtimes/claude-code/skills"
 SHIPPED_SKILLS_DIR="$ROOT/skills"
 
@@ -46,7 +82,12 @@ failures=0
 for skill in "${SKILLS[@]}"; do
   src="$SHIPPED_SKILLS_DIR/$skill"
   if [ ! -f "$src/SKILL.md" ]; then
-    echo "WARN: $skill has no SKILL.md — skipping" >&2
+    # A listed skill without a SKILL.md is a failed copy, not a skip: the
+    # plugin would ship without a skill the list promises (issue #204). The
+    # counter feeds the final check below, which was previously unreachable —
+    # a run that copied nothing printed "synced 0 skills" and exited 0.
+    echo "ERROR: $skill has no SKILL.md — cannot sync" >&2
+    failures=$((failures + 1))
     continue
   fi
   mkdir -p "$PLUGIN_SKILLS/$skill"

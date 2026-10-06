@@ -249,3 +249,135 @@ EOF
   [ "$status" -eq 1 ]
   echo "$output" | grep -qF "ERROR: --number must be PLAN-NNNN"
 }
+
+@test "scaffolding: --number format validation precedes the target guard (argument errors win from any directory)" {
+  # Copilot review, PR #203: the target guard runs after argument handling so
+  # that argument errors keep their precedence over the environment error.
+  # The format check must therefore live with the other argument validation —
+  # from a non-git cwd with a valid ADR and `--number PLAN-12`, the run must
+  # report the format error, not the work-tree error.
+  local nongit="$BATS_TEST_TMPDIR/not-a-repo"
+  mkdir -p "$nongit/docs/decisions"
+  cat > "$nongit/docs/decisions/ADR-0034-scratch-fixture.md" <<'EOF'
+---
+type: adr
+id: ADR-0034
+status: proposed
+title: Scratch fixture decision
+related_specs: []
+related_adrs: []
+superseded_by: null
+---
+
+# ADR-0034: Scratch fixture decision
+EOF
+
+  run bash -c "cd '$nongit' && bash '$NEW_PLAN' --adr docs/decisions/ADR-0034-scratch-fixture.md --number PLAN-12"
+  [ "$status" -eq 1 ]
+  echo "$output" | grep -qF "ERROR: --number must be PLAN-NNNN"
+  ! echo "$output" | grep -qF "not inside a git working tree"
+}
+
+# --- target guard: non-git cwd fails loudly, writes nothing (issue #202) ------
+
+@test "target_guard: new:plan from a non-git cwd fails loudly and writes nothing (issue #202)" {
+  # Pre-fix, REPO_ROOT fell back to `pwd` outside any repository; the
+  # next-number scan read an empty tree and the write path created
+  # docs/change-plans/PLAN-0001-*.md under the caller's directory — a durable
+  # PLAN outside any repository, exit 0 (the #194/#199 fail-open class, write
+  # side). The guard must fail loudly BEFORE any write.
+  local nongit="$BATS_TEST_TMPDIR/not-a-repo"
+  mkdir -p "$nongit/docs/decisions"
+  write_adr_fixture "$nongit"
+
+  run bash -c "cd '$nongit' && bash '$NEW_PLAN' --adr docs/decisions/ADR-0034-scratch-fixture.md"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "not inside a git working tree"
+  # nothing was scaffolded anywhere under the non-repo cwd
+  local count
+  count=$(find "$nongit" -name 'PLAN-*' -type f | wc -l | tr -d ' ')
+  [ "$count" -eq 0 ]
+}
+
+@test "target_guard: CA_TARGET_REPO pointing at a non-repo dir fails loudly (issue #202)" {
+  # The CA_TARGET_REPO branch of the same guard: the override canonicalizes to
+  # a directory that is not a repository, and the guard must reject it even
+  # when the caller's own cwd is inside a work tree.
+  local scratch="$BATS_TEST_TMPDIR/scratch"
+  build_scratch "$scratch"
+  write_adr_fixture "$scratch"
+  local nongit="$BATS_TEST_TMPDIR/not-a-repo"
+  mkdir -p "$nongit"
+
+  run bash -c "cd '$scratch' && CA_TARGET_REPO='$nongit' bash '$NEW_PLAN' --adr docs/decisions/ADR-0034-scratch-fixture.md"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "not inside a git working tree"
+  local count
+  count=$(find "$nongit" -name 'PLAN-*' -type f | wc -l | tr -d ' ')
+  [ "$count" -eq 0 ]
+}
+
+@test "target_guard: a bare git repository is rejected with its own message (issue #202)" {
+  # A bare repository IS a git repository, just one without a working tree to
+  # scaffold into — the error must say so rather than reusing the generic
+  # non-git wording (the same diagnostic the sibling #200 fix specifies for
+  # check-freshness.sh; that PR is in review at this commit).
+  local scratch="$BATS_TEST_TMPDIR/scratch"
+  build_scratch "$scratch"
+  write_adr_fixture "$scratch"
+  local bare="$BATS_TEST_TMPDIR/bare.git"
+  ( cd "$BATS_TEST_TMPDIR" && git init -q --bare "$bare" )
+
+  run bash -c "cd '$scratch' && CA_TARGET_REPO='$bare' bash '$NEW_PLAN' --adr docs/decisions/ADR-0034-scratch-fixture.md"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "bare git repository"
+  ! echo "$output" | grep -qF "not inside a git working tree"
+  # nothing was scaffolded inside the bare repository
+  local count
+  count=$(find "$bare" -name 'PLAN-*' -type f | wc -l | tr -d ' ')
+  [ "$count" -eq 0 ]
+}
+
+@test "target_guard: a missing git binary is named as such, not blamed on the directory (issue #202)" {
+  # With git absent from PATH the guard's probes return empty and the directory
+  # would be blamed for an environment problem. The environment check must
+  # pre-empt that (the same diagnostic the sibling #200 fix specifies for
+  # check-freshness.sh; that PR is in review at this commit).
+  # Copilot review, PR #203: the fake PATH must keep the tools the script uses
+  # BEFORE the git check reachable (`dirname` at the top), or the run emits an
+  # unrelated `dirname: command not found`; the assertions reject it and the
+  # generic work-tree blame so this case isolates the named diagnostic.
+  local scratch="$BATS_TEST_TMPDIR/scratch"
+  build_scratch "$scratch"
+  write_adr_fixture "$scratch"
+  local fakebin="$BATS_TEST_TMPDIR/fakebin"
+  mkdir -p "$fakebin"
+  ln -s "$(command -v bash)" "$fakebin/bash"
+  ln -s "$(command -v dirname)" "$fakebin/dirname"
+
+  run env PATH="$fakebin" bash "$NEW_PLAN" --adr "$scratch/docs/decisions/ADR-0034-scratch-fixture.md"
+  [ "$status" -eq 1 ]
+  echo "$output" | grep -qF "git' was not found on PATH"
+  ! echo "$output" | grep -qF "not inside a git working tree"
+  ! echo "$output" | grep -qF "command not found"
+}
+
+@test "target_guard: a fresh git work tree with no docs/change-plans/ still scaffolds (positive control, issue #202)" {
+  # The distinguishing positive control: a fresh consumer repository IS a git
+  # work tree with no docs/change-plans/ yet — the guard must not reject it,
+  # and the script still creates the directory and writes the PLAN.
+  # Copilot review, PR #203: build_scratch pre-creates docs/change-plans, so
+  # remove it (and the ADR fixture's copy is fine — the scaffold directory is
+  # what this control is about) to actually exercise the create-a-missing-dir
+  # path rather than a directory that already exists.
+  local scratch="$BATS_TEST_TMPDIR/scratch"
+  build_scratch "$scratch"
+  write_adr_fixture "$scratch"
+  rm -rf "$scratch/docs/change-plans"
+
+  run bash -c "cd '$scratch' && bash scripts/new-plan.sh --adr docs/decisions/ADR-0034-scratch-fixture.md"
+  [ "$status" -eq 0 ]
+  local plan
+  plan=$(ls "$scratch/docs/change-plans"/PLAN-0001-*.md 2>/dev/null | head -1)
+  [ -n "$plan" ]
+}

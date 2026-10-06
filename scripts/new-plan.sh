@@ -97,6 +97,48 @@ if [ ! -f "$ADR_FILE" ]; then
   exit 1
 fi
 
+# --number format validation runs here — with the other argument validation,
+# ahead of the target guard (Copilot review, PR #203). The guard below runs
+# after argument handling so that argument errors keep their precedence over
+# the environment error; validating the format later would let the guard mask
+# `--number PLAN-12` from a non-git directory, contradicting that contract.
+if [ -n "$PLAN_NUM" ]; then
+  if ! printf '%s\n' "$PLAN_NUM" | grep -qE '^PLAN-[0-9]{4}$'; then
+    echo "ERROR: --number must be PLAN-NNNN (e.g. PLAN-0035)" >&2
+    exit 1
+  fi
+fi
+
+# ----- Target guard (issue #202) -----
+# The resolved root must be a git work tree. The `|| pwd` fallback above
+# covers a caller inside a work tree whose top-level resolution needed it;
+# outside one it fabricated a target, the next-number scan then read an empty
+# tree, and the write path created docs/change-plans/ under whatever directory
+# the caller happened to stand in — a durable PLAN outside any repository,
+# exit 0 (the #194/#199 fail-open class, write side). The guard runs after
+# argument handling so `--help` and usage errors remain available from any
+# directory; argument errors keep their precedence over the environment error.
+# A bare repository gets its own message (it is a repository, just one with no
+# working tree to scaffold into); a missing git binary is named as such rather
+# than blamed on the directory — the same two diagnostics the sibling gate
+# fixes specify alongside the work-tree guard (#198 for check-status.sh and
+# cross-repo-lint.sh, #200 for check-freshness.sh; both in review at this
+# commit — this PR lands the write-side guard first).
+if ! command -v git >/dev/null 2>&1; then
+  echo "ERROR: 'git' was not found on PATH — new-plan needs git to resolve the target repository." >&2
+  exit 1
+fi
+if [ "$(git -C "$REPO_ROOT" rev-parse --is-inside-work-tree 2>/dev/null)" != "true" ]; then
+  if [ "$(git -C "$REPO_ROOT" rev-parse --is-bare-repository 2>/dev/null)" = "true" ]; then
+    echo "ERROR: '$REPO_ROOT' is a bare git repository — it has no working tree to scaffold into." >&2
+  else
+    echo "ERROR: '$REPO_ROOT' is not inside a git working tree." >&2
+  fi
+  echo "       Run this script from within the repository it should scaffold into, or set" >&2
+  echo "       CA_TARGET_REPO to that repository's working tree. (issue #202)" >&2
+  exit 1
+fi
+
 # Resolve absolute path for the ADR file
 ADR_FILE="$(cd "$(dirname "$ADR_FILE")" && pwd)/$(basename "$ADR_FILE")"
 
@@ -225,11 +267,6 @@ SLUG=$(slugify "$ADR_TITLE")
 
 # ----- Determine PLAN number -----
 if [ -n "$PLAN_NUM" ]; then
-  # Validate format PLAN-NNNN
-  if ! printf '%s\n' "$PLAN_NUM" | grep -qE '^PLAN-[0-9]{4}$'; then
-    echo "ERROR: --number must be PLAN-NNNN (e.g. PLAN-0035)" >&2
-    exit 1
-  fi
   PLAN_NUM_DIGITS="${PLAN_NUM#PLAN-}"
 else
   # Auto-find next PLAN number

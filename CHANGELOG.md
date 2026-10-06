@@ -32,6 +32,11 @@ For this project (a documentation/standards kit), semver follows the
   verified. Source links are SHA-pinned and may require repository
   authorization; `site/` remains internal build source rather than exported
   framework content.
+- **Draft governance packages for issues #209–#211 (FS-0045–FS-0047,
+  PLAN-0051–PLAN-0053).** Specify an accepted-ADR authority check,
+  whole-corpus governance triggers and trunk review enforcement, and a
+  regression-audited consumer-boundary cleanup. These documents remain drafts;
+  they authorize no implementation or live ruleset changes.
 - **Claude Code runtime binding (`FS-0030`).** The framework's first agent-runtime
   binding ships under `integrations/runtimes/claude-code/`: a plugin manifest
   (`claude plugin validate` clean), synced skill copies sourced from
@@ -723,6 +728,42 @@ For this project (a documentation/standards kit), semver follows the
   pre-fix script), the `CA_TARGET_REPO`-override failure, the bare-repository
   discrimination, the missing-git diagnostic, and the fresh-work-tree positive
   control.
+- **`new-plan.sh` no longer scaffolds into a non-git directory (#202).** The
+  target-resolution fallback (`git rev-parse --show-toplevel || pwd`) let the
+  scaffolder proceed when the caller stood outside any repository: the
+  next-number scan read an empty tree, and the write path created
+  `docs/change-plans/PLAN-0001-<slug>.md` under whatever directory the caller
+  happened to be in — even inside a bare repository — exit 0, a durable PLAN
+  outside any repository (the `#194`/`#199` fail-open class, write side). The
+  resolved root must now be a git work tree or the run fails loudly and names
+  the directory; a bare repository gets its own message, and a missing `git`
+  binary is named as such — the same two diagnostics the sibling gate fixes
+  specify (issues `#198`/`#200`, in review at this commit; this change lands
+  the write-side guard first). `--help` and
+  argument errors keep working from any directory. `test/FS-0026/scaffolding-cli.bats`
+  gains five cases: non-git cwd (fails loudly, writes nothing — fails against
+  the pre-fix script), `CA_TARGET_REPO` at a non-repo directory, bare-repository
+  diagnostic, missing-git diagnostic, and the fresh-work-tree positive control
+  (still scaffolds). Closes #202.
+- **The Claude Code runtime-binding tools resolve their target repository
+  properly, and sync-skills can no longer certify a copy that copied nothing
+  (issue #204).** Both `ca-runtime-audit.sh` and `sync-skills.sh` resolved
+  their target as literal `$PWD`: from a directory git disclaims the audit
+  printed a confident "[info] no .claude/ directory — nothing to audit" at
+  exit 0 (and under `--strict` too), from a checkout subdirectory it missed
+  the root's real `.claude/`, and sync wrote plugin scaffolding into a
+  non-repository at exit 0 — the #194 resolution class in
+  `integrations/runtimes/`. Both now resolve the repository containing the
+  caller's working directory (`CA_TARGET_REPO` overriding, per
+  `FS-0024`/`ADR-0033`), reject a non-work-tree target with a loud error on
+  their distinct target-error exit (2) — with their own diagnostics for a bare
+  repository and a missing `git` — and map a subdirectory target to the
+  work-tree top level. `sync-skills.sh` additionally counts a source skill
+  missing its `SKILL.md` as a failed copy: the previously unreachable
+  `N skill(s) failed to sync` check now fires instead of a run that copied
+  nothing exiting 0. Ten regression cases in `test/FS-0030/runtime-binding.bats`
+  (each of the fail-closed cases fails against the pre-fix scripts —
+  regression-proved).
 - **`gh-board-audit.sh` reported every pull-request item as field drift
   (#171).** Rows were serialised tab-delimited and parsed with `IFS=$'\t'`.
   Tab is IFS *whitespace*, so the empty `number`/`repository` cells on
