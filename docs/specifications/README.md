@@ -136,3 +136,6 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0041 | Status-vs-delivery consistency audit — detect governed documents that lag shipped implementation | approved |
 | FS-0042 | History-aware freshness audit — distinguish substantive document drift from metadata-only updates | approved |
 | FS-0043 | Cron attribution enforcement — require terminal mode=autonomous after the adoption boundary | approved |
+| FS-0045 | Accepted-ADR authority check for current-state guidance | draft |
+| FS-0046 | Whole-corpus governance triggers and trunk merge enforcement | draft |
+| FS-0047 | Reusable consumer guidance without instance-specific leakage | draft |

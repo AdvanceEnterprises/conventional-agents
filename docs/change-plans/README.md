@@ -75,3 +75,6 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | PLAN-0047 | Implement FS-0041 Status-vs-delivery consistency audit | FS-0041 | approved |
 | PLAN-0048 | Implement FS-0042 History-aware freshness audit | FS-0042 | approved |
 | PLAN-0049 | Implement FS-0043 Cron attribution enforcement | FS-0043 | approved |
+| PLAN-0051 | Implement FS-0045 Accepted-ADR authority check | FS-0045 | draft |
+| PLAN-0052 | Implement FS-0046 Trunk governance enforcement | FS-0046 | draft |
+| PLAN-0053 | Implement FS-0047 Exported consumer-boundary audit | FS-0047 | draft |

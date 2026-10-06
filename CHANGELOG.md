@@ -33,6 +33,11 @@ For this project (a documentation/standards kit), semver follows the
   renumber event. The implementation ships in PR #206; document statuses
   remain `approved` until a human reconciliation PR advances them (tracked by
   #179 and #186).
+- **Draft governance packages for issues #209–#211 (FS-0045–FS-0047,
+  PLAN-0051–PLAN-0053).** Specify an accepted-ADR authority check,
+  whole-corpus governance triggers and trunk review enforcement, and a
+  regression-audited consumer-boundary cleanup. These documents remain drafts;
+  they authorize no implementation or live ruleset changes.
 - **Claude Code runtime binding (`FS-0030`).** The framework's first agent-runtime
   binding ships under `integrations/runtimes/claude-code/`: a plugin manifest
   (`claude plugin validate` clean), synced skill copies sourced from
