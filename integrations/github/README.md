@@ -17,6 +17,7 @@ invoke a command explicitly from CI or an operator shell.
 | [`bin/gh-submodule-init.sh`](bin/gh-submodule-init.sh) | **enforces** fail-closed initialisation | It does not make a missing credential usable or mutate repository policy |
 | [`bin/gh-label-provision.sh`](bin/gh-label-provision.sh) | **provisions** the framework vocabulary | It does not delete, recolour, or otherwise own consumer labels |
 | [`bin/gh-board-audit.sh`](bin/gh-board-audit.sh) | **reports** project drift | It does not reconcile fields, items, Issues, or board membership |
+| [`bin/gh-pr-claim-audit.sh`](bin/gh-pr-claim-audit.sh) | **reports** cross-PR governed-ID drift | It does not rename documents, edit pull requests, or mutate GitHub |
 
 The distinction is deliberate. A binding can provide a mechanism without
 pretending that GitHub's permission model enforces a convention. The board audit
@@ -70,6 +71,26 @@ A repository without a project is reported as `project=absent` and is not an
 operational failure; the binding documents label and title-prefix fallbacks for
 that case. `--strict` turns findings into a non-zero result, but the framework's
 own CI does not wire that mode into a pull-request gate.
+
+### Cross-PR governed-ID claim audit
+
+`bin/gh-pr-claim-audit.sh` enumerates the target repository's complete open-PR
+set, including drafts, and compares each changed governed-document path with the
+default-branch tree. It reports one finding per duplicated open-PR claim, per
+default-branch collision, and per stale citation observed in a sibling PR's
+added lines after an open governed-document rename. Removed lines, unchanged
+context, the rename PR itself, a same-ID rename's vacated previous path, and
+two PRs editing the same path are excluded. GitHub also omits the `patch`
+field for very large files, so citation scanning silently skips those files —
+the limitation is accepted: renames of such files still produce the mapping,
+and the scan is a report, not a gate.
+
+The command is read-only and informational by default. `--strict` is the
+explicit consumer opt-in that returns status 1 when findings exist; GitHub API,
+authentication, repository, or pagination failures return status 2. `--json`
+emits stable machine-readable findings for CI artifacts. `CA_REST_MIN_INTERVAL`
+controls pacing between file-list API calls, and the command fails closed when
+the default branch or any open-PR file list cannot be read.
 
 The command paces successive GraphQL calls at seven seconds by default. Set
 `CA_GRAPHQL_MIN_INTERVAL=0` for a controlled test or an operator who has chosen
@@ -135,6 +156,7 @@ The commands are available through these npm scripts:
 - `npm run github:submodule-init`
 - `npm run github:label-provision`
 - `npm run github:board-audit`
+- `npm run github:pr-claim-audit`
 
 The integration markdown lint is recursive, so files below this directory are
 covered by `npm run lint:integrations` and `npm run lint:docs`.

@@ -5,6 +5,7 @@
 #   1. Agent-Attribution trailer format (FS-0017) across recent commits
 #   2. README index consistency (all doc files referenced)
 #   3. FS/PLAN numbering validity within each repo (no duplicate IDs)
+#   4. Post-boundary cron attribution requires terminal mode=autonomous
 #
 # Bash 3.2+ compatible (no associative arrays).
 #
@@ -19,11 +20,17 @@
 #   STRICT_TOOLS     — set to 1 to fail on missing tools (default: 0)
 #   COMMIT_RANGE     — git log range for attribution check. The range must already
 #                      exist locally; this script never fetches a remote.
+#   CRON_ATTRIBUTION_BOUNDARY — ISO-8601 UTC timestamp or epoch seconds. Cron
+#                      commits at or before the boundary are grandfathered.
+#                      Default: 2026-10-03T00:00:00Z (the adoption boundary).
+#   CRON_AGENT_EMAILS — space-separated unattended actor emails. Defaults to
+#                      the cron identities shipped by this framework.
 set -euo pipefail
 
 FRAMEWORK_HOME="$(cd "$(dirname "$0")/.." && pwd)"
 STRICT_TOOLS="${STRICT_TOOLS:-0}"
 COMMIT_RANGE="${COMMIT_RANGE:-}"
+CRON_ATTRIBUTION_BOUNDARY="${CRON_ATTRIBUTION_BOUNDARY:-2026-10-03T00:00:00Z}"
 DIED=false
 
 err() { echo "FAIL: $*" >&2; DIED=true; }
@@ -34,7 +41,7 @@ info() { echo "  $*"; }
 # The list covers every command the script uses, including coreutils used
 # mid-run (head, sort, uniq, tr, basename, awk, sed, grep).
 if [ "$STRICT_TOOLS" = "1" ]; then
-  for _tool in git grep sed awk basename head sort uniq tr; do
+  for _tool in git grep sed awk basename head sort uniq tr date; do
     if ! command -v "$_tool" >/dev/null 2>&1; then
       echo "ERROR: required tool '$_tool' not found" >&2
       exit 1
@@ -95,11 +102,42 @@ _resolve_default_branch() {
   echo "${result:-trunk}"
 }
 
+# Convert the configured cron adoption boundary to epoch seconds. Accepting
+# epoch seconds keeps the check portable on systems whose `date` implementations
+# disagree about ISO-8601 parsing; the documented/default form remains UTC ISO.
+_parse_cron_boundary() {
+  local value="$1" parsed=""
+  if printf '%s\n' "$value" | grep -qE '^[0-9]+$'; then
+    printf '%s\n' "$value"
+    return 0
+  fi
+  if ! printf '%s\n' "$value" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$'; then
+    return 1
+  fi
+  # GNU/coreutils date (Linux) first.
+  parsed="$(date -u -d "$value" +%s 2>/dev/null || true)"
+  if [ -z "$parsed" ]; then
+    # BSD date (macOS) fallback for the documented UTC form.
+    parsed="$(date -ju -f '%Y-%m-%dT%H:%M:%SZ' "$value" +%s 2>/dev/null || true)"
+  fi
+  if printf '%s\n' "$parsed" | grep -qE '^[0-9]+$'; then
+    printf '%s\n' "$parsed"
+    return 0
+  fi
+  return 1
+}
+
+if ! CRON_BOUNDARY_EPOCH="$(_parse_cron_boundary "$CRON_ATTRIBUTION_BOUNDARY")"; then
+  echo "ERROR: invalid CRON_ATTRIBUTION_BOUNDARY '$CRON_ATTRIBUTION_BOUNDARY' — use ISO-8601 UTC (YYYY-MM-DDTHH:MM:SSZ) or epoch seconds" >&2
+  exit 1
+fi
+
 # ── check 1: Agent-Attribution format ───────────────────────────────────────
 echo "─── check 1: Agent-Attribution trailer format (FS-0017) ───"
 # FS-0017: actor name is freeform (may contain parentheses, e.g.
-# "Hermes Agent (cron)"); ADR-0021 adds an optional `; mode=autonomous`
-# field for unattended actors. The structural regex accepts both.
+# "Hermes Agent (cron)"); ADR-0021 adds a terminal `; mode=autonomous`
+# field for unattended actors. The structural regex accepts both; the
+# boundary-aware rule below makes it mandatory for post-boundary cron commits.
 ATTRIBUTION_RE='^Agent-Attribution:[[:space:]]*actor=[^;]+;[[:space:]]*model=[^;]+;[[:space:]]*role=[^;]+;[[:space:]]*session=[^;]+(;[[:space:]]*mode=[^;]+)?$'
 # Body-scan pattern for the MALFORMED diagnosis (#154). A commit whose
 # trailer-parser result is empty is MALFORMED only when the message body
@@ -117,6 +155,10 @@ BODY_TRAILER_RE='^Agent-Attribution:[[:space:]]*actor='
 # reviews are comment-only (posted under the authenticated user), so that
 # address never authors commits.
 AGENT_EMAILS="${AGENT_EMAILS:-hermes-agent@tais-den.dev hermes-cron@tais-den.dev codex@tais-den.dev codex-cron@tais-den.dev claude-code@tais-den.dev github.marten@fwd.mtnden.org}"
+# The cron list is separate from the general agent allowlist because the
+# semantic rule is conditional on actor identity. It is independently
+# overridable for consumers that use a different unattended address.
+CRON_AGENT_EMAILS="${CRON_AGENT_EMAILS:-hermes-cron@tais-den.dev codex-cron@tais-den.dev}"
 # Floor for the anchored attribution audit (parity with
 # ATTRIBUTION_MIN_ANCHOR in test/FS-0017/commit-attribution.bats): the
 # audited range never shrinks below this boundary even if a release tag is
@@ -183,16 +225,23 @@ for REPO in "${REPOS[@]}"; do
   BAD_COUNT=0
   MISSING_COUNT=0
   MALFORMED_COUNT=0
+  CRON_BAD_COUNT=0
+  CRON_GRANDFATHERED_COUNT=0
   while IFS= read -r line; do
     [ -z "$line" ] && continue
     COMMIT_HASH=$(echo "$line" | awk '{print $1}')
     AUTHOR_EMAIL=$(git -C "$REPO" log -1 --format="%ae" "$COMMIT_HASH" 2>/dev/null)
     RAW=$(git -C "$REPO" log -1 --format="%(trailers:key=Agent-Attribution,only,separator=%n)" "$COMMIT_HASH" 2>/dev/null | head -1)
+    COMMIT_EPOCH=$(git -C "$REPO" log -1 --format="%ct" "$COMMIT_HASH" 2>/dev/null)
 
     # Check if this commit is agent-authored
     _is_agent=false
-    for _ae in $AGENT_EMAILS; do
+    for _ae in $AGENT_EMAILS $CRON_AGENT_EMAILS; do
       [ "$AUTHOR_EMAIL" = "$_ae" ] && _is_agent=true && break
+    done
+    _is_cron=false
+    for _ce in $CRON_AGENT_EMAILS; do
+      [ "$AUTHOR_EMAIL" = "$_ce" ] && _is_cron=true && break
     done
 
     if [ -z "$RAW" ]; then
@@ -225,9 +274,36 @@ for REPO in "${REPOS[@]}"; do
       TOTAL_BAD=$((TOTAL_BAD + 1))
       echo "  BAD  $REPO_NAME <$COMMIT_HASH> wrong format: $RAW"
     fi
+
+    # ADR-0021 is conditional by actor, not by the generic trailer grammar:
+    # cron identities after the adoption boundary must end in the autonomous
+    # marker. Equality is intentionally grandfathered so a boundary can be
+    # pinned to an exact commit timestamp without an off-by-one surprise.
+    # The timestamp comparison uses committer time (%ct) deliberately: the
+    # audit checks the commit as landed in this repository, and a rebase that
+    # moves a commit across the boundary should be re-evaluated there.
+    if $_is_cron && [ -n "$RAW" ]; then
+      if ! printf '%s\n' "$COMMIT_EPOCH" | grep -qE '^[0-9]+$'; then
+        # Fail closed: a cron commit whose timestamp cannot be read must not
+        # be silently grandfathered by a failed `[` comparison (issue #144
+        # review; the comparison below is numeric and needs a validated value).
+        CRON_BAD_COUNT=$((CRON_BAD_COUNT + 1))
+        TOTAL_BAD=$((TOTAL_BAD + 1))
+        echo "  BAD  $REPO_NAME <$COMMIT_HASH> cron attribution timestamp unreadable (empty committer time) — cannot evaluate the boundary (boundary: $CRON_ATTRIBUTION_BOUNDARY)"
+      elif [ "$COMMIT_EPOCH" -gt "$CRON_BOUNDARY_EPOCH" ]; then
+        if ! echo "$RAW" | grep -qE ';[[:space:]]*mode=autonomous$'; then
+          CRON_BAD_COUNT=$((CRON_BAD_COUNT + 1))
+          TOTAL_BAD=$((TOTAL_BAD + 1))
+          echo "  BAD  $REPO_NAME <$COMMIT_HASH> cron attribution missing terminal mode=autonomous (boundary: $CRON_ATTRIBUTION_BOUNDARY)"
+        fi
+      else
+        CRON_GRANDFATHERED_COUNT=$((CRON_GRANDFATHERED_COUNT + 1))
+        echo "  INFO $REPO_NAME <$COMMIT_HASH> cron attribution grandfathered (commit timestamp: $COMMIT_EPOCH; boundary: $CRON_ATTRIBUTION_BOUNDARY)"
+      fi
+    fi
   done < <(git -C "$REPO" log --format="%H %s" "$RANGE" 2>/dev/null)
-  if [ "$BAD_COUNT" -eq 0 ] && [ "$MISSING_COUNT" -eq 0 ] && [ "$MALFORMED_COUNT" -eq 0 ]; then
-    echo "  OK   $REPO_NAME (all $RANGE commits have correct attribution format)"
+  if [ "$BAD_COUNT" -eq 0 ] && [ "$MISSING_COUNT" -eq 0 ] && [ "$MALFORMED_COUNT" -eq 0 ] && [ "$CRON_BAD_COUNT" -eq 0 ]; then
+    echo "  OK   $REPO_NAME (all $RANGE commits have correct attribution format; cron boundary enforced)"
   fi
 done
 if [ "$TOTAL_BAD" -gt 0 ]; then
