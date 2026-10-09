@@ -139,3 +139,4 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0045 | Accepted-ADR authority check for current-state guidance | draft |
 | FS-0046 | Whole-corpus governance triggers and trunk merge enforcement | draft |
 | FS-0047 | Reusable consumer guidance without instance-specific leakage | draft |
+| FS-0049 | Bash 3.2 regression coverage for the status consistency gate | approved |
