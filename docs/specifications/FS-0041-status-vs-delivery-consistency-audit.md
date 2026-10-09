@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0041
-status: draft
+status: approved
 title: Status-vs-delivery consistency audit — detect governed documents that lag shipped implementation
 owner: ajoeofalltrades
 test_required: true
@@ -21,7 +21,7 @@ supersedes: []
 requires: [FS-0022, FS-0024]
 tags: [quality-gates, status-drift, delivery-evidence, report-only, detection]
 created: 2026-10-01
-updated: 2026-10-01
+updated: 2026-10-03
 ---
 
 <!--
@@ -38,13 +38,14 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Approved
 
 ## Plan Status
 
-- **PLAN-0047 is `draft`.** This first revision is the documentation package
-  only (spec + plan + index rows + CHANGELOG entry). Approval of that package
-  must not be read as approval to add the executable gate.
+- **PLAN-0047 is `approved`.** This package defines the executable audit,
+  fixtures, npm entry, and CI invocation; approval covers the declared
+  implementation surface and does not itself change any historical document
+  status.
 - The implementation revision will declare the executable surface in its own
   `touches:` set. It includes `scripts/` and `.github/workflows/`, which are
   reserved by `ADR-0027`; that revision needs a recorded approval under
@@ -182,6 +183,11 @@ is complete and whether the FS/PLAN status should advance.
   - `package.json` — `check:delivery` entry point.
   - `.github/workflows/lint-docs.yml` — runs the audit after full-history
     preparation; it must not turn a shallow checkout into a vacuous pass.
+    While the corpus still reports delivered-but-non-terminal pairs
+    (tracked by #188), the CI step is advisory (`continue-on-error`) so a
+    findings exit does not red-gate unrelated pull requests; the exit
+    codes stay as documented for local and strict use, and the step
+    hardens to a hard gate once a human reconciliation PR lands.
   - `test/FS-0041/**` — fixture-driven Bats coverage with real Git history in
     disposable worktrees.
   - The two document indexes and `CHANGELOG.md` — package and consumer-facing

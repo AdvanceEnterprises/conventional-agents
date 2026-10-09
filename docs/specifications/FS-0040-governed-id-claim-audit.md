@@ -1,8 +1,8 @@
 ---
 type: feature-spec
 id: FS-0040
-status: draft
-title: Governed-ID claim audit — local duplicate detection and cross-PR collision reporting
+status: approved
+title: Governed-ID claim and citation audit — local duplicates, cross-PR collisions, and stale renumber citations
 owner: ajoeofalltrades
 test_required: true
 interfaces:
@@ -21,7 +21,7 @@ supersedes: []
 requires: []
 tags: [quality-gates, id-registry, collisions, github-binding, read-only, detection]
 created: 2026-09-30
-updated: 2026-09-30
+updated: 2026-10-03
 ---
 
 <!--
@@ -34,21 +34,19 @@ PARSING_HINTS:
 - Interfaces listed here define allowed surface area for code changes.
 -->
 
-# Feature Spec: Governed-ID claim audit — local duplicate detection and cross-PR collision reporting
+# Feature Spec: Governed-ID claim and citation audit — local duplicates, cross-PR collisions, and stale renumber citations
 
 ## Status
 
-- Draft
+- Approved
 
 ## Plan Status
 
-- **PLAN-0046 is `draft`.** It is drafted alongside this spec, which
-  `workflows/document-lifecycle.md` permits. Its first revision ships the
-  documentation package only (spec + plan + index rows + CHANGELOG entry);
-  under `ADR-0026` an approval covers only the `touches:` set that existed
-  when it was given, so approving that revision would not cover the
-  implementation.
-- The **implementation revision** declares the executable surface
+- **PLAN-0046 is `approved`.** This package defines both the local duplicate and
+  cross-PR claim layers from #179 and the stale-citation complement from #186.
+  Under `ADR-0026`, approval covers only the exact `touches:` set recorded at
+  the approval boundary.
+- The **implementation revision** declares the complete executable surface
   (`scripts/check-status.sh`, `scripts/README.md`,
   `integrations/github/bin/gh-pr-claim-audit.sh`,
   `integrations/github/README.md`, `package.json`,
@@ -75,21 +73,28 @@ shapes:
   gate sees only its own tree. The last collision (issue #174, pairs
   `#148`/`#159` and `#149`/`#173`) was caught and resolved by hand.
 
-This spec defines one coverage layer per shape:
+This spec defines one coverage layer per shape and one event-driven companion:
 
 1. **Local (offline).** `scripts/check-status.sh` gains duplicate-ID
    detection within the checked repository's own tree, across all three
    registries: two documents in one registry directory resolving to the
    same ID fail the gate, naming every offending file. No GitHub
    dependency — the portable core stays offline.
-2. **Cross-PR (binding).** A read-only **claim audit** in the GitHub
+2. **Cross-PR claims and citations (binding).** A read-only **claim audit** in the GitHub
    binding (`integrations/github/bin/gh-pr-claim-audit.sh`, registered as
    `npm run github:pr-claim-audit`) reports same-ID / different-path claims
    among the repository's open pull requests (drafts included) and claims
    colliding with IDs already present on the default branch under a
-   different path. Report-only per `ADR-0024`'s detection-over-prevention
-   posture; an opt-in `--strict` makes findings exit non-zero for consumers
-   who want their own job to fail.
+   different path. It also observes open-PR governed-document renames and
+   reports added-line citations of the retired ID on sibling open PRs. Report-
+   only per `ADR-0024`'s detection-over-prevention posture; an opt-in
+   `--strict` makes findings exit non-zero for consumers who want their own job
+   to fail.
+
+The citation layer is deliberately event-driven: a rename visible in the open
+PR set supplies the old-to-new mapping, and sibling added lines are the scan
+surface. It does not pretend that a closed historical rename can be reconstructed
+from a current token alone.
 
 The audit never rewrites IDs. Detection, not prevention; the human
 arbitrates, exactly as #174's resolution did.
@@ -160,8 +165,9 @@ trunk unnoticed until someone ran a registry sweep by hand.
   offending file and the duplicated ID.
 - Provide a read-only cross-PR claim audit consuming GitHub pull-request
   metadata that reports (a) same-ID / different-path claims among open pull
-  requests — drafts included — and (b) claims colliding with IDs already on
-  the default branch under a different path.
+  requests — drafts included — (b) claims colliding with IDs already on the
+  default branch under a different path, and (c) sibling citations of a retired
+  ID when an open PR exposes the corresponding rename event.
 - Keep the portable, offline core gate free of any GitHub dependency: the
   layers stay independent; the audit lives in the binding's executable
   layer per `ADR-0037`.
@@ -173,6 +179,8 @@ trunk unnoticed until someone ran a registry sweep by hand.
   machinery, same binding conventions (the `gh-common` library's
   authentication check, caller-relative target resolution per
   `FS-0024`/`ADR-0033`, rate-limit pacing), Bash 3.2 compatible.
+- Make citation findings explicit about the observed rename event and the
+  citing PR; do not silently reinterpret a still-valid forward reference.
 
 ## Non-Goals
 
@@ -184,6 +192,9 @@ trunk unnoticed until someone ran a registry sweep by hand.
   uniqueness checking into a hosted service.
 - Cross-repository claim checking. Each repository owns an independent
   registry sequence, so uniqueness is a per-repository property.
+- Reconstructing renumber events from closed PRs or arbitrary historical
+  commits. The citation companion only reports mappings visible in the open-PR
+  file set for this audit run.
 
 ## Users / Stakeholders
 
@@ -203,7 +214,7 @@ trunk unnoticed until someone ran a registry sweep by hand.
     `FS` / `PLAN` / `ADR` registries (behavior per Success Criteria 1–4);
     documented in `scripts/README.md`.
   - `integrations/github/bin/gh-pr-claim-audit.sh` — new read-only command
-    (report posture, `--strict`, `--json`, `--help`, stable exit codes);
+    (claim and citation report posture, `--strict`, `--json`, `--help`, stable exit codes);
     registered in `package.json` as `github:pr-claim-audit`; documented in
     `integrations/github/README.md`, including its `reports`
     classification in the enforcement-posture table.
@@ -267,6 +278,22 @@ trunk unnoticed until someone ran a registry sweep by hand.
   informational step: a clean report or findings-only report (non-strict)
   does not fail the job, while a run failure (exit 2) surfaces as a
   failure. No existing gate or job is weakened or removed.
+- **SC-13** Given one open PR that renames a governed document from an old ID
+  to a new ID and a sibling open PR whose added lines cite the old ID, when the
+  audit runs, then one `citation-drift` finding names the old/new IDs, both PRs,
+  and the citing path; `--strict` treats it like any other finding.
+- **SC-14** Given a rename PR whose removed side contains the retired ID and
+  whose added side contains the replacement ID, when the audit runs, then the
+  rename PR's own claim and removal do not become a stale citation finding.
+- **SC-15** Given an added-line citation for an ID with no observed rename event
+  in the open-PR set, when the audit runs, then the citation layer emits no
+  finding merely because the token is old or forward-looking.
+- **SC-16** Given multiple sibling citations of the same retired ID, when the
+  audit runs, then one finding lists all citing PR/path pairs rather than
+  emitting a pairwise duplicate for each line.
+- **SC-17** JSON output identifies citation findings with `class:
+  citation-drift` and includes the rename mapping and citing claims; the text
+  report identifies the same evidence.
 
 ## Edge Cases
 
@@ -274,6 +301,11 @@ trunk unnoticed until someone ran a registry sweep by hand.
   document (a renumber's old side) does not claim the removed ID; only the
   added side — including a rename target — is a claim. A renumber
   therefore produces no false collision against the ID it is retiring.
+- **Same-ID renames vacate their previous path.** A pull request that
+  renames a governed document without changing its ID vacates the
+  previous path; a default-branch owner at that vacated path is not a
+  collision for that pull request's claim at the new path. A rename that
+  changes the ID remains a renumber event for the citation layer.
 - **One finding per ID.** Multiple claimants for one ID are reported as a
   single finding listing all distinct claimants, not one finding per pair.
 - **A PR touching no governed files claims nothing** and contributes no
@@ -292,15 +324,17 @@ trunk unnoticed until someone ran a registry sweep by hand.
 - **Self-claim.** The pull request under audit is itself an open pull
   request; its own claims participate in the comparison like any other
   claimant's.
+- **Citation scan.** Only added lines from sibling open PR files participate;
+  removed lines, unchanged context, and the rename PR itself are not citations.
 
 ## Out of Scope
 
 - Auto-repair or renumbering of any kind; both layers report, neither
   rewrites.
 - Branch-protection or required-status-check changes.
-- Extending the audit beyond open pull requests and the default branch
-  (e.g. recently closed PRs) — deliberately deferred; the open-PR +
-  default-branch scope is what #174's closing recommendation specifies.
+- Extending the citation event source beyond open pull requests (for example,
+  reconstructing recently closed renames from the default-branch commit graph).
+  The open-PR + default-branch claim scope remains the binding boundary.
 - Changing `cross-repo-lint.sh` check 3 or the filename/id agreement check.
 - `docs/orchestration/` and other preserved-evidence exclusions carried by
   the existing rule set.
@@ -335,7 +369,8 @@ trunk unnoticed until someone ran a registry sweep by hand.
 - **Cross-PR audit:** informational on adoption. The framework's own CI
   runs it on pull requests from the first implementation; consumers wire
   it (or not) per their own policy, with `--strict` as the explicit
-  fail-on-findings opt-in.
+  fail-on-findings opt-in. Citation findings are tied to observed open-PR
+  renames and never rewrite the citing branch.
 - No document edits ship with the implementation beyond the index rows,
   the `scripts/README.md` / `integrations/github/README.md` documentation,
   and the `CHANGELOG.md` entry.

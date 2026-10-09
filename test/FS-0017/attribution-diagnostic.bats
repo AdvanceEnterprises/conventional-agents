@@ -23,8 +23,8 @@ build_scratch_repo() {
   ( cd "$repo" && git init -q -b trunk )
   # Repo-local identity (not -c overrides): the human-commit scope case below
   # overrides the identity inline, which takes precedence over this config.
-  git -C "$repo" config user.name "Hermes Agent (cron)"
-  git -C "$repo" config user.email "hermes-cron@tais-den.dev"
+  git -C "$repo" config user.name "Hermes Agent"
+  git -C "$repo" config user.email "hermes-agent@tais-den.dev"
   printf '# Specs\n' > "$repo/docs/specifications/README.md"
   printf '# Plans\n' > "$repo/docs/change-plans/README.md"
   printf '# Decisions\n' > "$repo/docs/decisions/README.md"
