@@ -42,6 +42,14 @@ status: accepted
 ---
 # ADR-0001
 EOF
+  cat > "$repo/docs/decisions/ADR-0002-proposed.md" <<'EOF'
+---
+type: adr
+id: ADR-0002
+status: proposed
+---
+# ADR-0002
+EOF
   printf '| FS-0001 | one | approved |\n' > "$repo/docs/specifications/README.md"
   printf '| PLAN-0001 | one | FS-0001 | approved |\n' > "$repo/docs/change-plans/README.md"
   printf '| ADR-0001 | one | accepted |\n' > "$repo/docs/decisions/README.md"
@@ -149,4 +157,26 @@ batch_commit() {
 
   [ "$status" -eq 0 ]
   ! echo "$output" | grep -qE 'ERROR'
+}
+
+@test "a multi-artifact batch passes (comma-split)" {
+  local repo="$BATS_TEST_TMPDIR/multi"
+  new_repo "$repo"; seed_docs "$repo"
+  batch_commit "$repo" "docs/specifications/FS-0001-approved.md" "FS-0001, ADR-0001"
+
+  run env CA_TARGET_REPO="$repo" bash "$SCRIPT" HEAD
+
+  [ "$status" -eq 0 ]
+  ! echo "$output" | grep -qE 'ERROR'
+}
+
+@test "a proposed artifact fails" {
+  local repo="$BATS_TEST_TMPDIR/proposed"
+  new_repo "$repo"; seed_docs "$repo"
+  batch_commit "$repo" "docs/decisions/ADR-0002-proposed.md" "ADR-0002"
+
+  run env CA_TARGET_REPO="$repo" bash "$SCRIPT" HEAD
+
+  [ "$status" -eq 1 ]
+  echo "$output" | grep -qF "ADR-0002 is 'proposed'"
 }
