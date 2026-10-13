@@ -42,6 +42,9 @@ status: accepted
 ---
 # ADR-0001
 EOF
+  printf '| FS-0001 | one | approved |\n' > "$repo/docs/specifications/README.md"
+  printf '| PLAN-0001 | one | FS-0001 | approved |\n' > "$repo/docs/change-plans/README.md"
+  printf '| ADR-0001 | one | accepted |\n' > "$repo/docs/decisions/README.md"
   printf '# Changelog\n' > "$repo/CHANGELOG.md"
   git -C "$repo" add -A
   git -C "$repo" commit -q -m "seed"
@@ -124,4 +127,26 @@ batch_commit() {
   run env CA_TARGET_REPO="$repo" bash "$SCRIPT" HEAD
 
   [ "$status" -eq 0 ]
+}
+
+@test "a batch touching the specifications index README passes" {
+  local repo="$BATS_TEST_TMPDIR/index"
+  new_repo "$repo"; seed_docs "$repo"
+  batch_commit "$repo" "docs/specifications/README.md" "FS-0001"
+
+  run env CA_TARGET_REPO="$repo" bash "$SCRIPT" HEAD
+
+  [ "$status" -eq 0 ]
+  ! echo "$output" | grep -qE 'ERROR'
+}
+
+@test "a batch touching CHANGELOG.md passes" {
+  local repo="$BATS_TEST_TMPDIR/changelog"
+  new_repo "$repo"; seed_docs "$repo"
+  batch_commit "$repo" "CHANGELOG.md" "FS-0001"
+
+  run env CA_TARGET_REPO="$repo" bash "$SCRIPT" HEAD
+
+  [ "$status" -eq 0 ]
+  ! echo "$output" | grep -qE 'ERROR'
 }
