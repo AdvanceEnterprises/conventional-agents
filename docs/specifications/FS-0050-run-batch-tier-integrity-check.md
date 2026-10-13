@@ -8,12 +8,14 @@ test_required: true
 interfaces:
   - "scripts/check-run-batch.sh"
   - "test/FS-0050/**"
+  - "package.json"
+  - ".github/workflows/lint-docs.yml"
   - "docs/specifications/FS-0050-run-batch-tier-integrity-check.md"
   - "docs/change-plans/PLAN-0056-implement-fs-0050-run-batch-tier-integrity-check.md"
   - "docs/specifications/README.md"
   - "docs/change-plans/README.md"
   - "CHANGELOG.md"
-related_adrs: [ADR-0045, ADR-0026, ADR-0012]
+related_adrs: [ADR-0045, ADR-0026, ADR-0027, ADR-0012]
 supersedes: []
 requires: []
 tags: [runs, batch-approval, tier-integrity, detection, governance]
@@ -33,10 +35,11 @@ ADR-0045 makes the *run* the unit of bounded autonomous work and draws a hard
 line between **proposal-acceptance** (batchable) and **implementation-authorization**
 (narrow). This feature specifies a detection check that enforces that line: it
 validates that a *batch-acceptance commit* — a commit carrying an
-`Approved-Artifacts:` trailer — accepts only proposal-class documents and changes
-no implementation surface. The check is detection, not prevention, consistent
-with the framework's stance: it reports an overreaching batch so a human can act,
-and does not itself block a merge.
+`Approved-Artifacts:` trailer (the batch list of a recorded approval, per
+ADR-0026) — accepts only proposal-class documents and changes no implementation
+surface. The check is detection, not prevention, consistent with the framework's
+stance: it reports an overreaching batch so a human can act, and does not itself
+block a merge.
 
 ## Goals
 
@@ -53,6 +56,9 @@ and does not itself block a merge.
   reserved-path approval gate — those are ADR-0012 / ADR-0027 concerns.
 - It does **not** validate the run manifest's PR-body structure (that surface is
   GitHub-dependent and out of scope for the platform-neutral core).
+- It does **not** re-validate the ADR-0026 approval shape (the `Approved-By:`
+  presence and the author-≠-approver rule) — that is the existing status gate's
+  concern; this check validates only the *tier integrity* of the batch list.
 - It does **not** enforce the 48-hour bound or the work-item scope linkage;
   those are conduct rules, detected-and-reported only where mechanically honest
   to state, and are otherwise out of scope.

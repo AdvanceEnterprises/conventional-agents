@@ -4,7 +4,7 @@ role: implementer
 language: shell
 status: draft
 related_specs: [FS-0050]
-related_adrs: [ADR-0045, ADR-0026]
+related_adrs: [ADR-0045, ADR-0026, ADR-0027]
 touches:
   - "scripts/check-run-batch.sh"
   - "test/FS-0050/run-batch-tier-integrity.bats"
@@ -30,7 +30,7 @@ updated: 2026-10-13
 
 * Feature Spec ID(s): FS-0050
 * Related ADR ID(s): ADR-0045, ADR-0026
-* Issue / PR Reference: #223
+* Issue / PR Reference: #223 (work item); this PR is #224
 
 ## 2. Scope of Change
 
