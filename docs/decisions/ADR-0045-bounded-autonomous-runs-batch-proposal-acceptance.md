@@ -99,24 +99,29 @@ The contract, in order:
    may not substitute a lower-Type item to bypass the feature gate.
 2. **Gate.** A human records go by moving Status to In Progress; a no-go leaves
    the item in Backlog with a recorded reason. The run starts only when Status
-   reaches In Progress.
+   reaches In Progress. A mid-run reversal (Status moved back to Backlog) stops
+   the run at the point of reversal; drafts already authored are surfaced for
+   human disposition, and no further edits are made.
 3. **Run.** The agent authors proposal-class documents (draft FS/PLAN/ADR)
    within the declared scope. During the run it does not touch reserved paths,
    does not change live enforcement, and does not merge.
 4. **Bound.** The run lasts at most 48 hours. At the boundary the agent freezes
    its artifact set and stops editing. Exceeding the bound stops the run: no
-   further edits, and the batch is presented as-is or re-scoped by a human.
-   Out-of-scope work discovered mid-run is surfaced as a separate work item,
-   not folded into the batch.
+   further edits, and the batch is presented as-is by default unless a human
+   re-scopes it. Out-of-scope work discovered mid-run is surfaced as a separate
+   work item, not folded into the batch; any artifacts already drafted for that
+   out-of-scope work move to the new work item and are excluded from the batch.
 5. **Present.** The agent opens one manifest-first PR: the body is a flow-report
    (objective, an artifact manifest with status and risk tier, and two labeled
    sections — *proposals seeking acceptance*, and *implementation items
    surfaced for narrow human authorization*, which are never part of the
-   batch); the documents are the diff.
+   batch and are authorized only per ADR-0026 / ADR-0012, never by the
+   run-level batch); the documents are the diff.
 6. **Approve.** One recorded approval accepts the proposal tier: an
-   `Approved-By:` trailer with `Approved-Artifacts: <list>` on the final commit.
-   Any rebase onto trunk happens *before* that approval commit, never after;
-   if a rebase changes document content (beyond a clean replay), the human
+   `Approved-By:` trailer with `Approved-Artifacts: <list>` on the final commit,
+   in the shape and author-≠-approver rule defined by ADR-0026. Any rebase onto
+   trunk happens *before* that approval commit, never after; if a rebase changes
+   document content beyond conflict-marker or line-shift-only edits, the human
    re-reviews the rebased head before approving.
 
 **The invariant that keeps this safe:** batch acceptance reaches
@@ -156,7 +161,8 @@ ruleset changes, workflow changes, and merge never enter the batch.
 - **Signal:** proposal-class work arrives as one batch approval per run, not one
   per document.
 - **Signal:** no `Approved-Artifacts:` batch ever lists an `implementation` tier
-  item or a merged change; every run manifest carries the two-section split.
+  item or a merged change.
+- **Signal:** every run manifest carries the two-section split.
 - **Signal:** the run's acceptance criteria are satisfied or explicitly
   re-scoped before the batch is approved.
 - **Review checkpoint:** after several runs, confirm the manifest-first surface
