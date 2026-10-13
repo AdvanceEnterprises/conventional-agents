@@ -13,7 +13,7 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
-- **ADR-0045: Bounded autonomous runs with batch proposal-acceptance (proposed).** Introduces the run as the unit of bounded autonomous work — declare-then-run, a 48-hour bound, one manifest-first PR, and a single batch acceptance of proposal-class artifacts at run end — while keeping reserved-path and merge authorization individually human-gated.
+- **ADR-0045: Bounded autonomous runs with batch proposal-acceptance (accepted).** Introduces the run as the unit of bounded autonomous work — declare-then-run, a 48-hour bound, one manifest-first PR, and a single batch acceptance of proposal-class artifacts at run end — while keeping reserved-path and merge authorization individually human-gated.
 - **FS-0042: History-aware freshness audit (`FS-0042`,
   `PLAN-0048`).** The companion to the implemented freshness gate ships in
   the implementation revision (PR #206): `scripts/check-freshness-history.sh`
