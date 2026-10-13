@@ -75,6 +75,7 @@ status=0
 # Changed paths in this commit only (not its parents).
 CHANGED="$(git diff-tree --no-commit-id --name-only -r "$COMMIT" 2>/dev/null || true)"
 for path in $CHANGED; do
+  [ -n "$path" ] || continue
   case "$path" in
     docs/specifications/*|docs/change-plans/*|docs/decisions/*|CHANGELOG.md) ;;
     *) echo "ERROR: batch-acceptance commit $COMMIT touches forbidden path: $path" >&2; status=1 ;;
@@ -89,7 +90,7 @@ TREE_FILES="$(git ls-tree -r --name-only "$COMMIT" 2>/dev/null || true)"
 # an accepted/approved/implemented state.
 IFS=',' read -ra IDS <<< "$APPROVED"
 for id in "${IDS[@]}"; do
-  id="$(printf '%s' "$id" | tr -d ' ')"
+  id="$(printf '%s' "$id" | tr -d '[:space:]')"
   [ -z "$id" ] && continue
   case "$id" in
     FS-[0-9][0-9][0-9][0-9])   pat="^docs/specifications/$id-[^/]*\.md$" ;;
