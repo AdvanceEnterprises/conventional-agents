@@ -24,7 +24,8 @@ updated: 2026-10-13
 > **Note:** this plan is `draft` and is a *proposal*. The implementation that
 > follows it is a separate, narrowly-approved change: `scripts/`,
 > `.github/workflows/`, and `package.json` are reserved paths under ADR-0027 and
-> require recorded human approval, never a run-level batch acceptance.
+> require recorded human approval, never a run-level batch acceptance. That
+> approval is a **precondition**, recorded before any implementation commit.
 
 ## 1. Feature / Issue Reference
 
