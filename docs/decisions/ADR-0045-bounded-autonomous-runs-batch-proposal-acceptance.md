@@ -18,13 +18,13 @@ superseded_by: null
 ## Context and Problem Statement
 
 The framework's approval model is per-artifact. `ADR-0026` records approval on a
-commit, and `ADR-0027` gates reserved paths behind a recorded human act; every
-ADR/FS/PLAN is its own approval event. That granularity is correct for
-*authorizing changes* — reserved paths and live enforcement must stay narrowly
-gated — but it does not fit *accepting proposals*. A draft document authorizes
-nothing, yet a long autonomous work period that authors many drafts presents the
-human with many separate approval events, one per document, even though the set
-is one coherent body of work.
+commit; reserved-path work requires a recorded human act (`ADR-0026`/`ADR-0027`
+and the status gate). Every ADR/FS/PLAN is its own approval event. That
+granularity is correct for *authorizing changes* — reserved paths and live
+enforcement must stay narrowly gated — but it does not fit *accepting
+proposals*. A draft document authorizes nothing, yet a long autonomous work
+period that authors many drafts presents the human with many separate approval
+events, one per document, even though the set is one coherent body of work.
 
 Two objectives are in tension. **Governance integrity** demands that approval
 remain a recorded, human-held act with a hard line between accepting a proposal
@@ -38,6 +38,16 @@ work item; `FS-0018` defines the work-item layer and the agent-stance record;
 already lists multiple artifacts; `ADR-0028` resumes work when approval is
 recorded. What is missing is a first-class *run* that binds a declared scope, a
 bounded time window, and a single batch acceptance at its boundary.
+
+Two definitions that the rest of this decision relies on:
+
+- **Proposal-class artifact** — a draft FS, PLAN, or ADR. It records a proposed
+  behavior or decision and *authorizes nothing*. Its subject matter is
+  irrelevant to its class: a proposal *about* a reserved path is still a
+  proposal, not a change.
+- **Risk tier** — one of two, keyed to the *act* being approved, not the
+  document's subject: `proposal` (the act is accepting a document; batchable) or
+  `implementation` (the act is authorizing a change; always narrow).
 
 ## Decision Drivers
 
@@ -84,24 +94,37 @@ duration bound of at most 48 hours; and one batch acceptance at the end.
 The contract, in order:
 
 1. **Declare.** The agent opens the work item with scope, non-goals, and
-   acceptance criteria. A human records go/no-go by moving Status to
-   In Progress.
-2. **Run.** The agent authors proposal-class documents (draft FS/PLAN/ADR)
+   acceptance criteria. The item carries its normal Type under `ADR-0019`; the
+   run may not advance past that Type's checkpoint without human approval, and
+   may not substitute a lower-Type item to bypass the feature gate.
+2. **Gate.** A human records go by moving Status to In Progress; a no-go leaves
+   the item in Backlog with a recorded reason. The run starts only when Status
+   reaches In Progress.
+3. **Run.** The agent authors proposal-class documents (draft FS/PLAN/ADR)
    within the declared scope. During the run it does not touch reserved paths,
    does not change live enforcement, and does not merge.
-3. **Bound.** The run lasts at most 48 hours. At the boundary the agent freezes
-   its artifact set and stops editing.
-4. **Present.** The agent opens one manifest-first PR: the body is a flow-report
-   (objective, artifact manifest with status and risk tier, and two labeled
-   sections — proposals vs. implementation), and the documents are the diff.
-5. **Approve.** One recorded approval accepts the proposal tier: an
+4. **Bound.** The run lasts at most 48 hours. At the boundary the agent freezes
+   its artifact set and stops editing. Exceeding the bound stops the run: no
+   further edits, and the batch is presented as-is or re-scoped by a human.
+   Out-of-scope work discovered mid-run is surfaced as a separate work item,
+   not folded into the batch.
+5. **Present.** The agent opens one manifest-first PR: the body is a flow-report
+   (objective, an artifact manifest with status and risk tier, and two labeled
+   sections — *proposals seeking acceptance*, and *implementation items
+   surfaced for narrow human authorization*, which are never part of the
+   batch); the documents are the diff.
+6. **Approve.** One recorded approval accepts the proposal tier: an
    `Approved-By:` trailer with `Approved-Artifacts: <list>` on the final commit.
-   A rebase onto trunk happens *before* that approval commit, never after.
+   Any rebase onto trunk happens *before* that approval commit, never after;
+   if a rebase changes document content (beyond a clean replay), the human
+   re-reviews the rebased head before approving.
 
 **The invariant that keeps this safe:** batch acceptance reaches
-proposal-acceptance only. Reserved-path changes, ruleset changes, workflow
-changes, and merge remain individually and narrowly human-gated, unchanged.
-Accepting a proposal never authorizes its implementation.
+proposal-acceptance only. Accepting a proposal — including one whose content
+*describes* a reserved-path, ruleset, or workflow change — accepts the document
+and authorizes nothing; the described change is separately and narrowly
+human-gated, and merge remains individually human-held. Reserved-path changes,
+ruleset changes, workflow changes, and merge never enter the batch.
 
 ## Consequences
 
@@ -109,7 +132,7 @@ Accepting a proposal never authorizes its implementation.
 
 - One approval per run replaces N per-artifact approvals for proposal-class work.
 - The manifest gives the human one coherent review surface; the risk-tier split
-  keeps high-risk items visibly separate.
+  keeps the batchable tier visibly separate from the narrow tier.
 - The up-front scope contract restores "safely": the end approval is a review
   of declared, in-scope work.
 
@@ -118,8 +141,9 @@ Accepting a proposal never authorizes its implementation.
 - Batch granularity means one approval covers many artifacts, so a scope
   mistake is correspondingly larger than a single-document mistake. Mitigated
   by the up-front scope contract and the risk-tier split.
-- The run's declared scope must be written carefully, or the end review becomes
-  harder, not easier.
+- A reader must internalize the proposal/implementation distinction — that a
+  proposal *about* a reserved path is still only a proposal — or the invariant
+  will be misread in either direction.
 
 ### Neutral
 
@@ -131,8 +155,8 @@ Accepting a proposal never authorizes its implementation.
 
 - **Signal:** proposal-class work arrives as one batch approval per run, not one
   per document.
-- **Signal:** no `Approved-Artifacts:` batch ever lists a reserved path or a
-  merged change; the risk-tier split is present in every run manifest.
+- **Signal:** no `Approved-Artifacts:` batch ever lists an `implementation` tier
+  item or a merged change; every run manifest carries the two-section split.
 - **Signal:** the run's acceptance criteria are satisfied or explicitly
   re-scoped before the batch is approved.
 - **Review checkpoint:** after several runs, confirm the manifest-first surface
@@ -142,9 +166,10 @@ Accepting a proposal never authorizes its implementation.
 
 - ADR-0019 — the autonomous gate this widens.
 - ADR-0026 — recorded approval; the batch form extends its `Approved-Artifacts:` list.
+- ADR-0027 — reserved-path work outside declared interfaces requires a recorded human act.
 - ADR-0028 — level-triggered reconciliation.
-- ADR-0042 (proposed) — the flow-report read-model; the run manifest is its
-  concrete surface.
+- ADR-0042 (proposed) — the flow-report read-model; the run manifest anticipates
+  that direction without treating it as accepted.
 - ADR-0041 (proposed) — a distinct moderation mechanism (maintenance-class
   direct-to-trunk), kept separate from this decision.
 - FS-0018 — the work-item layer and the autonomous-gate stance record.
