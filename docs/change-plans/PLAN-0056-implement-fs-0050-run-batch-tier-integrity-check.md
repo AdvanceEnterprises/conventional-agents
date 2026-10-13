@@ -2,8 +2,9 @@
 type: change-plan
 role: implementer
 language: shell
-status: draft
+status: approved
 related_specs: [FS-0050]
+approved_by: "Joey Clark <administrator@ajoeofalltrades.dev>"
 related_adrs: [ADR-0045, ADR-0026, ADR-0027]
 touches:
   - "scripts/check-run-batch.sh"
@@ -21,7 +22,7 @@ updated: 2026-10-13
 
 # Change Plan: Implement FS-0050 run-batch tier-integrity check
 
-> **Note:** this plan is `draft` and is a *proposal*. The implementation that
+> **Note:** this plan is `approved`. The implementation that
 > follows it is a separate, narrowly-approved change: `scripts/`,
 > `.github/workflows/`, and `package.json` are reserved paths under ADR-0027 and
 > require recorded human approval, never a run-level batch acceptance. That
