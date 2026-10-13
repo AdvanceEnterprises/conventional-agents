@@ -79,4 +79,4 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | PLAN-0052 | Implement FS-0046 Trunk governance enforcement | FS-0046 | draft |
 | PLAN-0053 | Implement FS-0047 Exported consumer-boundary audit | FS-0047 | draft |
 | PLAN-0055 | Implement FS-0049 Bash 3.2 status-check compatibility | FS-0049 | approved |
-| PLAN-0056 | Implement FS-0050 run-batch tier-integrity check | FS-0050 | draft |
+| PLAN-0056 | Implement FS-0050 run-batch tier-integrity check | FS-0050 | approved |

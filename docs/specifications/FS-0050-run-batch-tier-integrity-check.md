@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0050
-status: draft
+status: approved
 title: Run-batch tier-integrity check
 owner: ajoeofalltrades
 test_required: true
@@ -27,7 +27,7 @@ updated: 2026-10-13
 
 ## Status
 
-- Draft
+- Approved
 
 ## Summary
 
