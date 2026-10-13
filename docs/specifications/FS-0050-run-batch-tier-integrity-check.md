@@ -39,7 +39,11 @@ validates that a *batch-acceptance commit* — a commit carrying an
 ADR-0026) — accepts only proposal-class documents and changes no implementation
 surface. The check is detection, not prevention, consistent with the framework's
 stance: it reports an overreaching batch so a human can act, and does not itself
-block a merge.
+block a merge. Proposal-class locations are `docs/specifications/`,
+`docs/change-plans/`, `docs/decisions/`, their index READMEs, and `CHANGELOG.md`;
+every other path — including `scripts/`, `test/`, `.github/`, `package.json`,
+`integrations/`, `templates/`, `workflows/`, and `guidelines/` — is forbidden in
+a batch-acceptance diff.
 
 ## Goals
 
@@ -59,6 +63,9 @@ block a merge.
 - It does **not** re-validate the ADR-0026 approval shape (the `Approved-By:`
   presence and the author-≠-approver rule) — that is the existing status gate's
   concern; this check validates only the *tier integrity* of the batch list.
+- It must remain an **advisory (non-required) CI job**; marking it required or
+  merge-blocking would turn detection into prevention and is out of scope
+  without revisiting this stance.
 - It does **not** enforce the 48-hour bound or the work-item scope linkage;
   those are conduct rules, detected-and-reported only where mechanically honest
   to state, and are otherwise out of scope.
@@ -104,6 +111,8 @@ block a merge.
   accepting a decision is a proposal act; changing its enforcement is not.
 - The check must not depend on the live repository's GitHub state, so it
   resolves artifact IDs against the checked-out tree only.
+- `test/` files are not proposal-class: a batch-acceptance commit that also
+  adds or changes a test file is an overreach and is reported.
 
 ## Out of Scope
 
