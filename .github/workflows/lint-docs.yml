@@ -154,6 +154,35 @@ jobs:
       - name: Check FS/PLAN status consistency
         run: bash scripts/check-status.sh
 
+  check-run-batch:
+    # FS-0050 / ADR-0045: a batch-acceptance commit (one carrying an
+    # Approved-Artifacts: trailer) must touch only proposal-class locations and
+    # list only accepted proposal-class artifacts. This is a DETECTION job, not a
+    # merge gate: nothing marks it a required check, and it exits non-zero only to
+    # surface an overreaching batch for human action.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fetch base branch ref
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch --no-tags origin "${{ github.base_ref }}"
+          else
+            git fetch --no-tags origin trunk
+          fi
+      - name: Check run-batch tier integrity
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            for c in $(git rev-list "origin/${{ github.base_ref }}..HEAD"); do
+              bash scripts/check-run-batch.sh "$c" || exit 1
+            done
+          else
+            bash scripts/check-run-batch.sh HEAD
+          fi
+
   github-binding-audit:
     # FS-0029 adoption: the framework runs the non-mutating binding audit against
     # itself. A project number is an optional repository variable because the
