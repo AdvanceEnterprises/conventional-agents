@@ -11,6 +11,9 @@
 # (scripts/, test/, .github/, package.json, integrations/, templates/,
 # workflows/, guidelines/, ...) is forbidden in a batch-acceptance diff.
 #
+# Artifact IDs and their front-matter status are resolved against the tree at
+# the commit being validated, not the working tree (PLAN-0056 §7).
+#
 # This is a DETECTION check, not prevention: it reports an overreaching batch
 # and exits non-zero, but does not block a merge and does not enforce the
 # reserved-path approval gate (ADR-0027 / ADR-0012 concerns). It does NOT
@@ -78,34 +81,35 @@ for path in $CHANGED; do
   esac
 done
 
+# Tracked files at the commit being validated (not the working tree), so the
+# artifact resolution and status read are correct for any commit-ish.
+TREE_FILES="$(git ls-tree -r --name-only "$COMMIT" 2>/dev/null || true)"
+
 # Every listed artifact must resolve to an existing proposal-class document in
 # an accepted/approved/implemented state.
 IFS=',' read -ra IDS <<< "$APPROVED"
 for id in "${IDS[@]}"; do
   id="$(printf '%s' "$id" | tr -d ' ')"
   [ -z "$id" ] && continue
-  file=""
   case "$id" in
-    FS-[0-9][0-9][0-9][0-9])
-      file="$(ls "docs/specifications/$id"-*.md 2>/dev/null | head -n 1 || true)" ;;
-    PLAN-[0-9][0-9][0-9][0-9])
-      file="$(ls "docs/change-plans/$id"-*.md 2>/dev/null | head -n 1 || true)" ;;
-    ADR-[0-9][0-9][0-9][0-9])
-      file="$(ls "docs/decisions/$id"-*.md 2>/dev/null | head -n 1 || true)" ;;
+    FS-[0-9][0-9][0-9][0-9])   pat="^docs/specifications/$id-[^/]*\.md$" ;;
+    PLAN-[0-9][0-9][0-9][0-9]) pat="^docs/change-plans/$id-[^/]*\.md$" ;;
+    ADR-[0-9][0-9][0-9][0-9])  pat="^docs/decisions/$id-[^/]*\.md$" ;;
     *)
       echo "ERROR: unrecognized artifact ID '$id' in $COMMIT (expected FS-/PLAN-/ADR-)." >&2
       status=1
       continue ;;
   esac
+  file="$(printf '%s\n' "$TREE_FILES" | grep -E "$pat" | head -n 1 || true)"
   if [ -z "$file" ]; then
-    echo "ERROR: $id has no matching proposal-class document." >&2
+    echo "ERROR: $id has no matching proposal-class document at $COMMIT." >&2
     status=1
     continue
   fi
-  st="$(sed -n 's/^status:[[:space:]]*//p' "$file" | head -n 1 | tr -d '\"\r\n ')"
+  st="$(git show "$COMMIT:$file" 2>/dev/null | sed -n 's/^status:[[:space:]]*//p' | head -n 1 | tr -d '[:space:]"')"
   case "$st" in
     accepted|approved|implemented) ;;
-    *) echo "ERROR: $id is '$st' — a batch acceptance may only name accepted/approved artifacts." >&2; status=1 ;;
+    *) echo "ERROR: $id is '$st' — a batch acceptance may only name accepted/approved/implemented artifacts." >&2; status=1 ;;
   esac
 done
 

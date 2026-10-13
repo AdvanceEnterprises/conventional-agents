@@ -175,13 +175,15 @@ jobs:
           fi
       - name: Check run-batch tier integrity
         run: |
+          rc=0
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             for c in $(git rev-list "origin/${{ github.base_ref }}..HEAD"); do
-              bash scripts/check-run-batch.sh "$c" || exit 1
+              bash scripts/check-run-batch.sh "$c" || rc=1
             done
           else
-            bash scripts/check-run-batch.sh HEAD
+            bash scripts/check-run-batch.sh HEAD || rc=1
           fi
+          exit $rc
 
   github-binding-audit:
     # FS-0029 adoption: the framework runs the non-mutating binding audit against
