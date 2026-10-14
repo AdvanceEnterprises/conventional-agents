@@ -141,3 +141,4 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0047 | Reusable consumer guidance without instance-specific leakage | draft |
 | FS-0049 | Bash 3.2 regression coverage for the status consistency gate | approved |
 | FS-0050 | Run-batch tier-integrity check | approved |
+| FS-0051 | Two-loop maintenance tick with parallel build | draft |

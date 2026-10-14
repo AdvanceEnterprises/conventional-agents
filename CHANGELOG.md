@@ -13,6 +13,7 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
+- **ADR-0046 (proposed) / FS-0051 (draft) / PLAN-0057 (draft): Two-loop maintenance tick with parallel build.** Evolves the maintenance tick from a single 20-minute loop (one build per tick) into a fast detection/review loop plus a slower build loop that implements approved features in parallel (main thread + up to four workers) and makes feature generation demand-driven. Approval and merge stay human-gated.
 - **ADR-0045: Bounded autonomous runs with batch proposal-acceptance (accepted).** Introduces the run as the unit of bounded autonomous work — declare-then-run, a 48-hour bound, one manifest-first PR, and a single batch acceptance of proposal-class artifacts at run end — while keeping reserved-path and merge authorization individually human-gated.
 - **FS-0050 / PLAN-0056 (approved): Run-batch tier-integrity check.** Specifies and plans a detection check that enforces ADR-0045's proposal/implementation line: a batch-acceptance commit must touch only proposal-class locations and list only accepted proposal-class artifacts. Approved — the implementation is a separate reserved-path change with recorded approval.
 - **FS-0042: History-aware freshness audit (`FS-0042`,
