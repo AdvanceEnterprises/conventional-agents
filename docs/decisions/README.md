@@ -261,3 +261,4 @@ If validation fails:
 | ADR-0042 | Portable flow-report read-model — visibility profile, not a seventh capability | proposed |
 | ADR-0043 | Planning fields are binding policy, not framework state — authority matrix for Priority, Iteration, and Milestone | proposed |
 | ADR-0045 | Bounded autonomous runs with batch proposal-acceptance | accepted |
+| ADR-0047 | Merge the governance and operations templates | proposed |
