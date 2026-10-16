@@ -4,8 +4,7 @@ id: ADR-0047
 status: proposed
 decision_scope: architecture
 reversible: yes
-related_specs:
-  - FS-0001
+related_specs: []
 superseded_by: null
 ---
 
@@ -37,9 +36,10 @@ instances use is a recursion, and it has cost more than it has returned:
   its own `docs/decisions/README.md`, `scripts/gates/check-status.sh`, markdownlint
   configs, `package.json`, and two CI workflows — a structural clone of the repo it
   vendors.
-- **It adds a second pin every consumer tracks.** collective-agents sits ~60 commits
-  behind its own vendor, independently of the 60–147-commit drift the other consumers
-  already show.
+- **It already costs a second vendor pin, and would add a second pin for every future
+  dual-template consumer.** collective-agents sits ~60 commits behind its own vendor — a
+  drift that exists today even with zero consumers — independently of the 60–147-commit
+  drift the other consumers already show.
 - **It forces a public-flip ordering.** The governance repo must go public before the
   operations repo, purely because the latter's submodule would otherwise fail to
   resolve for anonymous users.
@@ -102,7 +102,8 @@ Collapse the two templates into one repository, with `conventional-agents` as th
 survivor (it is the base, the vendored unit, and the public name). The
 governance/operations boundary becomes a directory-and-lint-gate boundary inside one
 repo, not a repository wall. The engine is re-extracted as its own package/repo only
-when FS-0001 is actually implemented. *Chosen.*
+when the engine spec (collective-agents FS-0001, to be renumbered on import) is actually
+implemented. *Chosen.*
 
 ### Option C — Merge later, once the engine ships
 
@@ -126,7 +127,8 @@ The org/visibility migration (transfer conventional-agents to Advance.Enterprise
 re-pin the consumer submodules, scrub instance data, flip public) is the operational
 spine that surrounds this merge and is planned separately (PLAN-0058). Branch
 protection — the mechanism behind ADR-0012's merge gate — is restored by configuring it
-after the public flip, which a free-plan org supports only for public repositories.
+after the public flip, which a free-plan org supports only for public repositories
+(policy as of this draft; re-verify at PLAN-0058 step 7c).
 
 ## Consequences
 
