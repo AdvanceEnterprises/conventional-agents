@@ -1,18 +1,18 @@
 ---
 type: adr
-id: ADR-0047
-status: proposed
+id: ADR-0046
+status: accepted
 decision_scope: architecture
 reversible: yes
 related_specs: []
 superseded_by: null
 ---
 
-# ADR-0047: Merge the governance and operations templates
+# ADR-0046: Merge the governance and operations templates
 
 ## Status
 
-- Proposed
+- Accepted
 
 ## Context and Problem Statement
 
@@ -29,7 +29,7 @@ That second template consuming the first through the *same* submodule mechanism 
 instances use is a recursion, and it has cost more than it has returned:
 
 - **It produced mis-homing.** Operations content — ADR-0045 (bounded runs) and
-  ADR-0046 (two-loop tick) — landed in the governance repo, because the operations
+  the two-loop tick ADR (since withdrawn) — landed in the governance repo, because the operations
   repo did not exist when they were written and the boundary was never operationally
   enforced. The boundary the split was meant to maintain did not maintain itself.
 - **It duplicates the governance template's machinery.** `collective-agents` carries
@@ -118,17 +118,17 @@ mis-homing risk) for the entire interval, after which the merge is far more expe
 
 `conventional-agents` survives and absorbs `collective-agents`; `collective-agents` is
 archived. Its two ADRs are renumbered into the surviving repository's sequence
-(ADR-0001 → ADR-0048, ADR-0002 → ADR-0049, taking the IDs after this one), and its FS,
+(ADR-0001 → ADR-0047, ADR-0002 → ADR-0048, taking the IDs after this one), and its FS,
 PLAN, ARC42, research drafts, and gate config move into the surviving tree. The
 governance/operations boundary is expressed as a directory and enforced by the same
 lint/status gates the framework already runs, not by repository walls.
 
 The org/visibility migration (transfer conventional-agents to Advance.Enterprises,
 re-pin the consumer submodules, scrub instance data, flip public) is the operational
-spine that surrounds this merge and is planned separately (PLAN-0058). Branch
+spine that surrounds this merge and is planned separately (PLAN-0057). Branch
 protection — the mechanism behind ADR-0012's merge gate — is restored by configuring it
 after the public flip, which a free-plan org supports only for public repositories
-(policy as of this draft; re-verify at PLAN-0058 step 7c).
+(policy as of this draft; re-verify at PLAN-0057 step 7c).
 
 ## Consequences
 
@@ -151,13 +151,13 @@ after the public flip, which a free-plan org supports only for public repositori
   authority is unchanged; their location and numbering are not — but their internal
   cross-references must be migrated to the new IDs, and the source files carry a stale
   `PARSING_HINTS` line ("This ADR is PROPOSED") that contradicts their `accepted` front
-  matter; the import reconciles both (see PLAN-0058 step 3).
+  matter; the import reconciles both (see PLAN-0057 step 3).
 
 ### Neutral
 
 - feral-fleet (a leaf repo) and the runtime bindings (ADR-0039) do not change vendor
   URLs or binding models as a result of the merge itself. They do, however, still
-  require the content work named in PLAN-0058 — composing feral-fleet ADR-0023 with the
+  require the content work named in PLAN-0057 — composing feral-fleet ADR-0023 with the
   re-homed publisher ADR, and authoring the Hermes-Agent binding — which this decision
   does not remove, only relocates.
 
@@ -180,7 +180,7 @@ after the public flip, which a free-plan org supports only for public repositori
   rationale this decision adopts as reasoning, not precedent.
 - ADR-0024 / ADR-0039: the substrate- and runtime-binding layers, whose vendor/binding
   models the merge does not change.
-- collective-agents ADR-0001 / ADR-0002 (→ ADR-0048 / ADR-0049): the grant model and
+- collective-agents ADR-0001 / ADR-0002 (→ ADR-0047 / ADR-0048): the grant model and
   worker/publisher split, re-homed and renumbered by this decision.
-- PLAN-0058: the migration that carries out this merge and the surrounding org/visibility
+- PLAN-0057: the migration that carries out this merge and the surrounding org/visibility
   moves.

@@ -4,10 +4,10 @@ role: implementer
 language: shell
 status: draft
 related_specs: []
-related_adrs: [ADR-0047, ADR-0032, ADR-0026, ADR-0012]
+related_adrs: [ADR-0046, ADR-0032, ADR-0026, ADR-0012]
 touches:
-  - "docs/decisions/ADR-0047-merge-governance-and-operations-templates.md"
-  - "docs/change-plans/PLAN-0058-migrate-merge-reconcile-template-mesh.md"
+  - "docs/decisions/ADR-0046-merge-governance-and-operations-templates.md"
+  - "docs/change-plans/PLAN-0057-migrate-merge-reconcile-template-mesh.md"
   - "docs/decisions/README.md"
   - "docs/change-plans/README.md"
   - "CHANGELOG.md"
@@ -23,17 +23,17 @@ updated: 2026-10-14
 > **Note:** this plan is `draft`. It is a migration plan whose steps are mostly
 > *cross-repository* operations (org transfer, submodule re-pins, an archive), so most
 > of its `touches:` live outside this repository and are named in prose rather than
-> listed as in-repo paths. The governing decision is ADR-0047; there is no feature spec
+> listed as in-repo paths. The governing decision is ADR-0046; there is no feature spec
 > because a migration implements no testable behavior — it is validated by repository
 > state (see §8).
 
 ## 1. Feature / Issue Reference
 
-* Governing decision: ADR-0047 (merge the governance and operations templates)
+* Governing decision: ADR-0046 (merge the governance and operations templates)
 * Related ADR ID(s): ADR-0032 (template/instance forms), ADR-0026 (recorded approval),
   ADR-0012 (non-overridable merge gate)
-* Issue / PR Reference: supersedes and closes PR #227 (ADR-0046/FS-0051/PLAN-0057, the
-  two-loop tick)
+* Issue / PR Reference: supersedes and closes PR #227 (the two-loop tick ADR/FS/PLAN,
+  never merged; their IDs are reallocated below)
 
 ## 2. Scope of Change
 
@@ -46,8 +46,8 @@ updated: 2026-10-14
   identity map in §4a, migrate their internal cross-references, reconcile the stale
   `PARSING_HINTS`, and archive collective-agents.
 * Amend ADR-0045 (status-inferred go → grant model) via a *successor* ADR, and withdraw
-  ADR-0046 (unmerged), folding its mechanics into the operations layer.
-* Compose feral-fleet ADR-0023 / FS-0028 with the re-homed publisher ADR (ADR-0049).
+  the unmerged two-loop ADR, folding its mechanics into the operations layer.
+* Compose feral-fleet ADR-0023 / FS-0028 with the re-homed publisher ADR (ADR-0048).
 * Author the Hermes-Agent runtime binding (own FS/PLAN, per ADR-0039 §5).
 * Scrub instance data, flip the merged repository public, then configure and read back
   branch protection.
@@ -56,7 +56,7 @@ updated: 2026-10-14
 
 * Change the authority of ADR-0001 / ADR-0002 (re-homed and renumbered, not reopened).
 * Alter the substrate- and runtime-binding models (ADR-0024 / ADR-0039).
-* Implement FS-0001's engine — that remains a later re-extraction (ADR-0047).
+* Implement FS-0001's engine — that remains a later re-extraction (ADR-0046).
 
 ## 3. Tests Driving This Change
 
@@ -67,11 +67,11 @@ acceptance checks are in §8.
 
 In this repository (conventional-agents):
 
-* `docs/decisions/ADR-0047-*.md`, `docs/change-plans/PLAN-0058-*.md` — this package.
-* Imported and renumbered: `docs/decisions/ADR-0048-*.md`, `ADR-0049-*.md`,
+* `docs/decisions/ADR-0046-*.md`, `docs/change-plans/PLAN-0057-*.md` — this package.
+* Imported and renumbered: `docs/decisions/ADR-0047-*.md`, `ADR-0048-*.md`,
   `docs/specifications/FS-00NN-*.md`, `docs/change-plans/PLAN-00NN-*.md`,
   `docs/operations/ARC42.md`, `docs/research/**`, `config/gates.yml` (merged).
-* `docs/decisions/ADR-0050-*.md` — the successor ADR that amends ADR-0045 (step 4).
+* `docs/decisions/ADR-0049-*.md` — the successor ADR that amends ADR-0045 (step 4).
 * `docs/decisions/ADR-0045-*.md` — append-only Status note (never a body rewrite).
 * `docs/decisions/README.md`, `docs/change-plans/README.md`, `docs/specifications/README.md`,
   `CHANGELOG.md` — index and changelog rows throughout.
@@ -87,8 +87,8 @@ In other repositories (named in prose, not touched by this repo's diff):
 
 | Source (collective-agents) | Destination (conventional-agents) | Notes |
 | --- | --- | --- |
-| `docs/decisions/ADR-0001` | `docs/decisions/ADR-0048-*.md` | renumber; reconcile `PARSING_HINTS`; migrate cross-refs |
-| `docs/decisions/ADR-0002` | `docs/decisions/ADR-0049-*.md` | same |
+| `docs/decisions/ADR-0001` | `docs/decisions/ADR-0047-*.md` | renumber; reconcile `PARSING_HINTS`; migrate cross-refs |
+| `docs/decisions/ADR-0002` | `docs/decisions/ADR-0048-*.md` | same |
 | `docs/specifications/FS-0001` | `docs/specifications/FS-00NN-*.md` | next free FS ID |
 | `docs/change-plans/PLAN-0001` | `docs/change-plans/PLAN-00NN-*.md` | next free PLAN ID |
 | `docs/ARC42.md` | `docs/operations/ARC42.md` (new dir) | operations-layer architecture, distinct from `docs/ARC42.md` |
@@ -113,17 +113,17 @@ collective-agents is archived.
 3. **Fold** collective-agents into conventional-agents per the §4a manifest: renumber
    (0001→0048, 0002→0049; FS/PLAN take next-free IDs), migrate cross-references,
    reconcile `PARSING_HINTS`, move the remaining content, then archive collective-agents.
-4. **Amend ADR-0045 and withdraw ADR-0046.** ADR-0045 is amended by a *successor* ADR
-   (ADR-0050) that records the grant-model replacement and wires `superseded_by` back from
+4. **Amend ADR-0045 and withdraw the unmerged two-loop ADR.** ADR-0045 is amended by a *successor* ADR
+   (ADR-0049) that records the grant-model replacement and wires `superseded_by` back from
    ADR-0045 via an append-only Status note — the accepted body is never rewritten in
-   place, and the successor's acceptance is a recorded human act (ADR-0026). ADR-0046,
+   place, and the successor's acceptance is a recorded human act (ADR-0026). The two-loop ADR,
    unmerged and carried only by PR #227, is withdrawn: its two-loop mechanics are
    refolded into the operations-layer engine (FS-0001), and its instance knobs belong to
-   pack-protocol configuration — so no successor ADR is needed for it. FS-0051 and
-   PLAN-0057, the two-loop tick's spec and plan, are likewise not carried forward as
+   pack-protocol configuration — so no successor ADR is needed for it. The two-loop tick's spec and plan
+   are likewise not carried forward as
    separate documents; their content refolds into the engine FS/PLAN.
 5. **Compose** feral-fleet ADR-0023 / FS-0028 with the re-homed publisher ADR
-   (**ADR-0049**, after step 3's renumbering). This step depends on step 3.
+   (**ADR-0048**, after step 3's renumbering). This step depends on step 3.
 6. **Author** the Hermes-Agent runtime binding (own FS/PLAN, per ADR-0039 §5).
 7. **Finalize visibility and protection** — three ordered sub-steps:
    7a. **Scrub** instance data (config/project.yml board/project IDs, any token
@@ -174,11 +174,11 @@ strict-order.
 * After step 3: `collective-agents` is archived; `npm run check:status` in
   conventional-agents is green with a sequential, gap-free registry; no imported document
   still references a pre-renumber ID.
-* After step 4: ADR-0045 carries an append-only Status note and ADR-0050 records the
+* After step 4: ADR-0045 carries an append-only Status note and ADR-0049 records the
   grant-model amendment with `Approved-By:`; the grant model is the stated authority, and
   no status-inferred go remains.
 * After step 5: feral-fleet ADR-0023 names the publisher layer and defers the credential
-  model to ADR-0049.
+  model to ADR-0048.
 * After step 6: the Hermes-Agent binding has its own FS/PLAN and ships no
   status-mutating hooks or schedulers (ADR-0039).
 * After step 7c: the repository is public, and `gh api repos/<owner>/<repo>/branches/trunk/protection`
@@ -194,7 +194,7 @@ strict-order.
 
 ## 10. Readiness Check
 
-* [x] Governing decision is drafted (ADR-0047)
+* [x] Governing decision is drafted (ADR-0046)
 * [x] Steps are explicit and ordered, with an identity map and import manifest
 * [x] Cross-repository scope is named rather than implied
 * [x] No code implementation implied (engine re-extraction is deferred)
