@@ -11,6 +11,9 @@ touches:
   - "docs/decisions/README.md"
   - "docs/change-plans/README.md"
   - "CHANGELOG.md"
+  - "docs/specifications/README.md"
+  - "docs/operations/ARC42.md"
+  - "config/gates.yml"
 created: 2026-10-14
 updated: 2026-10-14
 ---
@@ -116,7 +119,9 @@ collective-agents is archived.
    place, and the successor's acceptance is a recorded human act (ADR-0026). ADR-0046,
    unmerged and carried only by PR #227, is withdrawn: its two-loop mechanics are
    refolded into the operations-layer engine (FS-0001), and its instance knobs belong to
-   pack-protocol configuration — so no successor ADR is needed for it.
+   pack-protocol configuration — so no successor ADR is needed for it. FS-0051 and
+   PLAN-0057, the two-loop tick's spec and plan, are likewise not carried forward as
+   separate documents; their content refolds into the engine FS/PLAN.
 5. **Compose** feral-fleet ADR-0023 / FS-0028 with the re-homed publisher ADR
    (**ADR-0049**, after step 3's renumbering). This step depends on step 3.
 6. **Author** the Hermes-Agent runtime binding (own FS/PLAN, per ADR-0039 §5).
@@ -125,7 +130,9 @@ collective-agents is archived.
    references).
    7b. **Flip public** — a prerequisite that *enables* protection, not proof of it.
    7c. **Configure and read back** branch protection on `trunk` (and any required
-   writer/bypass permissions), satisfying ADR-0012's merge gate.
+   writer/bypass permissions), satisfying ADR-0012's merge gate — re-verifying at this
+   step that the free-plan-public-repo protection policy still holds (it is a
+   policy-as-of-draft assumption).
 
 Steps 4 and 6 are order-independent; step 5 depends on step 3. Steps 1–3 and 7a–7c are
 strict-order.
@@ -139,6 +146,10 @@ strict-order.
   back*, not assumed from visibility.
 * ADR-0039 §5 — each runtime binding gets its own FS/PLAN; the Hermes-Agent binding is
   authored, not improvised.
+* Layer boundary — the governance/operations boundary is *review-enforced* (a documented
+  placement rule: operations content under `docs/operations/`, governance content in the
+  existing registries). Any future blocking gate for that boundary is a separate change
+  with its own FS/PLAN, not an implicit property of the existing lint/status checks.
 
 ## 7. Risks and Edge Cases
 
