@@ -4,7 +4,8 @@ id: ADR-0047
 status: proposed
 decision_scope: architecture
 reversible: yes
-related_specs: []
+related_specs:
+  - FS-0001
 superseded_by: null
 ---
 
@@ -55,9 +56,17 @@ justifications are all still hypothetical:
 | Separate visibility (public governance, private operations) | Both are planned public |
 | Keeps app code out of the governance repo's charter | The engine does not exist yet |
 
-ADR-0032 (template/instance forms) rejected mandatory splitting on the grounds that a
-split "imposes the cost ... on repositories that have exactly one instance" and that
-"extracting a reusable form before a second consumer exists means guessing at what
+*Evidence (reproducible, not assumed):* the zero-consumer claim follows from
+`pack-protocol/.gitmodules` and `feral-fleet/.gitmodules` (both pin only
+`conventional-agents`) and the absence of an `advance-operations` repository; the
+~20-file inventory is the `collective-agents` tree (two ADRs, one FS, one PLAN, an ARC42,
+`docs/research/`, `config/gates.yml`, and scaffolding); the drift figures are
+`git rev-list --count` per consumer. A reviewer should re-confirm these against the live
+repos at execution time, since they are observations at the time of writing.
+
+proposed ADR-0032 (template/instance forms) rejected mandatory splitting on the grounds
+that a split "imposes the cost ... on repositories that have exactly one instance" and
+that "extracting a reusable form before a second consumer exists means guessing at what
 generalizes." The same logic applies one layer up: a second template repository was
 created before a second consumer of it existed.
 
@@ -70,8 +79,11 @@ created before a second consumer of it existed.
   separate repo from the run/tick content that disagreed with them.
 - **Concrete action over documentation.** Collapsing two repos into one removes the
   inconsistency; a reconciliation document that explains the inconsistency does not.
-- **ADR-0032's discipline.** Do not extract a reusable form before a second consumer
-  exists; re-extract when the engine actually ships.
+- **The rationale of proposed ADR-0032, adopted as reasoning, not as a binding
+  precedent.** Do not extract a reusable form before a second consumer exists;
+  re-extract when the engine actually ships. ADR-0032 itself is `proposed`, so this ADR
+  makes the defer-extraction rule its own chosen constraint rather than relying on an
+  accepted one.
 - **Cost of reversal is asymmetric.** The merge is ~20 files today; it is an order of
   magnitude more once instances vendor both templates and the engine is built.
 
@@ -90,7 +102,7 @@ Collapse the two templates into one repository, with `conventional-agents` as th
 survivor (it is the base, the vendored unit, and the public name). The
 governance/operations boundary becomes a directory-and-lint-gate boundary inside one
 repo, not a repository wall. The engine is re-extracted as its own package/repo only
-when FS-0001 is actually implemented, per ADR-0032. *Chosen.*
+when FS-0001 is actually implemented. *Chosen.*
 
 ### Option C — Merge later, once the engine ships
 
@@ -113,8 +125,8 @@ lint/status gates the framework already runs, not by repository walls.
 The org/visibility migration (transfer conventional-agents to Advance.Enterprises,
 re-pin the consumer submodules, scrub instance data, flip public) is the operational
 spine that surrounds this merge and is planned separately (PLAN-0058). Branch
-protection — the mechanism behind ADR-0012's merge gate — is restored by the public
-flip, which a free-plan org supports only for public repositories.
+protection — the mechanism behind ADR-0012's merge gate — is restored by configuring it
+after the public flip, which a free-plan org supports only for public repositories.
 
 ## Consequences
 
@@ -134,13 +146,18 @@ flip, which a free-plan org supports only for public repositories.
   revisited when the engine is re-extracted — the merge defers, but does not remove,
   that decision.
 - Two accepted ADRs (ADR-0001, ADR-0002) change their IDs and repository. Their
-  authority is unchanged; their location and numbering are not.
+  authority is unchanged; their location and numbering are not — but their internal
+  cross-references must be migrated to the new IDs, and the source files carry a stale
+  `PARSING_HINTS` line ("This ADR is PROPOSED") that contradicts their `accepted` front
+  matter; the import reconciles both (see PLAN-0058 step 3).
 
 ### Neutral
 
-- feral-fleet (a leaf repo) and the runtime bindings (ADR-0039) are unaffected by the
-  merge: the former vendors only conventional-agents, the latter is content work in the
-  surviving repo.
+- feral-fleet (a leaf repo) and the runtime bindings (ADR-0039) do not change vendor
+  URLs or binding models as a result of the merge itself. They do, however, still
+  require the content work named in PLAN-0058 — composing feral-fleet ADR-0023 with the
+  re-homed publisher ADR, and authoring the Hermes-Agent binding — which this decision
+  does not remove, only relocates.
 
 ## Validation
 
@@ -148,15 +165,20 @@ flip, which a free-plan org supports only for public repositories.
   `.gitmodules` references it. Checkable by `gh api` on each consumer.
 - **Signal:** the surviving repo's ADR/FS/PLAN registries remain sequential and
   gap-free (`npm run check:status`).
+- **Signal:** the empirical claims above (zero consumers, ~20 files, drift figures) are
+  reproducible against the live repos and are re-confirmed at execution time, not
+  carried forward unexamined.
 - **Failure condition:** if the engine (FS-0001) is implemented without a re-extraction
   decision, the "no app code" charter has been silently violated — the re-extraction
   ADR is the scheduled follow-on when PLAN-0001 is picked up.
 
 ## Links
 
-- ADR-0032: Template and instance repository forms — the "defer extraction" principle.
-- ADR-0024 / ADR-0039: the substrate- and runtime-binding layers, unaffected by the merge.
-- collective-agents ADR-0001 / ADR-0002: the grant model and worker/publisher split,
-  re-homed and renumbered by this decision.
+- proposed ADR-0032: Template and instance repository forms — the "defer extraction"
+  rationale this decision adopts as reasoning, not precedent.
+- ADR-0024 / ADR-0039: the substrate- and runtime-binding layers, whose vendor/binding
+  models the merge does not change.
+- collective-agents ADR-0001 / ADR-0002 (→ ADR-0048 / ADR-0049): the grant model and
+  worker/publisher split, re-homed and renumbered by this decision.
 - PLAN-0058: the migration that carries out this merge and the surrounding org/visibility
   moves.
