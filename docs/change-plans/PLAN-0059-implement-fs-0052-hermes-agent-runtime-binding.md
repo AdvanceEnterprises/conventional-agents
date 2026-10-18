@@ -4,7 +4,16 @@ role: implementer
 language: bash
 status: draft
 related_specs: [FS-0052]
-related_adrs: [ADR-0039, ADR-0038]
+related_adrs:
+  - ADR-0039
+  - ADR-0038
+  - ADR-0004
+  - ADR-0007
+  - ADR-0015
+  - ADR-0018
+  - ADR-0029
+  - ADR-0032
+  - ADR-0037
 touches:
   - "integrations/runtimes/README.md"
   - "integrations/runtimes/hermes-agent/README.md"
@@ -75,7 +84,7 @@ separately, after this one merges — never inside it.
   `scripts/README.md` cross-reference; verify `lint:integrations` covers the
   Hermes markdown.
 * Repoint `INTEGRATION.md`'s Hermes guidance and `docs/ARC42.md` at the binding.
-* Add `test/FS-0052/` bats coverage for SC-1..SC-22, exercisable against
+* Add `test/FS-0052/` bats coverage for SC-1..SC-27, exercisable against
   fixtures without a live `hermes` CLI where possible.
 
 **This change will NOT:**
@@ -103,8 +112,8 @@ separately, after this one merges — never inside it.
   * `primitives-and-registration.bats` — SC-19..SC-22
   * `sync-and-acceptance.bats` — SC-23..SC-27
 
-* Target tests (names carry their SC identifier per the framework testing guide;
-  each SC maps to at least one test):
+* Illustrative target tests (names carry their SC identifier per the framework
+  testing guide; each SC maps to at least one test):
 
   * `test_sc_1__hermes_marked_available`
   * `test_sc_4__no_instance_data`
