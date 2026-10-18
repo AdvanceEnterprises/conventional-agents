@@ -33,7 +33,7 @@ PARSING_HINTS:
 ### 1.1 Requirements Overview
 
 collective-agents is a **reusable workflow execution product**. It applies the
-pinned conventional-agents governance contract to a set of projects by
+conventional-agents governance contract to a set of projects by
 reconciling work, dispatching bounded agent runs, and reporting their outcomes.
 It neither defines the governance contract nor runs an organization's portfolio
 without instance configuration. Git is the durable source for code and governed
@@ -44,7 +44,7 @@ This is an architecture proposal. The repository currently has a governance
 bootstrap only: no reconciler, dispatcher, publisher, or adapter exists.
 Implementation requires project ADRs where decisions are needed, followed by
 approved FS/PLAN documents. Background evidence and unresolved questions are
-recorded in [the research synthesis](research/architecture-evidence.md).
+recorded in [the research synthesis](../research/architecture-evidence.md).
 
 The human-selected **first pilot** is one `feature` work item with the bounded
 action `draft-spec`: an explicit human authorization of that action and its
@@ -53,15 +53,14 @@ The pilot leaves the work item's Phase at Approved and the FS at draft. This
 selects the first architectural scenario, **not** a dispatch permission or
 approval of an implementation specification. The comparison that informed it
 is archived with the five candidates in
-[`docs/research/model-drafts/`](research/model-drafts/).
+[`docs/research/model-drafts/`](../research/model-drafts/).
 
-The decisions this architecture motivated are now records, not drafts:
-`ADR-0047` (authorized intent identity and the human grant) and `ADR-0048`
-(worker/publisher credential separation) are **accepted**, and `FS-0051`
-(the `feature` / `draft-spec` pilot) is **approved**. None is implemented:
-`FS-0051`'s interface surface was declared by its 2026-10-01 amendment, and
-that surface includes reserved paths, so its first `PLAN` carries its own
-human-approval evidence. All three live under `docs/decisions/` and
+The decisions this architecture motivated are records. `ADR-0047` (authorized
+intent identity and the human grant) and `ADR-0048` (worker/publisher
+credential separation) are **accepted**. `FS-0051` (the `feature` /
+`draft-spec` pilot) is carried as **draft** — deferred per ADR-0046 until the
+engine is re-extracted as its own package — and none of the three is
+implemented. The ADRs live under `docs/decisions/`; the spec under
 `docs/specifications/`.
 
 ### 1.2 Quality Goals
@@ -91,7 +90,7 @@ Candidate acceptance scenarios to refine into a feature spec:
 | PR creation succeeds but acknowledgement is lost | Discover the possible remote effect; unresolved ambiguity halts a second create | Proposed recovery target; fault and integration tests required |
 | Worker can reach the host's `gh` login | Isolation check fails and unattended dispatch is disabled | Deployment requirement, not a Hermes-profile property |
 | A draft proposal triggers CI with privileged secrets | Keep untrusted code outside privileged jobs before publishing | Separate CI threat model and validation required |
-| Worker requests a human decision | Explain it on the work item with a preceding stance, then park; no further agent actions while parked | Upstream stance and `question` constraints, with local effect ordering to specify |
+| Worker requests a human decision | Explain it on the work item with a preceding stance, then park; no further agent actions while parked | Framework stance and `question` constraints, with local effect ordering to specify |
 | Schedule is disabled or a model fallback changes reviewer identity | Operator sees a missing pass; selected and actual models remain distinguishable | Proposed monitoring and attestation, not existing engine behavior |
 <!-- markdownlint-enable MD013 -->
 
@@ -108,20 +107,20 @@ Candidate acceptance scenarios to refine into a feature spec:
 
 ## 2. Constraints
 
-- The pinned `vendor/conventional-agents/` defines the role contract,
+- The conventional-agents contract defines the role contract,
   work-item lifecycle, Type-keyed autonomous gate, and agent attribution.
   Accepted ADR-0012 prohibits agent PR merges and requires GitHub identity
   verification before `gh` operations or `git push`.
 - Accepted ADR-0024 requires a conforming work-item substrate to map all six
   capabilities: work item, Type, Phase, parked state, ordered attributable
   activity record, and enumerability. Only the GitHub binding is shipped in
-  the pinned framework; its limitations must not be presented as enforcement.
+  the framework; its limitations must not be presented as enforcement.
 - Accepted ADR-0028 makes level-triggered reconciliation the correctness
   path. Events can reduce latency but cannot replace enumeration and a
   reliably monitored scheduled/on-demand pass.
 - Accepted ADR-0039 concerns **runtime setup**. It does not specify a
   programmatic agent-dispatch API. This product must design that interface.
-- Keep template and instance information apart. ADR-0032 in the pinned
+- Keep template and instance information apart. ADR-0032 in the
   framework is **proposed**, not an accepted mandate; the separation is also
   this product's explicit design direction. Its configuration mechanism and
   precedence still need a project decision.
@@ -134,7 +133,7 @@ Candidate acceptance scenarios to refine into a feature spec:
 ### 3.1 Business Context
 
 ```text
-conventional-agents (pinned contract)
+conventional-agents (contract)
           |
           v
 collective-agents (reusable engine) <--- instance configuration
@@ -148,7 +147,7 @@ collective-agents (reusable engine) <--- instance configuration
 
 conventional-agents and project repositories can themselves be projects in a
 configured portfolio. collective-agents must also govern its own changes as a
-consumer of the pinned framework. No special-case rules for either repository
+consumer of the framework. No special-case rules for either repository
 belong in the engine.
 
 ### 3.2 Technical Context and Authority
@@ -250,7 +249,7 @@ second write.
    external write or runtime invocation. Prepare a separate record for each
    intended remote effect. If this reservation cannot be made, stop.
 4. For a work-item action, place the required `agent-stance:` entry *before*
-   that action. Read the activity record as the upstream idempotency signal;
+   that action. Read the activity record as the framework's idempotency signal;
    use the ledger for the stronger internal reservation and correlation.
    Neither a mutable comment nor the ledger alone resolves an ambiguous
    external write. An uncertain stance write must be discovered before a
@@ -313,7 +312,7 @@ authorized scope generation can create a new intent.
   opens. The feature-spec pilot does not exercise that path. Task conformance
   and any other Phase automation need an explicit transition design; the
   pilot's no-Phase-write rule must not be generalized to silently contradict
-  the upstream criterion.
+  the framework's criterion.
 
 ## 7. Deployment View
 
@@ -366,13 +365,13 @@ is actually running; a missed scheduled pass is an operational incident.
 
 ## 9. Architectural Decisions
 
-Accepted *upstream* constraints include ADR-0012, ADR-0014, ADR-0024,
-ADR-0028, and ADR-0039 in the pinned conventional-agents submodule.
-ADR-0032 is proposed upstream; the product/instance split here is our own
-stated direction, not a claim that it is accepted upstream.
+Accepted constraints in this repository include ADR-0012, ADR-0014, ADR-0024,
+ADR-0028, and ADR-0039. ADR-0032 (template and instance forms) remains
+`proposed`; the product/instance split described here is a stated direction,
+not a claim that ADR-0032 is accepted.
 
-**Local decisions.** This repository now has two accepted ADRs recording the
-architecture's load-bearing choices, and one approved spec:
+**Decisions.** This repository now has two accepted ADRs recording the
+architecture's load-bearing choices, and one deferred spec:
 
 - `ADR-0047` (accepted) — authorized intent identity and the human grant. The
   unit of deduplication and publication is the *authorized intent*: work item +
@@ -382,11 +381,11 @@ architecture's load-bearing choices, and one approved spec:
   workers hold no GitHub write credential; a separate publisher revalidates
   authority, writes at most one canonical draft proposal per intent, and never
   merges.
-- `FS-0051` (approved, unimplemented) — the `feature` / `draft-spec` pilot's
+- `FS-0051` (draft, unimplemented) — the `feature` / `draft-spec` pilot's
   observable behavior and success criteria. Its interface surface was declared
   by the 2026-10-01 amendment; because that surface includes reserved paths
   (`.github/workflows/`, `package.json`), its first `PLAN` cannot self-approve
-  and carries its own human-approval evidence.
+  and will carry its own human-approval evidence.
 
 Those acceptance conditions are recorded in each document's Validation section.
 Neither ADR claims a platform guarantee: one canonical publication per intent is
@@ -398,7 +397,7 @@ the grant's durable representation and verification; minimum evidence *format*
 for dispatch; the dispatch API and runtime lookup; ledger, effect identity, and
 lock topology; publisher discovery and recovery; future Type-specific Phase
 transitions; and local versus portfolio configuration resolution. The
-feature-spec pilot does not settle a future `task` path's upstream In Review
+feature-spec pilot does not settle a future `task` path's In Review
 criterion.
 
 ## 10. Risks and Technical Debt
@@ -417,7 +416,7 @@ criterion.
   egress for each worker deployment.
 - **Privileged CI:** a credential-free worker's proposal may run code in CI
   with secrets. Validate the workflow and branch trust boundary separately.
-- **Contract drift:** the pinned governance version may evolve; compatibility
+- **Contract drift:** the governance version may evolve; compatibility
   checks must fail closed rather than silently reinterpret changed gates.
 - **Premature neutrality:** one GitHub/Hermes slice cannot prove every adapter
   seam. Validate the first slice end to end before promising other bindings.

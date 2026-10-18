@@ -15,7 +15,7 @@ touches:
   - ".github/workflows/engine-tests.yml"
   - "package.json"
   - "README.md"
-  - "docs/ARC42.md"
+  - "docs/operatio../operations/ARC42.md"
   - "docs/specifications/README.md"
   - "docs/change-plans/README.md"
   - "CHANGELOG.md"
@@ -36,7 +36,10 @@ PARSING_HINTS:
 > **Note — imported and deferred.** This plan was `approved` in collective-agents
 > as PLAN-0001. The engine it describes is deferred per ADR-0046 and will be
 > re-extracted as its own package when built, not inside conventional-agents.
-> The `touches:` paths below describe that future engine.
+> The `touches:` paths below, and the `vendor/conventional-agents` /
+> `config/gates.yml` references in §2 and §9, describe that future engine and
+> its own vendored framework — not this repository. Unqualified issue/PR
+> references (e.g. `GH #5`, `PR #15`) are collective-agents history.
 
 ## 1. Feature / Issue Reference
 
@@ -67,7 +70,7 @@ PARSING_HINTS:
   human-only write rule; a grant is a human commit, never an engine write.
 * Create `.github/workflows/engine-tests.yml` running the pytest suite.
 * Add the npm `test` entry invoking pytest (`package.json`).
-* Update `README.md` status text and `docs/ARC42.md` to mark the pilot blocks
+* Update `README.md` status text and `docs/operatio../operations/ARC42.md` to mark the pilot blocks
   implemented, and both governed-doc indexes for status sync.
 * Execute the pilot as one implementation PR after the plan receives its
   separate human approval. Use the lifecycle's single-PR exception: leave
@@ -139,7 +142,7 @@ PARSING_HINTS:
 * `config/instance.example.yml` (new)
 * `grants/README.md` (new)
 * `.github/workflows/engine-tests.yml` (new)
-* `package.json`, `README.md`, `docs/ARC42.md`,
+* `package.json`, `README.md`, `docs/operatio../operations/ARC42.md`,
   `docs/specifications/README.md`, `docs/change-plans/README.md`,
   `docs/specifications/FS-0051-feature-draft-spec-pilot.md` (status),
   `docs/change-plans/PLAN-0058-*.md` (this file, status), `CHANGELOG.md`
@@ -221,14 +224,11 @@ PARSING_HINTS:
   record before execution. Because execution is constrained to one
   implementation PR, it uses the direct `approved` → `implemented` path and
   does not change the PLAN to `in-progress`.
-* **Rule-6 containment will not machine-check this plan.** The framework gate's
-  grandfather clause lists `PLAN-0001-*`–`PLAN-0017-*` and skips those plan IDs
-  by name at every status — not merely at `draft` — so no containment error on
-  this plan will be caught mechanically until `conventional-agents`
-  issue #195 (scoping the clause to the framework's self-check) is fixed. The
-  plan therefore rests on human review and the trailered approval record
-  (`ADR-0026`) for containment discipline; it does not claim the
-  machine check as evidence.
+* **Rule-6 containment applies only at approval, not at `draft`.** This plan is
+  carried as `draft` (the engine is deferred), so rule 6 does not machine-check
+  it now. Containment discipline therefore rests on human review and the
+  trailered approval record (`ADR-0026`) when the engine is re-extracted and
+  this plan is re-approved; it does not claim a machine check as evidence.
 
 ## 8. Validation
 
