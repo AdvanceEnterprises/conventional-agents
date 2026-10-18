@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/Tais-Den/conventional-agents/benchmark/task-card.schema.json",
+  "$id": "https://github.com/AdvanceEnterprises/conventional-agents/benchmark/task-card.schema.json",
   "title": "Governed-agent benchmark task card (v1)",
   "description": "Versioned task-card schema for the governed-agent benchmark harness (FS-0031). A card declares a pinned base repository, a task prompt, governance constraints, and deterministic checks.",
   "type": "object",

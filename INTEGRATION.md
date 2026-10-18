@@ -28,7 +28,7 @@ This document is the canonical source for how conventional-agents integrates wit
 
 ```bash
 # 1) Add submodule
-git submodule add https://github.com/Tais-Den/conventional-agents.git vendor/conventional-agents
+git submodule add https://github.com/AdvanceEnterprises/conventional-agents.git vendor/conventional-agents
 
 git submodule update --init
 
