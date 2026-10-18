@@ -223,8 +223,10 @@ gate.
   files.
 - **SC-11.** Given the skill-discovery mechanism, when its source and outputs
   are inspected, then it writes no runtime dialect back into any
-  `skills/*/SKILL.md` (`ADR-0038` §5); any `metadata.hermes.*` is applied at the
-  binding edge only.
+  `skills/*/SKILL.md` (`ADR-0038` §5), and any `metadata.hermes.*` it applies is
+  written only to the binding's own
+  `integrations/runtimes/hermes-agent/skills/**` copy, never to framework
+  source.
 
 ### The advisory hook
 
@@ -281,6 +283,29 @@ gate.
 - **SC-22.** Given `npm test`, when it runs, then the `test/FS-0052/` suites
   execute and pass, and `bash -n` succeeds on every shipped `.sh` file.
 
+- **SC-23.** Given the skill-discovery sync mechanism, when it runs, then the
+  only repository paths it writes are under the binding's own
+  `integrations/runtimes/hermes-agent/skills/**` copy — never `skills/*/SKILL.md`
+  (source), never a consumer's files, and never any other repository path.
+- **SC-24.** Given a repository with `AGENTS.md`, `scripts/`, and `skills/` but
+  no Hermes binding installed, when the governed workflow is exercised end to
+  end (per a documented procedure in `integrations/runtimes/README.md`), then it
+  completes — spec-first, gate scripts, and skill guidance all function. The
+  binding is a convenience, not a requirement (`ADR-0039` Validation).
+- **SC-25.** Given `integrations/README.md` after the change, when inspected,
+  then it distinguishes substrate bindings from runtime bindings and names
+  `integrations/runtimes/` as the home of the latter, governed by `ADR-0039`.
+- **SC-26.** Given the binding's bundle/plugin and `SOUL.md.example`, when a
+  Hermes session is configured with the shipped profile fragment, then the
+  bundle is recognized and the session loads the canonical `AGENTS.md` through
+  the bootstrap — verified by a recorded manual smoke check naming the Hermes
+  version (a live-runtime check; no validator command is invented).
+- **SC-27.** Given `ca-hermes-audit.sh` runs against a profile containing MCP
+  configuration, when it completes (including error paths), then its stdout,
+  stderr, and any recorded evidence contain no credential value, no raw config
+  dump, and no parser-error context that could carry a secret — verified with
+  fixture inputs carrying distinctive dummy secret values.
+
 ## Edge Cases
 
 - **A consumer runs Hermes with an existing `~/.hermes/config.yaml`.** The
@@ -298,8 +323,10 @@ gate.
 ## Out of Scope
 
 - Any configuration for OpenClaw, Codex, Cursor, or Aider.
-- Mutating a consumer's `~/.hermes/`, git config, or any repository state from a
-  shipped command.
+- Mutating a consumer's `~/.hermes/`, git config, or any repository state from
+  a shipped command — except the binding's own generated skill-sync output under
+  `integrations/runtimes/hermes-agent/skills/**`, the one repository location
+  the sync mechanism is authorized to write (SC-23).
 - A marketplace listing for the bundle.
 - `shellcheck` adoption as a gate (applies repo-wide; a separate decision).
 - Changing `ADR-0004`'s precedence hierarchy or any accepted ADR's body.
