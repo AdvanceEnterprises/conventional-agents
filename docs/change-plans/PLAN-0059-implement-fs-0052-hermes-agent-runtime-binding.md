@@ -42,10 +42,11 @@ an `Approved-By:` trailer on the commit that flips this plan (and `FS-0052`) to
 `approved`, whose email differs from the commit author's (`ADR-0026`). Until that
 record exists this plan is `draft` and must not be executed.
 
-**This file must not be edited again before merge.** Under `ADR-0026` any
-further commit touching it invalidates the approval and requires a fresh
-recorded act. The implementing PR opens separately, after this one merges —
-never inside it.
+**Once the approval commit lands, this file must not be edited again before
+merge.** Under `ADR-0026` any commit touching it *after* the approval record
+invalidates that approval and requires a fresh recorded act; draft review
+revisions before the approval commit are permitted. The implementing PR opens
+separately, after this one merges — never inside it.
 
 ## 1. Feature / Issue Reference
 
@@ -100,6 +101,7 @@ never inside it.
   * `hook-and-identity.bats` — SC-12..SC-15
   * `audit.bats` — SC-16..SC-18
   * `primitives-and-registration.bats` — SC-19..SC-22
+  * `sync-and-acceptance.bats` — SC-23..SC-27
 
 * Target tests (names carry their SC identifier per the framework testing guide;
   each SC maps to at least one test):
@@ -116,6 +118,10 @@ never inside it.
   * `test_sc_17__audit_divergence_exit_codes`
   * `test_sc_18__audit_non_mutating`
   * `test_sc_19__primitives_documented_not_wired`
+
+  The named tests are representative; the file-group SC ranges above are the
+  full coverage contract — each SC in a range maps to at least one test in its
+  `*.bats` file.
 
 ## 4. Files to Be Modified
 
