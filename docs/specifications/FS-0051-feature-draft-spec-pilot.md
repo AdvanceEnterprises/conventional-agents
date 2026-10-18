@@ -14,7 +14,7 @@ interfaces:
   - ".github/workflows/engine-tests.yml"
   - "package.json"
   - "README.md"
-  - "docs/ARC42.md"
+  - "docs/operatio../operations/ARC42.md"
   - "docs/specifications/README.md"
   - "docs/change-plans/README.md"
 related_adrs:
@@ -43,7 +43,8 @@ PARSING_HINTS:
 - Imported from collective-agents (where this was `approved`). The engine
   implementation is **deferred** per ADR-0046: it will be re-extracted as its own
   package when built, not inside conventional-agents. The `interfaces:` below
-  describe that future engine, not this repository.
+  describe that future engine, not this repository. Unqualified PR references
+  (e.g. `PR #15`, `PR #2`) are collective-agents history.
 - Amended 2026-10-01 in PR #15: the interface surface is declared (§Interfaces),
   replacing the earlier deliberate empty declaration; stale references to
   pre-merge state were corrected at the same time. The `## Success Criteria`
@@ -52,14 +53,14 @@ PARSING_HINTS:
 ## Summary
 
 The first end-to-end slice of the collective-agents engine: on a scheduled or
-on-demand pass, evaluate governed work items against the pinned
+on-demand pass, evaluate governed work items against the
 conventional-agents contract, and for one work item carrying an explicit human
 grant for the bounded `draft-spec` action, dispatch an isolated worker, validate
 the evidence it returns, and publish **one** canonical draft FS PR for human
 review. The work item's Phase does not advance. Nothing merges automatically.
 
 This spec exists to make the pilot's observable behavior testable. The
-architecture that motivates it is in [`docs/ARC42.md`](../ARC42.md) (merged; the
+architecture that motivates it is in [`docs/operatio../operations/ARC42.md`](../operations/ARC42.md) (merged; the
 earlier draft PR #2 was the vehicle for its review); the decisions it depends on
 are `ADR-0047` (intent identity and the human grant) and `ADR-0048`
 (worker/publisher separation).
@@ -117,21 +118,22 @@ is decided by the framework's reserved-path rule (`ADR-0027`), not by this list.
   - `.github/workflows/engine-tests.yml` — CI running the test suite.
   - `package.json` — npm `test` entry invoking the pytest suite, matching this
     repository's existing npm-based gate entry points.
-  - `README.md` and `docs/ARC42.md` — status and architecture updates when the
+  - `README.md` and `docs/operatio../operations/ARC42.md` — status and architecture updates when the
     pilot lands; both currently describe the pre-implementation state.
   - `docs/specifications/README.md` and `docs/change-plans/README.md` — index
     status syncs that the framework's gates require.
 
 **Approval consequence.** This surface includes reserved paths
-(`.github/workflows/`, `package.json`) under this repository's `config/gates.yml`,
-so a `PLAN` implementing the pilot cannot self-approve: it must carry
-`approved_by:` evidence corroborated by an `Approved-By:` trailer
-(`ADR-0026`/`ADR-0027`). That is intended. The surface of a product whose engine
-does not exist should not be pre-approved by the same agents that will build it,
-and the first engine `PLAN` is therefore human-approved by construction.
+(`.github/workflows/`, `package.json`), so a `PLAN` implementing the pilot
+cannot self-approve: it must carry `approved_by:` evidence corroborated by an
+`Approved-By:` trailer (`ADR-0026`/`ADR-0027`). That is intended. The surface
+of a product whose engine does not exist should not be pre-approved by the
+same agents that will build it, and the first engine `PLAN` is therefore
+human-approved by construction.
 
-Note: `config/gates.yml` remains in this repository's `reserved_paths`, so any
-plan touching that file requires human approval regardless of this list.
+Note: the framework's reserved-path rule (`ADR-0027`) covers gate
+configuration and other constraining paths, so any plan touching them requires
+human approval regardless of this list.
 
 ## Success Criteria
 
