@@ -81,3 +81,4 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | PLAN-0055 | Implement FS-0049 Bash 3.2 status-check compatibility | FS-0049 | approved |
 | PLAN-0056 | Implement FS-0050 run-batch tier-integrity check | FS-0050 | approved |
 | PLAN-0057 | Migrate, merge, and reconcile the template mesh | ADR-0046 | draft |
+| PLAN-0058 | Implement FS-0051 engine pilot | FS-0051 | draft |
