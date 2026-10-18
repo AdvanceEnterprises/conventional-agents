@@ -1,19 +1,19 @@
 ---
 type: adr
 id: ADR-0045
-status: accepted
+status: superseded
 decision_scope: workflow
 reversible: yes
 related_specs:
   - FS-0018
-superseded_by: null
+superseded_by: ADR-0049
 ---
 
 # ADR-0045: Bounded autonomous runs with batch proposal-acceptance
 
 ## Status
 
-- Accepted
+- Superseded by `ADR-0049` (grant-based go signal for autonomous runs).
 
 ## Context and Problem Statement
 

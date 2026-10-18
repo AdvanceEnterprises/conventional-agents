@@ -1,7 +1,7 @@
 ---
 type: adr
 id: ADR-0049
-status: proposed
+status: accepted
 decision_scope: workflow
 reversible: yes
 related_specs:
@@ -13,7 +13,7 @@ superseded_by: null
 
 ## Status
 
-- Proposed
+- Accepted
 
 ## Context and Problem Statement
 
