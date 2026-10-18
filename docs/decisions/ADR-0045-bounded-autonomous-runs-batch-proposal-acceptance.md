@@ -7,6 +7,8 @@ reversible: yes
 related_specs:
   - FS-0018
 superseded_by: ADR-0049
+created: 2026-10-13
+updated: 2026-10-18
 ---
 
 # ADR-0045: Bounded autonomous runs with batch proposal-acceptance
