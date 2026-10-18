@@ -14,7 +14,7 @@ interfaces:
   - ".github/workflows/engine-tests.yml"
   - "package.json"
   - "README.md"
-  - "docs/operatio../operations/ARC42.md"
+  - "docs/operations/ARC42.md"
   - "docs/specifications/README.md"
   - "docs/change-plans/README.md"
 related_adrs:
@@ -60,7 +60,7 @@ the evidence it returns, and publish **one** canonical draft FS PR for human
 review. The work item's Phase does not advance. Nothing merges automatically.
 
 This spec exists to make the pilot's observable behavior testable. The
-architecture that motivates it is in [`docs/operatio../operations/ARC42.md`](../operations/ARC42.md) (merged; the
+architecture that motivates it is in [`docs/operations/ARC42.md`](../operations/ARC42.md) (merged; the
 earlier draft PR #2 was the vehicle for its review); the decisions it depends on
 are `ADR-0047` (intent identity and the human grant) and `ADR-0048`
 (worker/publisher separation).
@@ -118,7 +118,7 @@ is decided by the framework's reserved-path rule (`ADR-0027`), not by this list.
   - `.github/workflows/engine-tests.yml` — CI running the test suite.
   - `package.json` — npm `test` entry invoking the pytest suite, matching this
     repository's existing npm-based gate entry points.
-  - `README.md` and `docs/operatio../operations/ARC42.md` — status and architecture updates when the
+  - `README.md` and `docs/operations/ARC42.md` — status and architecture updates when the
     pilot lands; both currently describe the pre-implementation state.
   - `docs/specifications/README.md` and `docs/change-plans/README.md` — index
     status syncs that the framework's gates require.

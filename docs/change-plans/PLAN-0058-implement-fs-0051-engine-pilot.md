@@ -15,7 +15,7 @@ touches:
   - ".github/workflows/engine-tests.yml"
   - "package.json"
   - "README.md"
-  - "docs/operatio../operations/ARC42.md"
+  - "docs/operations/ARC42.md"
   - "docs/specifications/README.md"
   - "docs/change-plans/README.md"
   - "CHANGELOG.md"
@@ -70,7 +70,7 @@ PARSING_HINTS:
   human-only write rule; a grant is a human commit, never an engine write.
 * Create `.github/workflows/engine-tests.yml` running the pytest suite.
 * Add the npm `test` entry invoking pytest (`package.json`).
-* Update `README.md` status text and `docs/operatio../operations/ARC42.md` to mark the pilot blocks
+* Update `README.md` status text and `docs/operations/ARC42.md` to mark the pilot blocks
   implemented, and both governed-doc indexes for status sync.
 * Execute the pilot as one implementation PR after the plan receives its
   separate human approval. Use the lifecycle's single-PR exception: leave
@@ -142,7 +142,7 @@ PARSING_HINTS:
 * `config/instance.example.yml` (new)
 * `grants/README.md` (new)
 * `.github/workflows/engine-tests.yml` (new)
-* `package.json`, `README.md`, `docs/operatio../operations/ARC42.md`,
+* `package.json`, `README.md`, `docs/operations/ARC42.md`,
   `docs/specifications/README.md`, `docs/change-plans/README.md`,
   `docs/specifications/FS-0051-feature-draft-spec-pilot.md` (status),
   `docs/change-plans/PLAN-0058-*.md` (this file, status), `CHANGELOG.md`
