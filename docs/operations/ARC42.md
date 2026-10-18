@@ -146,9 +146,9 @@ collective-agents (reusable engine) <--- instance configuration
 ```
 
 conventional-agents and project repositories can themselves be projects in a
-configured portfolio. collective-agents must also govern its own changes as a
-consumer of the framework. No special-case rules for either repository
-belong in the engine.
+configured portfolio. When re-extracted, the engine will also govern its own
+changes as a consumer of the framework. No special-case rules for either
+repository belong in the engine.
 
 ### 3.2 Technical Context and Authority
 
