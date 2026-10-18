@@ -4,7 +4,8 @@ id: ADR-0049
 status: proposed
 decision_scope: workflow
 reversible: yes
-related_specs: []
+related_specs:
+  - FS-0051
 superseded_by: null
 ---
 
@@ -82,7 +83,9 @@ The amendment to `ADR-0045`'s run contract:
   become the grant's named scope/generation.
 - **Mid-run reversal.** A revoked grant stops the run at the point of
   revocation, mirroring `ADR-0045`'s mid-run reversal; already-authored drafts
-  are surfaced for human disposition.
+  are surfaced for human disposition. The *mechanism* of revocation — how a
+  grant is revoked and detected — is not decided here; it is deferred to
+  `FS-0051`, as in `ADR-0047`.
 
 Everything else in `ADR-0045` carries forward unchanged: the Run step, the
 ≤48-hour Bound, the Present step (one manifest-first PR with the
@@ -91,15 +94,15 @@ recorded once per run), and the invariant that batch acceptance reaches
 proposal-acceptance only — reserved-path, ruleset, and workflow changes and
 merge remain individually human-gated and never enter the batch.
 
-### Cadence, parallelism, and queue depth (instance configuration)
+### Cadence, parallelism, and queue depth (instance operating intent, not policy)
 
-This decision does **not** fix the tick's cadence, worker count, or queue depth.
-Those are instance configuration — the operations instance's cron schedule and
-worker lanes — not framework policy. The current operating intent is recorded
-here as the instance operator's stated direction, not a framework decision: a
-lower-frequency pass every few hours, one main thread plus four worker lanes,
-and a conservative queue depth. These may change in configuration without
-amending this ADR.
+This decision does **not** fix the tick's cadence, worker count, or queue depth,
+and the following is **not** framework policy. It records the instance
+operator's stated direction for the operations instance's cron schedule and
+worker lanes — a lower-frequency pass every few hours, one main thread plus
+four worker lanes, and a conservative queue depth — and may change in
+configuration without amending this ADR. Do not cite these figures as a
+framework constraint; they are instance configuration.
 
 ### Deferred
 
@@ -132,8 +135,9 @@ questions in `FS-0051`, and this ADR does not settle them.
 
 ## Validation
 
-- **Signal:** no run starts on a status move alone; every run start traces to a
-  resolvable grant.
+- **Signal:** every started run carries a citation to the grant record (work
+  item, action, scope/generation) that authorized it; a work item bearing
+  `feature` + `Approved` with no resolvable grant dispatches nothing.
 - **Signal:** a revoked grant stops a run mid-flight, and no further edits are
   made after the point of revocation.
 - **Signal:** the batch-acceptance invariant (proposal tier only) holds
