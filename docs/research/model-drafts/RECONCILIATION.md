@@ -1,0 +1,87 @@
+# Architecture reconciliation worksheet — discussion draft
+
+<!-- markdownlint-disable MD013 -->
+<!-- Wide claim and scenario matrices preserve comparison cells. -->
+
+**Status:** Head Architect analysis, not an accepted architecture or an approval.
+**Compared:** PR #3 at `9a9f58723ffb26c5d4f5fa39834dc46853abccb5` and PR #2 at `452490d7994ffc89ad869c6a80e1aec290fdd516`.
+**Contract:** conventional-agents pinned at `94b784aa022b715bf7dad331a714f786620f961a`.
+This worksheet belongs with the comparison material; it does **not** change PR #2.
+
+## Method and source authority
+
+Read each candidate's architecture, proposed decisions, open-decision register and failure flows against the pinned framework and the PR #1 research memo. A candidate's self-description is not implementation evidence. The Opus author had prior exposure to PR #1's architecture, as its provenance says; its agreement with PR #1 or the other candidates is not an independent vote. The four routed candidates shared a source checkout and were instructed not to read peers or existing architectures; that instruction was not an access-control guarantee. No candidate has been accepted merely because several models repeat it.
+
+Citation shorthand below resolves to files in this directory: **M** = `minimax-m3.md`; **K** = `kimi-k2.7-code.md`; **D** = `deepseek-v4.1-flash.md`; **A** = `gpt-6-astra.md`; **O** = `claude-opus-5-5.md`. `P2` means PR #2's `docs/ARC42.md`. Numbers are source-file line numbers on the revisions above. `C` denotes files in the pinned `vendor/conventional-agents/`. The research memo is evidence, not a source of new binding decisions.
+
+Confirmed contract anchors: `C:docs/specifications/FS-0018-issue-lifecycle-and-autonomous-triggers.md:287-326,328-355,402-424`; `C:docs/decisions/ADR-0014-background-task-governance.md:142-150`; accepted ADR-0012, -0019, -0020, -0024, -0026, -0028 and -0039. ADR-0032 and ADR-0036 are **proposed** at this pin; FS-0038 is **draft** and its Hermes-kanban candidate is outside the shipped binding surface. ADR-0039 does not define programmatic dispatch. Cross-substrate safety or isolation is not established by writing an arc42.
+
+## Claim matrix
+
+Each row shows all five candidates, then the proposed treatment. **Keep** means retain a claim as a constraint/direction, not adopt its particular mechanism. **Refine** means use a candidate idea only after further validation. **Reject** means do not transfer the stated claim into PR #2.
+
+| Claim | M | K | D | A | O | Treatment |
+| --- | --- | --- | --- | --- | --- | --- |
+| **Contract and product boundary** | GitHub reference, Hermes candidate; `ADR-0032` proposed (830-843) | two adapter axes (169-190, 430-454) | runtime-dispatch gap explicit (233-237, 394-409) | no neutral API imputed to ADR-0039 (255-263) | product/instance separation (794-811) | **Keep** PR #2's separation (26-38, 68-89, 113-128); no independent proof of a second conforming substrate. |
+| **Authorization / approval evidence** | Type `task` and Approved assumed sufficient (462-475) | same assumption (286-294) | Type plus Approved treated as recorded act (224-231) | rejects Type/Phase alone; explicit actor, action and scope proof (275-286, 495-500) | checks a human actor on the allowlist; authorization form open (457-465, 607-619) | **Refine A/O**: a current Phase is not necessarily proof of who approved *this action and scope*. Specify accepted records and revocation, without inventing field-history APIs. |
+| **Intent and generations** | reservation keyed in flow by work item + attempt UUID (477-485) despite open stable identity (901) | attempt ID in reservation (289-292), generation unresolved (493-495) | generation key proposed, unresolved (229-232, 487-489) | explicit semantic key and immutable scope; mutable description hash cannot grant authority (184-193) | intent, generation and attempt distinguished; new human act required (528-535, 607-615) | **Keep direction, refine with A/O**. PR #2's action/generation unit (138-144) is sound; an attempt ID must not be the dedupe key. Encoding and scope-revision rules need an ADR/FS. |
+| **Pre-dispatch evidence** | unspecified (898-900) | open, framed partly around worker write authority despite evidence-only direction (481-484) | open (481-483) | authority source, actor, scope, Git context and revocation (498; 238-263) | human Type, action authorization, scoped paths suggested (457-460, 830-832) | **Decide a minimum human grant**; then specify a machine-checkable envelope in an FS. No worker's self-recommendation is authority. |
+| **Worker/publisher boundary** | profile and `gh` absence used as isolation evidence (493-502) | separate publisher, isolation open (467) | isolation proposed and testable (435, 363-375) | sandbox + allowlisted publisher, tests outside privileged process (218-236) | credential-absence probe and CI branch exposure (621-647) | **Keep agreed evidence-only worker, refine mechanism**. Reject profile/tool/PATH as isolation proof; verify mounts, environment, helpers, network and publisher powers. CI exposure is an additional independent threat to test. |
+| **Publication identity and effect recovery** | states at-most-one *ever* (855-857), but write path only checks `gh_published_at` then creates PR (508-521) | ledger guard claimed to prevent second publish (302-324) | explicitly marks even at-most-one unproven (449-451) but other paths say publish once (267-272) | tracks each effect and closed as well as open remote publications; no match is not necessarily permission to retry (195-202, 238-250, 302-311) | create-only ref/tree comparison and PR uniqueness are proposed, not verified (649-678) | **Reject guarantees from M/K and unqualified D**. Keep PR #2's one *canonical logical target* as a goal (174-201); adopt A's unknown-effect/discovery completeness distinction as analysis. Verify O's Git/PR primitives against the actual host and fault-inject. |
+| **Concurrent human edit** | reread just before write (508-512) | says reread *closes* check-then-act race (326-332) | notes no optimistic concurrency yet says human edit wins (245-247, 272) | labels residual race detectable, not prevented (204-216, 519-524) | reread governs but residual limitation remains (470-481, 607-619) | **Reject K/D's prevention wording**. Keep reread as risk reduction; avoid automatic Phase writes initially; specify abort/repair when the remote write races a human change. |
+| **Stance/comment and `question` ordering** | reservation before stance, but `question` label then comment (477-491, 549-557) | stance before dispatch; `question` sometimes used for mere budget exhaustion (311-324) | same exhaustion conflation (255-258) | comment with stance **before** setting `question`; retries remain operational (313-325) | runtime diagram puts stance after PR creation (440-455); `question` label before comment (494-503) | **Keep ledger-first plus preceding stance** per `C:FS-0018:287-326`; reject post-action stance. Before park, publish the actual human question with stance, then set `question` with its own preceding stance as required; once set, suppress agent work-item actions except the specified removal path. Operational holds are not automatically `question`. Exact effect ordering/recovery needs a spec. |
+| **Type and Phase first slice** | implements `task` flow and auto-advances Approved → In Progress → In Review (456-469, 523-531) | `task` and automatic In Review (279-308) | leaves Type open yet implies `task` automatic (217-259) | `feature/draft-spec`, Phase remains Approved (275-300); also proposes read-only Phase initially (497-500) | illustrates `task` but explicitly not a choice; leaves transition open (422-425, 485-489) | **Recommend `feature/draft-spec` pilot**: exercise a governed artifact without implementation/merge or inventing task Phase behavior. For a future conforming `task` path, reconcile `C:FS-0018:420-424`'s automatic In Progress → In Review success criterion explicitly; cannot treat it as indefinitely optional while claiming FS-0018 conformance. |
+| **Runtime dispatch gap** | interface open (903) | interface open (489-492) | explicitly undefined (233-237) | submission vs completion vs unknown; discoverable runtime handle required or hold (255-263) | runtime lookup after reservation crash is a dependency, not a fact (514-517, 844-846) | **Keep gap open, refine with A/O**. Probe Hermes invocation/lookup/cancel/evidence on installed versions before claiming retry-safe dispatch. Do not conflate Hermes kanban work-item storage with agent runtime. |
+| **Config and model routing** | suggests engine owns model policy though brief gives assignments to instance (905) | instance policy (295-298) | profile mapping under instance (238-244) | explicit config roots, selected vs actual receipts and budget truth (388-408, 503-508) | same schema for local/portfolio form, source digest and review independence (711-748) | **Keep three-layer boundary**: framework constraints, product mechanism, instance assignments/limits. Candidate defaults are illustrative only. Exact config precedence and actual-model attestation remain open. |
+| **Monitoring and human-visible holds** | GitHub mirror, quiet scheduler risk (880-884, 913-922) | retries and phase visibility (311-324, 456-470) | schedule/visibility scenarios (427-438) | reason-coded exclusions and incomplete observations (181-182, 224-234) | liveness, distinct blocked reasons, `question` closed semantics (494-526, 751-776) | **Keep** human-visible required decisions and independent sweep heartbeat. Specify reporting that cannot violate the parked item's suppression rule or claim a silent schedule is healthy. |
+
+A non-substantive but relevant structure issue: K has fourteen top-level numbered sections (430-587), while the requested common brief says eleven. This is not a reason to ignore its arguments; normalize the eventual synthesis to the framework template, not to a majority section outline. The pinned arc42 template itself has ten numbered sections; a glossary/risks arrangement is a document-choice, not a governance vote (A:21-23; O:42-44).
+
+## Adversarial scenario checks (paper review, not executable tests)
+
+| Scenario | Result from candidate comparison | Evidence needed before a safety claim |
+| --- | --- | --- |
+| Two reconciler ticks race | Internal unique reservation can serialize cooperating processes, but M:477-485 keys an attempt rather than stable intent; O:518-520 requires one authoritative store. | Unique intent constraint, two-process interleaving test, topology limits, lease fencing. |
+| Human revokes approval or changes Type/Phase during a run | Publisher reread can detect a change already visible; a later human write races the GitHub mutation (K:326-332; A:519). | Explicit revocation/authority proof, concurrent-write integration test; classify remaining gap honestly. |
+| PR create succeeds, acknowledgement disappears | `gh_published_at` remains unset; blind retry creates risk (M:508-521). A:302-311 also searches closed/merged and questions whether absence is conclusive. | Stable marker/remote identity, complete scoped discovery, single active publisher or fencing, fault injection at every write/ack boundary, operator reconciliation path. |
+| Worker inherits host `gh` login or CI receives secrets | Toolset/profile/PATH restrictions are insufficient (M:493-502); O:621-647 identifies worker mounts and proposal-triggered CI as separate exposures. | Attempt-visible credential probe plus host/container mount and network tests; restricted publisher and CI threat model. |
+| Worker asks a question | Posting `question` first suppresses the very explanation the human needs (M:554-556; O:501-503). A:317 orders explanatory comment first. | Real GitHub binding test for stance → question/comment → park ordering, readbacks and recovery if any step is ambiguous. |
+| Retry budget exhausted without a human decision | K:318-320 and D:255-258 would apply `question` despite a technical failure; this confuses operational escalation with clarification. | Distinct operator hold/reason and visibility design, with `question` reserved for a real human choice. |
+| Model fallback duplicates an independent review seat | Selected route is not actual model (O:703-707, 725-732); the first pilot need not promise review-board support. | Runtime receipts/attestation or explicit unknown, fail independent-review claim when unverified. |
+
+## Decision queue for the human and the next document
+
+### Decide together before revising PR #2's candidate flow
+
+1. **First pilot:** recommend one `feature` work item with the narrow action `draft-spec`, an explicit human scope grant, draft FS PR, and no Phase advancement past Approved. This tests authorization and publication without silently assuming a `task` implementation/Phase rule. Alternative: bounded `task` if exercising implementation and its Phase semantics first is more valuable. The choice is a product-scope decision, not a five-model majority vote.
+2. **Minimum dispatch authorization:** recommend a human-origin record binding work-item identity, action (`draft-spec`), allowed paths/outcome, and scope generation to a Git revision or source snapshot. Type+Approved alone should not mint a new generation. Approve this semantic floor now; exact representation/verification belongs in an FS.
+3. **Phase policy:** recommend *no autonomous Phase write in the feature-spec pilot*. Future task support must either implement and verify the upstream PR-open transition or explicitly document/resolve the contract gap rather than claim conformance by omission.
+
+### Retain as agreed direction; specify in local ADRs/FSs before implementation
+
+- An intent is one authorized action/scope generation, stable across retries; a worker attempt is not a new grant. Keep one canonical draft proposal target per intent, **not** an unproven one-remote-effect guarantee.
+- Separate credential-free evidence workers from a publisher that revalidates authority, validates the exact patch/check context, writes a draft proposal and never merges.
+- Ledger reservation precedes dispatch-related effects; uncertain dispatch and publication need discovery or a visible hold. Keep the upstream human-facing activity record for conformance, while the ledger adds internal correlation; do not claim to supersede accepted `ADR-0014`'s activity-record idempotency requirement (`C:ADR-0014:142-150`).
+- One local configuration file is sufficient for a single repo; a portfolio repo is optional. Record selected and actual model; fail claims of independence if actual identity is unavailable.
+
+### Defer until adapter and fault evidence exists
+
+- Durable ledger technology/schema, lease/fencing and more-than-one-host topology; publisher concurrency; remote branch/PR discovery completeness and ambiguity resolution.
+- Hermes direct invocation versus task queue, runtime-handle lookup, cancellation and unknown submission; worker isolation probe on real execution backends.
+- Configuration file path/precedence, policy digest and secret resolution; cost cap enforcement versus retrospective measurement; provider fallback attestations.
+- Exact human-visible operator holds that are not `question`, scheduler monitoring, and CI privilege containment for agent-authored proposals.
+
+### Discard or correct before any synthesis
+
+- M:855-857's at-most-one-*ever* guarantee from a ledger pre-check and M:477-485's attempt-key-as-authority shape; K:323-324's analogous ledger guarantee.
+- K:330-332's claim a reread closes the human-edit race; D:272's unconditional "human edit wins" without a conditional remote write.
+- K:318-322 and D:255-258's use of `question` for exhausted operational retries/ambiguous writes without an actual human clarification question.
+- O:440-455's post-publication stance ordering and M:554-556/O:501-503's label-before-question-comment ordering as written. Preserve the insight about create-only refs as a hypothesis, not a verified PR uniqueness theorem (O:656-678).
+- D:400's classification of ADR-0036 as accepted: the pinned front matter says **proposed**. D:467-470's "build minimal dispatch before its ADR" should not become an implementation plan; ratify load-bearing choices before shipping an unattended path.
+- Any assertion that a draft PR alone is a human merge gate, that a Hermes profile proves a credential boundary, or that the research memo's platform observations are permanent API contracts.
+
+## PR #2 delta proposed after the human discussion
+
+Keep PR #2's concise product boundary, intent unit, evidence-only publisher and honest unknown-write warning (P2:26-38, 130-151, 174-201). Add concrete quality scenarios and authority/effect state distinctions from A:184-271 and O:649-678, without importing their unratified implementations. Replace its generic runtime example with the jointly chosen pilot, keeping work-item stance, question ordering, monitoring and the no-merge gate explicit. Move implementation contracts (ledger schema, envelope, store, retry policy) to local ADR/FS rather than turning arc42 into a hidden specification. Record rejected guarantees and unresolved platform claims in this worksheet, not as normative architecture.
+
+**No candidate source, accepted framework file, or PR #2 file was modified by this analysis.** The scenario checks above are reasoning exercises only; no engine, isolation or publication-recovery test was run.

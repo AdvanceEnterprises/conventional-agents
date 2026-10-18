@@ -262,3 +262,5 @@ If validation fails:
 | ADR-0043 | Planning fields are binding policy, not framework state — authority matrix for Priority, Iteration, and Milestone | proposed |
 | ADR-0045 | Bounded autonomous runs with batch proposal-acceptance | accepted |
 | ADR-0046 | Merge the governance and operations templates | accepted |
+| ADR-0047 | Authorized intent identity and the human grant | accepted |
+| ADR-0048 | Worker and publisher credential separation | accepted |

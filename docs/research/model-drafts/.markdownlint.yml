@@ -1,0 +1,20 @@
+# Lint configuration for preserved evidence.
+#
+# This directory preserves comparison evidence for the architecture synthesis:
+# five arc42 candidate drafts, a frozen brief, a provenance README, and the
+# reconciliation worksheet. The four routed candidates are VERBATIM model
+# output; the Claude candidate was self-edited before commit, and the brief,
+# README, and worksheet are authored prose. Archived files are deliberately
+# not reformatted — silently "fixing" a model's output would destroy the
+# thing being preserved and could hide a finding. See README.md here and
+# ../reviews/README.md.
+#
+# The rules disabled are exactly the ones the preserved drafts violate. They
+# stay enabled everywhere else in the repository, so this relaxation cannot
+# hide a defect in governed documents.
+default: true
+MD013: false   # line length — raw outputs rarely wrap
+MD032: false   # blanks around lists
+MD034: false   # bare URLs
+MD038: false   # spaces inside code spans
+MD047: false   # single trailing newline

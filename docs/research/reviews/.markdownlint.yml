@@ -1,0 +1,16 @@
+# Lint configuration for preserved evidence.
+#
+# The review files here are VERBATIM model outputs, retained so the review
+# trail is citable rather than living only in a session transcript. They are
+# not authored prose and are deliberately not reformatted — see README.md in
+# this directory.
+#
+# The rules disabled are exactly the ones these outputs violate. They stay
+# enabled everywhere else in the repository, so this relaxation cannot hide a
+# defect in governed documents.
+default: true
+MD013: false   # line length — the reviews use wide comparison tables
+MD032: false   # blanks around lists
+MD034: false   # bare URLs
+MD038: false   # spaces inside code spans
+MD047: false   # single trailing newline
