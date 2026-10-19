@@ -11,6 +11,7 @@ interfaces:
   - "AGENTS.md"
   - "CONTRIBUTING.md"
   - "scripts/README.md"
+  - "scripts/cross-repo-lint.sh"
   - "skills/**/*.md"
   - "workflows/*.md"
   - "integrations/**/*.md"
@@ -77,7 +78,9 @@ must be visibly non-normative and narrowly allowlisted.
 - Let an adopter follow integration guidance without cloning an instance-owned
   URL or relying on an instance-specific filesystem path.
 - Explain cross-repository lint in terms of the generic `CA_REPO_DIRS` and
-  `CA_TARGET_REPO` inputs, not a named repository fleet.
+  `CA_TARGET_REPO` inputs, not a named repository fleet — and remove the
+  framework instance's fleet names from the script's sibling-discovery default
+  so the exported script itself carries no named fleet.
 - Replace concrete actor identities in reusable guidance with consumer-selected
   placeholders; any retained consumer-specific example must be visibly
   non-normative and have an exact, reasoned audit exemption.
@@ -91,9 +94,9 @@ must be visibly non-normative and narrowly allowlisted.
 - Moving or rewriting legitimate internal identity and history records.
 - Adding consumer-specific policies, a replacement project board, or a new
   organization-specific repository.
-- Changing the semantics of cross-repository lint or its configuration.
-- Changing the script's framework-instance defaults; generic guidance instead
-  tells consumers to configure an explicit target.
+- Changing the semantics of cross-repository lint or its configuration
+  mechanism (`CA_REPO_DIRS`, `CA_TARGET_REPO`, `CA_SIBLING_NAMES`); only the
+  instance fleet names in the sibling-discovery *default* are removed.
 - Making framework guidance depend on a consumer repository or provider.
 
 ## Users / Stakeholders
@@ -187,6 +190,11 @@ and literal. Framework identity/history outside this scan remains unchanged.
   guidance and regression test, when `npm run lint:docs`, `npm run check:status`,
   the conformance doctor, and `npm test` run, then they complete without a
   GitHub or Notion dependency.
+- **SC-9 — the exported script carries no named fleet.** Given
+  `scripts/cross-repo-lint.sh`, when its source is inspected, then its default
+  sibling-name set contains no organization-specific fleet names; a consumer
+  (including this repository's own instance tooling) must configure
+  `CA_REPO_DIRS`, `CA_TARGET_REPO`, or `CA_SIBLING_NAMES` explicitly.
 
 ## Edge Cases
 
@@ -205,7 +213,9 @@ and literal. Framework identity/history outside this scan remains unchanged.
   information from internal governance.
 - Migrating organization-specific examples to a different repository in this
   work.
-- Changing `scripts/cross-repo-lint.sh` discovery, sorting, or lint semantics.
+- Changing `scripts/cross-repo-lint.sh` discovery *semantics*, sorting, or lint
+  behavior — the mechanism stays; only the instance fleet names in the
+  sibling-discovery default are removed.
 
 ## Dependencies
 
