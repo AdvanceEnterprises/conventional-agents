@@ -69,7 +69,9 @@ approval covers the reserved `scripts/README.md` path:**
 * Rewrite the cross-repository lint section in `scripts/README.md` to match the
   actual `CA_REPO_DIRS` and `CA_TARGET_REPO` behavior and remove the named fleet
   inventory; tell consumers to configure an explicit target rather than rely on
-  this repository's local sibling defaults.
+  this repository's local sibling defaults — and remove the instance fleet
+  names from `scripts/cross-repo-lint.sh`'s `CA_SIBLING_NAMES` default, leaving
+  the discovery mechanism unchanged (FS-0047 SC-9).
 * Replace framework-instance actor names/emails in reusable identity guidance
   with consumer-selected placeholders; sync generated skill copies from their
   source files.
@@ -129,6 +131,7 @@ the plan and coordinate shared-file ownership first.
 * `skills/framework-consumer-integration/SKILL.md`
 * `integrations/runtimes/claude-code/skills/framework-consumer-integration/SKILL.md`
 * `scripts/README.md`
+* `scripts/cross-repo-lint.sh`
 * `workflows/git-and-gh-conventions.md`
 * `skills/git-commit-identity/SKILL.md`
 * `integrations/runtimes/claude-code/skills/git-commit-identity/SKILL.md`
@@ -178,8 +181,9 @@ the plan and coordinate shared-file ownership first.
   * ADR-0026: approval is a separate recorded act scoped to the exact plan
     `touches:` set; this draft's documentation-only approval does not authorize
     implementation.
-  * ADR-0027: `scripts/README.md` is under the reserved `scripts/` path and
-    requires recorded human approval before it is changed.
+  * ADR-0027: `scripts/README.md` and `scripts/cross-repo-lint.sh` are under
+    the reserved `scripts/` path and require recorded human approval before
+    they are changed.
   * ADR-0030: update current-state docs in place while keeping decision history
     separate.
   * ADR-0033 / FS-0024: configuration names and target-repository behavior must
@@ -206,6 +210,10 @@ the plan and coordinate shared-file ownership first.
   scan the complete exported Markdown set defined in FS-0047.
 * `CA_TARGET_REPO` takes precedence over `CA_REPO_DIRS`; documentation must
   preserve that order.
+* Removing the instance fleet names from the sibling-discovery default breaks
+  the maintainer's zero-config local multi-repo sweep; instance tooling (the
+  maintenance tick and any local dev checkout) must export `CA_SIBLING_NAMES`
+  or `CA_REPO_DIRS` explicitly after the change.
 
 ## 8. Validation
 
@@ -234,7 +242,9 @@ the plan and coordinate shared-file ownership first.
 * No change to internal ADR/FS/PLAN/CHANGELOG history.
 * No migration of instance policy into the framework core.
 * No real organization-specific repository URL or replacement project board.
-* No change to cross-repository lint behavior or repo discovery semantics.
+* No change to cross-repository lint behavior or repo discovery *semantics*;
+  the amendment removes the instance fleet names from the sibling-discovery
+  default, leaving the mechanism unchanged.
 
 ## 10. Readiness Check
 
