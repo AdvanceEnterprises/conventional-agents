@@ -32,7 +32,8 @@ updated: 2026-10-04
 > FS-0047, this plan, the two index rows, and a draft CHANGELOG entry. It does
 > not edit exported guidance or add tests. Implementation begins only after
 > human approval of the spec and plan, an exact implementation `touches:` set,
-> and separate recorded approval for the reserved `scripts/README.md` path.
+> and separate recorded approval for the reserved `scripts/README.md` and
+> `scripts/cross-repo-lint.sh` paths.
 
 ## 1. Feature / Issue Reference
 
@@ -58,8 +59,9 @@ updated: 2026-10-04
 * Create or select a replacement organization-specific repository or board.
 
 **The later implementation revision WILL, only after FS-0047 and PLAN-0053 are
-approved, the implementation `touches:` set is exact, and recorded human
-approval covers the reserved `scripts/README.md` path:**
+approved, the implementation `touches:` set is exact (it must name
+`scripts/cross-repo-lint.sh`), and recorded human approval covers the reserved
+`scripts/README.md` and `scripts/cross-repo-lint.sh` paths:**
 
 * Parameterize the framework source URL in the README, `INTEGRATION.md`, and
   consumer-integration skill using `FRAMEWORK_REPO_URL`; replace fixed temporary
@@ -99,8 +101,10 @@ the plan and coordinate shared-file ownership first.
 * Test file(s) in the implementation revision:
 
   * `test/FS-0047/exported-boundary.bats` — fixture-backed tests for SC-1
-    through SC-8, including a hard-coded instance URL and a fixed checkout path
-    that must fail without a valid exact exemption.
+    through SC-9, including a hard-coded instance URL and a fixed checkout path
+    that must fail without a valid exact exemption, and a source assertion
+    against `scripts/cross-repo-lint.sh` verifying the sibling-discovery
+    default is empty (SC-9).
 
 * Documentation-package validation now:
 
@@ -242,9 +246,7 @@ the plan and coordinate shared-file ownership first.
 * No change to internal ADR/FS/PLAN/CHANGELOG history.
 * No migration of instance policy into the framework core.
 * No real organization-specific repository URL or replacement project board.
-* No change to cross-repository lint behavior or repo discovery *semantics*;
-  the amendment removes the instance fleet names from the sibling-discovery
-  default, leaving the mechanism unchanged.
+* No change to cross-repository lint behavior or repo discovery semantics.
 
 ## 10. Readiness Check
 
@@ -260,5 +262,5 @@ I affirm that:
 * This plan reflects the full intended scope of the documentation revision.
 * Implementation remains blocked until FS-0047 and PLAN-0053 are human-approved,
   the implementation `touches:` set is approved, and the reserved-path approval
-  for `scripts/README.md` is recorded.
+  for `scripts/README.md` and `scripts/cross-repo-lint.sh` is recorded.
 * Any deviation will require revising this plan before implementation.

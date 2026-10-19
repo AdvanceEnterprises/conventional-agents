@@ -191,8 +191,9 @@ and literal. Framework identity/history outside this scan remains unchanged.
   the conformance doctor, and `npm test` run, then they complete without a
   GitHub or Notion dependency.
 - **SC-9 — the exported script carries no named fleet.** Given
-  `scripts/cross-repo-lint.sh`, when its source is inspected, then its default
-  sibling-name set contains no organization-specific fleet names; a consumer
+  `scripts/cross-repo-lint.sh`, when its source is inspected, then its
+  sibling-discovery default is **empty** — no repository or fleet names are
+  baked in — so the unconfigured heuristic resolves nothing; a consumer
   (including this repository's own instance tooling) must configure
   `CA_REPO_DIRS`, `CA_TARGET_REPO`, or `CA_SIBLING_NAMES` explicitly.
 
@@ -213,9 +214,8 @@ and literal. Framework identity/history outside this scan remains unchanged.
   information from internal governance.
 - Migrating organization-specific examples to a different repository in this
   work.
-- Changing `scripts/cross-repo-lint.sh` discovery *semantics*, sorting, or lint
-  behavior — the mechanism stays; only the instance fleet names in the
-  sibling-discovery default are removed.
+- Changing `scripts/cross-repo-lint.sh` discovery semantics, sorting, or lint
+  behavior (the same mechanism-preservation boundary as the Non-Goal above).
 
 ## Dependencies
 
@@ -224,8 +224,9 @@ and literal. Framework identity/history outside this scan remains unchanged.
 - ADR-0026 requires recorded human approval scoped to the exact `touches:` set;
   approval of this draft documentation package does not authorize its later
   implementation.
-- ADR-0027 reserves `scripts/`; changing `scripts/README.md` requires a
-  recorded human approval for that path before implementation.
+- ADR-0027 reserves `scripts/`; changing `scripts/README.md` or
+  `scripts/cross-repo-lint.sh` requires a recorded human approval for that
+  path before implementation.
 - Accepted ADR-0037 governs the parameterized GitHub binding; no proposed ADR is
   required as authority for this spec.
 
