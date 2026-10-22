@@ -2,10 +2,10 @@
 type: change-plan
 role: implementer
 language: markdown and bash
-status: draft
+status: approved
 related_specs:
   - FS-0047
-approved_by: ""
+approved_by: "Joey Clark <administrator@ajoeofalltrades.dev>"
 related_adrs:
   - ADR-0009
   - ADR-0015
@@ -22,18 +22,41 @@ touches:
   - docs/specifications/README.md
   - docs/change-plans/README.md
   - CHANGELOG.md
+  - scripts/cross-repo-lint.sh
+  - scripts/README.md
+  - workflows/git-and-gh-conventions.md
+  - skills/git-commit-identity/SKILL.md
+  - skills/git-branch-and-commit/SKILL.md
+  - skills/framework-consumer-integration/SKILL.md
+  - integrations/runtimes/claude-code/skills/git-commit-identity/SKILL.md
+  - integrations/runtimes/claude-code/skills/git-branch-and-commit/SKILL.md
+  - integrations/runtimes/claude-code/skills/framework-consumer-integration/SKILL.md
+  - integrations/runtimes/claude-code/README.md
+  - integrations/runtimes/claude-code/settings.fragment.json
+  - INTEGRATION.md
+  - README.md
+  - .github/workflows/lint-docs.yml
+  - test/FS-0047/instance-exemptions.tsv
+  - test/FS-0047/exported-boundary.bats
+  - test/FS-0017/attribution-diagnostic.bats
+  - test/FS-0043/cron-attribution.bats
+  - test/FS-0017/commit-attribution.bats
+  - .claude/settings.json
+  - CHANGELOG.md
 created: 2026-10-04
-updated: 2026-10-04
+updated: 2026-10-22
 ---
 
 # PLAN-0053: Implement FS-0047 — Exported consumer-boundary audit
 
-> **Template note:** this first revision publishes the governance package only:
-> FS-0047, this plan, the two index rows, and a draft CHANGELOG entry. It does
-> not edit exported guidance or add tests. Implementation begins only after
-> human approval of the spec and plan, an exact implementation `touches:` set,
-> and separate recorded approval for the reserved `scripts/README.md` and
-> `scripts/cross-repo-lint.sh` paths.
+> **Template note (historical):** the first revision published the governance
+> package only: FS-0047, this plan, the two index rows, and a CHANGELOG entry.
+> It did not edit exported guidance or add tests. The implementation revision
+> (the `touches:` set below) proceeds only under the recorded human approval
+> carried by this revision's approval commit, the exact implementation
+> `touches:` set below, and separate recorded approval for the reserved
+> `scripts/README.md`, `scripts/cross-repo-lint.sh`, and
+> `.github/workflows/lint-docs.yml` paths.
 
 ## 1. Feature / Issue Reference
 
@@ -44,24 +67,25 @@ updated: 2026-10-04
 
 ## 2. Scope of Change
 
-**This documentation revision WILL:**
+**This package WILL (documentation + implementation revisions):**
 
-* Publish FS-0047 and this plan as draft documents.
-* Add the new draft rows to the specification and plan indexes.
+* Publish FS-0047 and this plan as approved documents.
+* Add the new approved rows to the specification and plan indexes.
 * Add a CHANGELOG entry that describes the proposal without claiming the
   exported guidance has been corrected.
 
-**This documentation revision will NOT:**
+**This package will NOT:**
 
 * Change `INTEGRATION.md`, a skill, a workflow, a script, a test, or a generated
   runtime copy.
 * Remove legitimate internal repository identity or history.
 * Create or select a replacement organization-specific repository or board.
 
-**The later implementation revision WILL, only after FS-0047 and PLAN-0053 are
-approved, the implementation `touches:` set is exact (it must name
-`scripts/cross-repo-lint.sh`), and recorded human approval covers the reserved
-`scripts/README.md` and `scripts/cross-repo-lint.sh` paths:**
+**The implementation revision WILL (carried by this package; the recorded
+approval above authorizes it, the implementation `touches:` set is exact — it
+names `scripts/cross-repo-lint.sh` — and recorded human approval covers the
+reserved `scripts/README.md`, `scripts/cross-repo-lint.sh`, and
+`.github/workflows/lint-docs.yml` paths):**
 
 * Parameterize the framework source URL in the README, `INTEGRATION.md`, and
   consumer-integration skill using `FRAMEWORK_REPO_URL`; replace fixed temporary
@@ -72,28 +96,49 @@ approved, the implementation `touches:` set is exact (it must name
   actual `CA_REPO_DIRS` and `CA_TARGET_REPO` behavior and remove the named fleet
   inventory; tell consumers to configure an explicit target rather than rely on
   this repository's local sibling defaults — and remove the instance fleet
-  names from `scripts/cross-repo-lint.sh`'s `CA_SIBLING_NAMES` default, leaving
-  the discovery mechanism unchanged (FS-0047 SC-9).
+  names from `scripts/cross-repo-lint.sh`'s `CA_SIBLING_NAMES` default and the
+  instance actor aliases from its `AGENT_EMAILS`/`CRON_AGENT_EMAILS` defaults,
+  leaving the discovery mechanism unchanged; an attribution run with both
+  allowlists unset fails closed naming the variables and the
+  `CA_SKIP_ATTRIBUTION=1` opt-out (FS-0047 SC-9). The instance's CI job exports
+  the allowlists explicitly.
 * Replace framework-instance actor names/emails in reusable identity guidance
   with consumer-selected placeholders; sync generated skill copies from their
   source files.
+* Replace the framework-instance `userName` in
+  `integrations/runtimes/claude-code/settings.fragment.json` with a visible
+  placeholder; re-word the `.github/workflows/lint-docs.yml` comment that
+  names the instance fleet.
 * Add `test/FS-0047/instance-exemptions.tsv` and
   `test/FS-0047/exported-boundary.bats` with unmarked-leak, exact-exemption,
   malformed-exemption, generic-command, and excluded-history fixtures; report
   every finding by path and line.
+* Update `test/FS-0017/attribution-diagnostic.bats`,
+  `test/FS-0043/cron-attribution.bats`, and
+  `test/FS-0017/commit-attribution.bats` so the attribution harnesses use the
+  instance's current actor domain (`advance.enterprises`) and configure the
+  actor allowlists explicitly — the script now ships empty defaults
+  (FS-0047 SC-9), so the harnesses configure the same set the instance
+  tooling uses; the historical `tais-den.dev` aliases stay in the commit
+  allowlist and the CI exports for anchored-history audits.
+* Move the instance's agent-email domain from `tais-den.dev` to
+  `advance.enterprises` across the exported configuration and harnesses —
+  the labeled non-normative appendices, the allowlist, the CI env exports,
+  the attribution harnesses, and the framework's committed
+  `.claude/settings.json`; the old-domain aliases remain only as historical
+  records (accepted ADRs, CHANGELOG, `.mailmap`) and as audit identifiers.
 * Run documentation, status, freshness, conformance, and Bats validation.
 
 The implementation must keep the issue's boundary: generic adoption guidance
 is corrected, while accurate internal identity and historical records remain
 untouched.
 
-Before implementation, re-read the current default branch and open draft PRs
-`#206` and `#208`. PR #206 changes `scripts/README.md` and
-`workflows/git-and-gh-conventions.md`; PR #208 changes `INTEGRATION.md`,
-`scripts/README.md`, the document indexes, and CHANGELOG. Reconcile those
-revisions before editing shared guidance, and base implementation on the
-then-current `trunk`. Do not stack uncoordinated edits onto either draft or
-reuse the audit SHA; if a predecessor remains open or changes scope, revise
+Before implementation, re-read the current default branch and open draft PRs.
+PR #208 (GitHub Pages website governance package) also touches `INTEGRATION.md`
+and `scripts/README.md`; reconcile that revision before editing shared
+guidance, or coordinate shared-file ownership. Base implementation on the
+then-current `trunk`. Do not stack uncoordinated edits onto an open draft or
+reuse an audit SHA; if a predecessor remains open or changes scope, revise
 the plan and coordinate shared-file ownership first.
 
 ## 3. Tests Driving This Change
@@ -120,30 +165,37 @@ the plan and coordinate shared-file ownership first.
 
 ## 4. Files to Be Modified
 
-**This documentation revision:**
+**Approval + implementation revision (this package):**
 
-* `docs/specifications/FS-0047-exported-consumer-boundary-audit.md`
+* `docs/specifications/FS-0047-exported-consumer-boundary-audit.md` (status
+  flip, interface additions)
 * `docs/change-plans/PLAN-0053-implement-fs-0047-exported-consumer-boundary-audit.md`
+  (status flip, exact implementation `touches:`)
 * `docs/specifications/README.md`
 * `docs/change-plans/README.md`
 * `CHANGELOG.md`
-
-**Implementation revision, not this package:**
-
-* `README.md`
-* `INTEGRATION.md`
-* `skills/framework-consumer-integration/SKILL.md`
-* `integrations/runtimes/claude-code/skills/framework-consumer-integration/SKILL.md`
-* `scripts/README.md`
 * `scripts/cross-repo-lint.sh`
+* `scripts/README.md`
+* `.github/workflows/lint-docs.yml`
 * `workflows/git-and-gh-conventions.md`
 * `skills/git-commit-identity/SKILL.md`
 * `integrations/runtimes/claude-code/skills/git-commit-identity/SKILL.md`
 * `skills/git-branch-and-commit/SKILL.md`
 * `integrations/runtimes/claude-code/skills/git-branch-and-commit/SKILL.md`
+* `skills/framework-consumer-integration/SKILL.md`
+* `integrations/runtimes/claude-code/skills/framework-consumer-integration/SKILL.md`
 * `integrations/runtimes/claude-code/README.md`
+* `integrations/runtimes/claude-code/settings.fragment.json`
+* `INTEGRATION.md`
+* `README.md`
 * `test/FS-0047/instance-exemptions.tsv`
 * `test/FS-0047/exported-boundary.bats`
+* `test/FS-0017/attribution-diagnostic.bats` (harness configures the instance
+  actor allowlists explicitly; FS-0047 SC-9)
+* `test/FS-0043/cron-attribution.bats` (same harness configuration)
+* `test/FS-0017/commit-attribution.bats` (current-domain alias assertions +
+  historical allowlist)
+* `.claude/settings.json` (instance actor alias moves to the current domain)
 * Any additional audited exported Markdown file that contains a confirmed
   consumer-specific leak; keep all edits inside FS-0047 `interfaces:`.
 
@@ -183,11 +235,11 @@ the plan and coordinate shared-file ownership first.
     guidance.
   * ADR-0017: do not reference nested framework vendor paths.
   * ADR-0026: approval is a separate recorded act scoped to the exact plan
-    `touches:` set; this draft's documentation-only approval does not authorize
-    implementation.
-  * ADR-0027: `scripts/README.md` and `scripts/cross-repo-lint.sh` are under
-    the reserved `scripts/` path and require recorded human approval before
-    they are changed.
+    `touches:` set; this revision's approval commit carries the exact
+    implementation `touches:` set and the reserved-path record.
+  * ADR-0027: `scripts/README.md`, `scripts/cross-repo-lint.sh`, and
+    `.github/workflows/lint-docs.yml` are reserved paths and require recorded
+    human approval before they are changed.
   * ADR-0030: update current-state docs in place while keeping decision history
     separate.
   * ADR-0033 / FS-0024: configuration names and target-repository behavior must
@@ -218,6 +270,11 @@ the plan and coordinate shared-file ownership first.
   the maintainer's zero-config local multi-repo sweep; instance tooling (the
   maintenance tick and any local dev checkout) must export `CA_SIBLING_NAMES`
   or `CA_REPO_DIRS` explicitly after the change.
+* Emptying the actor-email defaults makes an unconfigured attribution run
+  fail closed (`CA_SKIP_ATTRIBUTION=1` opts out explicitly); every in-repo
+  caller of `npm run lint:cross-repo` — the CI job, the maintenance tick, and
+  local sweeps — must export `AGENT_EMAILS`/`CRON_AGENT_EMAILS` so the
+  instance gate stays enforced rather than skipped.
 
 ## 8. Validation
 
@@ -246,21 +303,26 @@ the plan and coordinate shared-file ownership first.
 * No change to internal ADR/FS/PLAN/CHANGELOG history.
 * No migration of instance policy into the framework core.
 * No real organization-specific repository URL or replacement project board.
-* No change to cross-repository lint behavior or repo discovery semantics.
+* No change to repository discovery semantics or the attribution rule
+  (trailer format, cron boundary); the attribution check's unconfigured
+  behavior is the SC-9 fail-closed contract recorded in §2.
 
 ## 10. Readiness Check
 
-* [ ] Spec is approved
+* [x] Spec is approved
 * [x] Tests are clearly defined for the implementation revision
 * [x] Scope is minimal and explicit
-* [x] No implementation code or test change is included
+* [ ] No implementation code or test change is included
 
 ## Declaration
 
 I affirm that:
 
-* This plan reflects the full intended scope of the documentation revision.
-* Implementation remains blocked until FS-0047 and PLAN-0053 are human-approved,
-  the implementation `touches:` set is approved, and the reserved-path approval
-  for `scripts/README.md` and `scripts/cross-repo-lint.sh` is recorded.
+* This plan reflects the full intended scope of the approval and
+  implementation revisions.
+* Implementation proceeds under this revision: FS-0047 and PLAN-0053 are
+  human-approved, the implementation `touches:` set is exact, and the
+  reserved-path approval for `scripts/README.md`, `scripts/cross-repo-lint.sh`,
+  and `.github/workflows/lint-docs.yml` is recorded on the implementation
+  commit.
 * Any deviation will require revising this plan before implementation.
