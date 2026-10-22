@@ -1,5 +1,5 @@
 ---
-updated: 2026-10-03
+updated: 2026-10-22
 ---
 
 # Git + GitHub (gh) conventions
@@ -133,7 +133,7 @@ Agent-authored PRs MUST include enough context for review. Use this template (co
 - Validation:
 - Risk / Rollback:
 - Agent Attribution (only if any agent authored this PR):
-  - Hermes Agent — model=ollama-cloud/deepseek-v4.1-flash, role=Implementer, session=`desktop-<topic>`
+  - Hermes Agent — `model=ollama-cloud/<model-id>`, role=Implementer, session=`desktop-<topic>`
 
 The Agent Attribution section summarizes the agent actors and their roles
 for the PR as a whole. Per-commit model/role metadata lives in
@@ -236,23 +236,23 @@ distinguishing layer is git's `user.name` / `user.email`:
 
 | Field | Carries | Example |
 | --- | --- | --- |
-| `user.name` | Model display name, human-readable | `Opus 5` |
-| `user.email` | The actor — agent framework or human — as an alias | `claude-code@tais-den.dev` |
+| `user.name` | Model display name, human-readable | `<model>` |
+| `user.email` | The actor — agent framework or human — as an alias | `claude-code@<your-domain>` |
 
 | Commit source | Author line |
 | --- | --- |
-| Claude Code running Opus 5 | `Opus 5 <claude-code@tais-den.dev>` |
-| Hermes Agent (interactive) | `Hermes Agent <hermes-agent@tais-den.dev>` |
-| Hermes Agent (unattended / cron) | `Hermes Agent (cron) <hermes-cron@tais-den.dev>` |
-| Codex (interactive) | `Minimax M3 <codex@tais-den.dev>` |
-| Codex (unattended / cron) | `Minimax M3 (cron) <codex-cron@tais-den.dev>` |
-| Marten (agent persona) | `Marten <github.marten@fwd.mtnden.org>` |
-| Joey Clark, unassisted | `Joey Clark <administrator@ajoeofalltrades.dev>` |
+| Claude Code running a model | `<model> <claude-code@<your-domain>>` |
+| Hermes Agent (interactive) | `Hermes Agent <hermes-agent@<your-domain>>` |
+| Hermes Agent (unattended / cron) | `Hermes Agent (cron) <hermes-cron@<your-domain>>` |
+| Codex (interactive) | `<model> <codex@<your-domain>>` |
+| Codex (unattended / cron) | `<model> (cron) <codex-cron@<your-domain>>` |
+| Agent persona (optional) | `<persona> <persona@<your-domain>>` |
+| Human, unassisted | `<name> <human@<your-domain>>` |
 
 The `user.name` display forms in this table follow ADR-0029: the name
-carries the model's display form (e.g. `Minimax M3`, `Opus 5`) and may
+carries the model's display form and may
 differ from the canonical provider-qualified `model=` token in the
-`Agent-Attribution:` trailer (e.g. `minimax/minimax-3`).
+`Agent-Attribution:` trailer (e.g. `provider/model`).
 
 The human row is the exception: a human is not a model, so `user.name`
 carries the person's name.
@@ -261,11 +261,19 @@ These addresses are aliases under the same login. GitHub renders each
 commit's author email as a link to the same profile, but `git log`,
 `git shortlog`, and downstream tooling can distinguish actors by email.
 
-> **Adopting this convention:** the addresses above are this repository's
-> own actor aliases on its `tais-den.dev` domain. Adopters should substitute
-> their own domain and actor names — the binding part of the convention is
-> the *pattern* (one login, per-actor email aliases, `Agent-Attribution:`
-> trailers), not these concrete values.
+> **Adopting this convention:** the binding part of the convention is the
+> *pattern* — one login, per-actor email aliases, `Agent-Attribution:`
+> trailers — not any concrete address. Substitute your own domain and actor
+> names everywhere `<your-domain>` appears.
+> **Non-normative example — this framework instance's own aliases**
+> (retained for provenance; adopters do not copy them):
+> `Opus 5 <claude-code@advance.enterprises>`,
+> `Hermes Agent <hermes-agent@advance.enterprises>`,
+> `Hermes Agent (cron) <hermes-cron@advance.enterprises>`,
+> `Minimax M3 <codex@advance.enterprises>`,
+> `Minimax M3 (cron) <codex-cron@advance.enterprises>`,
+> `Marten <github.marten@fwd.mtnden.org>`,
+> `Joey Clark <administrator@ajoeofalltrades.dev>`.
 
 `user.name` carries a display form; the `Agent-Attribution:` trailer
 carries the canonical provider-qualified model id. Where the two
@@ -283,11 +291,12 @@ that is obviously wrong; a stale value from a different model is
 well-formed, plausible, and passes any check that only confirms the field
 is non-empty.
 
-This is not hypothetical: a Sonnet 5 session inherited `user.name = "Opus
-5"` from a prior session's leftover `git config`, and independently wrote
-`model=anthropic/claude-opus-5` into an `Agent-Attribution:` trailer — the
-agent had its own correct identity available in its own system context the
-entire time and simply never checked the configured value against it.
+This is not hypothetical: a Sonnet 5 session inherited `user.name = "<model
+display name>"` from a prior session's leftover `git config`, and
+independently wrote `model=<provider>/<model-id>` into an
+`Agent-Attribution:` trailer — the agent had its own correct identity
+available in its own system context the entire time and simply never
+checked the configured value against it.
 
 Before the first commit in a session, compare the configured `user.name` —
 and any value about to be written into an `Agent-Attribution: model=`
@@ -312,8 +321,8 @@ When authoring a single commit as an agent, override the identity inline
 rather than mutating global `git config`:
 
 ```bash
-git -c user.name="Opus 5" \
-    -c user.email="claude-code@tais-den.dev" \
+git -c user.name="<Model>" \
+    -c user.email="<actor>@<your-domain>" \
     commit -m "..."
 ```
 
@@ -324,7 +333,7 @@ record each contributing agent in an `Agent-Attribution:` trailer:
 ```text
 docs: explain single-identity workflow with agent attribution
 
-Agent-Attribution: actor=claude-code; model=anthropic/claude-opus-5; role=Head Architect; session=architecture-planning
+Agent-Attribution: actor=claude-code; model=<provider>/<model-id>; role=Head Architect; session=architecture-planning
 ```
 
 GitHub renders `Co-authored-by:` trailers natively as a second author chip
@@ -349,7 +358,7 @@ is normative:
 | Field | Canonical form | Valid examples | Invalid examples |
 | --- | --- | --- | --- |
 | `actor=` | Lowercase slug naming the agent persona | `hermes-agent`, `claude-code`, `codex`, `marten` | `Hermes Agent`, `Claude Code` |
-| `model=` | Provider-qualified `provider/vendor/model[:variant]` | `ollama-cloud/deepseek-v4.1-flash`, `anthropic/claude-opus-5` | `Opus 5`, `deepseek-v4.1-flash` (bare) |
+| `model=` | Provider-qualified `provider/vendor/model[:variant]` | `ollama-cloud/<model-id>`, `anthropic/<model-id>` | `<display name>`, `<model-id>` (bare) |
 | `role=` | ROLE_CONTRACT role in title case | `Implementer`, `Head Architect`, `Document Author` | `implementer`, `document-author` |
 | `session=` | Lowercase kebab-case session name | `architecture-planning`, `conventional-agents-maintenance` | `Architecture Planning` |
 | `mode=` | Conditional terminal field; mandatory `autonomous` for configured cron identities after the adoption boundary (ADR-0021 / FS-0043) | `mode=autonomous` | `mode=hybrid` |
@@ -360,7 +369,8 @@ Field order is fixed: `actor; model; role; session; mode?`.
 
 - `.mailmap` at the repository root is the canonical alias table. Keep
   it in sync with the actor table above and the allowlist in
-  `test/FS-0017/commit-attribution.bats`.
+  `test/FS-0017/commit-attribution.bats`. Agent aliases are already
+  canonical, so `.mailmap` carries the human and legacy-persona mappings.
 - A history rewrite may normalize **identities only** (author and
   committer name/email via `.mailmap`). Trailers are never edited
   retroactively — they are the audit record. Verify tree-identical and
@@ -376,8 +386,8 @@ identity once via environment or a local include:
 
 ```bash
 # Bash — export once at session start
-export GIT_AUTHOR_NAME="Opus 5"
-export GIT_AUTHOR_EMAIL="claude-code@tais-den.dev"
+export GIT_AUTHOR_NAME="<Model>"
+export GIT_AUTHOR_EMAIL="<actor>@<your-domain>"
 export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
 export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
 ```
@@ -391,8 +401,8 @@ export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
 ```ini
 # ~/.gitconfig-agent
 [user]
-    name = Opus 5
-    email = claude-code@tais-den.dev
+    name = <Model>
+    email = <actor>@<your-domain>
 ```
 
 ### Issue / work-item stance
@@ -433,10 +443,9 @@ identity is.
 
 ### When to use each layer
 
-- **Pure-human commit** (Joey wrote the code, the message, the review):
+- **Pure-human commit** (the human wrote the code, the message, the review):
   no special action. Default `user.email` should already be
-  `Joey Clark <administrator@ajoeofalltrades.dev>` (this repository's
-  own alias — adopters substitute their own domain).
+  `<name> <human@<your-domain>>` (your own alias).
 - **Pure-agent commit** (agent wrote and committed autonomously):
   set the agent's `user.email` via per-commit override or per-session
   config. Add an `Agent-Attribution:` trailer recording model, role,
@@ -454,9 +463,7 @@ When this repository (or any project following this convention) is ready to
 transition to separate GitHub accounts, the migration path is:
 
 1. Create `<org>-agent-committer` and `<org>-agent-reviewer` accounts
-   (this repository's own future accounts would be
-   `taisden-agent-committer` and `taisden-agent-reviewer` — adopters
-   substitute their own organization).
+   (adopters substitute their own organization).
 2. Add the existing emails as additional addresses on each actor's
    GitHub profile so historical commits still link correctly.
 3. Switch per-agent sessions from `GIT_AUTHOR_EMAIL` overrides to

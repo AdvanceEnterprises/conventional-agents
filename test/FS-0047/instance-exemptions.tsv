@@ -1,0 +1,27 @@
+# FS-0047 instance exemption allowlist.
+# Format: three tab-separated fields per row —
+#   repository-relative path	exact identifier literal	rationale
+# Blank lines and lines beginning with # are ignored. The path and literal
+# may not contain a glob or regular-expression pattern, and each path/literal
+# pair must match exactly one occurrence in the scanned surface.
+workflows/git-and-gh-conventions.md	claude-code@advance.enterprises	non-normative appendix: this framework instance's own actor alias, retained for provenance
+workflows/git-and-gh-conventions.md	hermes-agent@advance.enterprises	non-normative appendix: this framework instance's own actor alias, retained for provenance
+workflows/git-and-gh-conventions.md	hermes-cron@advance.enterprises	non-normative appendix: this framework instance's own actor alias, retained for provenance
+workflows/git-and-gh-conventions.md	codex@advance.enterprises	non-normative appendix: this framework instance's own actor alias, retained for provenance
+workflows/git-and-gh-conventions.md	codex-cron@advance.enterprises	non-normative appendix: this framework instance's own actor alias, retained for provenance
+workflows/git-and-gh-conventions.md	github.marten@fwd.mtnden.org	non-normative appendix: this framework instance's own actor alias, retained for provenance
+workflows/git-and-gh-conventions.md	administrator@ajoeofalltrades.dev	non-normative appendix: this framework instance's own actor alias, retained for provenance
+skills/git-commit-identity/SKILL.md	claude-code@advance.enterprises	non-normative appendix: this framework instance's own actor alias, retained for provenance
+skills/git-commit-identity/SKILL.md	hermes-agent@advance.enterprises	non-normative appendix: this framework instance's own actor alias, retained for provenance
+skills/git-commit-identity/SKILL.md	hermes-cron@advance.enterprises	non-normative appendix: this framework instance's own actor alias, retained for provenance
+skills/git-commit-identity/SKILL.md	codex@advance.enterprises	non-normative appendix: this framework instance's own actor alias, retained for provenance
+skills/git-commit-identity/SKILL.md	codex-cron@advance.enterprises	non-normative appendix: this framework instance's own actor alias, retained for provenance
+skills/git-commit-identity/SKILL.md	github.marten@fwd.mtnden.org	non-normative appendix: this framework instance's own actor alias, retained for provenance
+skills/git-commit-identity/SKILL.md	administrator@ajoeofalltrades.dev	non-normative appendix: this framework instance's own actor alias, retained for provenance
+integrations/runtimes/claude-code/skills/git-commit-identity/SKILL.md	claude-code@advance.enterprises	non-normative appendix: byte-identical generated copy of the source skill's instance-actor appendix
+integrations/runtimes/claude-code/skills/git-commit-identity/SKILL.md	hermes-agent@advance.enterprises	non-normative appendix: byte-identical generated copy of the source skill's instance-actor appendix
+integrations/runtimes/claude-code/skills/git-commit-identity/SKILL.md	hermes-cron@advance.enterprises	non-normative appendix: byte-identical generated copy of the source skill's instance-actor appendix
+integrations/runtimes/claude-code/skills/git-commit-identity/SKILL.md	codex@advance.enterprises	non-normative appendix: byte-identical generated copy of the source skill's instance-actor appendix
+integrations/runtimes/claude-code/skills/git-commit-identity/SKILL.md	codex-cron@advance.enterprises	non-normative appendix: byte-identical generated copy of the source skill's instance-actor appendix
+integrations/runtimes/claude-code/skills/git-commit-identity/SKILL.md	github.marten@fwd.mtnden.org	non-normative appendix: byte-identical generated copy of the source skill's instance-actor appendix
+integrations/runtimes/claude-code/skills/git-commit-identity/SKILL.md	administrator@ajoeofalltrades.dev	non-normative appendix: byte-identical generated copy of the source skill's instance-actor appendix

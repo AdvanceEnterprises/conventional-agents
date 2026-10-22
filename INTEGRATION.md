@@ -93,7 +93,7 @@ This is the substrate the framework itself runs on. Configuration:
 3. **Labels** — six labels classified by content (`enhancement`, `bug`, `documentation`) and
    position (`spec`, `plan`, `question`).
 4. **Unattended actor** — a dedicated GitHub identity (machine user or PAT) with a distinct
-   email alias (e.g., `hermes-cron@tais-den.dev`), per `ADR-0021`.
+   email alias (e.g., `<actor>-cron@<your-domain>`), per `ADR-0021`.
 5. **Trigger handlers** — webhook handlers that:
    - Verify the agent's `user.email` against the unattended alias before applying the
      `mode=autonomous` stance to a work item.

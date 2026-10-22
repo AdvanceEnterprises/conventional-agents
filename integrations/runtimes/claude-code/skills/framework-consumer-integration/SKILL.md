@@ -73,10 +73,11 @@ Use when tools only read root files, or for one-off snapshots where submodule
 maintenance is not worth the overhead.
 
 ```bash
-git clone https://github.com/AdvanceEnterprises/conventional-agents.git /tmp/conventional-agents
-cp -r /tmp/conventional-agents/guidelines /path/to/host-repo/
-cp -r /tmp/conventional-agents/roles /path/to/host-repo/
-cp -r /tmp/conventional-agents/workflows /path/to/host-repo/
+FRAMEWORK_SRC="$(mktemp -d)/conventional-agents"
+git clone "${FRAMEWORK_REPO_URL:-https://github.com/AdvanceEnterprises/conventional-agents.git}" "$FRAMEWORK_SRC"
+cp -r "$FRAMEWORK_SRC/guidelines" /path/to/host-repo/
+cp -r "$FRAMEWORK_SRC/roles" /path/to/host-repo/
+cp -r "$FRAMEWORK_SRC/workflows" /path/to/host-repo/
 ```
 
 Then create `AGENTS.md` pointing at the copied files and record the snapshot

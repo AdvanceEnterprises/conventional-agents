@@ -66,6 +66,13 @@ ACTOR_EMAILS=(
   "codex-cron@tais-den.dev"
   "claude-code@tais-den.dev"
   "github.marten@fwd.mtnden.org"
+  # Post-domain-move aliases (the instance's current actor domain; the
+  # tais-den.dev entries above remain for historical commits).
+  "hermes-agent@advance.enterprises"
+  "hermes-cron@advance.enterprises"
+  "codex@advance.enterprises"
+  "codex-cron@advance.enterprises"
+  "claude-code@advance.enterprises"
 )
 
 # Audit anchor for trailer enforcement. ADR-0018/ADR-0036 take effect going
@@ -100,7 +107,7 @@ agent_attribution_pattern() {
 
 @test "workflow doc teaches the single-identity convention" {
   assert_file_contains "$REPO_ROOT/workflows/git-and-gh-conventions.md" "Single-identity workflow with agent co-attribution"
-  assert_file_contains "$REPO_ROOT/workflows/git-and-gh-conventions.md" "hermes-agent@tais-den.dev"
+  assert_file_contains "$REPO_ROOT/workflows/git-and-gh-conventions.md" "hermes-agent@advance.enterprises"
   assert_file_contains "$REPO_ROOT/workflows/git-and-gh-conventions.md" "Co-authored-by:"
   assert_file_contains "$REPO_ROOT/workflows/git-and-gh-conventions.md" "Agent-Attribution:"
   assert_file_contains "$REPO_ROOT/workflows/git-and-gh-conventions.md" "reserved for human–human"
@@ -113,7 +120,7 @@ agent_attribution_pattern() {
   # attribution content — what this test guards — moved to git-commit-identity;
   # git-gh-workflow is retained as a deprecated router only.
   assert_file_contains "$REPO_ROOT/skills/git-commit-identity/SKILL.md" "Single-Identity Workflow"
-  assert_file_contains "$REPO_ROOT/skills/git-commit-identity/SKILL.md" "hermes-agent@tais-den.dev"
+  assert_file_contains "$REPO_ROOT/skills/git-commit-identity/SKILL.md" "hermes-agent@advance.enterprises"
   assert_file_contains "$REPO_ROOT/skills/git-commit-identity/SKILL.md" "Co-authored-by:"
   assert_file_contains "$REPO_ROOT/skills/git-commit-identity/SKILL.md" "Agent-Attribution:"
 }
@@ -213,7 +220,7 @@ agent_attribution_pattern() {
     [[ -z "$sha" ]] && continue
     email="$(git -C "$REPO_ROOT" log -1 --format='%ae' "$sha")"
     case "$email" in
-      hermes-agent@tais-den.dev|hermes-cron@tais-den.dev|codex@tais-den.dev|codex-cron@tais-den.dev|claude-code@tais-den.dev|github.marten@fwd.mtnden.org)
+      hermes-agent@tais-den.dev|hermes-cron@tais-den.dev|codex@tais-den.dev|codex-cron@tais-den.dev|claude-code@tais-den.dev|github.marten@fwd.mtnden.org|hermes-agent@advance.enterprises|hermes-cron@advance.enterprises|codex@advance.enterprises|codex-cron@advance.enterprises|claude-code@advance.enterprises)
         message="$(git -C "$REPO_ROOT" log -1 --format='%B' "$sha")"
         trailer_lines="$(printf '%s\n' "$message" | git -C "$REPO_ROOT" interpret-trailers --parse | grep -i '^Agent-Attribution:' || true)"
         if [[ -z "$trailer_lines" ]]; then

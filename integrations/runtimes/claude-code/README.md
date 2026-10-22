@@ -72,8 +72,8 @@ jq -s '.[0] * .[1]' .claude/settings.json integrations/runtimes/claude-code/sett
   > .claude/settings.json.tmp && mv .claude/settings.json.tmp .claude/settings.json
 ```
 
-The framework's own committed `.claude/settings.json` uses the concrete
-actor `Claude Code <claude-code@tais-den.dev>` (per
+The framework's own committed `.claude/settings.json` uses this instance's
+own concrete actor alias and model display name (per
 `workflows/git-and-gh-conventions.md`); consumers substitute their own actor
 address.
 

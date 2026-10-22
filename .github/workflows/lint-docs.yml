@@ -59,8 +59,8 @@ on:
       - "scripts/**/*"
       - "test/**/*.bats"
 
-# Spend guards (CI-refactor mitigation for the recurring Actions billing
-# condition — feral-fleet #207). `concurrency` cancels a superseded generation
+# Spend guards (CI-refactor mitigation for a recurring Actions billing
+# condition). `concurrency` cancels a superseded generation
 # when the same ref is pushed again while a run is in flight: without it, every
 # rapid reviewer-feedback push launched a full 11-job workflow whose outcome the
 # next push immediately superseded, consuming included Actions minutes in full.
@@ -288,6 +288,12 @@ jobs:
           npm run lint:cross-repo
         env:
           CA_REPO_DIRS: ${{ github.workspace }}
+          # FS-0047 SC-9: the script ships empty actor-email defaults; the
+          # instance configures its allowlists explicitly (the maintenance
+          # tick and local sweeps set the same values for the fleet) —
+          # both the historical and the current actor domains.
+          AGENT_EMAILS: hermes-agent@tais-den.dev hermes-cron@tais-den.dev codex@tais-den.dev codex-cron@tais-den.dev claude-code@tais-den.dev github.marten@fwd.mtnden.org hermes-agent@advance.enterprises hermes-cron@advance.enterprises codex@advance.enterprises codex-cron@advance.enterprises claude-code@advance.enterprises
+          CRON_AGENT_EMAILS: hermes-cron@tais-den.dev codex-cron@tais-den.dev hermes-cron@advance.enterprises codex-cron@advance.enterprises
 
   current-state-update:
     # ADR-0030 rule 3, per FS-0022 §3: an ADR that changes a rule must modify the
@@ -396,6 +402,12 @@ jobs:
         env:
           CA_VALIDATION_LOG: ${{ runner.temp }}/conventional-agents-validation.log
           COMMIT_RANGE: ${{ github.event_name == 'pull_request' && format('origin/{0}..HEAD', github.base_ref) || 'HEAD~20..HEAD' }}
+          # FS-0047 SC-9: the script ships empty actor-email defaults and
+          # fails closed unconfigured; the instance's canonical validation
+          # exports the allowlists explicitly (both the historical and the
+          # current actor domains).
+          AGENT_EMAILS: hermes-agent@tais-den.dev hermes-cron@tais-den.dev codex@tais-den.dev codex-cron@tais-den.dev claude-code@tais-den.dev github.marten@fwd.mtnden.org hermes-agent@advance.enterprises hermes-cron@advance.enterprises codex@advance.enterprises codex-cron@advance.enterprises claude-code@advance.enterprises
+          CRON_AGENT_EMAILS: hermes-cron@tais-den.dev codex-cron@tais-den.dev hermes-cron@advance.enterprises codex-cron@advance.enterprises
       - name: Upload canonical validation log
         if: always()
         uses: actions/upload-artifact@v4

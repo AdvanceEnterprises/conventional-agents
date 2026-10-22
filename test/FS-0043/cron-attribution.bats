@@ -8,6 +8,13 @@
 LINT_SCRIPT="$BATS_TEST_DIRNAME/../../scripts/cross-repo-lint.sh"
 BOUNDARY="2026-10-03T00:00:00Z"
 
+# The script ships empty actor-email defaults (FS-0047 SC-9): the framework
+# instance configures its allowlists explicitly. These fixtures plant cron
+# commits as hermes-cron@advance.enterprises, so the harness exports the same set
+# the instance tooling uses.
+export AGENT_EMAILS="hermes-agent@advance.enterprises hermes-cron@advance.enterprises codex@advance.enterprises codex-cron@advance.enterprises claude-code@advance.enterprises github.marten@fwd.mtnden.org"
+export CRON_AGENT_EMAILS="hermes-cron@advance.enterprises codex-cron@advance.enterprises"
+
 build_repo() {
   local repo="$1"
   mkdir -p "$repo/docs/specifications" "$repo/docs/change-plans" "$repo/docs/decisions"
@@ -30,7 +37,7 @@ plant_cron_commit() {
   git -C "$repo" add -A
   GIT_AUTHOR_DATE="$date" GIT_COMMITTER_DATE="$date" \
     git -C "$repo" -c user.name="Hermes Agent (cron)" \
-      -c user.email="hermes-cron@tais-den.dev" commit -q -F "$msgfile"
+      -c user.email="hermes-cron@advance.enterprises" commit -q -F "$msgfile"
 }
 
 plant_human_commit() {
@@ -121,7 +128,7 @@ $(cron_trailer missing)" "old.txt"
   git -C "$repo" add -A
   GIT_AUTHOR_DATE="2026-10-03T01:00:00Z" GIT_COMMITTER_DATE="2026-10-03T01:00:00Z" \
     git -C "$repo" -c user.name="Hermes Agent" \
-      -c user.email="hermes-agent@tais-den.dev" commit -q -m "feat: interactive agent without autonomous marker"
+      -c user.email="hermes-agent@advance.enterprises" commit -q -m "feat: interactive agent without autonomous marker"
 
   run_lint "$repo"
 

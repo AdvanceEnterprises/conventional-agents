@@ -82,19 +82,21 @@ moves to git commit metadata plus trailers.
 
 | Commit source | Author line |
 | --- | --- |
-| Claude Code running Opus 5 | `Opus 5 <claude-code@tais-den.dev>` |
-| Hermes Agent (multi-model framework) | `Hermes Agent <hermes-agent@tais-den.dev>` |
-| The human, unassisted | `Joey Clark <administrator@ajoeofalltrades.dev>` |
+| Claude Code running a model | `<model> <claude-code@<your-domain>>` |
+| Hermes Agent (multi-model framework) | `Hermes Agent <hermes-agent@<your-domain>>` |
+| The human, unassisted | `<name> <human@<your-domain>>` |
 
-Known actor emails: `claude-code@tais-den.dev`, `hermes-agent@tais-den.dev`,
-`hermes-cron@tais-den.dev`, `codex@tais-den.dev`, `codex-cron@tais-den.dev`,
-`github.marten@fwd.mtnden.org`, `administrator@ajoeofalltrades.dev`. The
-canonical alias table lives in `.mailmap` (`ADR-0036`).
-
-> **Adopting this convention:** these are this repository's own actor aliases on
-> its `tais-den.dev` domain. Adopters substitute their own domain and actor
-> names — the binding part is the pattern (one login, per-actor email aliases,
-> `Agent-Attribution:` trailers), not these concrete values.
+> **Non-normative example — this framework instance's own aliases** (retained
+> for provenance; adopters do not copy them): `claude-code@advance.enterprises`,
+> `hermes-agent@advance.enterprises`, `hermes-cron@advance.enterprises`,
+> `codex@advance.enterprises`, `codex-cron@advance.enterprises`,
+> `github.marten@fwd.mtnden.org`, `administrator@ajoeofalltrades.dev`. The
+> canonical alias table lives in `.mailmap` (`ADR-0036`); agent aliases are
+> already canonical, so `.mailmap` carries the human and legacy-persona
+> mappings.
+> **Adopting this convention:** the binding part is the pattern — one login,
+> per-actor email aliases, `Agent-Attribution:` trailers — not these concrete
+> values. Adopters substitute their own domain and actor names.
 
 ## Example 1 — Per-commit override
 
@@ -102,8 +104,8 @@ Use this when authoring one commit as an agent. Do not mutate global
 `git config user.email`.
 
 ```bash
-git -c user.name="Opus 5" \
-    -c user.email="claude-code@tais-den.dev" \
+git -c user.name="<Model>" \
+    -c user.email="<actor>@<your-domain>" \
     commit -m "docs: clarify the identity gate"
 ```
 
@@ -112,8 +114,8 @@ git -c user.name="Opus 5" \
 For sustained agent work in one session:
 
 ```bash
-export GIT_AUTHOR_NAME="Opus 5"
-export GIT_AUTHOR_EMAIL="claude-code@tais-den.dev"
+export GIT_AUTHOR_NAME="<Model>"
+export GIT_AUTHOR_EMAIL="<actor>@<your-domain>"
 export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
 export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
 ```
@@ -145,12 +147,12 @@ a trailer.
 ```text
 docs: explain single-identity workflow
 
-Agent-Attribution: actor=claude-code; model=anthropic/claude-opus-5; role=Implementer; session=implementation
+Agent-Attribution: actor=claude-code; model=<provider>/<model-id>; role=Implementer; session=implementation
 ```
 
 ```bash
 # Commit under the human identity; the trailer records the agent's part.
-git -c user.name="Joey Clark" -c user.email="administrator@ajoeofalltrades.dev" commit -m "docs: explain single-identity workflow"
+git -c user.name="<Name>" -c user.email="<human>@<your-domain>" commit -m "docs: explain single-identity workflow"
 ```
 
 ## Verify Before You Commit

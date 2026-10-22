@@ -104,7 +104,7 @@ git push -u origin HEAD
 ## Example 2 — Commit with a body and agent attribution
 
 ```bash
-git -c user.name="Opus 5" -c user.email="claude-code@tais-den.dev" \
+git -c user.name="<Model>" -c user.email="<actor>@<your-domain>" \
   commit -F - <<'MSG'
 fix: reject empty label sets in the provisioning path
 

@@ -19,11 +19,10 @@ treats documents as the primary interface between humans and agents:
 
 ## Project Board
 
-Work tracking for the conventional-agents project uses a GitHub Project board.
-Board metadata (IDs, fields, options) is maintained outside this repository at
-[`pack-protocol/config/boards/conventional-agents.yml`](https://github.com/Tais-Den/pack-protocol/blob/trunk/config/boards/conventional-agents.yml).
-The board lives in the Tais-Den organization; external contributors can open
-issues without it — the board is a maintainer-side tracking surface.
+Work tracking for the conventional-agents project uses a maintainer-side
+GitHub Project board. Board metadata (IDs, fields, options) is maintained
+outside this repository; external contributors can open issues without it —
+the board is a maintainer-side tracking surface.
 
 ## Security and Conduct
 
@@ -239,7 +238,7 @@ git commit -m "chore: update conventional-agents to latest"
 For one-time use or when tools only read root files:
 
 ```bash
-git clone https://github.com/AdvanceEnterprises/conventional-agents.git
+git clone "${FRAMEWORK_REPO_URL:-https://github.com/AdvanceEnterprises/conventional-agents.git}" conventional-agents
 cp -r conventional-agents/guidelines /path/to/your-project/
 cp -r conventional-agents/roles /path/to/your-project/
 cp -r conventional-agents/workflows /path/to/your-project/
