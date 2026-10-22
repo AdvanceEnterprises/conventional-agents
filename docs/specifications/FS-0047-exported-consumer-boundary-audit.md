@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0047
-status: draft
+status: approved
 title: Reusable consumer guidance without instance-specific leakage
 owner: ajoeofalltrades
 test_required: true
@@ -10,13 +10,19 @@ interfaces:
   - "README.md"
   - "AGENTS.md"
   - "CONTRIBUTING.md"
+  - ".github/workflows/lint-docs.yml"
   - "scripts/README.md"
   - "scripts/cross-repo-lint.sh"
   - "skills/**/*.md"
   - "workflows/*.md"
   - "integrations/**/*.md"
+  - "integrations/runtimes/claude-code/settings.fragment.json"
   - "test/FS-0047/**"
   - "test/FS-0047/instance-exemptions.tsv"
+  - "test/FS-0017/attribution-diagnostic.bats"
+  - "test/FS-0043/cron-attribution.bats"
+  - "test/FS-0017/commit-attribution.bats"
+  - ".claude/settings.json"
   - "docs/specifications/FS-0047-exported-consumer-boundary-audit.md"
   - "docs/change-plans/PLAN-0053-implement-fs-0047-exported-consumer-boundary-audit.md"
   - "docs/specifications/README.md"
@@ -36,7 +42,7 @@ supersedes: []
 requires: []
 tags: [consumer-boundary, exported-surface, portability]
 created: 2026-10-04
-updated: 2026-10-04
+updated: 2026-10-22
 ---
 <!--
 PARSING_HINTS:
@@ -51,16 +57,16 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Approved
 
 ## Plan Status
 
-- **PLAN-0053 is `draft`.** The initial package contains this spec, its plan,
-  index rows, and a draft CHANGELOG entry only. It does not edit the exported
-  guidance or add a regression test.
-- The implementation includes a test under `test/FS-0047/`, but it remains
-  blocked by the spec-first lifecycle until both governed documents are
-  approved.
+- **PLAN-0053 is `approved`.** The documentation package (this spec, its plan,
+  index rows, and a CHANGELOG entry) is merged with this approval; the
+  implementation revision proceeds under the approved plan's `touches:` set,
+  with recorded human approval for the reserved paths.
+- The implementation includes the regression audit under `test/FS-0047/`,
+  authorized by the recorded approval of both governed documents.
 
 ## Summary
 
@@ -95,8 +101,10 @@ must be visibly non-normative and narrowly allowlisted.
 - Adding consumer-specific policies, a replacement project board, or a new
   organization-specific repository.
 - Changing the semantics of cross-repository lint or its configuration
-  mechanism (`CA_REPO_DIRS`, `CA_TARGET_REPO`, `CA_SIBLING_NAMES`); only the
-  instance fleet names in the sibling-discovery *default* are removed.
+  mechanism (`CA_REPO_DIRS`, `CA_TARGET_REPO`, `CA_SIBLING_NAMES`); the
+  instance fleet names in the sibling-discovery *default* and the instance
+  actor aliases in the actor-email *defaults* are removed — the mechanism and
+  its configuration variables stay.
 - Making framework guidance depend on a consumer repository or provider.
 
 ## Users / Stakeholders
@@ -137,6 +145,20 @@ must be visibly non-normative and narrowly allowlisted.
     every unapproved match with source path and line.
   - Generated Claude Code skill copies remain synchronized with their source
     skills when a source skill changes.
+  - The remaining front-matter interface entries are carried by this
+    implementation: the Claude settings fragment is parameterized
+    (`{{MODEL_DISPLAY_NAME}}` placeholders, no instance model data), the
+    framework's committed `.claude/settings.json` carries the instance's
+    current actor domain (`advance.enterprises`), the `lint-docs.yml` comment
+    carries no fleet name — and its lint-cross-repo env block carries the
+    instance actor allowlists (both the historical and the current domains)
+    as intentional in-scope configuration — and the attribution harnesses
+    (`test/FS-0017/attribution-diagnostic.bats`,
+    `test/FS-0043/cron-attribution.bats`,
+    `test/FS-0017/commit-attribution.bats`) use the current domain and
+    configure the instance actor allowlists explicitly (SC-9); the
+    historical `tais-den.dev` aliases remain only as excluded historical
+    records and audit identifiers.
 
 The audit covers root `README.md`, `AGENTS.md`, `CONTRIBUTING.md`,
 `INTEGRATION.md`, and Markdown under `guidelines/`, `roles/`, `skills/`,
@@ -190,12 +212,16 @@ and literal. Framework identity/history outside this scan remains unchanged.
   guidance and regression test, when `npm run lint:docs`, `npm run check:status`,
   the conformance doctor, and `npm test` run, then they complete without a
   GitHub or Notion dependency.
-- **SC-9 — the exported script carries no named fleet.** Given
-  `scripts/cross-repo-lint.sh`, when its source is inspected, then its
+- **SC-9 — the exported script carries no named fleet or instance actors.**
+  Given `scripts/cross-repo-lint.sh`, when its source is inspected, then its
   sibling-discovery default is **empty** — no repository or fleet names are
-  baked in — so the unconfigured heuristic resolves nothing; a consumer
-  (including this repository's own instance tooling) must configure
-  `CA_REPO_DIRS`, `CA_TARGET_REPO`, or `CA_SIBLING_NAMES` explicitly.
+  baked in — so the unconfigured heuristic resolves nothing; its actor-email
+  allowlists (`AGENT_EMAILS`, `CRON_AGENT_EMAILS`) default **empty**, and an
+  attribution run with both lists unset fails closed, naming the variables
+  and the explicit `CA_SKIP_ATTRIBUTION=1` opt-out — which reports the check
+  skipped, never enforced. A consumer (including this repository's own
+  instance tooling) must configure `CA_REPO_DIRS`, `CA_TARGET_REPO`,
+  `CA_SIBLING_NAMES`, or the actor lists explicitly.
 
 ## Edge Cases
 
@@ -222,11 +248,13 @@ and literal. Framework identity/history outside this scan remains unchanged.
 - Accepted ADR-0016 places consumer-specific conventions outside the framework.
 - Accepted ADR-0017 keeps the framework's nested vendor paths internal.
 - ADR-0026 requires recorded human approval scoped to the exact `touches:` set;
-  approval of this draft documentation package does not authorize its later
-  implementation.
-- ADR-0027 reserves `scripts/`; changing `scripts/README.md` or
-  `scripts/cross-repo-lint.sh` requires a recorded human approval for that
-  path before implementation.
+  the approval commit carries the implementation `touches:` set, and the
+  reserved-path approval is a separate recorded act on the implementation
+  commit.
+- ADR-0027 reserves `scripts/` and `.github/workflows/`; changing
+  `scripts/README.md`, `scripts/cross-repo-lint.sh`, or
+  `.github/workflows/lint-docs.yml` requires a recorded human approval for
+  that path before implementation.
 - Accepted ADR-0037 governs the parameterized GitHub binding; no proposed ADR is
   required as authority for this spec.
 
