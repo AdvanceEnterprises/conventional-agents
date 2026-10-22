@@ -272,8 +272,7 @@ target names a repository, not a directory within one.
    output from having run the rule and found nothing to flag. This is also
    the correct, permanent state for a repository with no exported surface at
    all — a pure instance-form repository per `ADR-0032` that nobody vendors,
-   the concrete case this rule's design was checked against
-   (`feral-fleet`).
+   the concrete case this rule's design was checked against.
 8. **Referenced-path resolution** (`FS-0022` §1c, extended by `FS-0037`).
    Every path a current-state document names in backticks must resolve,
    relative to the repository root or the naming document's own directory.
@@ -527,8 +526,8 @@ status PR), and locally via `npm run check:delivery`.
 
 `npm run lint:cross-repo` runs `bash scripts/cross-repo-lint.sh`.
 
-**Purpose.** Validates cross-repo consistency across the Tais-Den fleet
-(conventional-agents, feral-fleet, pack-protocol):
+**Purpose.** Validates cross-repo consistency across a caller-configured
+repository set:
 
 1. **Agent-Attribution trailer format (FS-0017)** across recent commits on
    each repo's default branch
@@ -542,12 +541,15 @@ status PR), and locally via `npm run check:delivery`.
    `README.md` index.
 3. **FS/PLAN numbering validity** — no duplicate IDs within a repo.
 
-**Repo discovery.** Heuristic sibling lookup from the framework home, or
-explicit via `CA_REPO_DIRS` (colon-separated repo roots) and `CA_TARGET_REPO`
-(single repo, takes precedence). A vendored copy checks the host repository
-when pointed at it explicitly. In a single-repo context (a CI runner, or a
-checkout without siblings) the heuristic resolves to the repository present;
-finding zero repositories is a hard failure, never a silent pass.
+**Repo discovery.** Explicit target selection via `CA_REPO_DIRS`
+(colon-separated repo roots) and `CA_TARGET_REPO` (single repo, takes
+precedence); a vendored copy checks the host repository when pointed at it
+explicitly. When neither is set, sibling discovery under the framework's
+parent directory consults `CA_SIBLING_NAMES` (space-separated repo names) —
+whose default is **empty**, so the unconfigured heuristic resolves nothing.
+A consumer sets an explicit target rather than rely on local discovery
+defaults; finding zero repositories is a hard failure that tells the caller
+to set `CA_REPO_DIRS` or `CA_TARGET_REPO`, never a silent pass.
 
 **Config.**
 - `COMMIT_RANGE` — git log range for the attribution check. Explicit ranges
@@ -572,8 +574,14 @@ finding zero repositories is a hard failure, never a silent pass.
   (`YYYY-MM-DDTHH:MM:SSZ`) or epoch seconds. Default
   `2026-10-03T00:00:00Z`; equality is grandfathered. An invalid value is a
   hard failure.
+- `AGENT_EMAILS` — space-separated actor emails that must carry an
+  `Agent-Attribution:` trailer. Empty by default: an instance configures its
+  own actor aliases explicitly. An attribution run with both allowlists empty
+  **fails closed**, naming the variables; set
+  `CA_SKIP_ATTRIBUTION=1` to skip it explicitly (the run then reports SKIP —
+  "cron boundary not enforced" — never a passing attribution check).
 - `CRON_AGENT_EMAILS` — space-separated configured unattended actor emails;
-  default `hermes-cron@tais-den.dev codex-cron@tais-den.dev`.
+  empty by default (set explicitly to enable the boundary-aware cron rule).
 - **Diagnostic precedence.** If Git's trailer parser returns no trailer
   material, the missing/malformed-attribution diagnostic is emitted and the
   cron boundary check is skipped; no separate timestamp diagnostic is emitted.

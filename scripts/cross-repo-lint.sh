@@ -23,8 +23,11 @@
 #   CRON_ATTRIBUTION_BOUNDARY — ISO-8601 UTC timestamp or epoch seconds. Cron
 #                      commits at or before the boundary are grandfathered.
 #                      Default: 2026-10-03T00:00:00Z (the adoption boundary).
-#   CRON_AGENT_EMAILS — space-separated unattended actor emails. Defaults to
-#                      the cron identities shipped by this framework.
+#   CRON_AGENT_EMAILS — space-separated unattended actor emails. Empty by
+#                      default; set explicitly to enable attribution checks.
+#   CA_SKIP_ATTRIBUTION — set to 1 to skip the attribution check entirely
+#                      when the allowlists are unconfigured; the run reports
+#                      SKIP, never "enforced".
 set -euo pipefail
 
 FRAMEWORK_HOME="$(cd "$(dirname "$0")/.." && pwd)"
@@ -60,17 +63,19 @@ elif [ -n "${CA_REPO_DIRS:-}" ]; then
   done
 else
   # Heuristic: walk up from $FRAMEWORK_HOME to find sibling repos of the
-  # governance stack this script lints. Override the stack with
-  # CA_SIBLING_NAMES (space-separated) for other layouts.
+  # governance stack this script lints. The sibling-name set is empty by
+  # default — a caller names its layout explicitly via CA_SIBLING_NAMES
+  # (space-separated), or points at the target with CA_REPO_DIRS /
+  # CA_TARGET_REPO. The unconfigured heuristic resolves nothing.
   PARENT="$(cd "$FRAMEWORK_HOME/.." && pwd)"
-  for _name in ${CA_SIBLING_NAMES:-conventional-agents feral-fleet pack-protocol}; do
+  for _name in ${CA_SIBLING_NAMES:-}; do
     _dir="$PARENT/$_name"
     [ -d "$_dir/.git" ] && REPOS+=("$_dir")
   done
 fi
 
 if [ ${#REPOS[@]} -eq 0 ]; then
-  echo "ERROR: Could not locate any repos. Set CA_REPO_DIRS or CA_TARGET_REPO." >&2
+  echo "ERROR: Could not locate any repos. Set CA_REPO_DIRS or CA_TARGET_REPO, or name siblings via CA_SIBLING_NAMES." >&2
   exit 1
 fi
 
@@ -147,18 +152,18 @@ ATTRIBUTION_RE='^Agent-Attribution:[[:space:]]*actor=[^;]+;[[:space:]]*model=[^;
 # update this pattern too, or MALFORMED commits silently re-classify as
 # MISSING (the wrong remedy). The #170 review pinned this contract.
 BODY_TRAILER_RE='^Agent-Attribution:[[:space:]]*actor='
-# Known agent emails that must carry an Agent-Attribution trailer.
-# Must stay in sync with the actor table in workflows/git-and-gh-conventions.md
-# and the allowlist in test/FS-0017/commit-attribution.bats.
-# Overridable via AGENT_EMAILS for adopting repos with different actors.
-# Note: kimi-code-review@tais-den.dev is deliberately absent — Kimi K2.7
-# reviews are comment-only (posted under the authenticated user), so that
-# address never authors commits.
-AGENT_EMAILS="${AGENT_EMAILS:-hermes-agent@tais-den.dev hermes-cron@tais-den.dev codex@tais-den.dev codex-cron@tais-den.dev claude-code@tais-den.dev github.marten@fwd.mtnden.org}"
+# Actor emails that must carry an Agent-Attribution trailer. Empty by
+# default: each instance configures its own actor aliases explicitly via
+# AGENT_EMAILS (and CRON_AGENT_EMAILS for unattended actors), and a
+# consumer adopts the pattern with its own addresses. Review-posting
+# identities never author commits and are deliberately absent. An
+# attribution run with both lists empty fails closed (FS-0047 SC-9) —
+# set them, or opt out explicitly with CA_SKIP_ATTRIBUTION=1.
+AGENT_EMAILS="${AGENT_EMAILS:-}"
 # The cron list is separate from the general agent allowlist because the
 # semantic rule is conditional on actor identity. It is independently
 # overridable for consumers that use a different unattended address.
-CRON_AGENT_EMAILS="${CRON_AGENT_EMAILS:-hermes-cron@tais-den.dev codex-cron@tais-den.dev}"
+CRON_AGENT_EMAILS="${CRON_AGENT_EMAILS:-}"
 # Floor for the anchored attribution audit (parity with
 # ATTRIBUTION_MIN_ANCHOR in test/FS-0017/commit-attribution.bats): the
 # audited range never shrinks below this boundary even if a release tag is
@@ -227,6 +232,14 @@ for REPO in "${REPOS[@]}"; do
   MALFORMED_COUNT=0
   CRON_BAD_COUNT=0
   CRON_GRANDFATHERED_COUNT=0
+  if [ -z "${AGENT_EMAILS}${CRON_AGENT_EMAILS}" ]; then
+    if [ "${CA_SKIP_ATTRIBUTION:-0}" = "1" ]; then
+      echo "  SKIP  $REPO_NAME (attribution unconfigured; CA_SKIP_ATTRIBUTION=1 — cron boundary not enforced)"
+      continue
+    fi
+    err "$REPO_NAME: AGENT_EMAILS and CRON_AGENT_EMAILS are empty — attribution checks cannot run; set them explicitly, or set CA_SKIP_ATTRIBUTION=1 to skip"
+    continue
+  fi
   while IFS= read -r line; do
     [ -z "$line" ] && continue
     COMMIT_HASH=$(echo "$line" | awk '{print $1}')
@@ -302,8 +315,10 @@ for REPO in "${REPOS[@]}"; do
       fi
     fi
   done < <(git -C "$REPO" log --format="%H %s" "$RANGE" 2>/dev/null)
+  _cron_suffix="cron boundary enforced"
+  [ -z "$CRON_AGENT_EMAILS" ] && _cron_suffix="cron boundary NOT configured (CRON_AGENT_EMAILS empty)"
   if [ "$BAD_COUNT" -eq 0 ] && [ "$MISSING_COUNT" -eq 0 ] && [ "$MALFORMED_COUNT" -eq 0 ] && [ "$CRON_BAD_COUNT" -eq 0 ]; then
-    echo "  OK   $REPO_NAME (all $RANGE commits have correct attribution format; cron boundary enforced)"
+    echo "  OK   $REPO_NAME (all $RANGE commits have correct attribution format; $_cron_suffix)"
   fi
 done
 if [ "$TOTAL_BAD" -gt 0 ]; then

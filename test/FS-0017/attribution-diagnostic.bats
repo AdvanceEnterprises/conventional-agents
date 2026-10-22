@@ -14,6 +14,13 @@
 
 LINT_SCRIPT="$BATS_TEST_DIRNAME/../../scripts/cross-repo-lint.sh"
 
+# The script ships empty actor-email defaults (FS-0047 SC-9): the framework
+# instance configures its allowlists explicitly. The scratch repos below
+# author commits under these identities, so the diagnostic harness exports
+# the same set the instance tooling uses.
+export AGENT_EMAILS="hermes-agent@advance.enterprises hermes-cron@advance.enterprises codex@advance.enterprises codex-cron@advance.enterprises claude-code@advance.enterprises github.marten@fwd.mtnden.org"
+export CRON_AGENT_EMAILS="hermes-cron@advance.enterprises codex-cron@advance.enterprises"
+
 # A scratch repository with the minimum cross-repo-lint needs to reach check 1:
 # a resolvable default branch. The doc checks (2/3) pass trivially on the empty
 # docs tree; scope each case to the attribution check's own output.
@@ -24,7 +31,7 @@ build_scratch_repo() {
   # Repo-local identity (not -c overrides): the human-commit scope case below
   # overrides the identity inline, which takes precedence over this config.
   git -C "$repo" config user.name "Hermes Agent"
-  git -C "$repo" config user.email "hermes-agent@tais-den.dev"
+  git -C "$repo" config user.email "hermes-agent@advance.enterprises"
   printf '# Specs\n' > "$repo/docs/specifications/README.md"
   printf '# Plans\n' > "$repo/docs/change-plans/README.md"
   printf '# Decisions\n' > "$repo/docs/decisions/README.md"

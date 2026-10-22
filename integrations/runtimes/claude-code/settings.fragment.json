@@ -1,6 +1,6 @@
 {
   "git": {
-    "userName": "Opus 5",
+    "userName": "{{MODEL_DISPLAY_NAME}}",
     "userEmail": "{{ACTOR_EMAIL}}"
   },
   "statusLine": {
