@@ -60,6 +60,11 @@ evidence, overhead, and failure sections. It is registered as `bench:run` in
 npm run bench:run -- benchmark/task-cards/pilot-001.md baseline
 ```
 
+The shipped `pilot-001.md` is an **example card** — its `base_repo` is a
+placeholder, its `base_commit` a fake example SHA, and its path literals
+illustrative placeholders; substitute your own repository, commit, and
+paths before running, or author your own card.
+
 The harness never executes tasks in the framework's own checkout — it clones
 the card's pinned base commit into a disposable directory. Task cards live in
 `benchmark/task-cards/` and validate against

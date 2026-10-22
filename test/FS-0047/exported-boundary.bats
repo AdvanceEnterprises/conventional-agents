@@ -11,7 +11,8 @@
 #
 # Scan scope (per FS-0047 §Interfaces): root README.md, AGENTS.md,
 # CONTRIBUTING.md, INTEGRATION.md, and Markdown under guidelines/, roles/,
-# skills/, templates/, workflows/, integrations/, runbooks/, and scripts/.
+# skills/, templates/, workflows/, integrations/, runbooks/, scripts/, and
+# benchmark/.
 # ADR, FS, PLAN, CHANGELOG, backlog, issue, and test history are excluded —
 # internal identity and historical records are preserved (SC-7).
 
@@ -65,7 +66,7 @@ boundary_files() {
       git -C "$root" -c core.quotepath=false ls-files --error-unmatch -- "$f" >/dev/null 2>&1 \
         && echo "$root/$f"
     done
-    for dir in guidelines roles skills templates workflows integrations runbooks scripts; do
+    for dir in guidelines roles skills templates workflows integrations runbooks scripts benchmark; do
       git -C "$root" -c core.quotepath=false ls-files -- "${dir}/*.md" "${dir}/**/*.md" 2>/dev/null \
         | sed "s|^|$root/|"
     done
@@ -73,7 +74,7 @@ boundary_files() {
     for f in README.md AGENTS.md CONTRIBUTING.md INTEGRATION.md; do
       [ -f "$root/$f" ] && echo "$root/$f"
     done
-    for dir in guidelines roles skills templates workflows integrations runbooks scripts; do
+    for dir in guidelines roles skills templates workflows integrations runbooks scripts benchmark; do
       [ -d "$root/$dir" ] && find "$root/$dir" -name '*.md' -type f | sort
     done
   fi
