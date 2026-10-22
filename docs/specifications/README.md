@@ -138,7 +138,7 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0043 | Cron attribution enforcement — require terminal mode=autonomous after the adoption boundary | approved |
 | FS-0045 | Accepted-ADR authority check for current-state guidance | draft |
 | FS-0046 | Whole-corpus governance triggers and trunk merge enforcement | draft |
-| FS-0047 | Reusable consumer guidance without instance-specific leakage | approved |
+| FS-0047 | Reusable consumer guidance without instance-specific leakage | implemented |
 | FS-0049 | Bash 3.2 regression coverage for the status consistency gate | approved |
 | FS-0050 | Run-batch tier-integrity check | approved |
 | FS-0051 | First pilot — an authorized feature draft-spec produces one canonical draft FS PR | draft |

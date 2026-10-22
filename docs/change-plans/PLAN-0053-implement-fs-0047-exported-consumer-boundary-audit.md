@@ -2,7 +2,7 @@
 type: change-plan
 role: implementer
 language: markdown and bash
-status: approved
+status: implemented
 related_specs:
   - FS-0047
 approved_by: "Joey Clark <administrator@ajoeofalltrades.dev>"
@@ -21,7 +21,6 @@ touches:
   - docs/change-plans/PLAN-0053-implement-fs-0047-exported-consumer-boundary-audit.md
   - docs/specifications/README.md
   - docs/change-plans/README.md
-  - CHANGELOG.md
   - scripts/cross-repo-lint.sh
   - scripts/README.md
   - workflows/git-and-gh-conventions.md
@@ -42,6 +41,7 @@ touches:
   - test/FS-0043/cron-attribution.bats
   - test/FS-0017/commit-attribution.bats
   - .claude/settings.json
+  - benchmark/task-cards/pilot-001.md
   - CHANGELOG.md
 created: 2026-10-04
 updated: 2026-10-22
@@ -127,6 +127,18 @@ reserved `scripts/README.md`, `scripts/cross-repo-lint.sh`, and
   the attribution harnesses, and the framework's committed
   `.claude/settings.json`; the old-domain aliases remain only as historical
   records (accepted ADRs, CHANGELOG, `.mailmap`) and as audit identifiers.
+* Convert the benchmark fixture to the placeholder example form —
+  `benchmark/task-cards/pilot-001.md` carries a `<your-org>`/`<your-task-repo>`
+  repository placeholder, a schema-valid fake example `base_commit` SHA, and
+  a note that the path literals are illustrative placeholders too; the
+  FS-0031 harness's SC-5 assertion (verified unchanged) keeps requiring the
+  escalation/adversarial scenario flags on the example card; the instance's
+  real pilot card lives with the instance, not here. The Project Board
+  section stays generic — the instance's board lives at the maintainer's
+  personal account, tracking the personal fork, so no framework-repo change
+  is needed.
+* Extend the boundary audit's scan scope to `benchmark/**/*.md` so the
+  placeholder-example obligation is regression-protected.
 * Run documentation, status, freshness, conformance, and Bats validation.
 
 The implementation must keep the issue's boundary: generic adoption guidance
@@ -196,6 +208,8 @@ the plan and coordinate shared-file ownership first.
 * `test/FS-0017/commit-attribution.bats` (current-domain alias assertions +
   historical allowlist)
 * `.claude/settings.json` (instance actor alias moves to the current domain)
+* `benchmark/task-cards/pilot-001.md` (placeholder example form; the
+  FS-0031 harness is verified unchanged — its SC-5 assertion keeps holding)
 * Any additional audited exported Markdown file that contains a confirmed
   consumer-specific leak; keep all edits inside FS-0047 `interfaces:`.
 
@@ -300,7 +314,9 @@ the plan and coordinate shared-file ownership first.
 
 ## 9. Explicit Non-Changes
 
-* No change to internal ADR/FS/PLAN/CHANGELOG history.
+* No rewriting of released ADR/FS/PLAN/CHANGELOG history; the unreleased
+  CHANGELOG section and the two governed documents this plan names are
+  edited in place as part of the package.
 * No migration of instance policy into the framework core.
 * No real organization-specific repository URL or replacement project board.
 * No change to repository discovery semantics or the attribution rule
@@ -312,17 +328,18 @@ the plan and coordinate shared-file ownership first.
 * [x] Spec is approved
 * [x] Tests are clearly defined for the implementation revision
 * [x] Scope is minimal and explicit
-* [ ] No implementation code or test change is included
+* [x] No implementation code or test change is included (the approved revision was documentation-only)
+* [x] Implementation landed and is merged (trunk carries the scrub)
 
 ## Declaration
 
 I affirm that:
 
 * This plan reflects the full intended scope of the approval and
-  implementation revisions.
-* Implementation proceeds under this revision: FS-0047 and PLAN-0053 are
-  human-approved, the implementation `touches:` set is exact, and the
+  implementation revisions, now landed: FS-0047 and PLAN-0053 are
+  `implemented` together, the implementation `touches:` set is exact, the
   reserved-path approval for `scripts/README.md`, `scripts/cross-repo-lint.sh`,
-  and `.github/workflows/lint-docs.yml` is recorded on the implementation
-  commit.
+  and `.github/workflows/lint-docs.yml` is recorded, and the instance-side
+  work (board location, real pilot card, maintenance-tick exports) lives
+  with the instance (pack-protocol), not in this repository.
 * Any deviation will require revising this plan before implementation.

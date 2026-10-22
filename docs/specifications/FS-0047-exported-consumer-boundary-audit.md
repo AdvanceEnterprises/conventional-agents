@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0047
-status: approved
+status: implemented
 title: Reusable consumer guidance without instance-specific leakage
 owner: ajoeofalltrades
 test_required: true
@@ -23,6 +23,7 @@ interfaces:
   - "test/FS-0043/cron-attribution.bats"
   - "test/FS-0017/commit-attribution.bats"
   - ".claude/settings.json"
+  - "benchmark/task-cards/pilot-001.md"
   - "docs/specifications/FS-0047-exported-consumer-boundary-audit.md"
   - "docs/change-plans/PLAN-0053-implement-fs-0047-exported-consumer-boundary-audit.md"
   - "docs/specifications/README.md"
@@ -57,16 +58,15 @@ PARSING_HINTS:
 
 ## Status
 
-- Approved
+- Implemented
 
 ## Plan Status
 
-- **PLAN-0053 is `approved`.** The documentation package (this spec, its plan,
-  index rows, and a CHANGELOG entry) is merged with this approval; the
-  implementation revision proceeds under the approved plan's `touches:` set,
-  with recorded human approval for the reserved paths.
-- The implementation includes the regression audit under `test/FS-0047/`,
-  authorized by the recorded approval of both governed documents.
+- **PLAN-0053 is `implemented`.** The scrub is complete: the exported script
+  and guidance are standalone-consumable, the regression audit enforces the
+  boundary, the benchmark fixture is the placeholder example form, and the
+  Project Board section describes work tracking generically — the instance's
+  board and real pilot card live with the instance (pack-protocol), not here.
 
 ## Summary
 
@@ -159,10 +159,19 @@ must be visibly non-normative and narrowly allowlisted.
     configure the instance actor allowlists explicitly (SC-9); the
     historical `tais-den.dev` aliases remain only as excluded historical
     records and audit identifiers.
+  - The benchmark fixture is the placeholder example form: the shipped
+    `benchmark/task-cards/pilot-001.md` carries a `<your-org>`/`<your-task-repo>`
+    repository placeholder, a fake example `base_commit` SHA (schema-valid
+    `^[0-9a-f]{7,40}$`), and an explicit note that the path literals are
+    illustrative placeholders too; the FS-0031 harness's SC-5 assertion parses
+    the example card and requires both scenario-presence flags to stay true
+    (the harness itself is verified unchanged); the instance's real pilot
+    card lives with the instance, not in the framework.
 
 The audit covers root `README.md`, `AGENTS.md`, `CONTRIBUTING.md`,
 `INTEGRATION.md`, and Markdown under `guidelines/`, `roles/`, `skills/`,
-`templates/`, `workflows/`, `integrations/`, `runbooks/`, and `scripts/`.
+`templates/`, `workflows/`, `integrations/`, `runbooks/`, `scripts/`, and
+`benchmark/`.
 ADR, FS, PLAN, CHANGELOG, backlog, issue, and test history are not reusable
 adoption instructions and are not rewritten by this feature.
 

@@ -77,7 +77,7 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | PLAN-0049 | Implement FS-0043 Cron attribution enforcement | FS-0043 | approved |
 | PLAN-0051 | Implement FS-0045 Accepted-ADR authority check | FS-0045 | draft |
 | PLAN-0052 | Implement FS-0046 Trunk governance enforcement | FS-0046 | draft |
-| PLAN-0053 | Implement FS-0047 Exported consumer-boundary audit | FS-0047 | approved |
+| PLAN-0053 | Implement FS-0047 Exported consumer-boundary audit | FS-0047 | implemented |
 | PLAN-0055 | Implement FS-0049 Bash 3.2 status-check compatibility | FS-0049 | approved |
 | PLAN-0056 | Implement FS-0050 run-batch tier-integrity check | FS-0050 | approved |
 | PLAN-0057 | Migrate, merge, and reconcile the template mesh | ADR-0046 | draft |
