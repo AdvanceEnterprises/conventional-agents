@@ -460,6 +460,16 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Changed
 
+#### Merge gate documented as a single human-gated path (G3)
+
+- **Removed the agent-enabled auto-merge path.** `skills/gh-pr-workflow`
+  documented `gh pr merge --auto` as a compliant second merge path,
+  contradicting ADR-0012 (merging is human-gated). The skills now state the
+  single path — the agent leaves the PR green and requests the human merge —
+  and the enabling of auto-merge or a merge queue is the human's act.
+  Corrected in `gh-pr-workflow`, `versioning-and-releases`, `git-gh-workflow`,
+  the skills index, and the Claude-code copies.
+
 #### `lint-docs` workflow gains spend guards (concurrency + job timeouts)
 
 - **`.github/workflows/lint-docs.yml` now sets `concurrency` (workflow + ref,

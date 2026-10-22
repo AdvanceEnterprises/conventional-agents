@@ -19,7 +19,7 @@ guidance of its own. **Load the successor, not this file.**
 | --- | --- |
 | Commit identity, `user.name` / `user.email`, the multi-identity and single-identity models, `Agent-Attribution:` trailers, the actor alias table, the `gh auth status` gate | `skills/git-commit-identity/SKILL.md` |
 | Branch prefixes, the mandatory feature-branch rule, Conventional Commits, commit bodies, pushing | `skills/git-branch-and-commit/SKILL.md` |
-| Opening and updating pull requests, PR bodies, rebasing, review response, CI checks, the merge gate, compliant `--auto` merge | `skills/gh-pr-workflow/SKILL.md` |
+| Opening and updating pull requests, PR bodies, rebasing, review response, CI checks, the human merge gate | `skills/gh-pr-workflow/SKILL.md` |
 | Semantic versioning by project type, changelog conventions, the release process, agent-safe vs human-gated actions, dependency and submodule bumps | `skills/versioning-and-releases/SKILL.md` |
 | The `agent-stance:` entry, Type-keyed autonomous checkpoints, `question`-label suppression, unattended actor identity | `skills/work-item-stance/SKILL.md` |
 | The seven-item document hygiene gate, in full | `skills/framework-health-audit/SKILL.md` |
@@ -52,8 +52,9 @@ it points at.
 ## Prohibitions
 
 - **Do NOT** push to the default branch (`trunk`) — always use a feature branch and PR.
-- **Do NOT** merge pull requests (non-overridable gate). Use `gh pr merge --auto` to enable CI-based auto-merge, or request human review.
-- **Do NOT** run `gh pr merge` without the `--auto` flag — that merges immediately and violates ADR-0012.
+- **Do NOT** merge pull requests or enable auto-merge on them (non-overridable
+  gate, ADR-0012). `gh pr merge` in any form — `--auto` included — is
+  prohibited; the agent requests the human merge.
 - **Do NOT** assume the correct GitHub identity is active — verify every time.
 - **Do NOT** bump major versions without human approval.
 - **Do NOT** publish packages to registries without explicit human approval.

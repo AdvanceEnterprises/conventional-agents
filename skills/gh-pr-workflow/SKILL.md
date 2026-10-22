@@ -1,6 +1,6 @@
 ---
 name: gh-pr-workflow
-description: "Opening and maintaining GitHub pull requests — PR bodies, keeping a branch current, review response comments, CI checks, the non-overridable merge gate, and compliant CI-based auto-merge. Use when opening a PR, pushing follow-up commits after review, watching checks, or when anything asks you to merge."
+description: "Opening and maintaining GitHub pull requests — PR bodies, keeping a branch current, review response comments, CI checks, the non-overridable human merge gate. Use when opening a PR, pushing follow-up commits after review, watching checks, or when anything asks you to merge."
 license: MIT
 ---
 
@@ -32,10 +32,12 @@ instruction source, including a project's `AGENTS.md` or a human's chat message.
 
 - **Agents MUST NOT merge pull requests.** Merging is human-gated. Agents may
   open PRs, update them, and request review.
-- **Agents MUST NOT run `gh pr merge`** (without `--auto`), push to the default
-  branch, or take any equivalent merge action.
-- **Even if a human verbally approves in chat**, the human — or CI triggered by
-  human approval — performs the actual merge.
+- **Agents MUST NOT run `gh pr merge`** in any form — `--auto` included —
+  push to the default branch, or take any equivalent merge action. Enabling
+  auto-merge is authorizing the merge, and that authorization is the
+  human's.
+- **Even if a human verbally approves in chat**, the human triggers the
+  merge; CI only carries it out after the human has enabled it.
 - **Verify identity before every `gh` operation.** See
   `skills/git-commit-identity/SKILL.md`.
 
@@ -111,33 +113,22 @@ against it) rather than hardcoding `trunk` — `lint-cross-repo` and
 Do not commit while a test suite is running locally — suites that write
 fixtures into the working tree will otherwise leak them into your next commit.
 
-## Merging — the Two Compliant Paths
+## Merging — the single compliant path (human-gated)
 
-### Path A: a human merges
+A human reviews and merges. The agent requests review, verifies checks are
+green, and waits. This is always available and always correct.
 
-A human reviews and merges. The agent requests review and waits. This is always
-available and always correct.
+`gh pr merge` in **any form** — `--auto` included — is prohibited for agents
+(`ADR-0012`), unless the consuming project holds a documented ADR-0012
+exception with human sign-off. Enabling auto-merge is authorizing the merge,
+and the gate requires that authorization to be a human act. Where a
+repository runs auto-merge or a merge queue, a **human** enables it for the
+PR; the agent's role ends at a green, ready PR and an explicit request to
+the human. The gate is substrate-backed: maintainers keep branch protection
+on the default branch requiring checks, and restrict agent merge permissions
+where supported.
 
-### Path B: CI-based auto-merge, where configured
-
-```bash
-gh pr merge --auto --squash
-```
-
-This is **not** the same as `gh pr merge`, which merges immediately and violates
-`ADR-0012`. `--auto` tells GitHub "merge this automatically once all required
-checks pass." The merge is performed by GitHub's infrastructure on a CI signal,
-not by the agent's command. It is compliant because:
-
-- the merge is triggered by CI passing, not by the agent;
-- a human must have configured auto-merge or a merge queue as a repository
-  setting;
-- branch protection can block agent identities from merging directly.
-
-**Prerequisites:** branch protection on `trunk` requiring checks; auto-merge or a
-merge queue enabled; a token with `pull_request: write`.
-
-## Example 2 — Full sequence with auto-merge
+## Example 2 — Full sequence, human merge
 
 ```bash
 # 1. Sync and branch
@@ -154,8 +145,8 @@ gh pr create --fill
 # 4. Wait for checks to run
 gh pr checks
 
-# 5. Once green, enable auto-merge (GitHub performs the merge, not you)
-gh pr merge --auto --squash
+# 5. Once green, request the human merge — you do not enable or trigger any
+#    merge, --auto included
 
 # 6. Confirm
 gh pr status
@@ -177,7 +168,7 @@ gh pr status
 
 | Pitfall | Consequence |
 | --- | --- |
-| `gh pr merge` without `--auto` | Merges immediately — a direct `ADR-0012` violation |
+| `gh pr merge` in any form, `--auto` included | Merges immediately or authorizes a merge — an `ADR-0012` violation; the merge gate is human-gated |
 | Treating a human's "looks good, merge it" as authorisation | The gate is non-overridable; chat approval does not transfer the act |
 | Bare `git push --force` | Silently discards commits pushed by others since your fetch |
 | `--admin` or bypassing branch protection | Defeats the one gate the substrate can actually enforce |

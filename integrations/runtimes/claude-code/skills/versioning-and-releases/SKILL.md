@@ -122,7 +122,7 @@ gh pr create --fill
 | Publish to registries | **No** | Requires human approval |
 | Merge release PRs | **No** | Requires human approval |
 | External announcements | **No** | Requires human approval |
-| Enable auto-merge on a PR | Yes | Only with `--auto`; never `gh pr merge` without it |
+| Enable auto-merge on a PR | **No** | Human-gated merge (ADR-0012); a human enables auto-merge if the repository uses it |
 
 ## Dependency and Submodule Versioning
 
