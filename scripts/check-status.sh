@@ -742,10 +742,21 @@ for plan_file in "$PLAN_DIR"/PLAN-*.md; do
     continue
   fi
 
-  # Compute the union of interfaces: for the PLAN's related_specs. Prefix with "|" so
-  # that the grep below can match every entry exactly (including the first).
+  # Resolve the governing-spec set and require every referenced spec to be
+  # non-draft for a plan seeking self-approval. FS-0022 §2: a PLAN may not reach
+  # `approved` while its FS is `draft` — and a plan with no governing spec has no
+  # boundary to be contained by. Every referenced spec contributes interfaces to
+  # the containment union, so every one must exist and be non-draft: a draft
+  # secondary spec's interfaces would otherwise supply part of the self-approval
+  # boundary without a human having drawn it. These states used to skip the check
+  # entirely via `continue`; they now fail closed. A human-approved plan is exempt
+  # (the approval is the authority); the problems are reported only when no such
+  # approval exists.
   primary_fs=$(get_related_specs "$plan_file" | head -1 | tr -d '[:space:]')
-  [ -z "$primary_fs" ] && continue
+  spec_problems=""
+  if [ -z "$primary_fs" ]; then
+    spec_problems="|has no related_specs — ADR-0027 self-approval requires a governing FS"
+  fi
 
   interfaces_union="|"
   while IFS= read -r fs_id; do
@@ -757,7 +768,17 @@ for plan_file in "$PLAN_DIR"/PLAN-*.md; do
       [ -f "$candidate" ] || continue
       [ "$(get_field "$candidate" "id")" = "$fs_id" ] && fs_file="$candidate" && break
     done
-    [ -z "$fs_file" ] && continue
+    if [ -z "$fs_file" ]; then
+      spec_problems="${spec_problems}|references '$fs_id' in related_specs, but no spec with that id exists"
+      continue
+    fi
+    fs_status=$(get_field "$fs_file" "status")
+    case "$fs_status" in
+      draft|"")
+        spec_problems="${spec_problems}|its referenced spec '$fs_id' is status: draft — self-approval requires a non-draft boundary a human drew"
+        continue
+        ;;
+    esac
     while IFS= read -r iface; do
       [ -z "$iface" ] && continue
       interfaces_union="${interfaces_union}${iface}|"
@@ -809,6 +830,20 @@ for plan_file in "$PLAN_DIR"/PLAN-*.md; do
         fi
       fi
     fi
+  fi
+
+  # A plan without human approval and an uncertifiable governing-spec set cannot
+  # be certified. Report each root cause and move on — the per-touch checks below
+  # would only repeat them per path against an incomplete interfaces union.
+  if [ "$approval_ok" != "ok" ] && [ -n "$spec_problems" ]; then
+    echo "ERROR: $plan_name cannot be certified for self-approval:"
+    IFS='|' read -ra spec_prob_list <<< "$spec_problems"
+    for p in "${spec_prob_list[@]}"; do
+      [ -z "$p" ] && continue
+      echo "       $plan_name $p."
+    done
+    errors=$((errors+1))
+    continue
   fi
 
   # Fail closed: a vendored check with no reserved_paths configured cannot safely

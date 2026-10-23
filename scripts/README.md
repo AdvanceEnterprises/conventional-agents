@@ -243,6 +243,17 @@ target names a repository, not a directory within one.
    repository" above. A PLAN with no `touches:` field fails this check;
    absence is not an empty declaration.
 
+   **Every referenced spec must exist and be non-`draft`.** For a PLAN
+   without human-approval evidence, every `related_specs:` entry must resolve
+   to a spec whose `status:` is not `draft` (FS-0022 §2: a PLAN may not reach
+   `approved` while its FS is `draft`) — every referenced spec contributes
+   `interfaces:` to the containment union, so a draft secondary spec would
+   otherwise supply part of the boundary. A plan with no governing spec, a
+   nonexistent spec id, or any `draft` referenced spec fails this check
+   instead of skipping it. A plan carrying human approval is exempt: the
+   approval is the authority, and the spec condition is evaluated only for
+   the self-approval path.
+
    **A host repository with no `config/gates.yml`, or one missing the
    `reserved_paths` key, cannot self-approve anything.** The check refuses to
    certify any PLAN evaluated under this rule and exits non-zero, naming

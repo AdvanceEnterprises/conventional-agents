@@ -716,6 +716,19 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Fixed
 
+#### PLAN self-approval requires a non-draft governing-spec set (G5)
+
+- **Closes the rule-6 bypass** where a PLAN with no `related_specs:`, a
+  nonexistent spec id, or any `draft` referenced FS skipped or diluted the
+  containment check — a draft spec's `interfaces:` could satisfy
+  self-approval (including via a draft *secondary* spec whose interfaces
+  joined the containment union), contradicting FS-0022 §2 ("a PLAN may not
+  reach `approved` while its FS is `draft`"). The check now fails closed on
+  all these states for any plan without human-approval evidence;
+  human-approved plans remain exempt (the approval is the authority). Six
+  new portable-gates fixtures cover the failure modes and the non-draft
+  acceptance paths.
+
 - **Three vendored-gate fail-open paths now fail closed (issues #194, #195).**
   Each of these could report success while skipping all or part of the audit
   it exists to perform, so a consumer's CI could receive green from a gate

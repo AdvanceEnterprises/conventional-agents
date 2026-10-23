@@ -316,6 +316,120 @@ EOF
   echo "$output" | grep -qF "reserved-path set"
 }
 
+# --- governing-spec requirement (FS-0022 §2: no draft-governed self-approval) -----
+
+@test "rule6: a self-approved plan with no governing spec fails instead of skipping" {
+  local host="$BATS_TEST_TMPDIR/host-nospec"
+  build_rule6_fixture "$host"
+  sed -i '/^related_specs:/d' "$host/docs/change-plans/PLAN-1-test.md"
+  mkdir -p "$host/config"
+  printf 'reserved_paths: []\n' > "$host/config/gates.yml"
+
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "no related_specs"
+  echo "$output" | grep -qF "PLAN-1-test.md"
+}
+
+@test "rule6: a self-approved plan whose governing FS is draft fails" {
+  local host="$BATS_TEST_TMPDIR/host-draftfs"
+  build_rule6_fixture "$host"
+  sed -i 's/^status: approved$/status: draft/' "$host/docs/specifications/FS-1-test.md"
+  sed -i 's/| FS-1 | Test | approved |/| FS-1 | Test | draft |/' "$host/docs/specifications/README.md"
+  mkdir -p "$host/config"
+  printf 'reserved_paths: []\n' > "$host/config/gates.yml"
+
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "status: draft"
+  echo "$output" | grep -qF "FS-1"
+}
+
+@test "rule6: a self-approved plan referencing a nonexistent spec fails" {
+  local host="$BATS_TEST_TMPDIR/host-nofs"
+  build_rule6_fixture "$host"
+  sed -i 's/FS-1/FS-9001/' "$host/docs/change-plans/PLAN-1-test.md"
+  mkdir -p "$host/config"
+  printf 'reserved_paths: []\n' > "$host/config/gates.yml"
+
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "no spec with that id exists"
+}
+
+@test "rule6: a self-approved plan against a non-draft (in-progress) FS still certifies" {
+  # Non-draft acceptance: rule 6's governing-spec condition rejects only `draft`
+  # (and missing). An `implemented` FS would trip rule 1 unless the plan is also
+  # implemented — but implemented plans skip rule 6, so the positive fixture uses
+  # `in-progress`, the other forward status.
+  local host="$BATS_TEST_TMPDIR/host-implfs"
+  build_rule6_fixture "$host"
+  sed -i 's/^status: approved$/status: in-progress/' "$host/docs/specifications/FS-1-test.md"
+  sed -i 's/^status: approved$/status: in-progress/' "$host/docs/change-plans/PLAN-1-test.md"
+  sed -i 's/| FS-1 | Test | approved |/| FS-1 | Test | in-progress |/' "$host/docs/specifications/README.md"
+  sed -i 's/| PLAN-1 | Test | FS-1 | approved |/| PLAN-1 | Test | FS-1 | in-progress |/' "$host/docs/change-plans/README.md"
+  mkdir -p "$host/config"
+  printf 'reserved_paths: []\n' > "$host/config/gates.yml"
+
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -eq 0 ]
+  ! echo "$output" | grep -qF "requires human approval"
+}
+
+@test "rule6: a draft SECONDARY spec supplying part of the union fails self-approval" {
+  # Every referenced spec contributes interfaces to the containment union, so a
+  # draft secondary spec's interfaces would otherwise supply part of the boundary
+  # without a human having drawn it (the residual C-23 shape: an approved spec
+  # first, a draft boundary second).
+  local host="$BATS_TEST_TMPDIR/host-mixed"
+  build_rule6_fixture "$host"
+  cat > "$host/docs/specifications/FS-2-test.md" <<'EOF'
+---
+type: feature-spec
+id: FS-2
+status: draft
+title: Test2
+owner: test
+interfaces:
+  - "src/"
+---
+EOF
+  printf '| FS-2 | Test2 | draft |\n' >> "$host/docs/specifications/README.md"
+  sed -i 's/related_specs: \[FS-1\]/related_specs: [FS-1, FS-2]/' "$host/docs/change-plans/PLAN-1-test.md"
+  sed -i 's|  - ci/deploy.sh|  - src/unapproved.sh|' "$host/docs/change-plans/PLAN-1-test.md"
+  mkdir -p "$host/config"
+  printf 'reserved_paths: []\n' > "$host/config/gates.yml"
+
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "FS-2"
+  echo "$output" | grep -qF "status: draft"
+}
+
+@test "rule6: a multi-spec plan whose specs are all non-draft certifies" {
+  local host="$BATS_TEST_TMPDIR/host-multiok"
+  build_rule6_fixture "$host"
+  cat > "$host/docs/specifications/FS-2-test.md" <<'EOF'
+---
+type: feature-spec
+id: FS-2
+status: approved
+title: Test2
+owner: test
+interfaces:
+  - "src/"
+---
+EOF
+  printf '| FS-2 | Test2 | approved |\n' >> "$host/docs/specifications/README.md"
+  sed -i 's/related_specs: \[FS-1\]/related_specs: [FS-1, FS-2]/' "$host/docs/change-plans/PLAN-1-test.md"
+  mkdir -p "$host/config"
+  printf 'reserved_paths: []\n' > "$host/config/gates.yml"
+
+  run bash -c "cd '$host' && bash vendor/conventional-agents/scripts/check-status.sh"
+  [ "$status" -eq 0 ]
+  ! echo "$output" | grep -qF "cannot be certified for self-approval"
+}
+
 # --- grandfather clause scoping (issue #195) -------------------------------------
 
 @test "grandfather: a consumer PLAN-0001 gets no exemption from the framework's historical allow-list (issue #195)" {
