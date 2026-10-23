@@ -20,6 +20,8 @@ PARSING_HINTS:
 - Generate tests ONLY from the section titled "Success Criteria".
 - Treat "Non-Goals" and "Out of Scope" as hard constraints.
 - Do NOT infer requirements not explicitly stated.
+- `interfaces:` bounds which change plans may self-approve (ADR-0027) — draw
+  it narrowly; a loose `interfaces:` widens agent authority.
 - Do NOT implement unless status == approved.
 - Interfaces listed here define allowed surface area for code changes.
 -->

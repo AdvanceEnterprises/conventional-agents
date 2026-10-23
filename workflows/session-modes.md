@@ -1,5 +1,5 @@
 ---
-updated: 2026-07-28
+updated: 2026-10-23
 ---
 
 # Session Modes
@@ -69,7 +69,7 @@ Change Plans, ADRs, README index tables, or workflow documents.
 **Out of scope:**
 
 - Implementation code or tests.
-- Approving documents (human-only gate).
+- Approving documents except a PLAN satisfying ADR-0027's conditions (human-only gate).
 - Publishing or communicating the document externally before it is approved.
 
 **Escalation triggers:**

@@ -1,7 +1,7 @@
 # Integration Guide
 
 Version: 2.0.0
-Last Updated: 2026-06-08
+Last Updated: 2026-10-23
 
 This document is the canonical source for how conventional-agents integrates with host repositories and resolves conflicts between instruction sources.
 
@@ -162,6 +162,17 @@ If instructions conflict, lower number wins.
 | 3 | `vendor/conventional-agents/roles/<role>.md` | Role-specific behavior and gates | Can strengthen 4 to 5 |
 | 4 | vendor/conventional-agents/guidelines/ | General practices and checklists | Can be tailored by 1 and 3 |
 | 5 | Tool configs (CLAUDE.md, .cursorrules, etc.) | Tool-specific hints | Must defer to 0 to 4 |
+
+ADR-0027's mechanical PLAN self-approval path is part of the universal
+contract itself, not a weakening of it: the conditions are defined in the
+role contract's Spec-first rule (the authoritative text lives in
+`guidelines/ROLE_CONTRACT.md`; `roles/ROLE_CONTRACT.md`, the row-2 project
+copy, delegates to it unchanged), and the reserved set (`scripts/`,
+`.github/workflows/`, `docs/decisions/`, `package.json`,
+`guidelines/ROLE_CONTRACT.md`) is never self-approvable. The carve-out travels
+with the row-2 contract; a host that edits its own
+`guidelines/ROLE_CONTRACT.md` copy is editing a tailorable document, not
+weakening a universal gate.
 
 ### Strengthening vs weakening
 
