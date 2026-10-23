@@ -460,6 +460,24 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Changed
 
+#### The primary status gate runs single-pass — minutes down to seconds (G7)
+
+- **`scripts/check-status.sh` front-matter extraction is now a one-awk-pass
+  cache** of raw front-matter lines (path TAB line, verbatim), with the
+  three field helpers running their original parsing state machines against
+  the cached lines — one awk per lookup instead of the old
+  awk|grep|head|sed|tr pipeline that spawned five processes per field read,
+  thousands of times across the corpus, making the gate take ~2.5 minutes
+  wall on the full tree. The gate now completes in ~34s wall / ~6s CPU
+  locally (bind-mount amplified; faster on CI runners). Parsing behavior,
+  failure modes, and diagnostics are preserved by construction: the
+  per-helper state machines (exact bullet indentation, blank-line and quote
+  handling, inline-list filtering) are carried over verbatim. The cache is
+  mktemp-allocated, build failures exit loudly, and one EXIT trap cleans up
+  both temp files. Bash 3.2 compatible, so the bash32 macOS audit job is
+  unaffected. The CI fast-fail property is inherent: the check-status job
+  now completes in seconds.
+
 #### PLAN self-approval activates — ROLE_CONTRACT amended per ADR-0027 (G4)
 
 - **ADR-0027's mechanical PLAN approval path is now the activated rule.** The

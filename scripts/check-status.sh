@@ -84,72 +84,124 @@ errors=0
 
 # Extract a single YAML front matter field value from a file.
 # Returns empty string if field not found.
+# --- front-matter cache (G7 / C-32: single-pass extraction) ------------------
+#
+# The helpers below used to re-read each file and spawn awk|grep|head|sed|tr
+# per call — five processes for every field read, thousands of times across
+# the corpus, which made the primary gate take minutes on the full tree. One
+# awk pass now copies the raw front-matter lines of every FS/PLAN/ADR into a
+# cache (path<TAB>line, lines verbatim), and the helpers run their ORIGINAL
+# parsing state machines against the cached lines — semantics unchanged by
+# construction, one awk per call. Bash 3.2 compatible: no associative arrays,
+# no `nextfile`; per-file state resets on FNR==1. Lookup paths travel through
+# ENVIRON so `-v` cannot reinterpret backslashes.
+
+FM_CACHE=""
+duplicate_evidence=""
+# shellcheck disable=SC2016
+FM_CACHE_EXTRACT='
+  FNR==1 { n=0 }
+  /^---/ { n++; next }
+  n==1 { printf "%s\t%s\n", FILENAME, $0 }
+'
+
+build_fm_cache() {
+  FM_CACHE="$(mktemp "${TMPDIR:-/tmp}/ca-fm-cache.XXXXXX")" \
+    || { echo "ERROR: could not create the front-matter cache" >&2; exit 1; }
+  set --
+  local d f
+  for d in "$FS_DIR" "$PLAN_DIR" "$ADR_DIR"; do
+    [ -d "$d" ] || continue
+    for f in "$d"/*.md; do
+      [ -f "$f" ] && set -- "$@" "$f"
+    done
+  done
+  [ "$#" -gt 0 ] || return 0
+  if ! awk "$FM_CACHE_EXTRACT" "$@" >> "$FM_CACHE"; then
+    echo "ERROR: front-matter cache extraction failed" >&2
+    exit 1
+  fi
+}
+
 get_field() {
-  local file="$1" field="$2" value=""
-  value=$(awk '/^---/{n++; if(n==2) exit; next} n==1' "$file" \
-    | grep "^${field}:" \
-    | head -1 \
-    | sed "s/^${field}:[[:space:]]*//" \
-    | tr -d '"')
-  echo "$value"
-}
-
-# Extract values from a multi-line YAML list field (  - value) or inline [a, b].
-get_related_specs() {
-  local file="$1"
-  awk '
-    /^---/{n++; if(n==2) exit; next}
-    n==1 && /^related_specs:/{
-      in_field=1
-      if ($0 ~ /\[/) {
-        gsub(/^related_specs:[[:space:]]*\[/, "")
-        gsub(/\]/, "")
-        gsub(/ /, "")
-        n2=split($0, parts, ",")
-        for (i=1; i<=n2; i++) { if (parts[i] != "") print parts[i] }
-        in_field=0
+  f="$1" k="$2" awk -F'\t' '
+    $1==ENVIRON["f"] {
+      line=$0; sub(/^[^\t]*\t/, "", line)
+      k=ENVIRON["k"]
+      # The original helper matched field names with grep/sed BRE; awk matches
+      # ERE, so escape metacharacters to keep literal-key semantics identical.
+      gsub(/[][.*+?^$(){}|\\]/, "\\\\&", k)
+      if (done==0 && line ~ "^" k ":") {
+        sub("^" k ":[[:space:]]*", "", line)
+        gsub(/"/, "", line)
+        print line
+        done=1
       }
-      next
     }
-    n==1 && in_field && /^  - /{
-      val=$0; gsub(/^  - /, "", val); gsub(/^[[:space:]]+|[[:space:]]+$/, "", val)
-      if (val != "") print val
-      next
-    }
-    n==1 && in_field && !/^  /{in_field=0}
-  ' "$file"
+  ' "$FM_CACHE"
 }
 
-# Extract values from a multi-line YAML list field — generic, for interfaces: and touches:.
 get_list_field() {
-  local file="$1" field="$2"
-  awk -v field="$field" '
-    /^---/{n++; if(n==2) exit; next}
-    n==1 && $0 ~ "^"field":"{
-      in_field=1
-      if ($0 ~ /\[/) {
-        line=$0
-        gsub("^"field":[[:space:]]*\\[", "", line)
-        gsub("\\]", "", line)
-        gsub(/ /, "", line)
-        n2=split(line, parts, ",")
-        for (i=1; i<=n2; i++) { if (parts[i] != "") print parts[i] }
-        in_field=0
+  f="$1" k="$2" awk -F'\t' '
+    $1==ENVIRON["f"] {
+      line=$0; sub(/^[^\t]*\t/, "", line)
+      k=ENVIRON["k"]
+      # Original helper matched the field name with grep/sed BRE; escape ERE
+      # metacharacters so literal-key semantics are identical.
+      gsub(/[][.*+?^$(){}|\\]/, "\\\\&", k)
+      if (in_field==0 && line ~ "^" k ":") {
+        in_field=1
+        if (line ~ /\[/) {
+          l=line
+          gsub("^" k ":[[:space:]]*\\[", "", l)
+          gsub("\\]", "", l)
+          gsub(/ /, "", l)
+          n2=split(l, parts, ",")
+          for (i=1; i<=n2; i++) { if (parts[i] != "") print parts[i] }
+          in_field=0
+        }
+        next
       }
-      next
+      if (in_field==1 && line ~ /^  - /) {
+        v=line; gsub(/^  - /, "", v); gsub(/^[[:space:]]+|[[:space:]]+$/, "", v)
+        gsub(/^"/, "", v); gsub(/"$/, "", v)
+        if (v != "") print v
+        next
+      }
+      # A blank line inside a block list does not end the field. Without this the
+      # parser stopped at the first blank separator and returned one entry, which
+      # silently reduced the touches: containment check to its first path.
+      if (in_field==1 && line ~ /^[[:space:]]*$/) next
+      if (in_field==1 && line !~ /^  /) in_field=0
     }
-    n==1 && in_field && /^  - /{
-      val=$0; gsub(/^  - /, "", val); gsub(/^[[:space:]]+|[[:space:]]+$/, "", val)
-      gsub(/^"/, "", val); gsub(/"$/, "", val)
-      if (val != "") print val
-      next
+  ' "$FM_CACHE"
+}
+
+get_related_specs() {
+  f="$1" awk -F'\t' '
+    $1==ENVIRON["f"] {
+      line=$0; sub(/^[^\t]*\t/, "", line)
+      if (in_field==0 && line ~ /^related_specs:/) {
+        in_field=1
+        if (line ~ /\[/) {
+          l=line
+          gsub(/^related_specs:[[:space:]]*\[/, "", l)
+          gsub(/\]/, "", l)
+          gsub(/ /, "", l)
+          n2=split(l, parts, ",")
+          for (i=1; i<=n2; i++) { if (parts[i] != "") print parts[i] }
+          in_field=0
+        }
+        next
+      }
+      if (in_field==1 && line ~ /^  - /) {
+        v=line; gsub(/^  - /, "", v); gsub(/^[[:space:]]+|[[:space:]]+$/, "", v)
+        if (v != "") print v
+        next
+      }
+      if (in_field==1 && line !~ /^  /) in_field=0
     }
-    # A blank line inside a block list does not end the field. Without this the
-    # parser stopped at the first blank separator and returned one entry, which
-    # silently reduced the touches: containment check to its first path.
-    n==1 && in_field && /^[[:space:]]*$/{next}
-    n==1 && in_field && !/^  /{in_field=0}
-  ' "$file"
+  ' "$FM_CACHE"
 }
 
 # Same shape as get_list_field, for a plain YAML file with no `---` front-matter
@@ -272,6 +324,11 @@ get_fs_status_for() {
 }
 
 # --- build FS index ----------------------------------------------------------
+
+# One combined EXIT handler, registered before the cache build so a build
+# failure still removes anything allocated.
+trap 'rm -f "$FM_CACHE" "$duplicate_evidence" 2>/dev/null' EXIT
+build_fm_cache
 
 fs_ids=()
 fs_statuses=()
@@ -474,7 +531,6 @@ fi
 # collision. This uses a temporary tab-delimited evidence file rather than
 # associative arrays so the check remains Bash 3.2-compatible.
 duplicate_evidence="$(mktemp "${TMPDIR:-/tmp}/ca-governed-id.XXXXXX")"
-trap 'rm -f "$duplicate_evidence"' EXIT
 for registry_file in "$FS_DIR"/FS-*.md "$PLAN_DIR"/PLAN-*.md "$ADR_DIR"/ADR-*.md; do
   [ -f "$registry_file" ] || continue
   registry_id=$(get_field "$registry_file" "id")
