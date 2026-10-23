@@ -7,6 +7,7 @@ reversible: yes
 related_specs:
   - FS-0010
 superseded_by: null
+updated: 2026-10-23
 ---
 
 # ADR-0026: Approval is a recorded act
@@ -109,6 +110,12 @@ departures.**
 | **Deferred approval** | Documents land un-approved; approval comes later | Declared in the PR description, then a later recorded approval |
 
 All three are human acts. None may be performed by an agent on its own initiative.
+
+**One exception, created later by ADR-0027:** a PLAN meeting ADR-0027's containment
+and reserved-path conditions self-approves — the status transition records the
+approval, with no separate marker. The three shapes above remain the exhaustive set
+for every other document: FS approval, ADR acceptance, and out-of-condition PLAN
+approval are always human acts.
 
 ### Recorded approval
 

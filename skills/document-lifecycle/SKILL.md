@@ -51,9 +51,9 @@ Statuses move forward through the lifecycle. No backward transitions without hum
 
 Never: `implemented → approved` or `approved → draft`.
 
-### Draft-to-Approved Requires Human Review
+### Draft-to-Approved: Human Review, With One Mechanical PLAN Path
 
-An agent MUST NOT transition a document from `draft` to `approved` on its own. This transition happens when a human merges the PR containing the document.
+An agent MUST NOT transition a document from `draft` to `approved` on its own, except a PLAN satisfying ADR-0027's containment and reserved-path conditions (governing FS `approved`, every `touches:` path inside its `interfaces:`, none in the reserved set) — that transition records the self-approval. Every other document reaches `approved` through one of the three ADR-0026 human-approval shapes (merge, recorded, or deferred).
 
 ### Agents MUST NOT Implement Draft Specs
 
@@ -284,7 +284,7 @@ When updating an existing governed document:
 
 ## Prohibitions
 
-- **Do NOT** transition `draft` → `approved` — that is human-only (merge of the PR)
+- **Do NOT** transition `draft` → `approved`, except a PLAN satisfying ADR-0027's conditions in `guidelines/ROLE_CONTRACT.md` §Spec-first rule — every other document's approval is a human act (ADR-0026)
 - **Do NOT** modify accepted ADRs beyond the Status section
 - **Do NOT** create documents without following the prescribed template
 - **Do NOT** commit without running `npm run check:status`

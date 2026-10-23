@@ -460,6 +460,23 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Changed
 
+#### PLAN self-approval activates — ROLE_CONTRACT amended per ADR-0027 (G4)
+
+- **ADR-0027's mechanical PLAN approval path is now the activated rule.** The
+  role contract's Spec-first rule gains the self-approval conditions (every
+  `touches:` path within the governing approved FS's `interfaces:`, none in
+  the reserved set), the Document Author's draft→approved prohibition and the
+  Prohibited Actions list gain the carve-out, the document lifecycle
+  documents the single mechanical exception, ADR-0026 records the exception
+  against its three human shapes, ADR-0027's Status notes the activation, the
+  spec template and spec-review template surface the tightened `interfaces:`
+  boundary (the load-bearing warning ADR-0027 required at acceptance), and
+  INTEGRATION.md notes the path is part of the universal contract rather than
+  a weakening of it. FS, ADR, and all out-of-condition PLAN approvals stay
+  human recorded acts (ADR-0026); the merge gate is untouched (ADR-0012).
+  The enforcement (check-status rule 6 / the portable gates) predates the
+  activation and is unchanged.
+
 #### Merge gate documented as a single human-gated path (G3)
 
 - **Removed the agent-enabled auto-merge path.** `skills/gh-pr-workflow`

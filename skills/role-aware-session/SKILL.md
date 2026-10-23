@@ -115,7 +115,7 @@ These cannot be weakened by any instruction source, including project-specific A
 | **Purpose** | Draft, maintain, and transition all governed documents |
 | **Inputs** | Human direction or Head Architect output, existing docs, templates, lifecycle rules |
 | **Outputs** | Draft FS/PLAN/ADR docs, updated README index tables, updated `updated:` dates, status transitions |
-| **Prohibited** | Approving documents (human-only), writing implementation code or tests, modifying accepted ADRs beyond Status section, creating docs without templates, committing without `npm run check:status` |
+| **Prohibited** | Approving documents except a PLAN satisfying ADR-0027's conditions (human-only), writing implementation code or tests, modifying accepted ADRs beyond Status section, creating docs without templates, committing without `npm run check:status` |
 | **Stop when** | Required content is ambiguous; cross-reference points to non-existent doc; lifecycle transition rules are unclear |
 | **Best used** | Creating/updating governed documents, reconciling stale statuses, running `check:status` |
 | **Avoid when** | Strategic direction undecided; session is in review mode; implementation is underway with no doc changes needed |

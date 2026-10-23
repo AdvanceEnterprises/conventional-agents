@@ -1,5 +1,5 @@
 ---
-updated: 2026-10-01
+updated: 2026-10-23
 ---
 
 # Document Lifecycle
@@ -88,7 +88,7 @@ session combination, subject to the retractability limits noted above.
 | Status | Meaning | Who transitions | When |
 | --- | --- | --- | --- |
 | `draft` | Under development, not ready for implementation | Agent or human creates | Initial creation |
-| `approved` | Reviewed and ready for implementation | Human approves (merge of spec PR) | After review |
+| `approved` | Reviewed and ready for implementation | Human approves (merge, recorded, or deferred — ADR-0026) | After review |
 | `in-progress` | Implementation actively underway | Agent sets when starting PLAN execution | First implementation commit |
 | `implemented` | All PLAN steps complete, PR merged | Agent sets in the completing PR | Same PR that finishes implementation |
 | `deprecated` | No longer active or superseded | Human or agent | When abandoned or replaced |
@@ -98,7 +98,7 @@ session combination, subject to the retractability limits noted above.
 | Status | Meaning | Who transitions | When |
 | --- | --- | --- | --- |
 | `draft` | Under development | Agent or human creates | Initial creation |
-| `approved` | Ready for execution | Human approves (merge of plan PR) | After review |
+| `approved` | Ready for execution | Human approves (merge, recorded, or deferred — ADR-0026), or mechanical self-approval where ADR-0027's containment and reserved-path conditions hold | After review |
 | `in-progress` | Execution underway | Agent sets when starting | First implementation commit |
 | `implemented` | All steps complete | Agent sets in the completing PR | Same PR that finishes implementation |
 | `deprecated` | Abandoned before implementation; will not be executed | Human | When the governing FS is deprecated, or the plan is otherwise abandoned |
@@ -160,9 +160,9 @@ Statuses move forward through the lifecycle. No backward transitions without hum
 - `draft → approved → in-progress → implemented`
 - Never: `implemented → approved` or `approved → draft`
 
-### Draft-to-approved requires human review
+### Draft-to-approved: human review, with one mechanical PLAN path
 
-An agent MUST NOT transition a document from `draft` to `approved` on its own. This transition happens when a human merges the PR containing the document.
+An agent MUST NOT transition a document from `draft` to `approved` on its own, with one exception: a PLAN whose `touches:` all fall within its governing FS's `interfaces:` (that FS at `status: approved`) and outside ADR-0027's reserved set may self-approve, recording the transition as its approval. Every other document — every FS and ADR included — reaches `approved` only through one of the three ADR-0026 human-approval shapes below.
 
 ### Agents MUST NOT implement draft specs
 
@@ -192,9 +192,12 @@ Some PLANs span multiple PRs. In this case:
 - Keep `in-progress` for intermediate PRs
 - Set `implemented` only in the final PR
 
-### How approval happens (ADR-0026)
+### How approval happens (ADR-0026, with the ADR-0027 PLAN path)
 
-Approval is a **human act with a locatable record**. Three shapes, all human-performed:
+Approval requiring a human is a **human act with a locatable record**. Three shapes,
+all human-performed. One mechanical exception: a PLAN meeting ADR-0027's containment
+and reserved-path conditions self-approves, recording the transition as its approval
+with no separate marker — everything else in this section is about the human shapes.
 
 | Shape | When | The record |
 | --- | --- | --- |
@@ -210,13 +213,14 @@ Approved-By: <Human Name> <human@example.dev>
 Approved-Artifacts: FS-0018, PLAN-0018
 ```
 
-The agent may *record* the approval; the agent may not *be* the approval. The trailer
+The agent may *record* the approval; the agent may not *be* the approval — except under ADR-0027's mechanical path, where the eligible PLAN's status transition is itself the approval. The trailer
 names a human who is not the commit's author, and a commit whose `Approved-By:` matches
 its own author is malformed.
 
-None of the following is an approval: silence, absence of objection, an approval of
+None of the following is a human approval: silence, absence of objection, an approval of
 something else in the same session, an approval from a prior session for work that has
-since changed, or the agent's own view that the work is ready. **If you are unsure
+since changed, or the agent's own view that the work is ready (the ADR-0027 mechanical
+path aside). **If you are unsure
 whether approval was given, it was not. Ask.**
 
 **Approved is provisional until merged.** A status set before merge describes intent

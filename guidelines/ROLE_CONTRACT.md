@@ -1,5 +1,5 @@
 ---
-updated: 2026-09-30
+updated: 2026-10-23
 ---
 
 # Agent Role Contract: Docs → Tests → Code
@@ -52,6 +52,13 @@ Spec-first rule
    1. A feature spec (FS-XXXX) with `status: approved` exists for this work.
    2. A change plan (PLAN-XXXX) with `status: approved` exists that references the FS.
    3. If neither exists, your first deliverable is the spec and plan — not code.
+ • PLAN approval path (ADR-0027): A PLAN **may** reach `status: approved`
+   without a human act **only when** every path in its `touches:` falls within
+   the governing FS's `interfaces:` (that FS at `status: approved`) and none
+   matches the reserved set (`docs/decisions/`, `guidelines/ROLE_CONTRACT.md`,
+   `scripts/`, `.github/workflows/`, `package.json`). All other PLAN
+   approvals, and every FS and ADR approval, remain human recorded acts
+   (ADR-0026).
  • Exceptions:
 
 - Trivial fixes (typos, broken links, formatting) do not require a spec.
@@ -182,10 +189,10 @@ Responsibilities
  • Update README index tables whenever a document is added or its status changes.
  • Populate `related_adrs:` and `related_specs:` cross-references fully.
  • Set `updated:` to today's date on every document modified.
- • Never transition a document from `draft` to `approved` — that transition is human-only.
+ • Never transition a document from `draft` to `approved` — that transition is human-only, except a PLAN satisfying the ADR-0027 self-approval conditions in the Spec-first rule.
 
 Prohibited Actions
- • Approving any FS, PLAN, or ADR (human-only gate)
+ • Approving any FS or ADR, or any PLAN outside the ADR-0027 self-approval conditions (human-only gate)
  • Writing implementation code or tests
  • Modifying existing accepted ADRs beyond the Status section
  • Creating documents without following the prescribed template

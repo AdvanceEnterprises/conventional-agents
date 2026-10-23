@@ -18,7 +18,7 @@ PARSING_HINTS:
 - Is Success Criteria testable? yes/no
 - Any criteria ambiguous? `SC list`
 - Non-Goals / Out of Scope clear? yes/no
-- Interfaces defined? yes/no
+- Interfaces defined? yes/no (and drawn narrowly enough to bound ADR-0027 self-approval — a loose `interfaces:` widens agent authority)
 
 ## Fix before approval
 

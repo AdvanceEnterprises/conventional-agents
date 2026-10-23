@@ -9,14 +9,17 @@ related_specs:
   - FS-0022
 superseded_by: null
 created: 2026-07-27
-updated: 2026-07-28
+updated: 2026-10-23
 ---
 
 # ADR-0027: PLAN self-approval within declared interfaces
 
 ## Status
 
-- Accepted
+- Accepted — activated 2026-10-23: the ROLE_CONTRACT amendment this ADR
+  required has landed, so the mechanical path is the live rule. The
+  amendment is this ADR's own sanctioned mechanism — no separate FS/PLAN
+  governs the activation; the ADR is the sufficient authority for it.
 
 ## Context and Problem Statement
 
@@ -73,9 +76,9 @@ would have caught it — but a reader should not treat its presence as evidence 
 faith. It is evidence that the hazard was identified, nothing more.
 
 This ADR therefore warrants closer human scrutiny than its reasoning alone invites,
-and it takes effect only through an amendment to `guidelines/ROLE_CONTRACT.md` that is
-deliberately not included here. Approving this ADR does not enable self-approval; a
-separate, human-authored change to the role contract does.
+and it took effect only through an amendment to `guidelines/ROLE_CONTRACT.md` that was
+deliberately not included with its acceptance — that amendment landed on 2026-10-23,
+so the mechanical path is live.
 
 ## Decision Drivers
 
@@ -255,8 +258,9 @@ a security boundary — is currently documented only here. An ADR is not what
 someone reads while approving a spec, so a warning that lives only in this
 document will not reach the moment it matters.
 
-Two current-state documents must therefore change **in the same change that
-accepts this ADR**, per `ADR-0030` rule 3:
+Two current-state documents therefore changed **in the change that accepts
+this ADR**, per `ADR-0030` rule 3 — discharged late, in the 2026-10-23
+activation change that amended ROLE_CONTRACT:
 
 - **`templates/core/feature-spec.md`** — `interfaces:` is presented as a bare
   empty list. It needs a note stating that under this ADR the field bounds
@@ -335,10 +339,10 @@ omission if this ADR is accepted without them.
   ADR requires.
 - `templates/core/change-plan.md`: defines the `touches:` field.
 - `templates/core/feature-spec.md`: presents `interfaces:`, which this ADR turns
-  into an approval boundary. **Must be updated in the change that accepts this
-  ADR** (`ADR-0030` rule 3).
+  into an approval boundary. Updated in the 2026-10-23 activation change
+  (late discharge of the acceptance obligation).
 - `templates/reviewer/spec-review-template.md`: its interfaces check tests
-  existence, not tightness. **Must be updated in the change that accepts this
-  ADR.**
+  existence, not tightness. Updated in the 2026-10-23 activation change
+  (late discharge of the acceptance obligation).
 - `guidelines/ROLE_CONTRACT.md` §"Spec-first rule": requires amendment to admit
   self-approval as a valid route to `status: approved`.
