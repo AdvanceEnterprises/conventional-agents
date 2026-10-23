@@ -3,30 +3,16 @@ name: lint-docs
 on:
   push:
     branches: [trunk]
-    paths:
-      - ".github/workflows/lint-docs.yml"
-      - "docs/decisions/ADR-*.md"
-      - "docs/decisions/.markdownlint.yml"
-      - "docs/specifications/FS-*.md"
-      - "docs/specifications/.markdownlint.yml"
-      - "docs/change-plans/PLAN-*.md"
-      - "docs/change-plans/.markdownlint.yml"
-      - "workflows/*.md"
-      - "workflows/.markdownlint.yml"
-      - "guidelines/**/*.md"
-      - "skills/**/*.md"
-      - "templates/**/*.md"
-      - "integrations/**/*.md"
-      - "runbooks/**/*.md"
-      - "roles/*.md"
-      - "AGENTS.md"
-      - "README.md"
-      - "INTEGRATION.md"
-      - "CONTRIBUTING.md"
-      - "CHANGELOG.md"
-      - "package.json"
-      - "scripts/**/*"
-      - "test/**/*.bats"
+  # No `paths:` filter at the event level. The governance gates are
+  # whole-corpus (check-status.sh reads every FS/PLAN/ADR regardless of the
+  # diff; gate coverage is FS-0022's subject, gate target resolution is
+  # ADR-0033's), so a filter that skips the workflow on non-matching diffs
+  # re-opens the exact fail-open shape FS-0024 was written to remove — a
+  # change confined to config/, package-lock.json, integrations/**/*.json,
+  # docs/operations/, docs/research/, or a test helper would get no
+  # governance signal at all. The concurrency and timeout guards below
+  # bound each run's cost and collapse superseded generations of the same
+  # ref (see the spend note above concurrency).
   # No base-branch filter on pull_request (per #139): stacked PRs whose base is
   # a non-trunk branch must receive the same governance signal as trunk-based
   # PRs. A green-looking stacked PR must not mean "no governance checks ran".
@@ -34,30 +20,6 @@ on:
   # pull_request_target, so removing the filter does not broaden secret
   # exposure — fork PRs still run with the read-only default token.
   pull_request:
-    paths:
-      - ".github/workflows/lint-docs.yml"
-      - "docs/decisions/ADR-*.md"
-      - "docs/decisions/.markdownlint.yml"
-      - "docs/specifications/FS-*.md"
-      - "docs/specifications/.markdownlint.yml"
-      - "docs/change-plans/PLAN-*.md"
-      - "docs/change-plans/.markdownlint.yml"
-      - "workflows/*.md"
-      - "workflows/.markdownlint.yml"
-      - "guidelines/**/*.md"
-      - "skills/**/*.md"
-      - "templates/**/*.md"
-      - "integrations/**/*.md"
-      - "runbooks/**/*.md"
-      - "roles/*.md"
-      - "AGENTS.md"
-      - "README.md"
-      - "INTEGRATION.md"
-      - "CONTRIBUTING.md"
-      - "CHANGELOG.md"
-      - "package.json"
-      - "scripts/**/*"
-      - "test/**/*.bats"
 
 # Spend guards (CI-refactor mitigation for a recurring Actions billing
 # condition). `concurrency` cancels a superseded generation
@@ -72,12 +34,12 @@ on:
 # on pull_request, so a push and a PR run never cancel each other, and each
 # PR's own superseded generations collapse.
 #
-# Deliberately NOT a `paths:` filter here: the governance gates are whole-corpus
-# (`check-status.sh` reads every FS/PLAN/ADR regardless of the diff; gate
-# coverage is FS-0022's subject, gate target resolution is ADR-0033's), so a
-# filter that skips the workflow on non-matching diffs re-opens the exact
-# fail-open shape FS-0024 was written to remove (see the setup note above).
-# The guards below bound spend without weakening any gate.
+# No `paths:` filter — see the event-level note above. The guards here bound
+# the cost of each run and collapse superseded generations of the same ref;
+# they do not cap how many runs launch, and with the event filters gone every
+# trunk push and every PR runs the full matrix. The mitigation for the
+# resulting minutes volume is the public-repo flip (public repos get
+# unlimited Actions minutes on Free).
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true

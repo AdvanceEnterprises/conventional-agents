@@ -224,6 +224,20 @@ PLAN_EOF
   assert_file_contains "$REPO_ROOT/docs/orchestration/multi-model-pilot-001/.markdownlint.yml" "default: false"
 }
 
+@test "lint: the CI workflow carries no event-level paths filter (G6 / C-24)" {
+  # The governance gates are whole-corpus; an event-level `paths:` (or
+  # `paths-ignore:`) filter skips the entire workflow for changes confined to
+  # surfaces the filter omitted (config/, package-lock.json,
+  # integrations/**/*.json, docs/operations/, docs/research/, test helpers) —
+  # the C-24 fail-open shape. The pattern also rejects flow-style `paths:`
+  # keys, and the second assertion pins the #139 rule (no `branches:` filter
+  # under `pull_request:`), the other half of the same filter class.
+  local workflow="$REPO_ROOT/.github/workflows/lint-docs.yml"
+  [ -f "$workflow" ]
+  ! grep -qE '(^|[{}[[:space:],])paths(-ignore)?:' "$workflow"
+  ! sed -n '/^  pull_request:/,/^concurrency:/p' "$workflow" | grep -qE '^[[:space:]]*branches:'
+}
+
 # --- npm test -----------------------------------------------------------------
 
 @test "npm_test: runs all suites" {

@@ -716,6 +716,22 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Fixed
 
+#### CI runs the whole-corpus gates on every push and PR — event-level paths filters removed (G6)
+
+- **Closes the C-24 coverage contradiction.** `lint-docs.yml` claimed the
+  governance gates were "deliberately NOT a paths filter" while carrying
+  event-level `paths:` filters that skipped the entire workflow for changes
+  confined to surfaces the filter omitted (`config/`, `package-lock.json`,
+  `integrations/**/*.json`, `docs/operations/`, `docs/research/`, test
+  helpers) — such changes got no governance signal at all. The filters are
+  removed (push keeps `branches: [trunk]`; the #139 no-branches-filter rule
+  on `pull_request` is untouched); the concurrency and timeout spend guards
+  remain. A gate-coverage fixture asserts no `paths:`/`paths-ignore:` key
+  (block or flow style) and no `pull_request` `branches:` filter can be
+  re-added. Every trunk push and PR now runs the full matrix; the spend
+  mitigation for the resulting volume is the public-repo flip, which makes
+  Actions minutes unlimited on Free.
+
 #### PLAN self-approval requires a non-draft governing-spec set (G5)
 
 - **Closes the rule-6 bypass** where a PLAN with no `related_specs:`, a
