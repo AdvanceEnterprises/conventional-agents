@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0040
-status: approved
+status: implemented
 title: Governed-ID claim and citation audit — local duplicates, cross-PR collisions, and stale renumber citations
 owner: ajoeofalltrades
 test_required: true
@@ -21,7 +21,7 @@ supersedes: []
 requires: []
 tags: [quality-gates, id-registry, collisions, github-binding, read-only, detection]
 created: 2026-09-30
-updated: 2026-10-03
+updated: 2026-10-24
 ---
 
 <!--
@@ -38,7 +38,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Approved
+- Implemented
 
 ## Plan Status
 

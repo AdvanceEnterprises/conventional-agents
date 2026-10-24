@@ -71,15 +71,15 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | PLAN-0043 | Implement FS-0037 Vendor-prefixed reference resolution | FS-0037 | implemented |
 | PLAN-0044 | Implement FS-0038 Hermes kanban substrate binding | FS-0038 | draft |
 | PLAN-0045 | Implement FS-0039 Validation reproducibility contract | FS-0039 | implemented |
-| PLAN-0046 | Implement FS-0040 Governed-ID claim and citation audit | FS-0040 | approved |
-| PLAN-0047 | Implement FS-0041 Status-vs-delivery consistency audit | FS-0041 | approved |
-| PLAN-0048 | Implement FS-0042 History-aware freshness audit | FS-0042 | approved |
-| PLAN-0049 | Implement FS-0043 Cron attribution enforcement | FS-0043 | approved |
+| PLAN-0046 | Implement FS-0040 Governed-ID claim and citation audit | FS-0040 | implemented |
+| PLAN-0047 | Implement FS-0041 Status-vs-delivery consistency audit | FS-0041 | implemented |
+| PLAN-0048 | Implement FS-0042 History-aware freshness audit | FS-0042 | implemented |
+| PLAN-0049 | Implement FS-0043 Cron attribution enforcement | FS-0043 | implemented |
 | PLAN-0051 | Implement FS-0045 Accepted-ADR authority check | FS-0045 | draft |
 | PLAN-0052 | Implement FS-0046 Trunk governance enforcement | FS-0046 | draft |
 | PLAN-0053 | Implement FS-0047 Exported consumer-boundary audit | FS-0047 | implemented |
 | PLAN-0055 | Implement FS-0049 Bash 3.2 status-check compatibility | FS-0049 | approved |
-| PLAN-0056 | Implement FS-0050 run-batch tier-integrity check | FS-0050 | approved |
+| PLAN-0056 | Implement FS-0050 run-batch tier-integrity check | FS-0050 | implemented |
 | PLAN-0057 | Migrate, merge, and reconcile the template mesh | ADR-0046 | draft |
 | PLAN-0058 | Implement FS-0051 engine pilot | FS-0051 | draft |
 | PLAN-0059 | Implement FS-0052 Hermes Agent runtime binding | FS-0052 | draft |
