@@ -12,6 +12,7 @@ For this project (a documentation/standards kit), semver follows the
 ## [Unreleased]
 
 ### Added
+
 #### Public-flip preparation: CODEOWNERS (G9)
 
 - **Adds `CODEOWNERS`** routing every path to the human maintainer. With the
@@ -27,7 +28,6 @@ For this project (a documentation/standards kit), semver follows the
   `check-delivery-status.sh` flagged the five pairs as delivered-but-
   `approved`. Statuses, index rows, and `updated:` stamps reconciled under
   recorded human approval; the drift the delivery gate reports is closed.
-
 
 - **FS-0047 (implemented) / PLAN-0053 (implemented): exported consumer-boundary audit.** Implements the standalone-consumable scrub: the exported lint script's sibling-discovery and actor-email defaults are empty (consumers configure `CA_REPO_DIRS`/`CA_TARGET_REPO`/`CA_SIBLING_NAMES`, `AGENT_EMAILS`, and `CRON_AGENT_EMAILS` explicitly; an unconfigured attribution run fails closed and `CA_SKIP_ATTRIBUTION=1` is the explicit opt-out — the OK line disclaims the cron boundary when the cron list is unset), normative actor tables are consumer-selected placeholders with a labeled non-normative appendix, the Claude settings fragment and copy-in examples are parameterized, the instance's agent-email domain moves from `tais-den.dev` to `advance.enterprises` (the historical aliases stay in the commit allowlist and CI exports for anchored-history audits), the Project Board section describes work tracking generically (the instance's board lives at the maintainer's personal account), the benchmark fixture is the placeholder example form (the instance's real pilot card lives in pack-protocol), and a `test/FS-0047/` regression audit enforces the boundary.
 - **FS-0052 / PLAN-0059 (draft): Hermes Agent runtime binding.** Specifies and plans the second agent-runtime binding under ADR-0039 — maps the framework's setup requirements onto Hermes Agent's config surface (`~/.hermes/config.yaml` + profiles, `SOUL.md` bootstrap, `metadata.hermes.*` skills), ships a report-only audit and an advisory hook, and documents (not wires) Hermes's cron/webhook/moa/kanban primitives.
@@ -484,6 +484,17 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Changed
 
+#### The repository is public — G9 cutover executed (C-25)
+
+- **Public flip complete.** The repo flipped public on 2026-10-24, and trunk
+  branch protection was configured within the cutover window and read back:
+  1 required approving review + required code-owner review (CODEOWNERS),
+  15 required CI contexts, linear history (ADR-0025), force-push and
+  deletion disabled, admins exempt from the review requirement so the human
+  merge authority is unchanged. This PR is the first post-flip artifact and
+  doubles as the blocked-merge demonstration: green checks, no approval —
+  the substrate refuses the merge until a human records one.
+
 #### The primary status gate runs single-pass — minutes down to seconds (G7)
 
 - **`scripts/check-status.sh` front-matter extraction is now a one-awk-pass
@@ -786,7 +797,6 @@ For this project (a documentation/standards kit), semver follows the
   human-approved plans remain exempt (the approval is the authority). Six
   new portable-gates fixtures cover the failure modes and the non-draft
   acceptance paths.
-
 
 - **`scripts/check-status.sh` now actually parses under Bash 3.2 (issue #214).**
   The script advertised "Bash 3.2+ compatible" but its rule 8 reference
