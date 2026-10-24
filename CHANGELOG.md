@@ -12,6 +12,13 @@ For this project (a documentation/standards kit), semver follows the
 ## [Unreleased]
 
 ### Added
+#### Public-flip preparation: CODEOWNERS (G9)
+
+- **Adds `CODEOWNERS`** routing every path to the human maintainer. With the
+  flip's branch protection requiring one approving review *and* code-owner
+  review, the merge gate becomes substrate-enforced: a green PR without a
+  human approval stays blocked. This is the C-25 exit-gate preparation.
+
 - **Delivery reconciliation (G8 / C-14): FS-0040/PLAN-0046, FS-0041/PLAN-0047,
   FS-0042/PLAN-0048, FS-0043/PLAN-0049, and FS-0050/PLAN-0056 flip
   `approved` → `implemented`.** The implementations landed with green CI
