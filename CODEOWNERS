@@ -1,0 +1,6 @@
+# CODEOWNERS — required-review routing for the public-flip protection config.
+# The human maintainer owns every path: branch protection requires one
+# approving review, and code-owner review is required, so a PR cannot merge
+# without a human approval recorded on it (ADR-0026's recorded-act model
+# enforced substrate-side).
+* @ajoeofalltrades
