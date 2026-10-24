@@ -130,7 +130,16 @@ get_field() {
       k=ENVIRON["k"]
       # The original helper matched field names with grep/sed BRE; awk matches
       # ERE, so escape metacharacters to keep literal-key semantics identical.
-      gsub(/[][.*+?^$(){}|\\]/, "\\\\&", k)
+      # index()-based escape — the bracket-class spelling used first failed to
+      # PARSE on mawk (Ubuntu CI): `/[][...]/` is a gawk-only construction.
+      esc = ""
+      meta = "\\^$.|?*+(){}[]"
+      for (i = 1; i <= length(k); i++) {
+        c = substr(k, i, 1)
+        if (index(meta, c) > 0) esc = esc "\\"
+        esc = esc c
+      }
+      k = esc
       if (done==0 && line ~ "^" k ":") {
         sub("^" k ":[[:space:]]*", "", line)
         gsub(/"/, "", line)
@@ -147,8 +156,16 @@ get_list_field() {
       line=$0; sub(/^[^\t]*\t/, "", line)
       k=ENVIRON["k"]
       # Original helper matched the field name with grep/sed BRE; escape ERE
-      # metacharacters so literal-key semantics are identical.
-      gsub(/[][.*+?^$(){}|\\]/, "\\\\&", k)
+      # metacharacters so literal-key semantics are identical. index()-based
+      # escape — the bracket-class spelling failed to parse on mawk (CI).
+      esc = ""
+      meta = "\\^$.|?*+(){}[]"
+      for (i = 1; i <= length(k); i++) {
+        c = substr(k, i, 1)
+        if (index(meta, c) > 0) esc = esc "\\"
+        esc = esc c
+      }
+      k = esc
       if (in_field==0 && line ~ "^" k ":") {
         in_field=1
         if (line ~ /\[/) {
@@ -270,7 +287,10 @@ get_relation_ids() {
     n==1 && $0 ~ "^"field":"{
       line=$0; sub("^"field":[[:space:]]*", "", line)
       if (line ~ /\[/) {
-        gsub(/^[[:space:]]*\[|[][[:space:]]*$/, "", line)
+        # mawk-safe: two gsubs instead of one alternation with a `]`-in-class
+        # spelling, which some awk implementations reject at parse time.
+        gsub(/^[[:space:]]*\[/, "", line)
+        gsub(/][[:space:]]*$/, "", line)
         gsub(/[[:space:]]*,[[:space:]]*/, "\n", line)
         gsub(/["'\'']/, "", line)
         if (line != "") print line

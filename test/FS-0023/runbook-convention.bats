@@ -106,10 +106,14 @@ setup() {
   grep -q 'lint:docs.*lint:runbooks' "$PACKAGE_JSON"
 }
 
-@test "lint: CI triggers on runbooks in both push and pull_request path lists" {
-  local n
-  n=$(grep -c 'runbooks/\*\*/\*\.md' "$CI")
-  [ "$n" -eq 2 ]
+@test "lint: runbooks are covered on every push and pull_request" {
+  # G6 removed the event-level paths: filters entirely: the workflow runs the
+  # full lint matrix (lint:docs chain, which includes lint:runbooks) on every
+  # trunk push and every PR. Runbook coverage is therefore unconditional, not
+  # achieved by path lists. The absence of any paths: block is the assertion.
+  if grep -qE "^[[:space:]]+paths:" "$CI"; then
+    fail "lint-docs.yml must not filter triggers with paths: (G6, #241)"
+  fi
 }
 
 @test "lint: runbooks/ inherits the root markdownlint config" {

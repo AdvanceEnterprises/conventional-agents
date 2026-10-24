@@ -37,12 +37,19 @@ setup() {
   assert_file_contains "$workflow" "markdownlint-cli2-action@v17"
 }
 
-@test "workflow targets trunk and ADR globs only" {
+@test "workflow triggers on trunk pushes and lints the whole corpus" {
+  # G6 (PR #241) removed the event-level paths: filters — the workflow must run
+  # the full matrix on every trunk push and every PR, so a filtered-out diff can
+  # never slip past governance. The ADR glob remains a lint target, not a
+  # trigger filter.
   local workflow="$REPO_ROOT/.github/workflows/lint-docs.yml"
   assert_file_exists "$workflow"
-  assert_file_contains "$workflow" "trunk"
+  assert_file_contains "$workflow" "branches: [trunk]"
   assert_file_contains "$workflow" "docs/decisions/ADR-*.md"
-  assert_file_contains "$workflow" "docs/decisions/.markdownlint.yml"
+  # No paths: filters on either event.
+  if grep -qE "^[[:space:]]+paths:" "$workflow"; then
+    fail "lint-docs.yml must not filter triggers with paths: (G6, #241)"
+  fi
 }
 
 @test "package.json defines markdownlint-cli2 and lint:adrs script" {
