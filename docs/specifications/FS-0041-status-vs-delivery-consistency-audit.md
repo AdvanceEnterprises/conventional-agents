@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0041
-status: approved
+status: implemented
 title: Status-vs-delivery consistency audit — detect governed documents that lag shipped implementation
 owner: ajoeofalltrades
 test_required: true
@@ -21,7 +21,7 @@ supersedes: []
 requires: [FS-0022, FS-0024]
 tags: [quality-gates, status-drift, delivery-evidence, report-only, detection]
 created: 2026-10-01
-updated: 2026-10-03
+updated: 2026-10-24
 ---
 
 <!--
@@ -38,7 +38,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Approved
+- Implemented
 
 ## Plan Status
 

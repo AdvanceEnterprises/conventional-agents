@@ -12,6 +12,15 @@ For this project (a documentation/standards kit), semver follows the
 ## [Unreleased]
 
 ### Added
+- **Delivery reconciliation (G8 / C-14): FS-0040/PLAN-0046, FS-0041/PLAN-0047,
+  FS-0042/PLAN-0048, FS-0043/PLAN-0049, and FS-0050/PLAN-0056 flip
+  `approved` → `implemented`.** The implementations landed with green CI
+  (claim audit, delivery audit, history-aware freshness, cron attribution,
+  run-batch tier check — scripts, tests, and CI wiring all on trunk), and
+  `check-delivery-status.sh` flagged the five pairs as delivered-but-
+  `approved`. Statuses, index rows, and `updated:` stamps reconciled under
+  recorded human approval; the drift the delivery gate reports is closed.
+
 
 - **FS-0047 (implemented) / PLAN-0053 (implemented): exported consumer-boundary audit.** Implements the standalone-consumable scrub: the exported lint script's sibling-discovery and actor-email defaults are empty (consumers configure `CA_REPO_DIRS`/`CA_TARGET_REPO`/`CA_SIBLING_NAMES`, `AGENT_EMAILS`, and `CRON_AGENT_EMAILS` explicitly; an unconfigured attribution run fails closed and `CA_SKIP_ATTRIBUTION=1` is the explicit opt-out — the OK line disclaims the cron boundary when the cron list is unset), normative actor tables are consumer-selected placeholders with a labeled non-normative appendix, the Claude settings fragment and copy-in examples are parameterized, the instance's agent-email domain moves from `tais-den.dev` to `advance.enterprises` (the historical aliases stay in the commit allowlist and CI exports for anchored-history audits), the Project Board section describes work tracking generically (the instance's board lives at the maintainer's personal account), the benchmark fixture is the placeholder example form (the instance's real pilot card lives in pack-protocol), and a `test/FS-0047/` regression audit enforces the boundary.
 - **FS-0052 / PLAN-0059 (draft): Hermes Agent runtime binding.** Specifies and plans the second agent-runtime binding under ADR-0039 — maps the framework's setup requirements onto Hermes Agent's config surface (`~/.hermes/config.yaml` + profiles, `SOUL.md` bootstrap, `metadata.hermes.*` skills), ships a report-only audit and an advisory hook, and documents (not wires) Hermes's cron/webhook/moa/kanban primitives.

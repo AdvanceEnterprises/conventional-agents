@@ -2,7 +2,7 @@
 type: change-plan
 role: implementer
 language: markdown
-status: approved
+status: implemented
 related_specs: [FS-0040]
 approved_by: "Joey Clark <administrator@ajoeofalltrades.dev>"
 related_adrs: [ADR-0015, ADR-0024, ADR-0026, ADR-0027, ADR-0033, ADR-0037]
@@ -18,7 +18,7 @@ touches:
   - docs/change-plans/README.md
   - CHANGELOG.md
 created: 2026-09-30
-updated: 2026-10-03
+updated: 2026-10-24
 ---
 
 # PLAN-0046: Implement FS-0040 — Governed-ID claim and citation audit

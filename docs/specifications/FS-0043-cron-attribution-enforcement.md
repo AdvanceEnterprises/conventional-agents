@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0043
-status: approved
+status: implemented
 title: Cron attribution enforcement — require terminal mode=autonomous after the adoption boundary
 owner: ajoeofalltrades
 test_required: true
@@ -18,7 +18,7 @@ supersedes: []
 requires: [FS-0017]
 tags: [attribution, cron, autonomous, quality-gates, history, detection]
 created: 2026-10-03
-updated: 2026-10-03
+updated: 2026-10-24
 ---
 
 <!--
@@ -35,7 +35,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Approved
+- Implemented
 
 ## Plan Status
 

@@ -132,14 +132,14 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0037 | Vendor-prefixed reference resolution — close the submodule-citation blind spot in referenced-path checking | implemented |
 | FS-0038 | Hermes kanban substrate binding for work item lifecycle | draft |
 | FS-0039 | Validation reproducibility contract — bounded, hermetic, and CI-parity framework checks | implemented |
-| FS-0040 | Governed-ID claim and citation audit — local duplicates, cross-PR collisions, and stale renumber citations | approved |
-| FS-0041 | Status-vs-delivery consistency audit — detect governed documents that lag shipped implementation | approved |
-| FS-0042 | History-aware freshness audit — distinguish substantive document drift from metadata-only updates | approved |
-| FS-0043 | Cron attribution enforcement — require terminal mode=autonomous after the adoption boundary | approved |
+| FS-0040 | Governed-ID claim and citation audit — local duplicates, cross-PR collisions, and stale renumber citations | implemented |
+| FS-0041 | Status-vs-delivery consistency audit — detect governed documents that lag shipped implementation | implemented |
+| FS-0042 | History-aware freshness audit — distinguish substantive document drift from metadata-only updates | implemented |
+| FS-0043 | Cron attribution enforcement — require terminal mode=autonomous after the adoption boundary | implemented |
 | FS-0045 | Accepted-ADR authority check for current-state guidance | draft |
 | FS-0046 | Whole-corpus governance triggers and trunk merge enforcement | draft |
 | FS-0047 | Reusable consumer guidance without instance-specific leakage | implemented |
 | FS-0049 | Bash 3.2 regression coverage for the status consistency gate | approved |
-| FS-0050 | Run-batch tier-integrity check | approved |
+| FS-0050 | Run-batch tier-integrity check | implemented |
 | FS-0051 | First pilot — an authorized feature draft-spec produces one canonical draft FS PR | draft |
 | FS-0052 | Hermes Agent runtime binding — the second agent-runtime binding under ADR-0039 | draft |

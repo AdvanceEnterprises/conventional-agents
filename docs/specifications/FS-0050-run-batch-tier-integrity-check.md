@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0050
-status: approved
+status: implemented
 title: Run-batch tier-integrity check
 owner: ajoeofalltrades
 test_required: true
@@ -20,14 +20,14 @@ supersedes: []
 requires: []
 tags: [runs, batch-approval, tier-integrity, detection, governance]
 created: 2026-10-13
-updated: 2026-10-13
+updated: 2026-10-24
 ---
 
 # Feature Spec: Run-batch tier-integrity check
 
 ## Status
 
-- Approved
+- Implemented
 
 ## Summary
 
