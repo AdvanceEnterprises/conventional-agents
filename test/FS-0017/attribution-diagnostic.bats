@@ -368,11 +368,12 @@ Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implement
   # Shim git so rev-parse --is-shallow-repository exits nonzero with no output,
   # exercising the fail-closed branch for an indeterminate shallow state.
   local real_git fake_bin
-  real_git="$(command -v git)"
+  real_git="$(type -P git)"
+  [ -n "$real_git" ] || skip "git executable is not discoverable"
   fake_bin="$BATS_TEST_TMPDIR/fake-git-bin"
   mkdir -p "$fake_bin"
   # The real git path is expanded now; "$@" inside the shim stays literal.
-  printf '#!/usr/bin/env bash\nfor arg in "$@"; do\n  case "$arg" in\n    --is-shallow-repository)\n      exit 1\n      ;;\n  esac\ndone\nexec "%s" "$@"\n' "$real_git" > "$fake_bin/git"
+  printf '#!/bin/bash\nfor arg in "$@"; do\n  case "$arg" in\n    --is-shallow-repository)\n      exit 1\n      ;;\n  esac\ndone\nexec "%s" "$@"\n' "$real_git" > "$fake_bin/git"
   chmod +x "$fake_bin/git"
 
   run env PATH="$fake_bin:$PATH" CA_TARGET_REPO="$repo" bash "$LINT_SCRIPT"
