@@ -1,6 +1,6 @@
 ---
 type: feature-spec
-id: FS-0053
+id: FS-0056
 status: draft
 title: Narrow direct-to-trunk merge exception — eligibility gate and audit digest
 owner: Head Architect
@@ -10,8 +10,8 @@ interfaces:
   - .github/workflows/
   - package.json
   - docs/decisions/ADR-0041-narrow-direct-to-trunk-merge-exception-for-reversible-maintenance.md
-  - docs/specifications/FS-0053-narrow-direct-to-trunk-merge-exception.md
-  - docs/change-plans/PLAN-0060-implement-fs-0053.md
+  - docs/specifications/FS-0056-narrow-direct-to-trunk-merge-exception.md
+  - docs/change-plans/PLAN-0060-implement-fs-0056.md
   - CHANGELOG.md
 related_adrs:
   - ADR-0012

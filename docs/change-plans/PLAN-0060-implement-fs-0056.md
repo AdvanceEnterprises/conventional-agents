@@ -5,7 +5,7 @@ role: implementer
 language: bash
 status: draft
 related_specs:
-  - FS-0053
+  - FS-0056
 related_adrs:
   - ADR-0012
   - ADR-0018
@@ -21,9 +21,9 @@ touches:
   - .github/workflows/lint-docs.yml
   - package.json
   - docs/decisions/ADR-0041-narrow-direct-to-trunk-merge-exception-for-reversible-maintenance.md
-  - docs/specifications/FS-0053-narrow-direct-to-trunk-merge-exception.md
-  - docs/change-plans/PLAN-0060-implement-fs-0053.md
-  - test/FS-0053/eligibility-gate.bats
+  - docs/specifications/FS-0056-narrow-direct-to-trunk-merge-exception.md
+  - docs/change-plans/PLAN-0060-implement-fs-0056.md
+  - test/FS-0056/eligibility-gate.bats
   - CHANGELOG.md
 created: 2026-10-27
 updated: 2026-10-27
@@ -49,7 +49,7 @@ under-declared plan fails later and louder.
 
 ## 1. Feature / Issue Reference
 
-* Feature Spec ID(s): FS-0053
+* Feature Spec ID(s): FS-0056
 * Related ADR ID(s): ADR-0012, ADR-0018, ADR-0027, ADR-0029, ADR-0041, ADR-0047, ADR-0049
 * Issue / PR Reference: #151
 
@@ -64,7 +64,7 @@ under-declared plan fails later and louder.
 * Add the gate as a required status check in `.github/workflows/lint-docs.yml`
   (or a new workflow) on trunk.
 * Add an `eligibility-gate` npm script entry in `package.json`.
-* Provide bats tests under `test/FS-0053/` covering eligible, ineligible, and
+* Provide bats tests under `test/FS-0056/` covering eligible, ineligible, and
   human-approved cases.
 * Add a consumer-framed `CHANGELOG.md` entry because the change touches
   exported surface (`scripts/`).
@@ -81,7 +81,7 @@ under-declared plan fails later and louder.
 
 * Test file(s):
 
-  * `test/FS-0053/eligibility-gate.bats`
+  * `test/FS-0056/eligibility-gate.bats`
 
 * Target test(s):
 
@@ -101,9 +101,9 @@ Only list files that will be changed.
 * `package.json`
 * `docs/decisions/ADR-0041-narrow-direct-to-trunk-merge-exception-for-reversible-maintenance.md`
   (update `updated:` only)
-* `docs/specifications/FS-0053-narrow-direct-to-trunk-merge-exception.md`
-* `docs/change-plans/PLAN-0060-implement-fs-0053.md`
-* `test/FS-0053/eligibility-gate.bats`
+* `docs/specifications/FS-0056-narrow-direct-to-trunk-merge-exception.md`
+* `docs/change-plans/PLAN-0060-implement-fs-0056.md`
+* `test/FS-0056/eligibility-gate.bats`
 * `CHANGELOG.md`
 
 ## 5. Implementation Steps (High-Level)
@@ -130,7 +130,7 @@ Describe concrete steps without code.
 
 * Spec constraints:
 
-  * FS-0053 Success Criteria and Out of Scope.
+  * FS-0056 Success Criteria and Out of Scope.
 
 * ADR constraints:
 
@@ -154,7 +154,7 @@ Describe concrete steps without code.
 
 * Tests expected to pass:
 
-  * `test/FS-0053/eligibility-gate.bats`
+  * `test/FS-0056/eligibility-gate.bats`
 
 * Manual checks (if any):
 

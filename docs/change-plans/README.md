@@ -83,8 +83,7 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | PLAN-0057 | Migrate, merge, and reconcile the template mesh | ADR-0046 | draft |
 | PLAN-0058 | Implement FS-0051 engine pilot | FS-0051 | draft |
 | PLAN-0059 | Implement FS-0052 Hermes Agent runtime binding | FS-0052 | draft |
-| PLAN-0060 | Implement FS-0053 narrow direct-to-trunk merge exception | FS-0053 | draft |
-|| PLAN-0060 | Implement FS-0053 narrow direct-to-trunk merge exception | FS-0053 | draft |
+| PLAN-0060 | Implement FS-0056 narrow direct-to-trunk merge exception | FS-0056 | draft |
 
 | PLAN-0046 | Implement FS-0040 Governed-ID claim audit | FS-0040 | draft |
 | PLAN-0047 | Implement FS-0041 Status-vs-delivery consistency audit | FS-0041 | draft |
