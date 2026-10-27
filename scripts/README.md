@@ -661,6 +661,25 @@ Both fail the gate — exit-code semantics are unchanged: any `BAD` line still
 makes the run non-zero, so CI wiring is unaffected. Only the remedy differs.
 The hermetic cases live in `test/FS-0017/attribution-diagnostic.bats`.
 
+## check-citations.sh
+`npm run check:citations` runs `bash scripts/check-citations.sh`.
+**Purpose.** Issue #186 / FS-0040 complement: resolve FS/PLAN/ADR citations
+inside the repository's own governed documents. A governed ID cited anywhere
+in the FS/PLAN/ADR corpus must resolve to an existing document in the same
+repository's registries. The script is read-only and never fetches.
+**Scope.** Scans the three registry directories
+(`docs/specifications/`, `docs/change-plans/`, `docs/decisions/`) plus
+`docs/operations/ARC42.md`. Extracts `FS-NNNN`, `PLAN-NNNN`, and `ADR-NNNN`
+tokens and checks each against the local registries. Self-citations are
+allowed. Forward references or preserved historical citations may be exempted
+with `--exempt ID[,ID]` or `CA_CITATION_EXEMPT`.
+**Posture.** Detection, not prevention: exit 1 with a list of unresolved
+`file: token` pairs; exit 2 for invalid input or a missing repository; exit
+0 when every citation resolves. Not wired as a required CI gate by default —
+consumers opt in once their corpus is clean.
+**Target resolution.** Per FS-0024/ADR-0033, resolves the repository from the
+caller's working directory or `CA_TARGET_REPO`.
+
 ## run-bats.sh
 
 `npm test` runs `bash scripts/run-bats.sh`.
