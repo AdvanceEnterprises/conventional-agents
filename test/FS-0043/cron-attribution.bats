@@ -76,7 +76,22 @@ $(cron_trailer missing)" "post.txt"
 
   [ "$status" -ne 0 ]
   echo "$output" | grep -qF "cron attribution missing terminal mode=autonomous"
-  ! echo "$output" | grep -qF "grandfathered"
+  ! echo "$output" | grep -qF "cron attribution grandfathered"
+}
+
+@test "post-boundary cron digest reports missing marker count" {
+  local repo="$BATS_TEST_TMPDIR/post-boundary-digest"
+  build_repo "$repo"
+  plant_cron_commit "$repo" "2026-10-03T01:00:00Z" "feat: missing autonomous marker
+
+$(cron_trailer missing)" "post.txt"
+
+  run_lint "$repo"
+
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qE "DIGEST[[:space:]]+[^[:space:]]+:[[:space:]]*cron attribution"
+  echo "$output" | grep -qE "1 missing mode=autonomous"
+  echo "$output" | grep -qE "0 grandfathered"
 }
 
 @test "post-boundary cron commit with terminal marker passes" {
@@ -91,6 +106,8 @@ $(cron_trailer autonomous)" "pass.txt"
   [ "$status" -eq 0 ]
   echo "$output" | grep -qF "cron boundary enforced"
   ! echo "$output" | grep -qF "missing terminal mode=autonomous"
+  echo "$output" | grep -qE "DIGEST[[:space:]]+[^[:space:]]+:[[:space:]]*cron attribution"
+  echo "$output" | grep -qE "1 audited, 0 missing mode=autonomous, 0 grandfathered"
 }
 
 @test "mode marker in the middle of the trailer is not terminal" {
@@ -119,6 +136,8 @@ $(cron_trailer missing)" "old.txt"
   [ "$status" -eq 0 ]
   echo "$output" | grep -qF "cron attribution grandfathered"
   ! echo "$output" | grep -qF "missing terminal mode=autonomous"
+  echo "$output" | grep -qE "DIGEST[[:space:]]+[^[:space:]]+:[[:space:]]*cron attribution"
+  echo "$output" | grep -qE "1 audited, 0 missing mode=autonomous, 1 grandfathered"
 }
 
 @test "interactive agent behavior is unchanged" {
@@ -210,5 +229,5 @@ EOF
 
   [ "$status" -ne 0 ]
   echo "$output" | grep -qF "cron attribution timestamp unreadable"
-  ! echo "$output" | grep -qF "grandfathered"
+  ! echo "$output" | grep -qF "cron attribution grandfathered"
 }

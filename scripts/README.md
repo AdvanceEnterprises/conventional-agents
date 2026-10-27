@@ -551,7 +551,9 @@ repository set:
    Configured cron identities are subject to the boundary-aware ADR-0021 rule:
    after `CRON_ATTRIBUTION_BOUNDARY` their parsed trailer must end in
    `mode=autonomous`; commits at or before the boundary are reported as
-   grandfathered and are not rewritten.
+   grandfathered and are not rewritten. The check emits a per-repository digest
+   line summarizing how many cron commits were audited, how many are missing
+   `mode=autonomous`, and how many were grandfathered (issue #187).
 2. **README index consistency** — every governed doc under `docs/decisions/`,
    `docs/specifications/`, and `docs/change-plans/` appears in its
    `README.md` index.

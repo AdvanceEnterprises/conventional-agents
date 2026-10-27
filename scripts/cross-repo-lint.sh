@@ -6,6 +6,7 @@
 #   2. README index consistency (all doc files referenced)
 #   3. FS/PLAN numbering validity within each repo (no duplicate IDs)
 #   4. Post-boundary cron attribution requires terminal mode=autonomous
+#      and emits a digest line summarizing cron-attribution coverage.
 #
 # Bash 3.2+ compatible (no associative arrays).
 #
@@ -232,6 +233,7 @@ for REPO in "${REPOS[@]}"; do
   MALFORMED_COUNT=0
   CRON_BAD_COUNT=0
   CRON_GRANDFATHERED_COUNT=0
+  CRON_AUDITED_COUNT=0
   if [ -z "${AGENT_EMAILS}${CRON_AGENT_EMAILS}" ]; then
     if [ "${CA_SKIP_ATTRIBUTION:-0}" = "1" ]; then
       echo "  SKIP  $REPO_NAME (attribution unconfigured; CA_SKIP_ATTRIBUTION=1 — cron boundary not enforced)"
@@ -256,6 +258,9 @@ for REPO in "${REPOS[@]}"; do
     for _ce in $CRON_AGENT_EMAILS; do
       [ "$AUTHOR_EMAIL" = "$_ce" ] && _is_cron=true && break
     done
+    if $_is_cron; then
+      CRON_AUDITED_COUNT=$((CRON_AUDITED_COUNT + 1))
+    fi
 
     if [ -z "$RAW" ]; then
       # In-scope offenders so far were all reported as "missing". Two distinct
@@ -319,6 +324,11 @@ for REPO in "${REPOS[@]}"; do
   [ -z "$CRON_AGENT_EMAILS" ] && _cron_suffix="cron boundary NOT configured (CRON_AGENT_EMAILS empty)"
   if [ "$BAD_COUNT" -eq 0 ] && [ "$MISSING_COUNT" -eq 0 ] && [ "$MALFORMED_COUNT" -eq 0 ] && [ "$CRON_BAD_COUNT" -eq 0 ]; then
     echo "  OK   $REPO_NAME (all $RANGE commits have correct attribution format; $_cron_suffix)"
+  fi
+  # Issue #187 digest: one line summarizing cron-attribution coverage so the
+  # audit result is not buried in per-commit grandfathered INFO lines.
+  if [ -n "$CRON_AGENT_EMAILS" ]; then
+    echo "  DIGEST $REPO_NAME: cron attribution — $CRON_AUDITED_COUNT audited, $CRON_BAD_COUNT missing mode=autonomous, $CRON_GRANDFATHERED_COUNT grandfathered (boundary: $CRON_ATTRIBUTION_BOUNDARY)"
   fi
 done
 if [ "$TOTAL_BAD" -gt 0 ]; then
