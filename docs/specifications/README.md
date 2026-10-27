@@ -142,7 +142,7 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0049 | Bash 3.2 regression coverage for the status consistency gate | approved |
 | FS-0050 | Run-batch tier-integrity check | implemented |
 | FS-0051 | First pilot — an authorized feature draft-spec produces one canonical draft FS PR | draft |
-| FS-0052 | Hermes Agent runtime binding — the second agent-runtime binding under ADR-0039 | draft |
-
-| FS-0041 | Status-vs-delivery consistency audit — detect governed documents that lag shipped implementation | draft |
 | FS-0048 | Governance metadata and version source-of-truth reconciliation | draft |
+| FS-0052 | Hermes Agent runtime binding — the second agent-runtime binding under ADR-0039 | draft |
+| FS-0053 | Portable flow-report read-model and Git-native work-item boundary | draft |
+| FS-0054 | Optional consumer conformance doctor — standalone package boundary and clean-adopter checks | draft |
