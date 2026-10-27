@@ -349,6 +349,9 @@ Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implement
 
   run_lint_with_shallow_state "$shallow" true
 
+  if [ "$status" -eq 0 ]; then
+    printf 'DEBUG shallow-state=true output:\\n%s\\n' "$output" >&3
+  fi
   [ "$status" -ne 0 ]
   echo "$output" | grep -qF "repository is shallow"
   echo "$output" | grep -qF "git fetch --unshallow"
@@ -397,6 +400,9 @@ Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implement
 
   run_lint_with_shallow_state "$repo" unknown
 
+  if [ "$status" -eq 0 ]; then
+    printf 'DEBUG shallow-state=unknown output:\\n%s\\n' "$output" >&3
+  fi
   [ "$status" -ne 0 ]
   echo "$output" | grep -qF "cannot determine whether the repository is shallow"
 }
