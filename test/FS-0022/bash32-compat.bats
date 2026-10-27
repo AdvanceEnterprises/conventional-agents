@@ -81,7 +81,10 @@ PY
   # self-check path resolves like CI does.
   cd "$REPO_ROOT"
   run "$b32" "$CHECK"
-  [ "$status" -eq 0 ]
+  if [ "$status" -ne 0 ]; then
+    echo "$output"
+    return 1
+  fi
   [[ "$output" == *"All status checks passed."* ]]
 }
 
