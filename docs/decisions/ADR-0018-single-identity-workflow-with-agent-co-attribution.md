@@ -6,6 +6,7 @@ decision_scope: workflow
 reversible: yes
 related_specs: []
 superseded_by: null
+updated: 2026-08-31
 ---
 
 # ADR-0018: Single-identity workflow with agent co-attribution

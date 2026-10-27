@@ -7,6 +7,7 @@ reversible: yes
 related_specs:
   - FS-0024
 superseded_by: null
+updated: 2026-08-02
 ---
 
 # ADR-0033: Governance gate target resolution and configuration

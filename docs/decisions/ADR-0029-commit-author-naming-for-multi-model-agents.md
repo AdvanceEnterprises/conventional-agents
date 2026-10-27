@@ -7,6 +7,7 @@ reversible: yes
 related_specs:
   - FS-0017
 superseded_by: null
+updated: 2026-07-28
 ---
 
 # ADR-0029: Commit-author naming for multi-model agent frameworks

@@ -1246,6 +1246,40 @@ while IFS= read -r doc; do
   done < <(extract_doc_refs "$doc" | sort -u)
 done < <(git -C "$REPO_ROOT" ls-files '*.md')
 
+# --- rule 9: framework version markers agree with package.json (FS-0048 / issue #212) --
+#
+# The framework ships version markers in multiple exported-surface documents.
+# package.json is the authoritative source; README.md, AGENTS.md, and
+# INTEGRATION.md are display markers and must match it. Only run this in
+# self-check: a consumer repository has its own package.json and its own
+# version story.
+if is_self_check; then
+  pkg_version="$(grep -E '^\s*"version":' "$REPO_ROOT/package.json" | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')"
+  if [ -z "$pkg_version" ]; then
+    echo "ERROR: could not extract version from package.json (FS-0048)."
+    errors=$((errors+1))
+  else
+    for doc in README.md AGENTS.md INTEGRATION.md; do
+      doc_version=""
+      case "$doc" in
+        README.md|AGENTS.md)
+          doc_version="$(grep -E 'Framework Version:' "$REPO_ROOT/$doc" | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')"
+          ;;
+        INTEGRATION.md)
+          doc_version="$(grep -E '^Version:' "$REPO_ROOT/$doc" | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')"
+          ;;
+      esac
+      if [ -z "$doc_version" ]; then
+        echo "ERROR: $doc does not declare a framework version marker (FS-0048)."
+        errors=$((errors+1))
+      elif [ "$doc_version" != "$pkg_version" ]; then
+        echo "ERROR: $doc version $doc_version disagrees with package.json version $pkg_version (FS-0048)."
+        errors=$((errors+1))
+      fi
+    done
+  fi
+fi
+
 # --- result ------------------------------------------------------------------
 
 if [ "$errors" -gt 0 ]; then

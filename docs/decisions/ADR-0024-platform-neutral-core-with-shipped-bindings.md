@@ -8,6 +8,7 @@ related_specs:
   - FS-0018
   - FS-0020
 superseded_by: null
+updated: 2026-07-28
 ---
 
 # ADR-0024: Platform-neutral core with shipped bindings

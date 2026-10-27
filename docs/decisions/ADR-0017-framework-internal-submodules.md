@@ -9,6 +9,7 @@ related_specs:
   - FS-0008
   - FS-0009
 superseded_by: null
+updated: 2026-07-26
 ---
 
 # ADR-0017: Framework vendor directory is internal; consumers must not reference nested submodules

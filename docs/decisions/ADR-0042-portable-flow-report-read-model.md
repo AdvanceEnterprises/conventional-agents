@@ -7,6 +7,7 @@ reversible: yes
 related_specs:
   - FS-0035
 superseded_by: null
+updated: 2026-09-14
 ---
 
 # ADR-0042: Portable flow-report read-model — visibility profile, not a seventh capability

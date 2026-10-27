@@ -95,6 +95,7 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 
 | ID | Title | Status |
 | --- | --- | --- |
+
 | FS-0001 | Markdownlint Integration for ADR Quality Gates | implemented |
 | FS-0002 | Move workflow skills into conventional-agents (dual-mode) | deprecated |
 | FS-0003 | Git + gh CLI conventions for the kit | implemented |
@@ -121,8 +122,8 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0024 | Portable governance gates — vendored checks target the host repository, not the framework | implemented |
 | FS-0026 | ADR and PLAN scaffolding CLI — npm run new:adr and npm run new:plan | implemented |
 | FS-0027 | Workflow and guideline doc freshness gate — enforce updated: frontmatter | implemented |
-| FS-0029 | Executable layer for the GitHub binding — provisioning, initialisation, and audit commands | implemented |
 | FS-0028 | ADR supersession chain gate — machine-check superseded_by completeness | implemented |
+| FS-0029 | Executable layer for the GitHub binding — provisioning, initialisation, and audit commands | implemented |
 | FS-0030 | Claude Code runtime binding — the first agent-runtime binding under ADR-0039 | implemented |
 | FS-0031 | Governed-agent benchmark harness — reproducible functional + governance scoring | implemented |
 | FS-0033 | Governance CI on stacked and non-trunk pull requests | implemented |
@@ -139,10 +140,8 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0045 | Accepted-ADR authority check for current-state guidance | draft |
 | FS-0046 | Whole-corpus governance triggers and trunk merge enforcement | draft |
 | FS-0047 | Reusable consumer guidance without instance-specific leakage | implemented |
+| FS-0048 | Governance metadata and version source-of-truth reconciliation | draft |
 | FS-0049 | Bash 3.2 regression coverage for the status consistency gate | approved |
 | FS-0050 | Run-batch tier-integrity check | implemented |
 | FS-0051 | First pilot — an authorized feature draft-spec produces one canonical draft FS PR | draft |
 | FS-0052 | Hermes Agent runtime binding — the second agent-runtime binding under ADR-0039 | draft |
-
-| FS-0041 | Status-vs-delivery consistency audit — detect governed documents that lag shipped implementation | draft |
-| FS-0048 | Governance metadata and version source-of-truth reconciliation | draft |

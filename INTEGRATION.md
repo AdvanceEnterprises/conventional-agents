@@ -1,7 +1,7 @@
 # Integration Guide
 
-Version: 2.0.0
-Last Updated: 2026-10-23
+Version: 2.1.0
+Last Updated: 2026-10-27
 
 This document is the canonical source for how conventional-agents integrates with host repositories and resolves conflicts between instruction sources.
 
