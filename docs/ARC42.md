@@ -6,6 +6,8 @@ status: "Draft"
 last_updated: "2026-09-09"
 ---
 
+<!-- markdownlint-disable-file MD025 -->
+
 # 1. Introduction and Goals
 
 ## 1.1 Requirements Overview
@@ -17,12 +19,14 @@ and reusable templates that host repositories can reference from stable
 paths.
 
 Key requirements and driving forces:
+
 - Provide clear, checkable engineering standards for AI-assisted work.
 - Remain tool-neutral and usable across multiple agent runtimes.
 - Allow safe vendoring via submodule with stable paths.
 - Keep the guidance auditable, repeatable, and explicit.
 
 Primary references:
+
 - README.md for positioning and usage.
 - INTEGRATION.md for precedence and cross-tool integration rules.
 - docs/decisions/README.md for the ADR lifecycle and template usage.
@@ -51,6 +55,7 @@ Top quality goals for the architecture:
 # 2. Architecture Constraints
 
 Technical constraints:
+
 - Must work as a standalone repository and as a git submodule.
 - Must not require adoption of a specific workflow kit or runtime.
 - Must not modify or depend on .specify/ internals.
@@ -58,11 +63,13 @@ Technical constraints:
 - All canonical references must be addressable via stable paths.
 
 Organizational constraints:
+
 - Avoid becoming a competing workflow or orchestration layer.
 - Remain complementary to Spec Kit, Aider, and Claude Code ecosystems.
 - Preserve standalone value even without external tooling.
 
 Conventions and stability requirements:
+
 - Prefer well-known integration surfaces (AGENTS.md, CLAUDE.md, Aider config).
 - Keep templates easy to copy into host repos.
 - Maintain stable vendor paths for upstream sources (see ADR-0003).
@@ -87,6 +94,7 @@ Communication partners and domain I/O:
 ## 3.2 Technical Context
 
 Technical interfaces and channels:
+
 - Git (clone or submodule) is the delivery channel.
 - Filesystem paths are the integration surface.
 - Markdown is the primary content format.
@@ -109,19 +117,23 @@ host repos as needed.
 Key design decisions:
 
 Decision 1: Content Organization
+
 - Canonical content lives in guidelines/, roles/, templates/.
 - Integration stubs are expected to point to canonical content.
 
 Decision 2: Integration Pattern
+
 - Use well-known filenames (AGENTS.md, CLAUDE.md) as references.
 - Keep stubs minimal and point to canonical content in stable paths.
 
 Decision 3: Spec Kit Relationship
+
 - Stay adjacent, never competitive.
 - Provide references for how to integrate standards with Spec Kit.
 - Never touch .specify/ directory structure.
 
 Decision 4: Role Contract Format
+
 - Use a role-as-skill-card format with explicit gates and checks.
 
 # 5. Building Block View
@@ -169,6 +181,7 @@ Contained Building Blocks (black boxes):
 > should use framework files and upstream URLs, not nested vendor paths.
 
 Important Interfaces:
+
 - Stable file paths referenced by host repos and tools.
 - `vendor/madr/` for ADR templates and ADR documentation.
 
@@ -182,9 +195,11 @@ Important Interfaces:
 ### White Box guidelines/
 
 Purpose:
+
 - Provide language-agnostic and language-specific guidance.
 
 Key elements:
+
 - guidelines/ROLE_CONTRACT.md
 - guidelines/python/
 - guidelines/bash/
@@ -192,17 +207,21 @@ Key elements:
 ### White Box roles/
 
 Purpose:
+
 - Define role responsibilities, guardrails, and acceptance checks.
 
 Key elements:
+
 - roles/ROLE_CONTRACT.md
 
 ### White Box templates/
 
 Purpose:
+
 - Provide reusable templates for planning, ADRs, and reviews.
 
 Key elements:
+
 - templates/core/
 - templates/python/
 - templates/reviewer/
@@ -210,11 +229,13 @@ Key elements:
 ### White Box integrations/
 
 Purpose:
+
 - Map the framework's six `ADR-0024` substrate capabilities onto one or more
   platforms. Each binding is normative for projects using that substrate;
   the framework itself runs on GitHub Issues and Projects.
 
 Key elements:
+
 - `integrations/README.md` — capability vocabulary and binding selection.
 - `integrations/github-issues-projects.md` — reference binding; six
   capability mappings plus the substrate limitations table.
@@ -227,12 +248,14 @@ Key elements:
 ### White Box runbooks/
 
 Purpose:
+
 - Record operational procedures *as performed against a real substrate*.
   Per `FS-0023`, a runbook is current-state evidence: it tells the next
   operator what actually happened, including where the substrate diverged
   from its binding.
 
 Key elements:
+
 - `runbooks/README.md` — status vocabulary (`current`/`stale`/`superseded`)
   and the `RB-NNNN` convention.
 - `templates/core/runbook.md` — scaffold with the mandatory
@@ -245,6 +268,7 @@ Key elements:
 ### White Box skills/
 
 Purpose:
+
 - Provide portable skill modules that encode the framework's knowledge
   into actionable guidance for agents. Each skill is a self-contained
   `SKILL.md` in the [Agent Skills](https://agentskills.io/specification)
@@ -253,6 +277,7 @@ Purpose:
   boundary, and `skills/index.md` is the catalog and source-document map.
 
 Key elements (current set):
+
 - `skills/role-aware-session/` — session mode inference, role boundaries, safety gates.
 - `skills/document-lifecycle/` — FS/PLAN/ADR lifecycle, templates, front matter hygiene.
 - `skills/git-commit-identity/` — commit identity and `Agent-Attribution:` trailers
@@ -272,9 +297,11 @@ Key elements (current set):
 ### White Box vendor/
 
 Purpose:
+
 - Track upstream reference material as submodules.
 
 Key elements:
+
 - `vendor/madr/`
 
 > **Note (v2.1.0):** `vendor/arc42-template/` was removed as a consumer-facing
@@ -288,24 +315,31 @@ Role-as-skill-card format (applies to every role file):
 # Role: [Role Name]
 
 ## Purpose
+
 [Single sentence describing what this role does]
 
 ## Inputs Required
+
 - [What context/files/data the agent needs]
 
 ## Outputs Expected
+
 - [What artifacts the role produces]
 
 ## Guardrails (Boundaries)
+
 - [What this role MUST NOT do]
 
 ## Quality Gates
+
 - [ ] [Checkable acceptance criterion]
 
 ## Acceptance Checks
+
 - [ ] [How to verify completion]
 
 ## Related Guidelines
+
 - [Links to relevant guidelines]
 
 # 6. Runtime View
@@ -345,6 +379,7 @@ Role-as-skill-card format (applies to every role file):
 ## 7.1 Infrastructure Level 1
 
 Deployment environments are documentation-centric:
+
 - Developer workstation
 - CI workspace (optional)
 - Git host (source distribution)
@@ -357,10 +392,12 @@ Motivation:
 The system is consumed as files; no runtime infrastructure is required.
 
 Quality and/or Performance Features:
+
 - Low operational overhead (no services required).
 - High portability (plain Markdown and Git).
 
 Mapping of Building Blocks to Infrastructure:
+
 - All building blocks map to filesystem paths under the repo root.
 
 Deployment options:
@@ -385,10 +422,12 @@ No further infrastructure decomposition is required.
 ## 8.2 Quality Gates (Checkable, Not Vibes)
 
 Prefer:
+
 - "Add or update tests that fail before and pass after implementation"
 - "Document migration steps for schema changes"
 
 Avoid:
+
 - "Write clean code"
 - "Make it good"
 
@@ -415,6 +454,7 @@ not exist; the substance lives in those ADRs and specs.
 ## 8.5 Evidence-Based Practices
 
 Minimum bar for each guideline:
+
 1) What is the practice?
 2) Why it matters (grounded rationale)
 3) How to implement it (concrete example)

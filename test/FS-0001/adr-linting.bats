@@ -45,7 +45,10 @@ setup() {
   local workflow="$REPO_ROOT/.github/workflows/lint-docs.yml"
   assert_file_exists "$workflow"
   assert_file_contains "$workflow" "branches: [trunk]"
-  assert_file_contains "$workflow" "docs/decisions/ADR-*.md"
+  # The per-directory job lints every Markdown file in decisions/, not only
+  # ADR-named files; the widened corpus job then runs the complete npm chain.
+  assert_file_contains "$workflow" "globs: \"docs/decisions/*.md\""
+  assert_file_contains "$workflow" "run: npm run lint:docs"
   # No paths: filters on either event.
   if grep -qE "^[[:space:]]+paths:" "$workflow"; then
     fail "lint-docs.yml must not filter triggers with paths: (G6, #241)"
@@ -57,7 +60,7 @@ setup() {
   assert_file_exists "$pkg"
   assert_file_contains "$pkg" "\"markdownlint-cli2\""
   assert_file_contains "$pkg" "\"lint:adrs\""
-  assert_file_contains "$pkg" "markdownlint-cli2 \\\"docs/decisions/ADR-*.md\\\""
+  assert_file_contains "$pkg" "markdownlint-cli2 \\\"docs/decisions/*.md\\\""
 }
 
 @test "docs include local setup and troubleshooting for linting" {

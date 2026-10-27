@@ -52,7 +52,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: davidanson/markdownlint-cli2-action@v17
         with:
-          globs: "docs/decisions/ADR-*.md"
+          globs: "docs/decisions/*.md"
 
   lint-specs:
     runs-on: ubuntu-latest
@@ -61,7 +61,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: davidanson/markdownlint-cli2-action@v17
         with:
-          globs: "docs/specifications/FS-*.md"
+          globs: "docs/specifications/*.md"
 
   lint-change-plans:
     runs-on: ubuntu-latest
@@ -70,7 +70,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: davidanson/markdownlint-cli2-action@v17
         with:
-          globs: "docs/change-plans/PLAN-*.md"
+          globs: "docs/change-plans/*.md"
 
   lint-workflows:
     runs-on: ubuntu-latest
@@ -83,10 +83,16 @@ jobs:
 
   lint-docs-widened:
     # Widened lint coverage: per FS-0022 §4, this is the lint chain that catches
-    # drift across the full corpus (guidelines/, skills/, templates/, integrations/,
-    # roles/, and root-level docs). Catches mechanical whitespace issues, missing
-    # code-fence languages, and structural problems that the original four-glob chain
-    # would not.
+    # drift across the full corpus. The npm `lint:docs` script now covers
+    # guidelines/, skills/, templates/, integrations/, roles/, runbooks/,
+    # root-level docs, docs/ index files (ARC42.md, validation-baseline.md,
+    # and the README.md files under decisions/specifications/change-plans/
+    # orchestration/), docs/operations/, docs/proposals/, docs/research/,
+    # .github/ templates, scripts/, test/, and benchmark/. The eight files
+    # under docs/orchestration/multi-model-pilot-001/ remain deliberately
+    # exempt with their own .markdownlint.yml relaxation. Catches mechanical
+    # whitespace issues, missing code-fence languages, and structural problems
+    # that the original four-glob chain would not.
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
