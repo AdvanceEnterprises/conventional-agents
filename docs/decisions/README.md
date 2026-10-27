@@ -24,7 +24,7 @@ All ADRs must comply with markdown formatting standards enforced by markdownlint
 
 ### Setup
 
-**Optional: Local linting (recommended)**
+#### Optional: Local linting (recommended)
 
 ```bash
 # Install markdownlint-cli2
@@ -34,7 +34,7 @@ npm install
 npm run lint:adrs
 ```
 
-**Automatic: CI enforcement**
+#### Automatic: CI enforcement
 
 - CI runs markdownlint on ADRs only (`docs/decisions/ADR-*.md`).
 - PR will fail if any ADR violates linting rules.

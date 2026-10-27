@@ -20,13 +20,13 @@ PARSING_HINTS:
 - Do not treat an architecture sketch as authorization to dispatch agents.
 -->
 
+# Architecture Overview (arc42): collective-agents
+
 > **Note — imported and deferred.** This arc42 describes the operations engine
 > (the former `collective-agents` product). That engine is deferred per ADR-0046
 > and will be re-extracted as its own package when built, not inside
 > conventional-agents. References to its decisions and spec were renumbered on
 > import: ADR-0001→ADR-0047, ADR-0002→ADR-0048, FS-0001→FS-0051.
-
-# Architecture Overview (arc42): collective-agents
 
 ## 1. Introduction and Goals
 
