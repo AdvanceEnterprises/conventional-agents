@@ -661,6 +661,28 @@ Both fail the gate — exit-code semantics are unchanged: any `BAD` line still
 makes the run non-zero, so CI wiring is unaffected. Only the remedy differs.
 The hermetic cases live in `test/FS-0017/attribution-diagnostic.bats`.
 
+## check-pr-claims.sh
+`npm run check:pr-claims` runs `bash scripts/check-pr-claims.sh`.
+**Purpose.** Issue #179: a Category 1 gate that detects duplicate
+FS/PLAN/ADR ID claims across the repository's concurrently open pull requests.
+It is a strict wrapper around the read-only GitHub binding audit
+(`integrations/github/bin/gh-pr-claim-audit.sh --strict`), so the cross-PR
+claim logic lives in one place while the gate surface lives with the other
+local scripts.
+**What it detects.**
+- The same governed ID claimed under different paths by two or more open PRs.
+- An open PR claiming an ID that already exists on the default branch under a
+  different path (an in-place update is not a collision).
+- Sibling open PRs citing a retired ID after an open governed-document rename.
+**Requirements.** A GitHub CLI token with read access to the target
+repository. The target repository resolves from the caller's git remote or
+`CA_GITHUB_REPOSITORY`; the local path resolves from the working directory or
+`CA_TARGET_REPO`.
+**Posture.** Detection, not prevention: the wrapper exits with the binding's
+own codes — 0 when clean, 1 when duplicate/colliding claims are found, 2 on
+authentication or API failure. Not a required offline gate because it
+consumes GitHub metadata; run it from CI or an operator shell.
+
 ## run-bats.sh
 
 `npm test` runs `bash scripts/run-bats.sh`.
