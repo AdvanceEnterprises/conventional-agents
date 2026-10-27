@@ -315,7 +315,11 @@ Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implement
 
 Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implementer; session=shallow-fixture" "s2.txt"
 
-  git clone -q --depth 1 "file://$source" "$shallow"
+  git clone -q --no-local --depth 1 "file://$source" "$shallow"
+  # Keep the fixture deterministic across Git versions: the shallow marker is
+  # the state under test, so make it explicit even if a local file transport
+  # elects not to honor --depth.
+  git -C "$shallow" rev-parse HEAD > "$shallow/.git/shallow"
 
   run_lint_default_range "$shallow"
 
@@ -365,11 +369,10 @@ Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implement
 
 Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implementer; session=unknown-fixture" "u1.txt"
 
-  # Inject a Bash function through BASH_ENV rather than relying on PATH lookup.
-  # The function makes only the shallow-state probe indeterminate and delegates
-  # every other Git operation to the real command with `command git`.
-  local git_env="$BATS_TEST_TMPDIR/unknown-shallow-bash-env"
-  cat > "$git_env" <<'EOF'
+  # Run the script from the same Bash process as the shim. This avoids
+  # PATH/BASH_ENV differences between GitHub runner images while preserving
+  # the real Git command for every operation except the probe under test.
+  run env CA_TARGET_REPO="$repo" bash -c '
 _git_real() {
   local arg
   for arg in "$@"; do
@@ -384,9 +387,8 @@ _git_real() {
 git() {
   _git_real "$@"
 }
-EOF
-
-  run env BASH_ENV="$git_env" CA_TARGET_REPO="$repo" bash "$LINT_SCRIPT"
+. "$1"
+' "$LINT_SCRIPT" "$LINT_SCRIPT"
 
   [ "$status" -ne 0 ]
   echo "$output" | grep -qF "cannot determine whether the repository is shallow"
