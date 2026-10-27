@@ -105,7 +105,7 @@ register_ids() {
       id="$(sed -nE 's/^id:[[:space:]]*"?([A-Z]+-[0-9][0-9][0-9][0-9])"?.*/\1/p' "$file" | head -n 1 || true)"
     fi
     if [ -z "$id" ]; then
-      id="$(basename "$file" | sed -nE 's/^([A-Z]+-[0-9][0-9][0-9][0-9])-[^/]*\.md$/\1/p')"
+      id="$(basename "$file" | sed -nE 's/^([A-Z]+-[0-9][0-9][0-9][0-9])(-[^/]*)?\.md$/\1/p')"
     fi
     [ -n "$id" ] && printf '%s\n' "$id"
   done
@@ -176,19 +176,24 @@ fi
 scan_files "${SCAN_FILES[@]}" | sort -u > "$UNRESOLVED_FILE"
 
 # Every citation token that is not in the registry and not exempt is a finding.
+# One pass, one process: all registry IDs into a flat word list.
+REGISTRY_SET=" $(grep -E '^[A-Z]+-[0-9][0-9][0-9][0-9]$' "$REGISTRY_FILE" | sort -u | tr '\n' ' ') "
 while IFS=':' read -r file token; do
   [ -n "$file" ] || continue
   [ -n "$token" ] || continue
   if is_exempt "$token"; then
     continue
   fi
-  if ! grep -qx "$token" "$REGISTRY_FILE"; then
-    if [ "$status" -eq 0 ]; then
-      echo "ERROR: unresolved governed-ID citation(s) found:" >&2
-    fi
-    echo "  $file: $token" >&2
-    status=1
-  fi
+  case "$REGISTRY_SET" in
+    *" $token "*) ;;
+    *)
+      if [ "$status" -eq 0 ]; then
+        echo "ERROR: unresolved governed-ID citation(s) found:"
+      fi
+      echo "  $file: $token"
+      status=1
+      ;;
+  esac
 done < "$UNRESOLVED_FILE"
 
 if [ "$status" -eq 0 ]; then
