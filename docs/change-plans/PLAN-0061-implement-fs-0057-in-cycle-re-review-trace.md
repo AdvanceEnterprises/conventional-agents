@@ -5,7 +5,7 @@ role: implementer
 language: n/a
 status: draft
 related_specs:
-  - FS-0054
+  - FS-0057
 related_adrs:
   - ADR-0018
   - ADR-0022
@@ -18,8 +18,8 @@ touches:
   - workflows/session-modes.md
   - skills/in-cycle-re-review/SKILL.md
   - skills/index.md
-  - docs/specifications/FS-0054-in-cycle-re-review-trace-convention.md
-  - docs/change-plans/PLAN-0061-implement-fs-0054-in-cycle-re-review-trace.md
+  - docs/specifications/FS-0057-in-cycle-re-review-trace-convention.md
+  - docs/change-plans/PLAN-0061-implement-fs-0057-in-cycle-re-review-trace.md
   - CHANGELOG.md
 created: 2026-10-27
 updated: 2026-10-27
@@ -45,7 +45,7 @@ under-declared plan fails later and louder.
 
 ## 1. Feature / Issue Reference
 
-* Feature Spec ID(s): FS-0054
+* Feature Spec ID(s): FS-0057
 * Related ADR ID(s): ADR-0018, ADR-0022, ADR-0029, ADR-0036, ADR-0050
 * Issue / PR Reference: #220
 
@@ -74,7 +74,7 @@ under-declared plan fails later and louder.
 
 * Test file(s):
 
-  * `test/FS-0054/in-cycle-re-review-trace.bats`
+  * `test/FS-0057/in-cycle-re-review-trace.bats`
 
 * Target test(s):
 
@@ -91,8 +91,8 @@ Only list files that will be changed.
 * `workflows/session-modes.md`
 * `skills/in-cycle-re-review/SKILL.md`
 * `skills/index.md`
-* `docs/specifications/FS-0054-in-cycle-re-review-trace-convention.md`
-* `docs/change-plans/PLAN-0061-implement-fs-0054-in-cycle-re-review-trace.md`
+* `docs/specifications/FS-0057-in-cycle-re-review-trace-convention.md`
+* `docs/change-plans/PLAN-0061-implement-fs-0057-in-cycle-re-review-trace.md`
 * `CHANGELOG.md`
 
 ## 5. Implementation Steps (High-Level)
@@ -113,7 +113,7 @@ Describe concrete steps without code.
 
 * Spec constraints:
 
-  * FS-0054 Non-Goals / Out of Scope.
+  * FS-0057 Non-Goals / Out of Scope.
 
 * ADR constraints:
 
@@ -133,14 +133,14 @@ Describe concrete steps without code.
 * Risk: a model could omit a negative delta trace. Mitigation: the promotion
   gate still requires the latest commit to be newer than each reviewer's most
   recent comment; missing traces are flagged by the tick.
-* Edge case: a rebase-only head change triggers a trace. Accepted per FS-0054
+* Edge case: a rebase-only head change triggers a trace. Accepted per FS-0057
   because SHA audit matters.
 
 ## 8. Validation
 
 * Tests expected to pass:
 
-  * `test/FS-0054/in-cycle-re-review-trace.bats`
+  * `test/FS-0057/in-cycle-re-review-trace.bats`
 
 * Manual checks (if any):
 

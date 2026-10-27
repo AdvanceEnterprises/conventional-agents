@@ -68,4 +68,4 @@ review round.
 - `guidelines/ROLE_CONTRACT.md` § reviewer role — in-cycle re-review obligation.
 - `workflows/session-modes.md` § autonomous and consensus modes — when to post
   a trace comment.
-- `FS-0054` — governing feature spec.
+- `FS-0057` — governing feature spec.
