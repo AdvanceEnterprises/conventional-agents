@@ -30,6 +30,7 @@ requests. Wraps integrations/github/bin/gh-pr-claim-audit.sh in strict mode.
 Options:
   --repository OWNER/NAME   Target repository; overrides CA_GITHUB_REPOSITORY
   --target PATH             Caller repository path; overrides CA_TARGET_REPO
+  --strict                  Explicitly enable strict mode (it is on by default)
   --help                    Show this help message
 
 Environment:
@@ -66,6 +67,10 @@ while (( $# > 0 )); do
       args+=("$1")
       shift
       ;;
+    --strict)
+      args+=("$1")
+      shift
+      ;;
     --help|-h)
       usage
       exit 0
@@ -82,4 +87,8 @@ if [ ! -x "$AUDIT" ]; then
   exit 2
 fi
 
-exec bash "$AUDIT" --strict "${args[@]}"
+if printf '%s\0' "${args[@]}" | grep -qz -- '--strict'; then
+  exec bash "$AUDIT" "${args[@]}"
+else
+  exec bash "$AUDIT" --strict "${args[@]}"
+fi
