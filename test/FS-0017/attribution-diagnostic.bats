@@ -365,18 +365,28 @@ Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implement
 
 Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implementer; session=unknown-fixture" "u1.txt"
 
-  # Shim git so rev-parse --is-shallow-repository exits nonzero with no output,
-  # exercising the fail-closed branch for an indeterminate shallow state.
-  local real_git fake_bin
-  real_git="$(type -P git)"
-  [ -n "$real_git" ] || skip "git executable is not discoverable"
-  fake_bin="$BATS_TEST_TMPDIR/fake-git-bin"
-  mkdir -p "$fake_bin"
-  # The real git path is expanded now; "$@" inside the shim stays literal.
-  printf '#!/bin/bash\nfor arg in "$@"; do\n  case "$arg" in\n    --is-shallow-repository)\n      exit 1\n      ;;\n  esac\ndone\nexec "%s" "$@"\n' "$real_git" > "$fake_bin/git"
-  chmod +x "$fake_bin/git"
+  # Inject a Bash function through BASH_ENV rather than relying on PATH lookup.
+  # The function makes only the shallow-state probe indeterminate and delegates
+  # every other Git operation to the real command with `command git`.
+  local git_env="$BATS_TEST_TMPDIR/unknown-shallow-bash-env"
+  cat > "$git_env" <<'EOF'
+_git_real() {
+  local arg
+  for arg in "$@"; do
+    case "$arg" in
+      --is-shallow-repository)
+        return 1
+        ;;
+    esac
+  done
+  command git "$@"
+}
+git() {
+  _git_real "$@"
+}
+EOF
 
-  run env PATH="$fake_bin:$PATH" CA_TARGET_REPO="$repo" bash "$LINT_SCRIPT"
+  run env BASH_ENV="$git_env" CA_TARGET_REPO="$repo" bash "$LINT_SCRIPT"
 
   [ "$status" -ne 0 ]
   echo "$output" | grep -qF "cannot determine whether the repository is shallow"
