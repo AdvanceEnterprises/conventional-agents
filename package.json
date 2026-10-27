@@ -31,6 +31,7 @@
     "check:freshness:history": "bash scripts/check-freshness-history.sh --strict",
     "check:delivery": "bash scripts/check-delivery-status.sh",
     "check:run-batch": "bash scripts/check-run-batch.sh",
+    "check:run-manifest": "bash scripts/check-run-manifest.sh",
     "check:conformance": "bash scripts/check-conformance.sh",
     "lint:cross-repo": "bash scripts/cross-repo-lint.sh",
     "validate": "bash scripts/run-validation.sh",
