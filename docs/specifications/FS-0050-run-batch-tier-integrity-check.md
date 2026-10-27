@@ -15,12 +15,12 @@ interfaces:
   - "docs/specifications/README.md"
   - "docs/change-plans/README.md"
   - "CHANGELOG.md"
-related_adrs: [ADR-0045, ADR-0026, ADR-0027, ADR-0012]
+related_adrs: [ADR-0049, ADR-0026, ADR-0027, ADR-0012]
 supersedes: []
 requires: []
 tags: [runs, batch-approval, tier-integrity, detection, governance]
 created: 2026-10-13
-updated: 2026-10-24
+updated: 2026-10-27
 ---
 
 # Feature Spec: Run-batch tier-integrity check
@@ -31,13 +31,13 @@ updated: 2026-10-24
 
 ## Summary
 
-ADR-0045 makes the *run* the unit of bounded autonomous work and draws a hard
-line between **proposal-acceptance** (batchable) and **implementation-authorization**
-(narrow). This feature specifies a detection check that enforces that line: it
-validates that a *batch-acceptance commit* — a commit carrying an
-`Approved-Artifacts:` trailer (the batch list of a recorded approval, per
-ADR-0026) — accepts only proposal-class documents and changes no implementation
-surface. The check is detection, not prevention, consistent with the framework's
+ADR-0049 carries forward the ADR-0045 run contract: it makes the *run* the unit
+of bounded autonomous work and draws a hard line between **proposal-acceptance**
+(batchable) and **implementation-authorization** (narrow). This feature specifies
+a detection check that enforces that line: it validates that a *batch-acceptance
+commit* — a commit carrying an `Approved-Artifacts:` trailer (the batch list of
+a recorded approval, per ADR-0026) — accepts only proposal-class documents and
+changes no implementation surface. The check is detection, not prevention, consistent with the framework's
 stance: it reports an overreaching batch so a human can act, and does not itself
 block a merge. Proposal-class locations are `docs/specifications/`,
 `docs/change-plans/`, `docs/decisions/`, their index READMEs, and `CHANGELOG.md`;
@@ -119,11 +119,11 @@ a batch-acceptance diff.
 - PR-body manifest structure validation (GitHub-binding concern).
 - 48-hour bound enforcement and work-item scope linkage (conduct; not
   mechanically checkable in the offline core).
-- Any change to ADR-0045, ADR-0026, or the ADR-0027 reserved-path set.
+- Any change to ADR-0049, ADR-0026, or the ADR-0027 reserved-path set.
 
 ## Dependencies
 
-- ADR-0045 (accepted) — the invariant this check enforces.
+- ADR-0049 (accepted) — the invariant this check enforces (carrying forward ADR-0045).
 - ADR-0026 (accepted) — the `Approved-By:` / `Approved-Artifacts:` trailer shape.
 - The existing `check-status.sh` reserved-path logic as a reference for path
   classification (not as a runtime dependency).
