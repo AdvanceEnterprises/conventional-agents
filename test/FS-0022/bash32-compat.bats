@@ -55,3 +55,65 @@ setup() {
   [ "$status" -eq 0 ]
   [[ "$output" == *"All status checks passed."* ]]
 }
+
+@test "bash32: no case statement is nested inside a command or process substitution in any Bash-3.2-claiming script" {
+  # Issue #214 was a class bug: Bash 3.2 rejects a `case` nested directly in
+  # `$(...)` or `<(...)`. PR #215 removed the known incident; this regression
+  # fixture scans the whole class by looking for the `case` keyword inside a
+  # substitution. The scan tolerates the unrelated `BASH_SOURCE[0]` token.
+  local claims=""
+  claims=$(grep -RlE 'Bash 3\.2' scripts/ integrations/github/bin/ 2>/dev/null | grep '\.sh$' || true)
+  [ -n "$claims" ]
+  local f
+  for f in $claims; do
+    run python3 - "$f" <<'PY'
+import re, sys
+text = open(sys.argv[1]).read()
+n = len(text)
+stack = []
+i = 0
+while i < n:
+    if text[i:i+2] == '$(' or text[i:i+2] == '<(':
+        stack.append((text[i:i+2], i))
+        i += 2
+        continue
+    if text[i] == '(':
+        stack.append(('(', i))
+    elif text[i] == ')':
+        if stack and stack[-1][0] in ('(', '$(', '<('):
+            opened = stack.pop()
+            if opened[0] in ('$(', '<('):
+                content = text[opened[1]+2:i]
+                # case keyword followed by a quoted word and "in"
+                if re.search(r'\bcase\s+["\'][^"\']+["\']\s+in', content):
+                    print(f'{opened[0]} at char {opened[1]}')
+                    sys.exit(1)
+    i += 1
+PY
+    [ "$status" -eq 0 ]
+    [ -z "$output" ]
+  done
+}
+
+@test "bash32: every script advertising Bash 3.2 compatibility parses under a real bash 3.2 when available" {
+  local b32="${CA_BASH32:-}"
+  if [ -z "$b32" ]; then
+    b32="$(command -v bash-3.2 || true)"
+  fi
+  if [ -z "$b32" ] || [ ! -x "$b32" ]; then
+    skip "no Bash 3.2 binary available (set CA_BASH32 or install bash-3.2 as an opt-in)"
+  fi
+
+  local claims=""
+  claims=$(grep -RlE 'Bash 3\.2' scripts/ integrations/github/bin/ 2>/dev/null | grep '\.sh$' || true)
+  [ -n "$claims" ]
+  local f
+  for f in $claims; do
+    run "$b32" -n "$f"
+    if [ "$status" -ne 0 ]; then
+      echo "FAIL: $f"
+      echo "$output"
+      return 1
+    fi
+  done
+}
