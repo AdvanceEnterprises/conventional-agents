@@ -32,6 +32,7 @@
     "check:delivery": "bash scripts/check-delivery-status.sh",
     "check:run-batch": "bash scripts/check-run-batch.sh",
     "check:conformance": "bash scripts/check-conformance.sh",
+    "check:pr-claims": "bash scripts/check-pr-claims.sh",
     "lint:cross-repo": "bash scripts/cross-repo-lint.sh",
     "validate": "bash scripts/run-validation.sh",
     "bench:run": "bash scripts/bench-run.sh",
