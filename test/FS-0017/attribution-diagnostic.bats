@@ -286,6 +286,32 @@ run_lint_default_range() {
   run env CA_TARGET_REPO="$repo" bash "$LINT_SCRIPT"
 }
 
+# Exercise the guard with a deterministic probe result. The real shallow clone
+# is still created and asserted below, but the guard's `git rev-parse` result is
+# injected in the same Bash process so Git transport/version differences cannot
+# turn the fixture into a vacuous fallback test.
+run_lint_with_shallow_state() {
+  local repo="$1" state="$2"
+  run env CA_TARGET_REPO="$repo" CA_TEST_SHALLOW_STATE="$state" LINT_SCRIPT="$LINT_SCRIPT" bash -c '
+_git_real() {
+  local arg
+  for arg in "$@"; do
+    case "$arg" in
+      --is-shallow-repository)
+        printf "%s\\n" "$CA_TEST_SHALLOW_STATE"
+        return 0
+        ;;
+    esac
+  done
+  command git "$@"
+}
+git() {
+  _git_real "$@"
+}
+. "$LINT_SCRIPT"
+'
+}
+
 # Plant N human commits so origin/trunk~20 resolves when the repo is not shallow.
 seed_many_commits() {
   local repo="$1" n="${2:-21}" i
@@ -316,12 +342,12 @@ Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implement
 Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implementer; session=shallow-fixture" "s2.txt"
 
   git clone -q --no-local --depth 1 "file://$source" "$shallow"
-  # Keep the fixture deterministic across Git versions: the shallow marker is
-  # the state under test, so make it explicit even if a local file transport
-  # elects not to honor --depth.
-  git -C "$shallow" rev-parse HEAD > "$shallow/.git/shallow"
+  # Keep the fixture deterministic across Git versions: the clone must really
+  # report shallow, and the guard receives that same state through the
+  # in-process probe seam used by the unknown-state case below.
+  [ "$(git -C "$shallow" rev-parse --is-shallow-repository)" = true ]
 
-  run_lint_default_range "$shallow"
+  run_lint_with_shallow_state "$shallow" true
 
   [ "$status" -ne 0 ]
   echo "$output" | grep -qF "repository is shallow"
@@ -369,26 +395,7 @@ Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implement
 
 Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implementer; session=unknown-fixture" "u1.txt"
 
-  # Run the script from the same Bash process as the shim. This avoids
-  # PATH/BASH_ENV differences between GitHub runner images while preserving
-  # the real Git command for every operation except the probe under test.
-  run env CA_TARGET_REPO="$repo" bash -c '
-_git_real() {
-  local arg
-  for arg in "$@"; do
-    case "$arg" in
-      --is-shallow-repository)
-        return 1
-        ;;
-    esac
-  done
-  command git "$@"
-}
-git() {
-  _git_real "$@"
-}
-. "$1"
-' "$LINT_SCRIPT" "$LINT_SCRIPT"
+  run_lint_with_shallow_state "$repo" unknown
 
   [ "$status" -ne 0 ]
   echo "$output" | grep -qF "cannot determine whether the repository is shallow"
