@@ -44,7 +44,7 @@ updated: 2026-10-27
 This workflow requires ADR-0099 to be followed.
 EOF
 
-  ( cd "$host" && git add -A && GIT_AUTHOR_NAME=test GIT_AUTHOR_EMAIL=test@example.dev git commit -q -m "fixture" )
+  ( cd "$host" && git add -A && GIT_AUTHOR_NAME=test GIT_AUTHOR_EMAIL=test@example.dev GIT_COMMITTER_NAME=test GIT_COMMITTER_EMAIL=test@example.dev git commit -q -m "fixture" )
 
   run bash -c "cd '$host' && CA_TARGET_REPO='$host' bash '$CHECK'"
   [ "$status" -ne 0 ]
@@ -79,7 +79,7 @@ updated: 2026-10-27
 This workflow is consistent with ADR-0099, which is still proposed.
 EOF
 
-  ( cd "$host" && git add -A && GIT_AUTHOR_NAME=test GIT_AUTHOR_EMAIL=test@example.dev git commit -q -m "fixture" )
+  ( cd "$host" && git add -A && GIT_AUTHOR_NAME=test GIT_AUTHOR_EMAIL=test@example.dev GIT_COMMITTER_NAME=test GIT_COMMITTER_EMAIL=test@example.dev git commit -q -m "fixture" )
 
   # The only error should be the missing README indexes / CHANGELOG, not #209.
   run bash -c "cd '$host' && CA_TARGET_REPO='$host' bash '$CHECK'"
@@ -113,7 +113,7 @@ updated: 2026-10-27
 This workflow requires ADR-0001 to be followed.
 EOF
 
-  ( cd "$host" && git add -A && GIT_AUTHOR_NAME=test GIT_AUTHOR_EMAIL=test@example.dev git commit -q -m "fixture" )
+  ( cd "$host" && git add -A && GIT_AUTHOR_NAME=test GIT_AUTHOR_EMAIL=test@example.dev GIT_COMMITTER_NAME=test GIT_COMMITTER_EMAIL=test@example.dev git commit -q -m "fixture" )
 
   run bash -c "cd '$host' && CA_TARGET_REPO='$host' bash '$CHECK'"
   ! echo "$output" | grep -qF "issue #209"
