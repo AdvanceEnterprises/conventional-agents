@@ -1,8 +1,10 @@
 #!/usr/bin/env bats
-# Issue #186 — local governed-ID citation resolution.
+# FS-0056 — local governed-ID citation resolution gate.
 #
 # check-citations.sh scans governed documents and fails when a cited
 # FS/PLAN/ADR ID does not resolve in the repository's own registries.
+# This suite is the regression coverage for FS-0056 / PLAN-0063; it does
+# not cover cross-PR stale-citation drift (FS-0040 / PLAN-0046).
 
 SCRIPT="$BATS_TEST_DIRNAME/../../scripts/check-citations.sh"
 

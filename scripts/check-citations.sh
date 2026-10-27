@@ -5,8 +5,9 @@
 # FS-NNNN / PLAN-NNNN / ADR-NNNN tokens and fails when a cited ID does not
 # resolve to a document in the repository's own registries.
 #
-# This is an OFFLINE, read-only gate. It never fetches or edits.
-# Bash 3.2 compatible: no associative arrays.
+# Governance: Category 1 gate under ADR-0015; specified by FS-0056 and
+# implemented under PLAN-0063. This is the local, offline layer. Cross-PR
+# stale-citation drift is handled by FS-0040 / integrations/github/bin/gh-pr-claim-audit.sh.
 set -euo pipefail
 
 if [ -n "${CA_TARGET_REPO:-}" ]; then

@@ -662,11 +662,16 @@ makes the run non-zero, so CI wiring is unaffected. Only the remedy differs.
 The hermetic cases live in `test/FS-0017/attribution-diagnostic.bats`.
 
 ## check-citations.sh
+
 `npm run check:citations` runs `bash scripts/check-citations.sh`.
-**Purpose.** Issue #186 / FS-0040 complement: resolve FS/PLAN/ADR citations
-inside the repository's own governed documents. A governed ID cited anywhere
-in the FS/PLAN/ADR corpus must resolve to an existing document in the same
-repository's registries. The script is read-only and never fetches.
+
+**Purpose.** Resolve FS/PLAN/ADR citations inside the repository's own governed
+documents. A governed ID cited anywhere in the FS/PLAN/ADR corpus must resolve
+to an existing document in the same repository's registries. The script is
+read-only and never fetches. It is a Category 1 governance gate under
+ADR-0015; implementation is governed by FS-0056 / PLAN-0063. It is not the
+FS-0040 cross-PR stale-citation audit (that layer lives in
+`integrations/github/bin/gh-pr-claim-audit.sh`).
 **Scope.** Scans the three registry directories
 (`docs/specifications/`, `docs/change-plans/`, `docs/decisions/`) plus
 `docs/operations/ARC42.md`. Extracts `FS-NNNN`, `PLAN-NNNN`, and `ADR-NNNN`
