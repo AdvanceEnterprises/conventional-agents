@@ -317,6 +317,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          # The status gate's ADR-0026 approval check reads the commit that
+          # last touched each PLAN; shallow history makes a valid approval
+          # look absent and fails the Bash 3.2 execution fixture.
+          fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Install bats and jq
         run: brew install bats-core jq
