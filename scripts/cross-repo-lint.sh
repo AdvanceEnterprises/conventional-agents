@@ -3,6 +3,7 @@
 #
 # Checks:
 #   1. Agent-Attribution trailer format (FS-0017) across recent commits
+#      (anchored; fails closed on shallow clones that cannot resolve the anchor)
 #   2. README index consistency (all doc files referenced)
 #   3. FS/PLAN numbering validity within each repo (no duplicate IDs)
 #   4. Post-boundary cron attribution requires terminal mode=autonomous
@@ -209,6 +210,18 @@ for REPO in "${REPOS[@]}"; do
     elif [ -n "$_floor" ]; then
       RANGE="$_floor..origin/$DEFAULT_BRANCH"
     else
+      # Issue #221: a shallow clone with no reachable release anchor or floor
+      # cannot perform the anchored audit that #141 relies on; the ~20 fallback
+      # would silently narrow the window exactly like the bug being fixed. Fail
+      # closed with an actionable repair path instead.
+      _is_shallow="$(git -C "$REPO" rev-parse --is-shallow-repository 2>/dev/null || printf 'unknown')"
+      if [ "$_is_shallow" = "true" ]; then
+        err "$REPO_NAME: repository is shallow and no release anchor or ATTRIBUTION_MIN_ANCHOR resolves locally; the attribution audit cannot be anchored. Repair with 'git fetch --unshallow' or set an explicit COMMIT_RANGE that exists in the local clone"
+        continue
+      elif [ "$_is_shallow" = "unknown" ]; then
+        err "$REPO_NAME: Git cannot determine whether the repository is shallow; the attribution audit cannot be anchored safely. Repair the checkout or set an explicit COMMIT_RANGE"
+        continue
+      fi
       RANGE="origin/$DEFAULT_BRANCH~20..origin/$DEFAULT_BRANCH"
     fi
   fi

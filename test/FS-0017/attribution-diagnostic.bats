@@ -43,6 +43,10 @@ seed_commit() {
   printf 'baseline\n' > "$repo/baseline.txt"
   git -C "$repo" add -A
   git -C "$repo" commit -q -m "chore: baseline"
+  # Give the scratch repo a synthetic origin/trunk so default-range tests can
+  # resolve the script's fallback without a real remote.
+  git -C "$repo" update-ref refs/remotes/origin/trunk HEAD
+  git -C "$repo" symbolic-ref refs/remotes/origin/HEAD refs/remotes/origin/trunk
 }
 
 # Plant a commit authored by an agent identity, with the given message body.
@@ -271,4 +275,108 @@ Co-Authored-By: Someone <someone@example.com>
   [ "$status" -ne 0 ]
   echo "$output" | grep -qF "missing Agent-Attribution trailer"
   ! echo "$output" | grep -qF "malformed Agent-Attribution trailer"
+}
+
+# --- shallow-clone guard (issue #221) ------------------------------------------
+
+# Run the attribution check with the script's default range resolution, not
+# an explicit COMMIT_RANGE, so the shallow-clone guard is exercised.
+run_lint_default_range() {
+  local repo="$1"
+  run env CA_TARGET_REPO="$repo" bash "$LINT_SCRIPT"
+}
+
+# Plant N human commits so origin/trunk~20 resolves when the repo is not shallow.
+seed_many_commits() {
+  local repo="$1" n="${2:-21}" i
+  for (( i=0; i<n; i++ )); do
+    printf 'content %d\n' "$i" > "$repo/many-$i.txt"
+    git -C "$repo" add -A
+    git -C "$repo" -c user.name="Joey Clark" -c user.email="administrator@ajoeofalltrades.dev" \
+      commit -q -m "chore: many baseline $i"
+  done
+  # Tests that rely on the script's default range need a synthetic origin/trunk
+  # because the repo is a local scratch with no real remote.
+  git -C "$repo" update-ref refs/remotes/origin/trunk HEAD
+  git -C "$repo" symbolic-ref refs/remotes/origin/HEAD refs/remotes/origin/trunk
+}
+
+@test "shallow clone with no reachable anchor fails closed (issue #221)" {
+  local source="$BATS_TEST_TMPDIR/shallow-source"
+  local shallow="$BATS_TEST_TMPDIR/shallow-clone"
+  build_scratch_repo "$source"
+  seed_commit "$source"
+  # A few agent commits so the repo has real history, but no release tags and
+  # no ATTRIBUTION_MIN_ANCHOR floor (v2.1.0 does not exist here).
+  plant_agent_commit "$source" "feat: first agent change
+
+Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implementer; session=shallow-fixture" "s1.txt"
+  plant_agent_commit "$source" "feat: second agent change
+
+Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implementer; session=shallow-fixture" "s2.txt"
+
+  git clone -q --depth 1 "file://$source" "$shallow"
+
+  run_lint_default_range "$shallow"
+
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "repository is shallow"
+  echo "$output" | grep -qF "git fetch --unshallow"
+  # The vacuous OK line from the pre-fix shape must not appear.
+  ! echo "$output" | grep -qE "OK[[:space:]]+shallow-clone"
+}
+
+@test "non-shallow repo with no anchor falls back to ~20 and passes" {
+  local repo="$BATS_TEST_TMPDIR/non-shallow-fallback"
+  build_scratch_repo "$repo"
+  seed_many_commits "$repo" 22
+
+  run_lint_default_range "$repo"
+
+  [ "$status" -eq 0 ]
+  echo "$output" | grep -qE "OK[[:space:]]+non-shallow-fallback"
+}
+
+@test "explicit COMMIT_RANGE on shallow clone bypasses the guard" {
+  local source="$BATS_TEST_TMPDIR/explicit-source"
+  local shallow="$BATS_TEST_TMPDIR/explicit-shallow"
+  build_scratch_repo "$source"
+  seed_commit "$source"
+  plant_agent_commit "$source" "feat: agent change
+
+Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implementer; session=explicit-fixture" "e1.txt"
+
+  git clone -q --depth 1 "file://$source" "$shallow"
+
+  local head
+  head="$(git -C "$shallow" rev-parse HEAD)"
+  run env CA_TARGET_REPO="$shallow" COMMIT_RANGE="$head..$head" bash "$LINT_SCRIPT"
+
+  [ "$status" -eq 0 ]
+  echo "$output" | grep -qE "OK[[:space:]]+explicit-shallow"
+  ! echo "$output" | grep -qF "repository is shallow"
+}
+
+@test "unknown shallow state fails closed" {
+  local repo="$BATS_TEST_TMPDIR/unknown-shallow"
+  build_scratch_repo "$repo"
+  seed_commit "$repo"
+  plant_agent_commit "$repo" "feat: agent change
+
+Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implementer; session=unknown-fixture" "u1.txt"
+
+  # Shim git so rev-parse --is-shallow-repository exits nonzero with no output,
+  # exercising the fail-closed branch for an indeterminate shallow state.
+  local real_git fake_bin
+  real_git="$(command -v git)"
+  fake_bin="$BATS_TEST_TMPDIR/fake-git-bin"
+  mkdir -p "$fake_bin"
+  # The real git path is expanded now; "$@" inside the shim stays literal.
+  printf '#!/usr/bin/env bash\nfor arg in "$@"; do\n  case "$arg" in\n    --is-shallow-repository)\n      exit 1\n      ;;\n  esac\ndone\nexec "%s" "$@"\n' "$real_git" > "$fake_bin/git"
+  chmod +x "$fake_bin/git"
+
+  run env PATH="$fake_bin:$PATH" CA_TARGET_REPO="$repo" bash "$LINT_SCRIPT"
+
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "cannot determine whether the repository is shallow"
 }
