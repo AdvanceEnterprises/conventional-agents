@@ -32,7 +32,7 @@ All change plans must use the template defined in `templates/core/change-plan.md
 ## Current Plans
 
 | ID | Title | Related Spec | Status |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | PLAN-0001 | Implement FS-0003 Git/GH CLI Conventions | FS-0003 | implemented |
 | PLAN-0002 | Implement FS-0004 Agent Commentary Policy | FS-0004 | deprecated |
 | PLAN-0003 | Implement FS-0005 Expand Docs Linting | FS-0005 | implemented |
