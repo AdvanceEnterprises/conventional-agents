@@ -16,7 +16,10 @@ trailers. It does not cover branching, commits, or PRs; see **Related Skills**.
 - `docs/decisions/ADR-0011-adopt-multi-identity-github-model-human-agent-committer-agent-reviewer.md`
 - `docs/decisions/ADR-0018-single-identity-workflow-with-agent-co-attribution.md`
 - `docs/decisions/ADR-0029-commit-author-naming-for-multi-model-agents.md`
-- `docs/decisions/ADR-0036-attribution-vocabulary-canon-and-history-integrity.md`
+- `docs/decisions/ADR-0036-attribution-vocabulary-canon-and-history-integrity.md` (proposed)
+
+The binding identity rules come from accepted `ADR-0018` and `ADR-0029`;
+`ADR-0036` proposes a vocabulary canon that would refine them.
 
 ## When to Use
 
@@ -91,9 +94,9 @@ moves to git commit metadata plus trailers.
 > `hermes-agent@advance.enterprises`, `hermes-cron@advance.enterprises`,
 > `codex@advance.enterprises`, `codex-cron@advance.enterprises`,
 > `github.marten@fwd.mtnden.org`, `administrator@ajoeofalltrades.dev`. The
-> canonical alias table lives in `.mailmap` (`ADR-0036`); agent aliases are
-> already canonical, so `.mailmap` carries the human and legacy-persona
-> mappings.
+> canonical alias table lives in `.mailmap` (per accepted `ADR-0029`;
+> `ADR-0036` proposes the same as a vocabulary canon). Agent aliases are
+> already canonical, so `.mailmap` carries the human and legacy-persona mappings.
 > **Adopting this convention:** the binding part is the pattern — one login,
 > per-actor email aliases, `Agent-Attribution:` trailers — not these concrete
 > values. Adopters substitute their own domain and actor names.
@@ -133,7 +136,8 @@ session mode from `workflows/session-modes.md`. An unattended actor adds
 `; mode=autonomous` (`ADR-0021`).
 
 `Co-authored-by:` is reserved for human–human collaboration and must **not** be
-used for agent participation (`ADR-0036`): a model cannot hold co-authorship, and
+used for agent participation (per accepted `ADR-0018`/`ADR-0029`; `ADR-0036`
+proposes the same as a vocabulary canon): a model cannot hold co-authorship, and
 GitHub mints a contributor avatar for every `Co-authored-by:` name.
 `Agent-Attribution:` is not rendered by GitHub but is parsed by
 `git log --format=%(trailers)`.
@@ -191,7 +195,7 @@ If either is wrong, stale, or unset, use the per-commit override form above.
 | --- | --- |
 | Trusting a `user.name` that is merely set | A stale model name is plausible and passes a non-empty check — the attribution record becomes false |
 | Copying a `model=` value from a previous commit | Records the wrong model; trailers are the audit layer and are never edited retroactively |
-| Using `Co-authored-by:` for an agent | Violates `ADR-0036` and mints a GitHub contributor avatar for a model |
+| Using `Co-authored-by:` for an agent | Violates accepted `ADR-0018`/`ADR-0029` (and the proposed `ADR-0036` vocabulary canon) and mints a GitHub contributor avatar for a model |
 | Mutating global `git config user.email` | Leaks the agent identity into unrelated repositories |
 | Running `gh auth status` once per session | The gate is per-operation; an account can change between commands |
 

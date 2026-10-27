@@ -1,5 +1,5 @@
 ---
-updated: 2026-10-22
+updated: 2026-10-27
 ---
 
 # Git + GitHub (gh) conventions
@@ -10,9 +10,12 @@ Normative requirements are derived from:
 
 - Spec: FS-0003
 - ADR: ADR-0011
-- ADR: ADR-0036 (attribution vocabulary canon, `.mailmap`, history rewrites)
+- ADR: ADR-0036 (proposed — attribution vocabulary canon, `.mailmap`, history rewrites)
 
-## Defaults
+This document records both the binding requirements from accepted ADRs and the
+proposed refinements in ADR-0036. Until ADR-0036 is accepted, its vocabulary
+table is a proposal, not an append-only rule; the binding requirements on
+identity and attribution come from ADR-0018 and ADR-0029.
 
 - Default branch name: `trunk`
 - Canonical remote name: `origin`
@@ -213,7 +216,7 @@ If you use multiple accounts, ensure you explicitly switch contexts before takin
 
 - `gh auth switch -u <username>`
 
-## Single-identity workflow with agent co-attribution (ADR-0018, ADR-0029, ADR-0036)
+## Single-identity workflow with agent co-attribution (ADR-0018, ADR-0029, ADR-0036 proposed)
 
 Most projects — including this repository — operate with one GitHub login
 shared across human and agent actors. The single-identity workflow uses
@@ -221,7 +224,9 @@ git commit metadata to preserve the audit trail that ADR-0011's three
 identities would otherwise provide.
 
 **This section is the convention in force.** ADRs record why it changed;
-this section records what it is (ADR-0030).
+this section records what it is (ADR-0030). The binding requirements are
+from `ADR-0018` and `ADR-0029`; `ADR-0036` proposes a vocabulary canon that
+would refine, but not replace, those requirements.
 
 If this section and an individual ADR appear to disagree, the likely cause
 is that a later ADR revised that rule — check for one before concluding
@@ -345,15 +350,16 @@ at session start, into the commit audit trail. Multiple
 `Agent-Attribution:` trailers are permitted when more than one agent
 actor contributed (e.g., one per agent persona).
 
-### Canonical trailer vocabulary (ADR-0036)
+### Canonical trailer vocabulary (ADR-0036 proposed)
 
-`Agent-Attribution:` field values follow the canonical form below (mirrors
-ADR-0036). The canonical values are binding for new commits and
-review-audited per ADR-0030's detection-based enforcement stance;
-mechanical value enforcement is deferred to a future FS/PLAN. The
-structural regex in `test/FS-0017/commit-attribution.bats` checks field
-presence and order only — it does not check vocabulary values. The table
-is normative:
+`Agent-Attribution:` field values follow the canonical form below, drawn from
+the proposed `ADR-0036`. When `ADR-0036` is accepted, the canonical values
+will become binding for new commits; until then they are binding in intent
+but review-audited per `ADR-0030`'s detection-based enforcement stance.
+Mechanical value enforcement is deferred to a future FS/PLAN. The structural
+regex in `test/FS-0017/commit-attribution.bats` checks field presence and
+order only — it does not check vocabulary values. The table records the
+proposed normative vocabulary:
 
 | Field | Canonical form | Valid examples | Invalid examples |
 | --- | --- | --- | --- |
@@ -365,19 +371,20 @@ is normative:
 
 Field order is fixed: `actor; model; role; session; mode?`.
 
-### `.mailmap` and history rewrites (ADR-0036)
+### `.mailmap` and history rewrites (ADR-0036 proposed)
 
 - `.mailmap` at the repository root is the canonical alias table. Keep
   it in sync with the actor table above and the allowlist in
   `test/FS-0017/commit-attribution.bats`. Agent aliases are already
-  canonical, so `.mailmap` carries the human and legacy-persona mappings.
+  canonical per `ADR-0029`; `ADR-0036` proposes extending the canon to
+  `.mailmap` and history-rewrite policy.
 - A history rewrite may normalize **identities only** (author and
   committer name/email via `.mailmap`). Trailers are never edited
   retroactively — they are the audit record. Verify tree-identical and
   trailer-preserved before force-pushing, and complete any rewrite
   before a public flip.
 - Prefer SSH commit signing so public-era commits carry `Verified`
-  (ADR-0036).
+  (`ADR-0036` proposes this; accepted `ADR-0018` requires attribution).
 
 ### Per-session configuration (recommended for sustained agent runs)
 
@@ -450,12 +457,14 @@ identity is.
   set the agent's `user.email` via per-commit override or per-session
   config. Add an `Agent-Attribution:` trailer recording model, role,
   and session mode. No `Co-authored-by:` trailer needed — the email
-  alone identifies the actor (ADR-0036).
+  alone identifies the actor (accepted `ADR-0018` and `ADR-0029`;
+  `ADR-0036` proposes a vocabulary canon).
 - **Hybrid commit** (human and agent both contributed):
   the human is the accountable author — commit under the human
   identity, and add an `Agent-Attribution:` trailer for each agent
   actor with their model and role. No `Co-authored-by:` trailer for
-  agents (ADR-0036); it is reserved for human–human co-authorship.
+  agents (`ADR-0018`/`ADR-0029`; `ADR-0036` proposes the same); it is
+  reserved for human–human co-authorship.
 
 ### Forward compatibility with ADR-0011
 
@@ -470,8 +479,8 @@ transition to separate GitHub accounts, the migration path is:
    `gh auth switch --user <agent-account>`.
 4. The `Co-authored-by:` convention for human–human collaboration
    continues unchanged — it now represents a cross-account relationship
-   rather than same-account co-authorship (ADR-0036: agent
-   participation remains in `Agent-Attribution:` trailers).
+   rather than same-account co-authorship (accepted `ADR-0018` and
+   `ADR-0029`; `ADR-0036` proposes the same vocabulary canon).
 
-See ADR-0018 for the original rationale and ADR-0029 for the change to
+See `ADR-0018` for the original rationale and `ADR-0029` for the change to
 the name-field assignment.

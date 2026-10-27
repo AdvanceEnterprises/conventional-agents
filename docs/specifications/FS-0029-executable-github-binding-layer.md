@@ -39,7 +39,7 @@ requires:
   - FS-0024
 tags: [github, binding, integrations, substrate, provisioning, ci, exported-surface]
 created: 2026-09-03
-updated: 2026-09-08
+updated: 2026-10-27
 ---
 <!--
 PARSING_HINTS:
@@ -238,8 +238,9 @@ capability mapping; this layer provides mechanisms it already names.
   under any flag this command provides.
 - **SC-17.** Given the shipped framework label set is inspected, then it contains exactly
   the `FS-0018` six and no organisation-specific label — `propagation`
-  specifically must not appear (`ADR-0032`). Consumer additions are supplied
-  through the documented extension input and are not compiled in.
+  specifically is excluded, following the same reasoning captured in the proposed
+  `ADR-0032`. Consumer additions are supplied through the documented extension input and
+  are not compiled in.
 
 ### `gh-board-audit.sh` — read-only drift report
 

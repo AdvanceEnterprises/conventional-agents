@@ -19,7 +19,9 @@ worked example this skill draws from throughout.
 - `docs/decisions/ADR-0024-platform-neutral-core-with-shipped-bindings.md` — the two-layer model and the ordering rule
 - `docs/decisions/ADR-0037-executable-github-binding.md` — the four boundaries constraining a binding's executables
 - `docs/decisions/ADR-0039-agent-runtime-integration-bindings.md` — runtime bindings; §2 requirement set, §5 stage order
-- `docs/decisions/ADR-0007.md` (positioning), `ADR-0032` (template/instance repo forms; applied to bindings via `ADR-0037` §7), `ADR-0015` (Location invariant)
+- `docs/decisions/ADR-0007.md` (positioning), `ADR-0032` (proposed —
+  template/instance repo forms; applied to bindings via `ADR-0037` §7),
+  `ADR-0015` (Location invariant)
 
 ## When to Use
 
@@ -45,9 +47,9 @@ Summarised, not restated. Canonical texts are the ADRs above.
   is a Category 1 gate: it lives in `scripts/`, needs an approved FS and PLAN,
   and is listed in `scripts/README.md`. A binding executable is binding content
   *only while it is non-blocking*.
-- **No instance data (`ADR-0037` §7 — applies `ADR-0032`).** Parameterised
-  templates and `*.example.yml` shapes only. Project numbers, node IDs, org
-  names, secret names, and org-specific labels come from the caller.
+- **No instance data (`ADR-0037` §7 — applies the reasoning in the proposed
+  `ADR-0032`).** Parameterised placeholders and `*.example` files only; no
+  project numbers, org names, secrets, or real host identifiers.
 - **The merge gate (`ADR-0012`)** is inherited by every shipped command: verify
   `gh auth status` (or the runtime equivalent) before each operation.
 
@@ -259,7 +261,7 @@ setup() { REPO_ROOT="$(repo_root)"; BINDING="$REPO_ROOT/integrations/notion.md";
 | Shipping a `schedule:` trigger that moves a work item | Crosses `ADR-0007`'s orchestration line |
 | Wiring a binding audit into a pull-request gate | It is now a Category 1 gate in the wrong directory, with no FS |
 | A command that reports drift *and* fixes it | The fix is the consumer's act under the consumer's policy |
-| Hardcoding a project number or org name in a shipped file | `ADR-0037` §7 / `ADR-0032` violation; the next adopter's copy is wrong |
+| Hardcoding a project number or org name in a shipped file | `ADR-0037` §7 / proposed `ADR-0032` violation; the next adopter's copy would be wrong |
 | Testing against the live API | Non-deterministic; fixtures are the contract, live use is the weaker check |
 
 ## Related Skills

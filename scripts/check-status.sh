@@ -1246,6 +1246,63 @@ while IFS= read -r doc; do
   done < <(extract_doc_refs "$doc" | sort -u)
 done < <(git -C "$REPO_ROOT" ls-files '*.md')
 
+# --- rule 9: accepted-ADR authority for current-state guidance (issue #209) ----
+#
+# Current-state / exported-surface documents must not present a proposed,
+# rejected, deprecated, or superseded ADR as a binding rule. A binding claim
+# is detected by a non-accepted ADR appearing on a line with words such as
+# "requires", "prohibits", "mandates", "binding", "must", "shall", or
+# "normative". Lines that also name the ADR's actual status (proposed, draft,
+# rejected, deprecated, superseded) are treated as non-normative context and
+# are allowed. CHANGELOG and other historical records are excluded by the
+# path filter below.
+
+binding_words='requires?|prohibits?|mandates?|forbids?|binding|must|shall|normative|obliges?|compels?'
+status_words='proposed|proposes?|draft|rejected|deprecated|superseded'
+
+# Build a list of ADRs that are not accepted.
+non_accepted_adrs=()
+for adr_file in "$ADR_DIR"/ADR-*.md; do
+  [ -f "$adr_file" ] || continue
+  adr_id="$(get_field "$adr_file" "id")"
+  adr_status="$(get_field "$adr_file" "status")"
+  if [ -n "$adr_id" ] && [ "$adr_status" != "accepted" ]; then
+    non_accepted_adrs+=("$adr_id")
+  fi
+done
+
+if [ "${#non_accepted_adrs[@]}" -gt 0 ]; then
+  while IFS= read -r doc; do
+    [ -f "$REPO_ROOT/$doc" ] || continue
+    case "$doc" in
+      README.md|AGENTS.md|INTEGRATION.md|CONTRIBUTING.md) ;;
+      workflows/*.md|runbooks/*.md|skills/*/SKILL.md|templates/core/*.md|integrations/**/*.md|docs/specifications/*.md) ;;
+      *) continue ;;
+    esac
+    # Skip historical records even if they fall in an included path.
+    case "$doc" in
+      CHANGELOG.md|BACKLOG.md|docs/decisions/*.md|docs/change-plans/*.md) continue ;;
+    esac
+    for adr_id in "${non_accepted_adrs[@]}"; do
+      while IFS= read -r line; do
+        # awk output: "ORIGINAL_LINE:content" with front matter removed.
+        num="${line%%:*}"
+        content="${line#*:}"
+        # If the line names the ADR's actual status or uses a conditional
+        # verb (proposes), treat it as non-normative context and skip it.
+        if printf '%s\n' "$content" | grep -qiE "$status_words"; then
+          continue
+        fi
+        if printf '%s\n' "$content" | grep -qiE "$binding_words"; then
+          printf 'ERROR: %s presents %s as binding current-state policy (issue #209).\n' "$doc" "$adr_id"
+          printf '       %s: %s\n' "$num" "$(printf '%s\n' "$content" | sed 's/^[[:space:]]*//')"
+          errors=$((errors+1))
+        fi
+      done < <(awk 'BEGIN{c=0} /^---$/{c++; next} c==1{next} {printf "%d:%s\n", NR, $0}' "$REPO_ROOT/$doc" | grep -E "$adr_id" | head -20)
+    done
+  done < <(git -C "$REPO_ROOT" ls-files '*.md')
+fi
+
 # --- result ------------------------------------------------------------------
 
 if [ "$errors" -gt 0 ]; then
