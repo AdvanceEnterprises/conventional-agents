@@ -7,6 +7,7 @@ reversible: yes
 related_specs:
   - FS-0036
 superseded_by: null
+updated: 2026-09-16
 ---
 
 # ADR-0043: Planning fields are binding policy, not framework state — authority matrix for Priority, Iteration, and Milestone

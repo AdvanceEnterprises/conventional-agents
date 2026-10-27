@@ -7,6 +7,7 @@ reversible: yes
 related_specs:
   - FS-0003
 superseded_by: null
+updated: 2026-07-26
 ---
 
 # ADR-0011: Adopt multi-identity GitHub model (human + agent-committer + agent-reviewer)

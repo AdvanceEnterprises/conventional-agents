@@ -9,6 +9,7 @@ related_specs:
   - FS-0015
   - FS-0018
 superseded_by: null
+updated: 2026-07-28
 ---
 
 # ADR-0013: Multi-model session coordination model

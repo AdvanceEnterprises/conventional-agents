@@ -7,6 +7,7 @@ reversible: yes
 related_specs:
   - FS-0018
 superseded_by: null
+updated: 2026-07-28
 ---
 
 # ADR-0028: Level-triggered reconciliation

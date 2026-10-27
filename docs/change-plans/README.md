@@ -32,7 +32,7 @@ All change plans must use the template defined in `templates/core/change-plan.md
 ## Current Plans
 
 | ID | Title | Related Spec | Status |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | PLAN-0001 | Implement FS-0003 Git/GH CLI Conventions | FS-0003 | implemented |
 | PLAN-0002 | Implement FS-0004 Agent Commentary Policy | FS-0004 | deprecated |
 | PLAN-0003 | Implement FS-0005 Expand Docs Linting | FS-0005 | implemented |
@@ -58,10 +58,10 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | PLAN-0023 | Implement FS-0023 Runbook document type | FS-0023 | implemented |
 | PLAN-0024 | Implement FS-0024 Portable governance gates | FS-0024 | implemented |
 | PLAN-0026 | Implement FS-0026 ADR and PLAN scaffolding CLI | FS-0026 | implemented |
-| PLAN-0034 | Implement ADR-0034 MCP tool category and GitHub skills consolidation | ADR-0034 | deprecated |
 | PLAN-0027 | Implement FS-0027 Workflow and guideline freshness gate | FS-0027 | implemented |
-| PLAN-0035 | Implement FS-0029 Executable layer for the GitHub binding | FS-0029 | implemented |
 | PLAN-0028 | Implement FS-0028 ADR supersession chain gate | FS-0028 | implemented |
+| PLAN-0034 | Implement ADR-0034 MCP tool category and GitHub skills consolidation | ADR-0034 | deprecated |
+| PLAN-0035 | Implement FS-0029 Executable layer for the GitHub binding | FS-0029 | implemented |
 | PLAN-0036 | Implement FS-0030 Claude Code runtime binding | FS-0030 | implemented |
 | PLAN-0037 | Implement FS-0031 Governed-agent benchmark harness | FS-0031 | implemented |
 | PLAN-0039 | Implement FS-0033 Governance CI on stacked and non-trunk PRs | FS-0033 | implemented |
@@ -78,12 +78,9 @@ All change plans must use the template defined in `templates/core/change-plan.md
 | PLAN-0051 | Implement FS-0045 Accepted-ADR authority check | FS-0045 | draft |
 | PLAN-0052 | Implement FS-0046 Trunk governance enforcement | FS-0046 | draft |
 | PLAN-0053 | Implement FS-0047 Exported consumer-boundary audit | FS-0047 | implemented |
+| PLAN-0054 | Implement FS-0048 Governance metadata and version reconciliation | FS-0048 | draft |
 | PLAN-0055 | Implement FS-0049 Bash 3.2 status-check compatibility | FS-0049 | approved |
 | PLAN-0056 | Implement FS-0050 run-batch tier-integrity check | FS-0050 | implemented |
 | PLAN-0057 | Migrate, merge, and reconcile the template mesh | ADR-0046 | draft |
 | PLAN-0058 | Implement FS-0051 engine pilot | FS-0051 | draft |
 | PLAN-0059 | Implement FS-0052 Hermes Agent runtime binding | FS-0052 | draft |
-
-| PLAN-0046 | Implement FS-0040 Governed-ID claim audit | FS-0040 | draft |
-| PLAN-0047 | Implement FS-0041 Status-vs-delivery consistency audit | FS-0041 | draft |
-| PLAN-0054 | Implement FS-0048 Governance metadata and version reconciliation | FS-0048 | draft |

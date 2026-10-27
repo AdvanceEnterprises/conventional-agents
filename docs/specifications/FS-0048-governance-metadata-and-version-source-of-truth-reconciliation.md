@@ -33,7 +33,7 @@ requires:
   - FS-0027
 tags: [metadata, versioning, adr, freshness, index, source-of-truth]
 created: 2026-10-05
-updated: 2026-10-05
+updated: 2026-10-27
 ---
 <!--
 PARSING_HINTS:

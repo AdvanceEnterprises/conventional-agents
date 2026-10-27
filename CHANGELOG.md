@@ -70,6 +70,14 @@ For this project (a documentation/standards kit), semver follows the
   validated display markers, and one ADR status vocabulary plus a documented
   FS/PLAN index-ordering rule. The documents remain drafts; they authorize no
   template, script, corpus, marker, or index change.
+- **Governance metadata reconciliation for issue #212 (FS-0048, PLAN-0054).**
+  Enacts the draft package: backfills `updated:` on every ADR, adds the field to
+  the ADR template, extends `check-freshness.sh` to ADRs/FS/PLAN, makes
+  `document-lifecycle.md` require `updated:` on runbooks and recognize `rejected`,
+  establishes `package.json` as the single version authority with a new
+  `check-status.sh` rule validating README.md / AGENTS.md / INTEGRATION.md
+  markers, and sorts the FS/PLAN README indexes. `AGENTS.md` marker update
+  deferred pending protected-file approval.
 - **Claude Code runtime binding (`FS-0030`).** The framework's first agent-runtime
   binding ships under `integrations/runtimes/claude-code/`: a plugin manifest
   (`claude plugin validate` clean), synced skill copies sourced from

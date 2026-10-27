@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
-# check-freshness.sh — workflow/guideline doc freshness gate for conventional-agents.
+# check-freshness.sh — workflow/guideline/doc freshness gate for conventional-agents.
 #
-# Rule 1 (hard — exit non-zero): every governed doc under `workflows/` and
-#   `guidelines/` must carry an `updated:` front-matter field. Freshness cannot
-#   be measured on a doc that does not say when it was last touched, and without
-#   the field the maintenance tick's staleness check silently no-ops on these
-#   directories (7/7 workflow docs and 10/10 guideline docs lacked it as of
-#   2026-08-29, FS-0027).
+# Rule 1 (hard — exit non-zero): every governed doc under `workflows/`,
+#   `guidelines/`, `docs/specifications/`, `docs/change-plans/`, and
+#   `docs/decisions/` must carry an `updated:` front-matter field. Freshness
+#   cannot be measured on a doc that does not say when it was last touched, and
+#   without the field the maintenance tick's staleness check silently no-ops on
+#   these directories (7/7 workflow docs and 10/10 guideline docs lacked it as of
+#   2026-08-29, FS-0027; ADRs joined the set under FS-0048 / issue #212).
 #
 # Rule 2 (soft — printed, exit 0): a doc whose `updated:` date is older than
 #   90 days is reported as a staleness candidate for a human or the maintenance
@@ -14,9 +15,9 @@
 #   flagged than deleted, and failing CI on every old doc would force mass
 #   rewrites of content that may still be accurate.
 #
-# Scope: `workflows/*.md` and `guidelines/**/*.md` (recursive — bash/JS/Python
-#   subdirectories), excluding `**/README.md` index files, which are navigation
-#   aids rather than governed docs.
+# Scope: `workflows/*.md`, `guidelines/**/*.md`, `docs/specifications/*.md`,
+#   `docs/change-plans/*.md`, and `docs/decisions/*.md`, excluding `**/README.md`
+#   index files, which are navigation aids rather than governed docs.
 #
 # Target: the resolved root must be a git work tree (issue #199). A directory
 #   git disclaims is a hard error — the empty-corpus branch would otherwise
@@ -153,10 +154,10 @@ docs=()
 while IFS= read -r f; do
   [[ "$f" == */README.md ]] && continue
   docs+=("$f")
-done < <(find workflows guidelines -type f -name '*.md' | sort)
+done < <(find workflows guidelines docs/specifications docs/change-plans docs/decisions -type f -name '*.md' 2>/dev/null | sort)
 
 if [ "${#docs[@]}" -eq 0 ]; then
-  echo "check-freshness: no governed docs found under workflows/ or guidelines/"
+  echo "check-freshness: no governed docs found under workflows/, guidelines/, docs/specifications/, docs/change-plans/, or docs/decisions/"
   exit 0
 fi
 
@@ -186,4 +187,4 @@ if [ "$errors" -gt 0 ]; then
   exit 1
 fi
 
-echo "check-freshness: OK — all governed docs under workflows/ and guidelines/ carry updated:"
+echo "check-freshness: OK — all governed docs under workflows/, guidelines/, docs/specifications/, docs/change-plans/, and docs/decisions/ carry updated:"

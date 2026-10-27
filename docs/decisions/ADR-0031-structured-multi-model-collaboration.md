@@ -8,6 +8,7 @@ related_specs:
   - FS-0019
   - FS-0021
 superseded_by: null
+updated: 2026-07-28
 ---
 
 # ADR-0031: Structured multi-model collaboration

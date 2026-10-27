@@ -6,6 +6,7 @@ decision_scope: architecture
 reversible: yes
 related_specs: []
 superseded_by: null
+updated: 2026-08-01
 ---
 
 # ADR-0032: Template and instance repository forms
