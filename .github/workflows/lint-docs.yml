@@ -328,7 +328,8 @@ jobs:
           export BASH32_BIN=/bin/bash
           bats test/FS-0040/claim-audit-binding.bats \
             test/FS-0040/claim-audit-rename.bats \
-            test/FS-0041/status-vs-delivery.bats
+            test/FS-0041/status-vs-delivery.bats \
+            test/FS-0022/bash32-compat.bats
 
   validation:
     # FS-0039 / issue #132: the hermetic local validation contract is the

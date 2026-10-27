@@ -72,8 +72,11 @@ For this project (a documentation/standards kit), semver follows the
   template, script, corpus, marker, or index change.
 - **Bash 3.2 compatibility sweep for issue #214.** Extends the regression
   coverage added in PR #215 to all scripts that advertise Bash 3.2 compatibility;
-  asserts no `case` statement is nested inside `$(...)` or `<(...)` and that each
-  script parses under a real Bash 3.2 binary when one is available.
+  uses a positive canary plus a generalized `case <word> in` detector to reject
+  nesting inside `$(...)` or `<(...)`, and checks each script under a real Bash
+  3.2 binary when one is available. The opt-in binary precedence is
+  `BASH32_BIN`, `CA_BASH32`, then `bash-3.2` on PATH; the macOS audit workflow
+  runs this fixture explicitly.
 - **Claude Code runtime binding (`FS-0030`).** The framework's first agent-runtime
   binding ships under `integrations/runtimes/claude-code/`: a plugin manifest
   (`claude plugin validate` clean), synced skill copies sourced from
