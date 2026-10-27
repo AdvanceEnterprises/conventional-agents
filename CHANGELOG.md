@@ -62,6 +62,11 @@ For this project (a documentation/standards kit), semver follows the
   whole-corpus governance triggers and trunk review enforcement, and a
   regression-audited consumer-boundary cleanup. These documents remain drafts;
   they authorize no implementation or live ruleset changes.
+- **Accepted-ADR authority sweep for issue #209 (FS-0045, PLAN-0051).** Rewords
+  current-state references to the proposed ADRs `ADR-0032`, `ADR-0036`, and
+  `ADR-0043` from binding to conditional or points them at accepted ADRs, adds a
+  new `check-status.sh` rule that detects non-accepted ADRs presented as binding,
+  and ships `test/FS-0045/accepted-adr-authority.bats` as the regression fixture.
 
 - **Draft governance package for issue #212 (FS-0048, PLAN-0054).** Specifies a
   bounded reconciliation of the framework's governance metadata contract: one

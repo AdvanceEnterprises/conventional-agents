@@ -15,7 +15,7 @@ supersedes: []
 requires: []
 tags: [github, projects, planning, priority, iteration, milestone, flow, binding, governance]
 created: 2026-09-16
-updated: 2026-09-16
+updated: 2026-10-27
 ---
 
 <!--
@@ -44,7 +44,9 @@ The GitHub Projects v2 binding (`integrations/github-issues-projects.md`,
 planning fields the framework recognizes — native issue `Milestone`,
 project `Priority` (single-select), and project `Iteration` — plus a
 **read-only flow report** of planning-field drift. The contract is ratified
-by `ADR-0043`: planning fields are **binding policy, not framework state**;
+by the proposed `ADR-0043`: if accepted, planning fields would be **binding
+policy, not framework state**; the GitHub binding conventions below are written
+against that proposal and remain provisional until `ADR-0043` is accepted.
 agents may recommend and (under an explicit scheduling contract) assign
 iterations and backfill UNSET priorities, but the human remains the arbiter
 of Milestone and Priority, and no planning field is a lifecycle axis.
@@ -66,7 +68,7 @@ of Milestone and Priority, and no planning field is a lifecycle axis.
   protected-field changes by agents, missing P0/P1 rationale, and repeated
   rollovers — without mutating any field.
 - Keep the framework's own tick-visible conventions substrate-neutral where
-  possible (`ADR-0024`, `ADR-0035`), with the GitHub binding as the
+  possible (`ADR-0024`, the proposed `ADR-0035`), with the GitHub binding as the
   reference implementation.
 
 ## Non-Goals
@@ -146,7 +148,7 @@ The binding defines the iteration scheduling contract the tick implements:
   the NEXT defined iteration (highest priority first, skip human-blocked)
   into the ACTIVE iteration, same day, logged per promotion. The concrete
   cap ("up to 3") and the ordering are **consumer policy defaulting to
-  3-with-priority-first**, not core framework policy (ADR-0043 Decision 1:
+  3-with-priority-first**, not core framework policy (proposed `ADR-0043` Decision 1:
   cadence and replenishment policy belongs to the consumer or a higher-level
   convention); the binding ships the *mechanism* only — an item may be
   re-homed across iterations, and every promotion is attributable + logged
@@ -198,9 +200,10 @@ template/registration tests and `test/FS-0016` vendor-boundary tests) for:
 
 ## Interfaces
 
-- `docs/decisions/ADR-0043-planning-fields-are-binding-policy.md` — the
-  architecture decision this spec depends on (authority matrix,
-  mechanism-vs-policy boundary).
+- `docs/decisions/ADR-0043-planning-fields-are-binding-policy.md` (proposed) — the
+  architecture decision this spec depends on once accepted (authority matrix,
+  mechanism-vs-policy boundary). Until acceptance the conventions below are
+  provisional.
 - `docs/specifications/README.md`, `docs/change-plans/README.md` — index
   rows for this spec and its plan.
 - `CHANGELOG.md` — consumer-facing entry for the draft contract.
