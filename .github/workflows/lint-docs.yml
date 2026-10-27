@@ -117,7 +117,7 @@ jobs:
         run: bash scripts/check-status.sh
 
   check-run-batch:
-    # FS-0050 / ADR-0045: a batch-acceptance commit (one carrying an
+    # FS-0050 / ADR-0049 (supersedes ADR-0045): a batch-acceptance commit (one carrying an
     # Approved-Artifacts: trailer) must touch only proposal-class locations and
     # list only accepted proposal-class artifacts. This is a DETECTION job, not a
     # merge gate: nothing marks it a required check, and it exits non-zero only to
