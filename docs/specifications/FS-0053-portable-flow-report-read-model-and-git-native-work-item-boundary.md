@@ -14,7 +14,7 @@ supersedes: []
 requires: [FS-0018, FS-0035]
 tags: [flow-report, read-model, work-item-binding, substrate-neutrality, git, governance, visibility]
 created: 2026-10-27
-updated: 2026-10-27
+updated: 2026-10-28
 ---
 
 <!--
@@ -37,17 +37,29 @@ PARSING_HINTS:
 
 - No PLAN exists yet.
 - This is a proposal-class spec for issue [#146](https://github.com/AdvanceEnterprises/conventional-agents/issues/146); implementation is blocked until the spec reaches `approved` and a governing PLAN is approved.
+- **Prerequisite before this spec advances past `draft`:** the Git-native boundary decision must be recorded in an `accepted` companion ADR in `docs/decisions/` (see `SC-4`). `ADR-0042` defers that decision and cannot stand in for it.
 
 ## Summary
 
 Work items currently live in more than one substrate (GitHub Issues, Projects boards, tick digests, and possibly native Git artifacts). There is no portable, read-only read-model for "what is the current state of work item X", and no explicit framework decision on whether a Git-native binding can ever satisfy the six substrate capabilities defined by `FS-0018`.
 
-This spec defines:
+This spec adds two things to the contract owned by `FS-0035`:
 
-1. A **portable `flow-report` read-model** that the maintenance tick emits per work item, containing only the fields that can be derived from every conforming substrate or stated explicitly when a field is unset/invalid.
+1. A **per-work-item read-model projection** that the maintenance tick emits for every in-scope work item, containing only the fields that can be derived from every conforming substrate or stated explicitly when a field is unset/invalid. The report envelope, determinism rule, planning-profile separation, and conformance-claim rule remain `FS-0035`'s contract and are not redefined here.
 2. The **Git-native work-item boundary decision**: whether pure Git can be a conforming work-item binding, and if not, what minimal substrate capability it can and cannot provide.
 
 The read-model is derived data. Git remains authoritative only for Git artifacts (commits, branches, tags, pull requests). Issues, boards, and digests stay where they are. The report makes governance state visible without making GitHub a core framework dependency.
+
+### Spec ownership relative to `FS-0035`
+
+`FS-0035` ("Portable flow-report read-model — substrate-neutral governance visibility without a work-item binding") owns the **base read-model contract**: the mandatory envelope (`FS-0035` `SC-1`), lossless and deterministic rendering (`FS-0035` `SC-4`), planning-profile separation (`FS-0035` `SC-3`), and the conformance-claim rule (`FS-0035` `SC-5`).
+
+This spec owns only:
+
+- the **per-work-item projection** in `SC-2` — the field set a report needs in order to describe the items of a named work-item binding — and
+- the **Git-native boundary decision** in `SC-4`, which `FS-0035` explicitly excludes from its own scope.
+
+Where the two specs appear to disagree, `FS-0035` governs the base contract and this spec must be corrected to match it. This spec never supersedes, narrows, or reinterprets an `FS-0035` success criterion, and both drafts must stay consistent when either one changes.
 
 ## Goals
 
@@ -75,11 +87,13 @@ The read-model is derived data. Git remains authoritative only for Git artifacts
 ## Interfaces
 
 - `docs/specifications/README.md` and `docs/change-plans/README.md` — index rows for this spec and its future PLAN.
-- `docs/decisions/ADR-0042-portable-flow-report-read-model.md` — the boundary rationale this spec extends with the Git-native work-item question.
+- `docs/decisions/ADR-0042-portable-flow-report-read-model.md` — the report-as-visibility-profile decision this spec builds on. Its Decision 6 defers the Git-native work-item question, so it is context for `SC-4`, not the record that satisfies it.
 
 ## Success Criteria
 
-### SC-1: Report envelope
+### SC-1: Report envelope (owned by `FS-0035`)
+
+The mandatory envelope is `FS-0035`'s `SC-1` and is **not** redefined here; a report conforming to this spec carries that envelope unchanged. The fields are restated below only as the context the `SC-2` projection attaches to:
 
 Given a conforming generator run, the emitted report starts with an envelope containing mandatorily:
 
@@ -91,27 +105,31 @@ Given a conforming generator run, the emitted report starts with an envelope con
 
 ### SC-2: Work-item read-model
 
-Given the tick runs against a conforming work-item binding, the emitted JSON contains, for every in-scope work item:
+Given the tick runs against a conforming work-item binding, the emitted JSON contains, for every in-scope work item (this per-work-item record is the projection this spec owns; the enclosing envelope is `FS-0035`'s `SC-1`):
 
 - `id` — the work-item identifier.
 - `substrate` — the binding-native substrate name.
 - `status` — the binding-native phase state, represented verbatim; unset/invalid states are `unset`/`invalid`.
 - `owner` — the accountable party as recorded by the binding.
 - `last_touched` — ISO-8601 timestamp of the most recent binding-native or Git evidence.
-- `hra` — boolean or list of human-required actions awaiting a human.
+- `human_decisions_required` — a READ-ONLY boolean-or-list marker of human-required actions awaiting a human. This is the same canonical field name used by `FS-0035` `SC-2` and by `SC-5` below; no shorter alias exists.
 - `links` — URLs or binding-native handles for the item and its Git evidence.
 
-### SC-3: Determinism and lossless state
+### SC-3: Determinism and lossless state (inherited from `FS-0035`)
 
-Given a fixed binding snapshot and revision, when the report is generated twice, the two outputs are byte-identical except for `generated_at`. Unset and invalid substrate fields are rendered as `unset` and `invalid` respectively, never coerced into a guessed lifecycle value.
+Determinism and lossless rendering are `FS-0035`'s `SC-4`; this spec restates them only to bind the per-work-item fields introduced in `SC-2`.
 
-### SC-4: Git-native boundary decision
+Given a fixed binding snapshot and revision, when the report is generated twice, the two outputs are byte-identical except for `generated_at`. Unset and invalid substrate fields are rendered as `unset` and `invalid` respectively, never coerced into a guessed lifecycle value. If `FS-0035`'s determinism rule changes, `FS-0035` governs and this criterion is corrected to match.
 
-Given this spec reaches `approved`, the repository contains a separate governed record (this spec or a companion ADR) that explicitly answers:
+### SC-4: Git-native boundary decision (companion ADR prerequisite)
+
+Given this spec advances past `draft`, a companion ADR in `docs/decisions/` is `accepted` and explicitly answers:
 
 - Which of the six `FS-0018` substrate capabilities pure Git can provide.
 - Which capabilities it cannot provide.
 - Whether a Git-only consumer may claim partial, full, or no `FS-0018` lifecycle conformance.
+
+`ADR-0042` does **not** satisfy this criterion. Its Decision 6 records that the Git-native question "is recorded separately from this contract and is NOT decided here", and its Consequences leave that question "open as a separate bounded decision". The companion ADR must therefore be authored and accepted on its own merits; this draft does not assert that the decision exists, and `SC-4` fails until such an ADR is `accepted`.
 
 ### SC-5: Human decisions queue is read-only
 
@@ -137,7 +155,7 @@ Given the contract is documented, it is accompanied by one human-readable exampl
 ## Dependencies
 
 - `FS-0018` — the six substrate capabilities that define a conforming work-item binding.
-- `FS-0035` — the existing portable flow-report read-model contract this spec extends with the Git-native boundary.
+- `FS-0035` — the existing portable flow-report read-model contract this spec extends; `FS-0035` owns the base contract (envelope, determinism, planning profile, conformance claim) and this spec adds only the per-work-item projection and the Git-native boundary decision.
 - `ADR-0024` — platform-neutral core with shipped bindings.
 - `ADR-0026` — approval is a recorded act; evidence requirement.
 - `ADR-0037` — executable binding boundary.
@@ -151,4 +169,4 @@ Given the contract is documented, it is accompanied by one human-readable exampl
 
 ## Open Questions
 
-- Should the Git-native boundary be recorded in this FS's own front matter (`related_adrs:`) or in a new ADR? This spec deliberately references `ADR-0042` and leaves the choice to the first review cycle.
+- The **content** of the Git-native boundary decision — which of the six `FS-0018` capabilities pure Git can provide — remains open. `SC-4` fixes only its venue: an `accepted` companion ADR in `docs/decisions/` that this spec then references from `related_adrs:`.
