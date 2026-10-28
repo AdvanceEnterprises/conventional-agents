@@ -7,6 +7,18 @@ last_updated: "2026-09-09"
 ---
 
 <!-- markdownlint-disable-file MD025 -->
+<!--
+  MD025 (single-h1) is exempted for this file, and this file only. arc42 is
+  structured as one H1 per numbered architecture section (§1–§12), and the
+  front matter `title:` is itself a top-level-heading candidate, so MD025
+  cannot be satisfied without destroying the arc42 section structure.
+  This is a rule-scoped exemption, not a file-scoped one: every other
+  markdownlint rule still applies to this document. It is counted explicitly
+  in the coverage accounting of FS-0022 §4 — exemption 9 of 9, i.e. the eight
+  file-scoped exemptions under `docs/orchestration/multi-model-pilot-001/`
+  (`default: false`) plus this one rule-scoped directive. See the #210
+  lint-coverage change (PR #252).
+-->
 
 # 1. Introduction and Goals
 

@@ -702,9 +702,10 @@ A test that deliberately exercises this script must opt out explicitly with
 **Dependencies.** `bats` and `rg` (ripgrep). Both are checked up front and both
 fail with an install hint. ripgrep is required because several suites call it
 directly with `-U` and `-A`, which have no clean POSIX equivalent — and because
-a missing `rg` used to surface as every assertion failing with "expected `\<file\>`
-to contain pattern" against files that matched perfectly well. The shared
-`assert_file_contains` helper now uses `grep -F` for exactly that reason.
+a missing `rg` used to surface as every assertion failing with
+"expected `<file>` to contain pattern" against files that matched perfectly
+well. The shared `assert_file_contains` helper now uses `grep -F` for exactly
+that reason.
 
 **Install hints** (when a dependency is absent):
 
