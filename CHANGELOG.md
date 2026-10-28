@@ -769,6 +769,18 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Fixed
 
+#### Lint coverage now covers every non-exempt tracked Markdown file (`#210`, coverage half)
+
+- **Closes the coverage half of #210.** `npm run lint:docs` and the
+  `lint-docs` workflow now lint all 255 non-exempt tracked Markdown files —
+  the eight `docs/orchestration/multi-model-pilot-001/` files stay exempt by
+  their own `default: false` config — adding the directory README indexes,
+  `docs/operations/`, `docs/proposals/`, `docs/research/`, `.github/`
+  templates, `scripts/`, `test/`, and `benchmark/`. `docs/ARC42.md` carries a
+  rule-scoped `MD025` exemption (arc42 uses one H1 per section), recorded
+  separately from the eight file-scoped exemptions. The enforcement half of
+  #210 (trunk ruleset) is unchanged.
+
 #### CI runs the whole-corpus gates on every push and PR — event-level paths filters removed (G6)
 
 - **Closes the C-24 coverage contradiction.** `lint-docs.yml` claimed the
