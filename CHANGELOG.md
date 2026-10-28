@@ -59,6 +59,11 @@ For this project (a documentation/standards kit), semver follows the
   lines. This resolves the remaining digest-count item from issue #187
   without changing the ADR-0021 boundary or the grandfathering semantics;
   `scripts/README.md` documents the output and the FS-0043 fixtures assert it.
+  The counts partition the audited set
+  (`audited = missing + unreadable timestamp + grandfathered + ok`): a cron
+  commit with no trailer, or with one Git's trailer parser cannot reach, counts
+  as missing, and the fail-closed unreadable-timestamp case reports in its own
+  bucket instead of being labelled missing.
 - **FS-0040 now includes the #186 citation-drift complement.** The governed-ID
   audit package covers local duplicate detection, cross-PR claim collisions,
   and stale citations of retired IDs when an open PR exposes the corresponding

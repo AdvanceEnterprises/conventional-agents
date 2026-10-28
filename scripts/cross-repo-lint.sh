@@ -231,7 +231,13 @@ for REPO in "${REPOS[@]}"; do
   BAD_COUNT=0
   MISSING_COUNT=0
   MALFORMED_COUNT=0
-  CRON_BAD_COUNT=0
+  # Cron-attribution counters partition the audited set exactly:
+  #   audited = missing mode=autonomous + unreadable timestamp
+  #             + grandfathered + ok
+  # CRON_BAD_COUNT is derived from the two failure buckets after the scan (see
+  # below) so the digest can never disagree with the per-commit BAD lines.
+  CRON_MISSING_COUNT=0
+  CRON_UNREADABLE_COUNT=0
   CRON_GRANDFATHERED_COUNT=0
   CRON_AUDITED_COUNT=0
   if [ -z "${AGENT_EMAILS}${CRON_AGENT_EMAILS}" ]; then
@@ -286,6 +292,13 @@ for REPO in "${REPOS[@]}"; do
           TOTAL_BAD=$((TOTAL_BAD + 1))
           echo "  BAD  $REPO_NAME <$COMMIT_HASH> missing Agent-Attribution trailer (agent-authored: $AUTHOR_EMAIL)"
         fi
+        if $_is_cron; then
+          # A cron commit with no trailer, or with one git's parser cannot
+          # reach, cannot end in the terminal marker: it fails the same rule
+          # the digest summarizes. Count it in the missing bucket so no
+          # failing cron commit hides in the implied "ok" remainder.
+          CRON_MISSING_COUNT=$((CRON_MISSING_COUNT + 1))
+        fi
       fi
     elif ! echo "$RAW" | grep -qE "$ATTRIBUTION_RE"; then
       BAD_COUNT=$((BAD_COUNT + 1))
@@ -305,12 +318,15 @@ for REPO in "${REPOS[@]}"; do
         # Fail closed: a cron commit whose timestamp cannot be read must not
         # be silently grandfathered by a failed `[` comparison (issue #144
         # review; the comparison below is numeric and needs a validated value).
-        CRON_BAD_COUNT=$((CRON_BAD_COUNT + 1))
+        # This is its own bucket: the marker was never evaluated, so reporting
+        # it as "missing mode=autonomous" would misdescribe a commit that
+        # carries the marker (issue #254 review).
+        CRON_UNREADABLE_COUNT=$((CRON_UNREADABLE_COUNT + 1))
         TOTAL_BAD=$((TOTAL_BAD + 1))
         echo "  BAD  $REPO_NAME <$COMMIT_HASH> cron attribution timestamp unreadable (empty committer time) — cannot evaluate the boundary (boundary: $CRON_ATTRIBUTION_BOUNDARY)"
       elif [ "$COMMIT_EPOCH" -gt "$CRON_BOUNDARY_EPOCH" ]; then
         if ! echo "$RAW" | grep -qE ';[[:space:]]*mode=autonomous$'; then
-          CRON_BAD_COUNT=$((CRON_BAD_COUNT + 1))
+          CRON_MISSING_COUNT=$((CRON_MISSING_COUNT + 1))
           TOTAL_BAD=$((TOTAL_BAD + 1))
           echo "  BAD  $REPO_NAME <$COMMIT_HASH> cron attribution missing terminal mode=autonomous (boundary: $CRON_ATTRIBUTION_BOUNDARY)"
         fi
@@ -320,15 +336,26 @@ for REPO in "${REPOS[@]}"; do
       fi
     fi
   done < <(git -C "$REPO" log --format="%H %s" "$RANGE" 2>/dev/null)
+  # Derived once from the two failure buckets — never incremented independently
+  # — so `audited = missing + unreadable + grandfathered + ok` is exact.
+  CRON_BAD_COUNT=$((CRON_MISSING_COUNT + CRON_UNREADABLE_COUNT))
   _cron_suffix="cron boundary enforced"
   [ -z "$CRON_AGENT_EMAILS" ] && _cron_suffix="cron boundary NOT configured (CRON_AGENT_EMAILS empty)"
   if [ "$BAD_COUNT" -eq 0 ] && [ "$MISSING_COUNT" -eq 0 ] && [ "$MALFORMED_COUNT" -eq 0 ] && [ "$CRON_BAD_COUNT" -eq 0 ]; then
     echo "  OK   $REPO_NAME (all $RANGE commits have correct attribution format; $_cron_suffix)"
   fi
   # Issue #187 digest: one line summarizing cron-attribution coverage so the
-  # audit result is not buried in per-commit grandfathered INFO lines.
+  # audit result is not buried in per-commit grandfathered INFO lines. The four
+  # counts partition the audited set exactly:
+  #   audited = missing mode=autonomous + unreadable timestamp
+  #             + grandfathered + ok
+  # `missing mode=autonomous` covers every commit whose trailer was evaluated
+  # and lacks the terminal marker, plus cron commits with no trailer at all or
+  # one git's parser cannot reach. `unreadable timestamp` covers the fail-closed
+  # case where the marker could not be evaluated — a distinct fault, so it gets
+  # its own bucket rather than inflating the missing count.
   if [ -n "$CRON_AGENT_EMAILS" ]; then
-    echo "  DIGEST $REPO_NAME: cron attribution — $CRON_AUDITED_COUNT audited, $CRON_BAD_COUNT missing mode=autonomous, $CRON_GRANDFATHERED_COUNT grandfathered (boundary: $CRON_ATTRIBUTION_BOUNDARY)"
+    echo "  DIGEST $REPO_NAME: cron attribution — $CRON_AUDITED_COUNT audited, $CRON_MISSING_COUNT missing mode=autonomous, $CRON_UNREADABLE_COUNT unreadable timestamp, $CRON_GRANDFATHERED_COUNT grandfathered (boundary: $CRON_ATTRIBUTION_BOUNDARY)"
   fi
 done
 if [ "$TOTAL_BAD" -gt 0 ]; then

@@ -553,7 +553,15 @@ repository set:
    `mode=autonomous`; commits at or before the boundary are reported as
    grandfathered and are not rewritten. The check emits a per-repository digest
    line summarizing how many cron commits were audited, how many are missing
-   `mode=autonomous`, and how many were grandfathered (issue #187).
+   `mode=autonomous`, how many failed the boundary evaluation on an unreadable
+   committer timestamp, and how many were grandfathered (issue #187). The four
+   counts partition the audited set —
+   `audited = missing + unreadable timestamp + grandfathered + ok` — so a
+   failing cron commit cannot hide in an implied clean remainder: a cron commit
+   with no trailer, or with one Git's trailer parser cannot reach, counts as
+   missing, and the fail-closed unreadable-timestamp case reports in its own
+   bucket rather than being labelled missing (a marker-bearing commit can fail
+   the timestamp read).
 2. **README index consistency** — every governed doc under `docs/decisions/`,
    `docs/specifications/`, and `docs/change-plans/` appears in its
    `README.md` index.
