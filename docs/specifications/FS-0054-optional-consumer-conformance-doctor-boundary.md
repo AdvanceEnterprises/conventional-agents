@@ -13,7 +13,7 @@ supersedes: []
 requires: [FS-0034]
 tags: [conformance, consumer, diagnostics, adoption, doctor, clean-adopter, read-only]
 created: 2026-10-27
-updated: 2026-10-27
+updated: 2026-10-28
 ---
 
 <!--
@@ -123,13 +123,12 @@ Given the design is approved, a prototype is validated against the clean-adopter
 - The first-slice `scripts/check-conformance.sh` implementation already delivered by `FS-0034`.
 - Cross-repo scaffolding or migration automation.
 - Planning-field checks (Priority, Iteration, Milestone) — those belong to `FS-0036`.
-- Milestone/iteration/priority planning checks.
 - Any write path that is not explicit, opt-in, and reviewable.
 
 ## Dependencies
 
 - `FS-0034` — the first in-framework conformance-doctor slice.
-- `ADR-0015` — tool taxonomy and location boundaries.
+- `ADR-0015` — Tool taxonomy and introduction process (governs tool location and category boundaries).
 - `ADR-0033` — caller-relative portable gates and configuration.
 - The clean-adopter fixture referenced in issue #142 and the framework's exported `integrations/` surface.
 - Issue [#142](https://github.com/AdvanceEnterprises/conventional-agents/issues/142).
