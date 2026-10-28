@@ -9,6 +9,7 @@ interfaces:
   - scripts/
   - .github/workflows/
   - package.json
+  - test/FS-0056/eligibility-gate.bats
   - docs/decisions/ADR-0041-narrow-direct-to-trunk-merge-exception-for-reversible-maintenance.md
   - docs/specifications/FS-0056-narrow-direct-to-trunk-merge-exception.md
   - docs/change-plans/PLAN-0060-implement-fs-0056.md
@@ -30,7 +31,7 @@ tags:
   - merge-gate
   - autonomy
 created: 2026-10-27
-updated: 2026-10-27
+updated: 2026-10-28
 ---
 <!--
 PARSING_HINTS:
@@ -84,9 +85,12 @@ that records every direct merge so a human can review the batch.
 - Details:
   - `scripts/eligibility-gate.sh` — exit 0 if the current PR/branch is eligible
     for direct-to-trunk merge, exit 1 with a diagnostic otherwise.
-  - `.github/workflows/lint-docs.yml` — extended to require the
-    `eligibility-gate` check on trunk (or a new workflow).
+  - `.github/workflows/lint-docs.yml` — extended with an `eligibility-gate`
+    job that runs the gate and reports the required `eligibility-gate`
+    status check on trunk.
   - `package.json` — adds an `eligibility-gate` script entry point.
+  - `test/FS-0056/eligibility-gate.bats` — bats coverage for the Success
+    Criteria cases.
   - Digest output format: JSON Lines with fields `repo`, `pr`, `commit_range`,
     `touched_paths`, `work_item`, `type`, `actor`, `model`, `session`, `checks`,
     `rollback_ref`.
@@ -162,5 +166,3 @@ that records every direct merge so a human can review the batch.
 
 - Should the digest be written to a file in the repo, to GitHub Actions
   artifacts, or both?
-- Does the eligibility gate run as a separate workflow job or as an additional
-  step in the existing lint-docs workflow?

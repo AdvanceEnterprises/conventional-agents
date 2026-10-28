@@ -26,7 +26,7 @@ touches:
   - test/FS-0056/eligibility-gate.bats
   - CHANGELOG.md
 created: 2026-10-27
-updated: 2026-10-27
+updated: 2026-10-28
 
 ---
 
@@ -61,8 +61,8 @@ under-declared plan fails later and louder.
   predicate for Phase 1 (path-based categories).
 * Extend `scripts/check-status.sh` to validate that any PR claiming the direct
   merge exception has an `eligibility-gate` pass recorded.
-* Add the gate as a required status check in `.github/workflows/lint-docs.yml`
-  (or a new workflow) on trunk.
+* Add an `eligibility-gate` job to `.github/workflows/lint-docs.yml` and
+  require its status check on trunk.
 * Add an `eligibility-gate` npm script entry in `package.json`.
 * Provide bats tests under `test/FS-0056/` covering eligible, ineligible, and
   human-approved cases.
@@ -121,7 +121,8 @@ Describe concrete steps without code.
    * Exit 0 with `eligible` or 1 with a diagnostic.
 2. Add a rule to `scripts/check-status.sh` verifying that any PR with
    `type=autonomous` and a direct-merge claim has an `eligibility-gate` pass.
-3. Add the gate to CI in `.github/workflows/lint-docs.yml`.
+3. Add the gate as an `eligibility-gate` job in
+   `.github/workflows/lint-docs.yml`.
 4. Add the npm script entry.
 5. Write bats tests.
 6. Add a consumer-framed `CHANGELOG.md` entry.
@@ -172,7 +173,8 @@ State what will NOT be modified.
 ## 10. Readiness Check
 
 * [x] Spec is draft (implementation blocked until approved)
-* [ ] Tests exist or are clearly defined
+* [x] Tests exist or are clearly defined (§3 names the five cases; the bats
+  file lands with implementation)
 * [x] Scope is minimal and explicit
 * [x] No architectural changes implied
 
