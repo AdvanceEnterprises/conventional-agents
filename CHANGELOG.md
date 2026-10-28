@@ -772,14 +772,29 @@ For this project (a documentation/standards kit), semver follows the
 #### Lint coverage now covers every non-exempt tracked Markdown file (`#210`, coverage half)
 
 - **Closes the coverage half of #210.** `npm run lint:docs` and the
-  `lint-docs` workflow now lint all 255 non-exempt tracked Markdown files —
-  the eight `docs/orchestration/multi-model-pilot-001/` files stay exempt by
-  their own `default: false` config — adding the directory README indexes,
-  `docs/operations/`, `docs/proposals/`, `docs/research/`, `.github/`
-  templates, `scripts/`, `test/`, and `benchmark/`. `docs/ARC42.md` carries a
-  rule-scoped `MD025` exemption (arc42 uses one H1 per section), recorded
-  separately from the eight file-scoped exemptions. The enforcement half of
-  #210 (trunk ruleset) is unchanged.
+  `lint-docs` workflow now lint all 255 non-exempt tracked Markdown files
+  (263 tracked `.md` files, 8 exempt), adding the directory README indexes,
+  `docs/operations/`, `docs/proposals/`, `docs/research/`, `docs/*.md`,
+  `.github/` templates, `scripts/`, `test/`, and `benchmark/`. The
+  enforcement half of #210 (trunk ruleset) is unchanged.
+- **Exemption register — 9 exemptions, in two kinds.** 8 are **file-scoped**:
+  `docs/orchestration/multi-model-pilot-001/*.md`, preserved with their own
+  `default: false` config (FS-0022 §4 requires that exemption to survive
+  widening). 1 is **rule-scoped**: `docs/ARC42.md` disables `MD025` only —
+  arc42 is one H1 per numbered architecture section and the front matter
+  `title:` is itself a top-level-heading candidate — while every other rule
+  still applies, and the directive carries an inline rationale. This is the
+  complete exemption register: none of the 27 newly covered files is exempt.
+- **Relaxed, not exempt — 15 of the 27 newly covered files sit under
+  pre-existing per-directory configs.** The 12 preserved-evidence files in
+  `docs/research/model-drafts/` and `docs/research/reviews/` are linted under
+  their directory configs, which disable the same five rules (`MD013`,
+  `MD032`, `MD034`, `MD038`, `MD047`); the three directory README indexes
+  (`docs/change-plans/`, `docs/decisions/`, `docs/specifications/`) are
+  linted under their directory's config. Those configs predate this change
+  and are sanctioned by FS-0022 §4. These files are linted, so they are
+  relaxations of the rule set, not exemptions from it — recorded here so the
+  9-exemption count is not mistaken for the whole story.
 
 #### CI runs the whole-corpus gates on every push and PR — event-level paths filters removed (G6)
 
