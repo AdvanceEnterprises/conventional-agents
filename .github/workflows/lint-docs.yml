@@ -117,7 +117,7 @@ jobs:
         run: bash scripts/check-status.sh
 
   check-run-batch:
-    # FS-0050 / ADR-0045: a batch-acceptance commit (one carrying an
+    # FS-0050 / ADR-0049 (supersedes ADR-0045): a batch-acceptance commit (one carrying an
     # Approved-Artifacts: trailer) must touch only proposal-class locations and
     # list only accepted proposal-class artifacts. This is a DETECTION job, not a
     # merge gate: nothing marks it a required check, and it exits non-zero only to
@@ -144,6 +144,38 @@ jobs:
             done
           else
             bash scripts/check-run-batch.sh HEAD || rc=1
+          fi
+          exit $rc
+
+  check-run-manifest:
+    # FS-0050 / ADR-0049 (supersedes ADR-0045): the run-manifest detector reports a
+    # proposal-class document entering an accepted status outside a batch-acceptance
+    # commit that names it and records an Approved-By: approver, reports a bare
+    # Approved-Artifacts: trailer with no Approved-By:, and delegates batch overreach
+    # to check-run-batch.sh. Split from the check-run-batch job so each job name
+    # describes the detector it runs. This is a DETECTION job, not a merge gate:
+    # nothing marks it a required check, and it exits non-zero only to surface a
+    # violation for human action.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fetch base branch ref
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch --no-tags origin "${{ github.base_ref }}"
+          else
+            git fetch --no-tags origin trunk
+          fi
+      - name: Check run-manifest tier integrity
+        run: |
+          rc=0
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            bash scripts/check-run-manifest.sh "origin/${{ github.base_ref }}..HEAD" || rc=1
+          else
+            bash scripts/check-run-manifest.sh HEAD || rc=1
           fi
           exit $rc
 
