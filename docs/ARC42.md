@@ -13,11 +13,16 @@ last_updated: "2026-09-09"
   front matter `title:` is itself a top-level-heading candidate, so MD025
   cannot be satisfied without destroying the arc42 section structure.
   This is a rule-scoped exemption, not a file-scoped one: every other
-  markdownlint rule still applies to this document. It is counted explicitly
-  in the coverage accounting of FS-0022 §4 — exemption 9 of 9, i.e. the eight
+  markdownlint rule still applies to this document.
+  It is exemption 9 of 9 in the lint-coverage register recorded in
+  `CHANGELOG.md`, under "[Unreleased] → Fixed → Lint coverage now covers
+  every non-exempt tracked Markdown file (#210, coverage half)": the eight
   file-scoped exemptions under `docs/orchestration/multi-model-pilot-001/`
-  (`default: false`) plus this one rule-scoped directive. See the #210
-  lint-coverage change (PR #252).
+  (`default: false`) plus this one rule-scoped directive. FS-0022 §4 defines
+  the coverage contract this exemption must respect (including that widening
+  coverage MUST NOT override the pilot exemption) and states there that
+  coverage is derived, not enumerated, so it is not cited here as the
+  register.
 -->
 
 # 1. Introduction and Goals

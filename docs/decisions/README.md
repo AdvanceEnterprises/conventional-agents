@@ -36,7 +36,8 @@ npm run lint:adrs
 
 #### Automatic: CI enforcement
 
-- CI runs markdownlint on ADRs only (`docs/decisions/ADR-*.md`).
+- CI runs markdownlint on every Markdown file in `docs/decisions/`
+  (`docs/decisions/*.md`), including this README — not only the ADRs.
 - PR will fail if any ADR violates linting rules.
 - Config lives at `docs/decisions/.markdownlint.yml` (copied from MADR).
 
