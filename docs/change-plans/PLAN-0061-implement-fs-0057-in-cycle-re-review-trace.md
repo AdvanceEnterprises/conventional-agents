@@ -64,6 +64,21 @@ under-declared plan fails later and louder.
 * Update `CHANGELOG.md` with a consumer-framed entry because the change touches
   exported surface (`guidelines/`, `workflows/`, `skills/`).
 
+**Delivery is staged.** FS-0057 is `status: draft`, and the spec's parsing hints
+say to not implement it unless `status: approved`. The draft PR carries only the
+draft artifacts — FS-0057, this plan, `skills/in-cycle-re-review/SKILL.md`, and
+the `skills/index.md` registration.
+
+The remaining items above are gated and land in a follow-up change:
+
+* `guidelines/ROLE_CONTRACT.md` and `workflows/session-modes.md` implement the
+  spec's declared `interfaces:`, so they are blocked by the draft status.
+* `CHANGELOG.md` sits outside FS-0057's `interfaces:`, so it needs an
+  `interfaces:` amendment plus the human approval recorded under ADR-0026.
+* `test/FS-0057/in-cycle-re-review-trace.bats` sits outside FS-0057's
+  `interfaces:` and is absent from `touches:`, so adding it now would
+  under-declare this change against the governing spec.
+
 **This change will NOT:**
 
 * Modify GitHub branch protection or required checks.
@@ -83,31 +98,51 @@ under-declared plan fails later and louder.
   * `test_sc_3__dedupe_once_per_head_per_model`
   * `test_sc_4__parseable_format`
 
+The test file is defined here but deliberately not created in the draft PR: its
+path is outside FS-0057's `interfaces:` and absent from this plan's `touches:`,
+so adding it now would under-declare the change against the governing spec. It
+lands with the post-approval implementation change.
+
 ## 4. Files to Be Modified
 
 Only list files that will be changed.
 
-* `guidelines/ROLE_CONTRACT.md`
-* `workflows/session-modes.md`
+In this draft PR:
+
 * `skills/in-cycle-re-review/SKILL.md`
 * `skills/index.md`
 * `docs/specifications/FS-0057-in-cycle-re-review-trace-convention.md`
 * `docs/change-plans/PLAN-0061-implement-fs-0057-in-cycle-re-review-trace.md`
+
+Index rows in `docs/specifications/README.md` and `docs/change-plans/README.md`
+track the front-matter status of the two documents above and are kept in sync by
+`check:status`.
+
+Deferred to the post-approval implementation change (see "Delivery is staged"
+in §2):
+
+* `guidelines/ROLE_CONTRACT.md`
+* `workflows/session-modes.md`
 * `CHANGELOG.md`
 
 ## 5. Implementation Steps (High-Level)
 
 Describe concrete steps without code.
 
+In this draft PR:
+
 1. Draft the exact trace-comment template and once-per-head dedupe rule in the
    new skill file.
-2. Add the reviewer-role subsection to `guidelines/ROLE_CONTRACT.md` referencing
+2. Register the skill in `skills/index.md`.
+
+After FS-0057 is approved:
+
+1. Add the reviewer-role subsection to `guidelines/ROLE_CONTRACT.md` referencing
    the skill.
-3. Add the autonomous/consensus mode subsection to `workflows/session-modes.md`
+2. Add the autonomous/consensus mode subsection to `workflows/session-modes.md`
    referencing the skill.
-4. Register the skill in `skills/index.md`.
-5. Write the bats tests against the comment template parser.
-6. Add a consumer-framed `CHANGELOG.md` entry.
+3. Write the bats tests against the comment template parser.
+4. Add a consumer-framed `CHANGELOG.md` entry.
 
 ## 6. Constraints and Guardrails
 
@@ -157,7 +192,8 @@ State what will NOT be modified.
 ## 10. Readiness Check
 
 * [x] Spec is draft (implementation blocked until approved)
-* [ ] Tests exist or are clearly defined
+* [x] Tests exist or are clearly defined — defined in §3; the file lands with the
+  post-approval implementation change
 * [x] Scope is minimal and explicit
 * [x] No architectural changes implied
 
