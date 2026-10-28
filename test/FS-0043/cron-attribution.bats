@@ -76,7 +76,37 @@ $(cron_trailer missing)" "post.txt"
 
   [ "$status" -ne 0 ]
   echo "$output" | grep -qF "cron attribution missing terminal mode=autonomous"
-  ! echo "$output" | grep -qF "grandfathered"
+  ! echo "$output" | grep -qF "cron attribution grandfathered"
+}
+
+@test "post-boundary cron digest reports missing marker count" {
+  local repo="$BATS_TEST_TMPDIR/post-boundary-digest"
+  build_repo "$repo"
+  plant_cron_commit "$repo" "2026-10-03T01:00:00Z" "feat: missing autonomous marker
+
+$(cron_trailer missing)" "post.txt"
+
+  run_lint "$repo"
+
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qE "DIGEST[[:space:]]+[^[:space:]]+:[[:space:]]*cron attribution"
+  # Anchored on the digest separator so a leading digit cannot satisfy the
+  # counts (e.g. "21 audited" must not match "1 audited").
+  echo "$output" | grep -qE "cron attribution — 1 audited, 1 missing mode=autonomous, 0 unreadable timestamp, 0 grandfathered \\(boundary: $BOUNDARY\\)"
+}
+
+@test "cron commit with no trailer is counted as missing, not silently audited" {
+  local repo="$BATS_TEST_TMPDIR/no-trailer"
+  build_repo "$repo"
+  plant_cron_commit "$repo" "2026-10-03T01:00:00Z" "feat: cron commit with no trailer" "no-trailer.txt"
+
+  run_lint "$repo"
+
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "missing Agent-Attribution trailer"
+  # A failing cron commit must land in a digest bucket: the counts partition as
+  # audited = missing + unreadable + grandfathered + ok (issue #254 review).
+  echo "$output" | grep -qE "cron attribution — 1 audited, 1 missing mode=autonomous, 0 unreadable timestamp, 0 grandfathered \\(boundary: $BOUNDARY\\)"
 }
 
 @test "post-boundary cron commit with terminal marker passes" {
@@ -91,6 +121,8 @@ $(cron_trailer autonomous)" "pass.txt"
   [ "$status" -eq 0 ]
   echo "$output" | grep -qF "cron boundary enforced"
   ! echo "$output" | grep -qF "missing terminal mode=autonomous"
+  echo "$output" | grep -qE "DIGEST[[:space:]]+[^[:space:]]+:[[:space:]]*cron attribution"
+  echo "$output" | grep -qE "cron attribution — 1 audited, 0 missing mode=autonomous, 0 unreadable timestamp, 0 grandfathered \\(boundary: $BOUNDARY\\)"
 }
 
 @test "mode marker in the middle of the trailer is not terminal" {
@@ -119,6 +151,8 @@ $(cron_trailer missing)" "old.txt"
   [ "$status" -eq 0 ]
   echo "$output" | grep -qF "cron attribution grandfathered"
   ! echo "$output" | grep -qF "missing terminal mode=autonomous"
+  echo "$output" | grep -qE "DIGEST[[:space:]]+[^[:space:]]+:[[:space:]]*cron attribution"
+  echo "$output" | grep -qE "cron attribution — 1 audited, 0 missing mode=autonomous, 0 unreadable timestamp, 1 grandfathered \\(boundary: $BOUNDARY\\)"
 }
 
 @test "interactive agent behavior is unchanged" {
@@ -181,7 +215,7 @@ $(cron_trailer missing)" "readonly.txt"
   build_repo "$repo"
   plant_cron_commit "$repo" "2026-10-03T01:00:00Z" "feat: unreadable timestamp
 
-$(cron_trailer missing)" "unreadable.txt"
+$(cron_trailer autonomous)" "unreadable.txt"
   local real_git
   real_git="$(command -v git)"
   mkdir -p "$fake_bin"
@@ -210,5 +244,9 @@ EOF
 
   [ "$status" -ne 0 ]
   echo "$output" | grep -qF "cron attribution timestamp unreadable"
-  ! echo "$output" | grep -qF "grandfathered"
+  ! echo "$output" | grep -qF "cron attribution grandfathered"
+  # The marker-bearing commit must NOT be reported as missing the marker; the
+  # fail-closed timestamp fault gets its own digest bucket (issue #254 review).
+  ! echo "$output" | grep -qE "cron attribution — 1 audited, 1 missing mode=autonomous"
+  echo "$output" | grep -qE "cron attribution — 1 audited, 0 missing mode=autonomous, 1 unreadable timestamp, 0 grandfathered \\(boundary: $BOUNDARY\\)"
 }

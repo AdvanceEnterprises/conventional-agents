@@ -50,6 +50,20 @@ For this project (a documentation/standards kit), semver follows the
   boundary, grandfathers earlier history, fails closed on unreadable commit
   timestamps, and never rewrites old commits. Document statuses remain
   `approved` until a human reconciliation PR advances them (tracked by #187).
+- **FS-0043 cron attribution now reports a per-repository `DIGEST` line
+  (PR #254, issue #187).** The boundary-aware check in
+  `scripts/cross-repo-lint.sh` emits one line per repository summarizing how
+  many cron commits were audited, how many still miss the terminal
+  `mode=autonomous` marker, and how many were grandfathered at the adoption
+  boundary, so the audit result is no longer buried in per-commit `INFO`
+  lines. This resolves the remaining digest-count item from issue #187
+  without changing the ADR-0021 boundary or the grandfathering semantics;
+  `scripts/README.md` documents the output and the FS-0043 fixtures assert it.
+  The counts partition the audited set
+  (`audited = missing + unreadable timestamp + grandfathered + ok`): a cron
+  commit with no trailer, or with one Git's trailer parser cannot reach, counts
+  as missing, and the fail-closed unreadable-timestamp case reports in its own
+  bucket instead of being labelled missing.
 - **FS-0040 now includes the #186 citation-drift complement.** The governed-ID
   audit package covers local duplicate detection, cross-PR claim collisions,
   and stale citations of retired IDs when an open PR exposes the corresponding
