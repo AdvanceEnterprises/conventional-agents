@@ -280,25 +280,35 @@ Co-Authored-By: Someone <someone@example.com>
 # --- shallow-clone guard (issue #221) ------------------------------------------
 
 # Run the attribution check with the script's default range resolution, not
-# an explicit COMMIT_RANGE, so the shallow-clone guard is exercised.
+# an explicit COMMIT_RANGE, so the shallow-clone guard is exercised. The
+# ambient range is cleared explicitly: the `validation` CI job exports
+# COMMIT_RANGE (lint-docs.yml), and the script's explicit-range escape hatch
+# would otherwise short-circuit the guard before it runs — the fixture then
+# asserts against a code path it never reached (PR #255 review round B).
 run_lint_default_range() {
   local repo="$1"
-  run env CA_TARGET_REPO="$repo" bash "$LINT_SCRIPT"
+  run env -u COMMIT_RANGE CA_TARGET_REPO="$repo" bash "$LINT_SCRIPT"
 }
 
 # Exercise the guard with a deterministic probe result. The real shallow clone
 # is still created and asserted below, but the guard's `git rev-parse` result is
 # injected in the same Bash process so Git transport/version differences cannot
-# turn the fixture into a vacuous fallback test.
+# turn the fixture into a vacuous fallback test. Each probe is recorded so the
+# test can assert it targeted the repo under audit: without that assertion a
+# guard that drops -C "$REPO" (probing the caller CWD) passes unchanged.
 run_lint_with_shallow_state() {
-  local repo="$1" state="$2"
-  run env CA_TARGET_REPO="$repo" CA_TEST_SHALLOW_STATE="$state" LINT_SCRIPT="$LINT_SCRIPT" bash -c '
-_git_real() {
+  local repo="$1" state="$2" probe_log="$BATS_TEST_TMPDIR/shallow-probe.log"
+  run env -u COMMIT_RANGE CA_TARGET_REPO="$repo" CA_TEST_SHALLOW_STATE="$state" \
+    CA_TEST_PROBE_LOG="$probe_log" LINT_SCRIPT="$LINT_SCRIPT" bash -c '
+_git_shim() {
   local arg
   for arg in "$@"; do
     case "$arg" in
       --is-shallow-repository)
-        printf "%s\\n" "$CA_TEST_SHALLOW_STATE"
+        # Record the probe argv verbatim: the target assertion below depends
+        # on seeing the -C <repo> the guard is expected to pass.
+        printf "%s\n" "$*" >> "$CA_TEST_PROBE_LOG"
+        printf "%s\n" "$CA_TEST_SHALLOW_STATE"
         return 0
         ;;
     esac
@@ -306,10 +316,21 @@ _git_real() {
   command git "$@"
 }
 git() {
-  _git_real "$@"
+  _git_shim "$@"
 }
 . "$LINT_SCRIPT"
 '
+}
+
+# The guard must read the shallow state of the repository under audit, not of
+# whatever directory the lint harness happens to run from (PR #255 round B).
+assert_shallow_probe_targeted() {
+  local repo="$1" probe_log="$BATS_TEST_TMPDIR/shallow-probe.log"
+  [ -s "$probe_log" ] || {
+    echo "no shallow-state probe was recorded at $probe_log" >&2
+    return 1
+  }
+  grep -qF -- "-C $repo rev-parse --is-shallow-repository" "$probe_log"
 }
 
 # Plant N human commits so origin/trunk~20 resolves when the repo is not shallow.
@@ -348,6 +369,7 @@ Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implement
   [ "$(git -C "$shallow" rev-parse --is-shallow-repository)" = true ]
 
   run_lint_with_shallow_state "$shallow" true
+  assert_shallow_probe_targeted "$shallow"
 
   if [ "$status" -eq 0 ]; then
     printf 'DEBUG shallow-state=true output:\\n%s\\n' "$output" >&3
@@ -399,10 +421,89 @@ Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implement
 Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implementer; session=unknown-fixture" "u1.txt"
 
   run_lint_with_shallow_state "$repo" unknown
+  assert_shallow_probe_targeted "$repo"
 
   if [ "$status" -eq 0 ]; then
     printf 'DEBUG shallow-state=unknown output:\\n%s\\n' "$output" >&3
   fi
   [ "$status" -ne 0 ]
   echo "$output" | grep -qF "cannot determine whether the repository is shallow"
+}
+
+@test "shallow clone that still resolves a release tag fails closed (issue #221)" {
+  # The fail-open shape #221 reports: `git clone --depth N` fetches the tags
+  # that point into its window, so `git describe` succeeds even when the
+  # ATTRIBUTION_MIN_ANCHOR floor does not exist locally. Pre-fix the guard ran
+  # only when NO anchor resolved, so the shallow clone anchored to v3.0.0 and
+  # reported OK while a full clone — anchored to the v2.1.0 floor — caught the
+  # offender. Shallow state is now decided before anchor selection.
+  local source="$BATS_TEST_TMPDIR/tagged-source"
+  local full="$BATS_TEST_TMPDIR/tagged-full"
+  local shallow="$BATS_TEST_TMPDIR/tagged-shallow"
+  build_scratch_repo "$source"
+  seed_commit "$source"
+  # The floor: resolvable only with the full history.
+  git -C "$source" tag v2.1.0
+  # Offender: agent-authored, no trailer, behind the release tag.
+  plant_agent_commit "$source" "feat: offender behind the release tag" "t0.txt"
+  printf 'release prep\n' > "$source/release.txt"
+  git -C "$source" add -A
+  git -C "$source" -c user.name="Joey Clark" -c user.email="administrator@ajoeofalltrades.dev" \
+    commit -q -m "chore: release prep"
+  git -C "$source" tag v3.0.0
+  local i
+  for i in 1 2 3; do
+    printf 'post %d\n' "$i" > "$source/post-$i.txt"
+    git -C "$source" add -A
+    git -C "$source" -c user.name="Joey Clark" -c user.email="administrator@ajoeofalltrades.dev" \
+      commit -q -m "chore: post-release $i"
+  done
+
+  git clone -q --no-local "$source" "$full"
+  git clone -q --no-local --depth 4 "file://$source" "$shallow"
+
+  # Reference: the offender is real — the full clone, anchored at the floor,
+  # fails. Without this the case could pass vacuously on an empty range.
+  run env -u COMMIT_RANGE CA_TARGET_REPO="$full" bash "$LINT_SCRIPT"
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "missing Agent-Attribution trailer"
+
+  [ "$(git -C "$shallow" rev-parse --is-shallow-repository)" = true ]
+  # Preconditions that make this the fail-open case rather than the no-anchor
+  # one: a recent release tag resolves locally while the floor does not.
+  [ -n "$(git -C "$shallow" describe --first-parent --tags --match 'v*' --abbrev=0 HEAD)" ]
+  ! git -C "$shallow" rev-parse --verify --quiet v2.1.0
+
+  run_lint_with_shallow_state "$shallow" true
+  assert_shallow_probe_targeted "$shallow"
+
+  [ "$status" -ne 0 ]
+  echo "$output" | grep -qF "ATTRIBUTION_MIN_ANCHOR"
+  echo "$output" | grep -qF "git fetch --unshallow"
+  ! echo "$output" | grep -qE "OK[[:space:]]+tagged-shallow"
+}
+
+@test "CA_SKIP_ATTRIBUTION=1 still reports SKIP on a shallow clone" {
+  # The documented opt-out (scripts/README.md): an unconfigured instance that
+  # sets CA_SKIP_ATTRIBUTION=1 gets SKIP, never a failure. The shallow guard is
+  # part of the attribution audit, so it must not turn that opt-out into a hard
+  # failure (PR #255 review round B).
+  local source="$BATS_TEST_TMPDIR/skip-source"
+  local shallow="$BATS_TEST_TMPDIR/skip-shallow"
+  build_scratch_repo "$source"
+  seed_commit "$source"
+  plant_agent_commit "$source" "feat: agent change
+
+Agent-Attribution: actor=hermes-agent; model=deepseek-v4.1-flash; role=implementer; session=skip-fixture" "k1.txt"
+
+  git clone -q --no-local --depth 1 "file://$source" "$shallow"
+  [ "$(git -C "$shallow" rev-parse --is-shallow-repository)" = true ]
+
+  run env -u COMMIT_RANGE -u AGENT_EMAILS -u CRON_AGENT_EMAILS CA_SKIP_ATTRIBUTION=1 \
+    CA_TARGET_REPO="$shallow" bash "$LINT_SCRIPT"
+
+  [ "$status" -eq 0 ]
+  echo "$output" | grep -qF "SKIP"
+  echo "$output" | grep -qF "CA_SKIP_ATTRIBUTION=1"
+  ! echo "$output" | grep -qF "repository is shallow"
 }

@@ -582,9 +582,13 @@ to set `CA_REPO_DIRS` or `CA_TARGET_REPO`, never a silent pass.
   trailer outside a fixed recent-commit window cannot pass, and a
   moved/re-tagged release cannot silently shrink the audited set
   (work item #141). Repos with neither a release tag nor a resolvable
-  floor fall back to `origin/<default-branch>~20..origin/<default-branch>`;
-  on a shallow clone that fallback is rejected with an actionable message
-  instead of silently narrowing the audit (issue #221).
+  floor fall back to `origin/<default-branch>~20..origin/<default-branch>`.
+  A shallow clone is rejected with an actionable message whenever the
+  `ATTRIBUTION_MIN_ANCHOR` floor does not resolve locally — even when a
+  recent release tag does, because a depth-limited clone still fetches the
+  tags that point into its window and anchoring there audits a truncated
+  range that reports OK (issue #221). An unconfigured instance that sets
+  `CA_SKIP_ATTRIBUTION=1` still reports SKIP and is not affected.
 - `ATTRIBUTION_MIN_ANCHOR` — convention-era floor for the audited range
   (default `v2.1.0`, parity with `test/FS-0017/commit-attribution.bats`).
   Only applies when the ref resolves in the repo being linted.

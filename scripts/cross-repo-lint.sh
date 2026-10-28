@@ -179,6 +179,17 @@ for REPO in "${REPOS[@]}"; do
     continue
   fi
 
+  # Documented opt-out (FS-0047 SC-9, scripts/README.md). An instance with both
+  # allowlists unconfigured may set CA_SKIP_ATTRIBUTION=1, and the run must then
+  # report SKIP rather than any failure. Resolve it BEFORE range selection: the
+  # shallow-clone guard below is part of the attribution audit, so it must not
+  # turn an explicit opt-out into a hard failure on a repo that was never going
+  # to be audited (review round B, PR #255).
+  if [ -z "${AGENT_EMAILS}${CRON_AGENT_EMAILS}" ] && [ "${CA_SKIP_ATTRIBUTION:-0}" = "1" ]; then
+    echo "  SKIP  $REPO_NAME (attribution unconfigured; CA_SKIP_ATTRIBUTION=1 — cron boundary not enforced)"
+    continue
+  fi
+
   # Resolve default branch and commit range. The validation surface is
   # hermetic: callers must prepare any remote refs before invoking this script.
   DEFAULT_BRANCH="$(_resolve_default_branch "$REPO")"
@@ -194,11 +205,28 @@ for REPO in "${REPOS[@]}"; do
   if [ -n "${COMMIT_RANGE:-}" ]; then
     RANGE="$COMMIT_RANGE"
   else
-    _anchor="$(git -C "$REPO" describe --first-parent --tags --match 'v*' --abbrev=0 "origin/$DEFAULT_BRANCH" 2>/dev/null || true)"
+    # Issue #221: a shallow clone cannot perform the anchored audit that #141
+    # relies on, so shallow state is decided BEFORE anchor selection rather than
+    # only when no anchor resolves. A depth-limited clone still fetches the tags
+    # that point into its window, so `git describe` can return a recent release
+    # even though the floor (and the history behind it) is absent; anchoring
+    # there audits a truncated range and reports OK — the exact fail-open shape
+    # #221 was filed against. Fail closed whenever the clone is shallow and the
+    # floor does not resolve locally, independent of which other tags resolve.
+    _is_shallow="$(git -C "$REPO" rev-parse --is-shallow-repository 2>/dev/null || printf 'unknown')"
+    if [ "$_is_shallow" = "unknown" ]; then
+      err "$REPO_NAME: Git cannot determine whether the repository is shallow; the attribution audit cannot be anchored safely. Repair the checkout or set an explicit COMMIT_RANGE"
+      continue
+    fi
     _floor=""
     if [ -n "$ATTRIBUTION_MIN_ANCHOR" ] && git -C "$REPO" rev-parse --verify --quiet "$ATTRIBUTION_MIN_ANCHOR" >/dev/null 2>&1; then
       _floor="$ATTRIBUTION_MIN_ANCHOR"
     fi
+    if [ "$_is_shallow" = "true" ] && [ -z "$_floor" ]; then
+      err "$REPO_NAME: repository is shallow and the ATTRIBUTION_MIN_ANCHOR floor does not resolve locally — a release tag inside the fetched window would silently anchor the audit to a truncated range (issue #221). Repair with 'git fetch --unshallow' or set an explicit COMMIT_RANGE that exists in the local clone"
+      continue
+    fi
+    _anchor="$(git -C "$REPO" describe --first-parent --tags --match 'v*' --abbrev=0 "origin/$DEFAULT_BRANCH" 2>/dev/null || true)"
     if [ -n "$_anchor" ] && [ -n "$_floor" ]; then
       if git -C "$REPO" merge-base --is-ancestor "$_anchor" "$_floor"; then
         RANGE="$_anchor..origin/$DEFAULT_BRANCH"
@@ -210,18 +238,8 @@ for REPO in "${REPOS[@]}"; do
     elif [ -n "$_floor" ]; then
       RANGE="$_floor..origin/$DEFAULT_BRANCH"
     else
-      # Issue #221: a shallow clone with no reachable release anchor or floor
-      # cannot perform the anchored audit that #141 relies on; the ~20 fallback
-      # would silently narrow the window exactly like the bug being fixed. Fail
-      # closed with an actionable repair path instead.
-      _is_shallow="$(git -C "$REPO" rev-parse --is-shallow-repository 2>/dev/null || printf 'unknown')"
-      if [ "$_is_shallow" = "true" ]; then
-        err "$REPO_NAME: repository is shallow and no release anchor or ATTRIBUTION_MIN_ANCHOR resolves locally; the attribution audit cannot be anchored. Repair with 'git fetch --unshallow' or set an explicit COMMIT_RANGE that exists in the local clone"
-        continue
-      elif [ "$_is_shallow" = "unknown" ]; then
-        err "$REPO_NAME: Git cannot determine whether the repository is shallow; the attribution audit cannot be anchored safely. Repair the checkout or set an explicit COMMIT_RANGE"
-        continue
-      fi
+      # Reachable only on a non-shallow clone: the shallow case failed closed
+      # above, so the ~20 fallback can no longer hide truncated history.
       RANGE="origin/$DEFAULT_BRANCH~20..origin/$DEFAULT_BRANCH"
     fi
   fi
@@ -246,10 +264,6 @@ for REPO in "${REPOS[@]}"; do
   CRON_BAD_COUNT=0
   CRON_GRANDFATHERED_COUNT=0
   if [ -z "${AGENT_EMAILS}${CRON_AGENT_EMAILS}" ]; then
-    if [ "${CA_SKIP_ATTRIBUTION:-0}" = "1" ]; then
-      echo "  SKIP  $REPO_NAME (attribution unconfigured; CA_SKIP_ATTRIBUTION=1 — cron boundary not enforced)"
-      continue
-    fi
     err "$REPO_NAME: AGENT_EMAILS and CRON_AGENT_EMAILS are empty — attribution checks cannot run; set them explicitly, or set CA_SKIP_ATTRIBUTION=1 to skip"
     continue
   fi
