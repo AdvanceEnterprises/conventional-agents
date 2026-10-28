@@ -30,15 +30,22 @@ For this project (a documentation/standards kit), semver follows the
   recorded human approval; the drift the delivery gate reports is closed.
 
 - **ADR-0049 run-manifest tier-integrity detection (`scripts/check-run-manifest.sh`).**
-  Adds the dual check to the existing batch-acceptance detector: it now also
-  reports proposal-class artifacts (`docs/specifications/`, `docs/change-plans/`,
-  `docs/decisions/`, including their index READMEs) changed in commits that do
-  not carry an `Approved-Artifacts:` trailer. Batch-acceptance commits continue
-  to be checked for forbidden-path overreach via `scripts/check-run-batch.sh`.
-  Wired into `package.json` as `npm run check:run-manifest` and into its own
-  `lint-docs.yml` `check-run-manifest` job. Detection-only, advisory, and
-  platform-neutral (git-only). Reserved-path implementation under recorded human
-  approval.
+  Adds a second, separate detector alongside the batch-acceptance check. It
+  reports a proposal-class document (`docs/specifications/`, `docs/change-plans/`,
+  `docs/decisions/`) that **enters an accepted status**
+  (`approved`/`accepted`/`implemented`) outside a batch-acceptance commit that
+  names that artifact in `Approved-Artifacts:` **and** records the approver in
+  `Approved-By:`. The rule is a status transition, not a touch, so the drafting,
+  review-fix, and index-alignment commits that ADR-0045 steps 5-6 require stay
+  clean. It also reports an `Approved-Artifacts:` trailer with no `Approved-By:`,
+  so a bare trailer cannot silence the rule, and it enumerates merge commits and
+  the root commit (`git diff-tree -m --root`), so conflict-resolution content is
+  scanned. `scripts/check-run-batch.sh` keeps its batch-acceptance role and gains
+  only the same merge/root-aware path enumeration plus the ADR-0045 → ADR-0049
+  comment re-anchor. Wired into `package.json` as `npm run check:run-manifest` and
+  into its own `lint-docs.yml` `check-run-manifest` job. Detection-only, advisory,
+  and platform-neutral (git-only). Reserved-path implementation under recorded
+  human approval.
 
 - **FS-0047 (implemented) / PLAN-0053 (implemented): exported consumer-boundary audit.** Implements the standalone-consumable scrub: the exported lint script's sibling-discovery and actor-email defaults are empty (consumers configure `CA_REPO_DIRS`/`CA_TARGET_REPO`/`CA_SIBLING_NAMES`, `AGENT_EMAILS`, and `CRON_AGENT_EMAILS` explicitly; an unconfigured attribution run fails closed and `CA_SKIP_ATTRIBUTION=1` is the explicit opt-out — the OK line disclaims the cron boundary when the cron list is unset), normative actor tables are consumer-selected placeholders with a labeled non-normative appendix, the Claude settings fragment and copy-in examples are parameterized, the instance's agent-email domain moves from `tais-den.dev` to `advance.enterprises` (the historical aliases stay in the commit allowlist and CI exports for anchored-history audits), the Project Board section describes work tracking generically (the instance's board lives at the maintainer's personal account), the benchmark fixture is the placeholder example form (the instance's real pilot card lives in pack-protocol), and a `test/FS-0047/` regression audit enforces the boundary.
 - **FS-0052 / PLAN-0059 (draft): Hermes Agent runtime binding.** Specifies and plans the second agent-runtime binding under ADR-0039 — maps the framework's setup requirements onto Hermes Agent's config surface (`~/.hermes/config.yaml` + profiles, `SOUL.md` bootstrap, `metadata.hermes.*` skills), ships a report-only audit and an advisory hook, and documents (not wires) Hermes's cron/webhook/moa/kanban primitives.
