@@ -16,10 +16,10 @@ related_adrs:
   - ADR-0026
   - ADR-0027
   - ADR-0050
-  - FS-0022
 supersedes: []
 requires:
   - ADR-0050
+  - FS-0022
 tags:
   - governance
   - diagnostics

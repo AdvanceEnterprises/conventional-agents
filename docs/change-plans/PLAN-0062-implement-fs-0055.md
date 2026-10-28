@@ -6,11 +6,11 @@ language: bash
 status: draft
 related_specs:
   - FS-0055
+  - FS-0022
 related_adrs:
   - ADR-0026
   - ADR-0027
   - ADR-0050
-  - FS-0022
 consensus_required: false
 touches:
   - scripts/check-status.sh
@@ -41,8 +41,8 @@ under-declared plan fails later and louder.
 -->
 ## 1. Feature / Issue Reference
 
-* Feature Spec ID(s): FS-0055
-* Related ADR ID(s): ADR-0026, ADR-0027, ADR-0050, FS-0022
+* Feature Spec ID(s): FS-0055, FS-0022
+* Related ADR ID(s): ADR-0026, ADR-0027, ADR-0050
 * Issue / PR Reference: #155
 
 ## 2. Scope of Change
@@ -153,7 +153,7 @@ State what will NOT be modified.
 ## 10. Readiness Check
 
 * [x] Spec is draft (implementation blocked until approved)
-* [ ] Tests exist or are clearly defined
+* [x] Tests exist or are clearly defined
 * [x] Scope is minimal and explicit
 * [x] No architectural changes implied
 
