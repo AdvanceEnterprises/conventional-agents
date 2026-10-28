@@ -583,6 +583,12 @@ to set `CA_REPO_DIRS` or `CA_TARGET_REPO`, never a silent pass.
   moved/re-tagged release cannot silently shrink the audited set
   (work item #141). Repos with neither a release tag nor a resolvable
   floor fall back to `origin/<default-branch>~20..origin/<default-branch>`.
+  A shallow clone is rejected with an actionable message whenever the
+  `ATTRIBUTION_MIN_ANCHOR` floor does not resolve locally — even when a
+  recent release tag does, because a depth-limited clone still fetches the
+  tags that point into its window and anchoring there audits a truncated
+  range that reports OK (issue #221). An unconfigured instance that sets
+  `CA_SKIP_ATTRIBUTION=1` still reports SKIP and is not affected.
 - `ATTRIBUTION_MIN_ANCHOR` — convention-era floor for the audited range
   (default `v2.1.0`, parity with `test/FS-0017/commit-attribution.bats`).
   Only applies when the ref resolves in the repo being linted.
@@ -624,8 +630,9 @@ workflow's `paths:` (any governed doc, `package.json`, `.github/**`,
 
 **Failure.** Exits non-zero when any repo has a malformed/missing attribution
 trailer on an agent-authored commit, a post-boundary cron trailer without
-terminal `mode=autonomous`, a doc missing from its README index, or a duplicate
-FS/PLAN ID. The audit is read-only; it never amends historical commits.
+terminal `mode=autonomous`, a shallow clone that prevents an anchored audit,
+a doc missing from its README index, or a duplicate FS/PLAN ID. The audit is
+read-only; it never amends historical commits.
 
 ## check-conformance.sh
 `npm run check:conformance` runs `bash scripts/check-conformance.sh`.
