@@ -6,7 +6,6 @@ language: bash
 status: draft
 related_specs:
   - FS-0055
-  - FS-0022
 related_adrs:
   - ADR-0026
   - ADR-0027
@@ -19,7 +18,7 @@ touches:
   - docs/change-plans/PLAN-0062-implement-fs-0055.md
   - CHANGELOG.md
 created: 2026-10-27
-updated: 2026-10-27
+updated: 2026-10-29
 
 ---
 
@@ -38,6 +37,13 @@ See ADR-0027 for the reserved set and the rationale.
 Under-declaring here is a process violation, not a shortcut: the document hygiene
 gate checks touched files against the FS `interfaces:` at PR time, so an
 under-declared plan fails later and louder.
+
+`related_specs:` is not just a reference list. Rule 6 unions the `interfaces:` of
+every non-draft spec named here to build the containment boundary this plan
+self-approves against, so a second spec silently widens that boundary — even one
+whose own scope has nothing to do with this change. List only the spec that
+governs the plan (FS-0055), and name referenced-but-non-governing specs in §1
+prose instead.
 -->
 ## 1. Feature / Issue Reference
 
@@ -49,8 +55,9 @@ under-declared plan fails later and louder.
 
 **This change WILL:**
 
-* Add a new rule to `scripts/check-status.sh` that detects when an approved
-  PLAN was amended after its `Approved-By:` record.
+* Add a new rule to `scripts/check-status.sh` that fails a PLAN whose
+  `Approved-By:` record no longer covers its current content — the state the
+  gate passes silently today.
 * Emit a diagnostic naming the voiding commit SHA and the two recovery paths
   from `ADR-0050`.
 * Emit a separate diagnostic for self-approved plans under `ADR-0027` that
@@ -94,13 +101,16 @@ Only list files that will be changed.
 
 Describe concrete steps without code.
 
-1. Add a helper that, for each approved PLAN, finds the most recent commit
-   touching the plan and the most recent commit before it carrying an
-   `Approved-By:` trailer.
-2. If the approving commit is not the most recent touching commit, emit the
-   diagnostic naming the voiding commit and the recovery paths.
-3. For self-approved plans, additionally check whether the current `touches:`
-   still satisfies containment; if not, state that human approval is required.
+1. Add a helper that, for each PLAN at `approved` or `in-progress`, finds the
+   most recent commit touching the plan and the most recent commit before it
+   carrying an `Approved-By:` trailer.
+2. If the plan carries a human `approved_by:` record and the most recent
+   touching commit does not, fail the plan with a diagnostic naming the voiding
+   commit and the recovery paths.
+3. For self-approved plans, check whether the current `touches:` still satisfies
+   containment. If it does, emit the non-failing notice and leave the plan
+   passing; if it does not, fail the plan and state that human approval is
+   required.
 4. Write bats tests that construct git histories with the voiding cases.
 5. Add a consumer-framed `CHANGELOG.md` entry.
 
@@ -126,9 +136,11 @@ Describe concrete steps without code.
 ## 7. Risks and Edge Cases
 
 * Risk: false positives on single-PR plans that legitimately transition
-  `approved → in-progress → implemented`. Mitigation: the diagnostic only
-  fires when the most recent touching commit lacks an `Approved-By:` or
-  equivalent self-approval record; the single-PR shortcut is unaffected.
+  `approved → in-progress → implemented`. Mitigation: the rule governs plans at
+  `approved` and `in-progress` only, exactly as rule 6 does; a plan that reaches
+  `implemented` in the same PR is out of scope, so the single-PR shortcut is
+  unaffected. A multi-PR plan resting at `in-progress` must carry the trailer on
+  its transition commit — which is the re-approval this plan asks for.
 
 ## 8. Validation
 

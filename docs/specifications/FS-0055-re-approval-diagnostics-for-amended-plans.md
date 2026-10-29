@@ -18,7 +18,6 @@ related_adrs:
   - ADR-0050
 supersedes: []
 requires:
-  - ADR-0050
   - FS-0022
 tags:
   - governance
@@ -27,7 +26,7 @@ tags:
   - plan
   - check-status
 created: 2026-10-27
-updated: 2026-10-27
+updated: 2026-10-29
 ---
 <!--
 PARSING_HINTS:
@@ -48,15 +47,21 @@ PARSING_HINTS:
 
 ## Summary
 
-Add a `check-status` diagnostic that detects when an approved PLAN was amended
-after its `Approved-By:` record and tells the implementer exactly which commit
-voided the approval and how to recover. The diagnostic is detection-only: it
-does not change the approval rule, it makes the rule's failure mode readable.
+Add a `check-status` rule that fails a PLAN whose `Approved-By:` record no
+longer covers the plan's current content, and tells the implementer exactly
+which commit voided the approval and how to recover. Today that state is
+silent: a voided approval passes `check-status` whenever the amendment leaves
+`touches:` inside the governing FS's `interfaces:`, so the rule closes a
+governance gap between `ADR-0026`'s approval semantics and what the gate
+enforces. It changes no approval definition — it makes an already-invalid state
+fail instead of pass.
 
 ## Goals
 
 - Detect post-approval PLAN edits that invalidate the current `Approved-By:`
   record.
+- Fail the branch for a human-approved plan whose approval record no longer
+  covers its current content, instead of passing silently.
 - Emit one diagnostic per invalidated PLAN naming the voiding commit SHA and
   the two recovery paths (re-carry trailer or bump to draft).
 - Distinguish human-approved plans from self-approved plans in the diagnostic.
@@ -71,8 +76,9 @@ does not change the approval rule, it makes the rule's failure mode readable.
 
 ## Users / Stakeholders
 
-- Implementer whose branch went red after applying reviewer feedback.
-- Human reviewer triaging a red branch.
+- Implementer whose branch fails the re-approval check after applying reviewer
+  feedback.
+- Human reviewer deciding whether to re-approve a plan they already approved once.
 - Autonomous tick compiling the digest of blocked work items.
 
 ## Interfaces
@@ -80,8 +86,9 @@ does not change the approval rule, it makes the rule's failure mode readable.
 - Type: Script | CI check
 - Details:
   - `scripts/check-status.sh` gains a new rule (numbered after the existing
-    rule 6, conceptually rule 6a) that checks every approved PLAN for
-    post-approval edits.
+    rule 6, conceptually rule 6a) that checks every PLAN at `approved` or
+    `in-progress` — the same plan set rule 6 governs — for post-approval edits
+    that void its approval.
   - Diagnostic format:
 
     ```text
@@ -90,14 +97,17 @@ does not change the approval rule, it makes the rule's failure mode readable.
            setting status: draft and re-approving. See ADR-0026, ADR-0050.
     ```
 
-  - A WARN variant is emitted when a self-approved plan under ADR-0027 was
-    amended and is now ineligible for self-approval.
+  - A non-failing notice is emitted when a self-approved plan under ADR-0027 was
+    amended but remains within containment, where self-approval is simply
+    recomputed from the current `touches:`. A self-approved plan that left
+    containment is an ERROR, not a notice (see Success Criteria).
 
 ## Success Criteria
 
-- Given a PLAN whose most recent touching commit lacks an `Approved-By:` trailer
-  and whose prior touching commit has one, when `check-status` runs, then it
-  prints the voiding commit SHA and the two recovery paths.
+- Given a human-approved PLAN whose most recent touching commit lacks an
+  `Approved-By:` trailer and whose prior touching commit carries one, when
+  `check-status` runs, then it exits non-zero, names the voiding commit SHA, and
+  prints the two recovery paths.
 - Given a PLAN whose most recent touching commit has a matching `Approved-By:`
   trailer, when `check-status` runs, then no diagnostic is emitted for that
   plan.
@@ -125,13 +135,18 @@ does not change the approval rule, it makes the rule's failure mode readable.
 
 ## Dependencies
 
-- ADR-0026: Approval is a recorded act — the rule whose failure mode this spec
-  clarifies.
+- ADR-0026: Approval is a recorded act — the definition of approval whose
+  currency this spec enforces at the gate.
 - ADR-0027: PLAN self-approval within declared interfaces — the mechanical
   approval path that also needs invalidation detection.
 - ADR-0050: Re-approval flow for reviewer-feedback commits on approved PLANs
   — the decision this spec implements.
 - FS-0022: Gate coverage — the spec governing `check-status.sh`.
+
+Front-matter `requires:` is documentation only — no repository gate reads it. The
+dependency above is recorded for readers and reviewers; the enforced relationship
+is ADR-0027's containment routing, which reads a plan's `related_specs:` and not
+this field.
 
 ## Rollout / Migration
 
@@ -157,8 +172,9 @@ does not change the approval rule, it makes the rule's failure mode readable.
 
 ## Open Questions
 
-- Should the diagnostic be emitted as an ERROR or a WARN for self-approved
-  plans that remain within containment? (They can self-approve again without a
-  trailer, so no human act is strictly missing.)
+- Should a self-approved plan that remains within containment still receive the
+  non-failing notice, or is silence correct there because self-approval is
+  recomputed from `touches:` rather than recorded? ADR-0050 settles the routing —
+  no branch failure — but not whether the notice earns its noise.
 - Should the rule also flag FS documents amended after `Approved-By:`?
   `ADR-0026` applies to FS approvals too, but the worked cases are all PLANs.
