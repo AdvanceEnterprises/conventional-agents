@@ -71,12 +71,19 @@ For this project (a documentation/standards kit), semver follows the
   FS/PLAN index-ordering rule. The documents remain drafts; they authorize no
   template, script, corpus, marker, or index change.
 - **Bash 3.2 compatibility sweep for issue #214.** Extends the regression
-  coverage added in PR #215 to all scripts that advertise Bash 3.2 compatibility;
-  uses a positive canary plus a generalized `case <word> in` detector to reject
-  nesting inside `$(...)` or `<(...)`, and checks each script under a real Bash
-  3.2 binary when one is available. The opt-in binary precedence is
-  `BASH32_BIN`, `CA_BASH32`, then `bash-3.2` on PATH; the macOS audit workflow
-  runs this fixture explicitly.
+  coverage added in PR #215 to every tracked script that advertises Bash 3.2
+  compatibility, wherever it lives in the tree — the marker is matched
+  case-insensitively, so `bash 3.2/4.3` and the `integrations/` scripts count.
+  The fixture reproduces Bash 3.2's command-substitution scanner, which counts
+  parentheses without knowing a `case` pattern: a pattern's own `)` closes
+  `$(...)`/`<(...)` early and the rest of the script fails to parse. It rejects
+  that unparenthesized form and accepts the parenthesized pattern form issue
+  #214 prescribes, so the documented remedy does not trip the guard. Each
+  claiming script is also parse-checked under a real Bash 3.2 binary supplied
+  through `BASH32_BIN`, `CA_BASH32`, or `bash-3.2` on `PATH`; the binary's
+  version is asserted, a configured-but-invalid path fails instead of skipping,
+  and `scripts/README.md` documents the opt-in and the difference between a
+  skipped run and verified Bash 3.2 evidence.
 - **Claude Code runtime binding (`FS-0030`).** The framework's first agent-runtime
   binding ships under `integrations/runtimes/claude-code/`: a plugin manifest
   (`claude plugin validate` clean), synced skill copies sourced from
