@@ -1,6 +1,6 @@
 ---
 type: feature-spec
-id: FS-0056
+id: FS-0058
 status: draft
 title: Local governed-ID citation resolution gate
 owner: ajoeofalltrades
@@ -9,9 +9,9 @@ interfaces:
   - "scripts/check-citations.sh"
   - "scripts/README.md"
   - "package.json"
-  - "test/FS-0056/**"
-  - "docs/specifications/FS-0056-local-governed-id-citation-resolution-gate.md"
-  - "docs/change-plans/PLAN-0063-implement-fs-0056.md"
+  - "test/FS-0058/**"
+  - "docs/specifications/FS-0058-local-governed-id-citation-resolution-gate.md"
+  - "docs/change-plans/PLAN-0063-implement-fs-0058.md"
   - "docs/specifications/README.md"
   - "docs/change-plans/README.md"
   - "CHANGELOG.md"
@@ -20,7 +20,7 @@ supersedes: []
 requires: []
 tags: [governance-gate, citations, id-registry, offline, detection]
 created: 2026-10-27
-updated: 2026-10-27
+updated: 2026-10-29
 ---
 
 <!--
@@ -38,6 +38,13 @@ PARSING_HINTS:
 ## Status
 
 - Draft
+
+This spec was renumbered on 2026-10-29 from the previous `FS` sequence number
+`0056` to `FS-0058`. An open PR (`#257`, branch `specB-151-fs-0053`) had already
+renumbered its own draft spec into that number earlier in registry order, so
+this branch — the later claimant — yields it. Nothing else in the spec changed;
+the framework's rule-4 duplicate detector would otherwise report two documents
+claiming one ID once both PRs merged.
 
 ## Summary
 
@@ -61,8 +68,10 @@ specified by FS-0040 and implemented in
 - Fail with a clear `file: token` list when a cited ID does not resolve.
 - Allow intentional forward references and preserved historical citations via
   an exemption list (`--exempt` and `CA_CITATION_EXEMPT`).
-- Register the gate in `package.json` and document it in `scripts/README.md`
-  as a Category 1 governance gate under ADR-0015.
+- Register the gate in `package.json` and document it in `scripts/README.md`.
+  It is optional, detection-only tooling, **not** a Category 1 gate: ADR-0015
+  reserves that class for scripts wired into CI as a failing check, and this
+  gate is unwired and never blocks a merge.
 - Keep the default posture detection-only so consumers may opt in once their
   corpus is clean.
 
@@ -114,6 +123,11 @@ specified by FS-0040 and implemented in
   when the script runs, then the ID is ignored and the script exits `0`.
 - Given invalid command-line input, when the script runs, then it exits `2` with
   a usage diagnostic.
+- Given an exemption token that is not `FS-NNNN`, `PLAN-NNNN`, or `ADR-NNNN`,
+  when the script runs, then it exits `2` with a diagnostic naming the token —
+  the scan never aborts silently with an empty report.
+- Given `CA_CITATION_EXEMPT` holding a comma-separated list, when the script
+  runs, then every listed ID is exempt, matching the `--exempt` form.
 - Given a non-existent `CA_TARGET_REPO`, when the script runs, then it exits `2`
   with a clear error.
 - Given the script is registered in `package.json`, when `npm run check:citations`
@@ -127,6 +141,11 @@ specified by FS-0040 and implemented in
 - Exemptions from the command line and environment combine.
 - The scan must include directory READMEs under the three registry directories
   and `docs/operations/ARC42.md` if present.
+- The scan covers nothing else: the legacy, hand-curated `docs/ARC42.md` carries
+  no `id:` front matter and is not governed, and markdown outside the three
+  registry directories is out of scope.
+- Exemption tokens are validated, not filtered: a token outside the three
+  governed namespaces is a usage error (`2`), never a silently dropped entry.
 
 ## Out of Scope
 
@@ -137,7 +156,8 @@ specified by FS-0040 and implemented in
 
 ## Dependencies
 
-- ADR-0015 (accepted) — Category 1 gate introduction requirements.
+- ADR-0015 (accepted) — governance-gate classes. Category 1 requires CI wiring;
+  this gate deliberately does not claim that class (see Non-Goals).
 - ADR-0024 (accepted) — detection-over-prevention posture.
 - ADR-0027 (accepted) — reserved paths and human approval for reserved-path
   changes.

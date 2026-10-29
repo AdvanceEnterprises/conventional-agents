@@ -668,20 +668,28 @@ The hermetic cases live in `test/FS-0017/attribution-diagnostic.bats`.
 **Purpose.** Resolve FS/PLAN/ADR citations inside the repository's own governed
 documents. A governed ID cited anywhere in the FS/PLAN/ADR corpus must resolve
 to an existing document in the same repository's registries. The script is
-read-only and never fetches. It is a Category 1 governance gate under
-ADR-0015; implementation is governed by FS-0056 / PLAN-0063. It is not the
-FS-0040 cross-PR stale-citation audit (that layer lives in
+read-only and never fetches. Implementation is governed by FS-0058 / PLAN-0063.
+It is not the FS-0040 cross-PR stale-citation audit (that layer lives in
 `integrations/github/bin/gh-pr-claim-audit.sh`).
+**Not a Category 1 governance gate.** Per ADR-0015, Category 1 is the class of
+scripts that run in CI and whose non-zero exit blocks a merge. This script is
+optional tooling, not a gate: it is referenced by no workflow, is not run by
+`npm run validate`, and does not gate pull requests. Consumers may run it
+manually or in their own tooling.
 **Scope.** Scans the three registry directories
 (`docs/specifications/`, `docs/change-plans/`, `docs/decisions/`) plus
 `docs/operations/ARC42.md`. Extracts `FS-NNNN`, `PLAN-NNNN`, and `ADR-NNNN`
 tokens and checks each against the local registries. Self-citations are
 allowed. Forward references or preserved historical citations may be exempted
-with `--exempt ID[,ID]` or `CA_CITATION_EXEMPT`.
+with `--exempt ID[,ID]` or `CA_CITATION_EXEMPT`; both accept a comma- or
+space-separated list, and a token that is not a governed ID exits `2` with a
+diagnostic. Other markdown — including the legacy, non-governed `docs/ARC42.md`
+— is not scanned.
 **Posture.** Detection, not prevention: exit 1 with a list of unresolved
 `file: token` pairs; exit 2 for invalid input or a missing repository; exit
 0 when every citation resolves. Not wired as a required CI gate by default —
-consumers opt in once their corpus is clean.
+the framework's own corpus is not clean, and consumers opt in once their own
+corpus is.
 **Target resolution.** Per FS-0024/ADR-0033, resolves the repository from the
 caller's working directory or `CA_TARGET_REPO`.
 

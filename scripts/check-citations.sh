@@ -5,8 +5,11 @@
 # FS-NNNN / PLAN-NNNN / ADR-NNNN tokens and fails when a cited ID does not
 # resolve to a document in the repository's own registries.
 #
-# Governance: Category 1 gate under ADR-0015; specified by FS-0056 and
-# implemented under PLAN-0063. This is the local, offline layer. Cross-PR
+# Governance: optional detection-only tooling — NOT a Category 1 gate. ADR-0015
+# reserves Category 1 for scripts wired into CI as a failing check; this one is
+# referenced by no workflow, is not run by `npm run validate`, and blocks
+# nothing (ADR-0024's detection-over-prevention posture). Specified by FS-0058
+# and implemented under PLAN-0063. This is the local, offline layer. Cross-PR
 # stale-citation drift is handled by FS-0040 / integrations/github/bin/gh-pr-claim-audit.sh.
 set -euo pipefail
 
@@ -33,23 +36,28 @@ document in docs/specifications/, docs/change-plans/, or docs/decisions/.
 
 Options:
   --help              Show this help message and exit.
-  --exempt ID[,ID]    Comma-separated list of IDs to treat as resolved even
-                      when no matching document exists. Also reads
-                      CA_CITATION_EXEMPT as a space-separated list.
+  --exempt ID[,ID]    Comma- or space-separated list of IDs to treat as
+                      resolved even when no matching document exists.
+                      Combines with CA_CITATION_EXEMPT.
 
 Environment:
   CA_TARGET_REPO      Path to the repository to check (default: caller's
                       Git worktree).
-  CA_CITATION_EXEMPT  Space-separated IDs exempted from resolution.
+  CA_CITATION_EXEMPT  Comma- or space-separated IDs exempted from resolution.
 
 Exit codes:
   0  all cited governed IDs resolve in the local registries
   1  one or more citations do not resolve
-  2  invalid input or missing repository
+  2  invalid input (including an exemption token that is not FS-NNNN,
+     PLAN-NNNN, or ADR-NNNN) or missing repository
 EOF
 }
 
+# Both exemption sources accept a comma- or space-separated list (FS-0058
+# Interfaces). Commas are normalized to spaces up front so the environment and
+# command-line forms behave identically.
 EXEMPT_LIST="${CA_CITATION_EXEMPT:-}"
+EXEMPT_LIST="${EXEMPT_LIST//,/ }"
 
 while (( $# > 0 )); do
   case "$1" in
@@ -75,9 +83,33 @@ while (( $# > 0 )); do
 done
 
 # Normalized exemption set: one ID per line, sorted uniquely.
+#
+# Validation is explicit and fatal: an exemption token that is not a governed
+# ID is caller error — exit 2 with a diagnostic naming the token, never a
+# silent abort. The normalization below is a plain loop on purpose: filtering
+# through `grep -E ... | sort -u` returns 1 when nothing matches, and under
+# `set -euo pipefail` that assignment failure kills the script before the
+# citation scan at the bottom ever runs, producing exit 1 with no output.
 EXEMPT_NORMALIZED=""
 if [ -n "$EXEMPT_LIST" ]; then
-  EXEMPT_NORMALIZED="$(printf '%s\n' $EXEMPT_LIST | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | grep -E '^[A-Z]+-[0-9][0-9][0-9][0-9]$' | sort -u)"
+  # No pathname expansion on the caller's raw tokens: `--exempt '*'` must be
+  # rejected as an invalid token, not expanded into the current directory.
+  set -f
+  for exempt_token in $EXEMPT_LIST; do
+    case "$exempt_token" in
+      FS-[0-9][0-9][0-9][0-9]|PLAN-[0-9][0-9][0-9][0-9]|ADR-[0-9][0-9][0-9][0-9])
+        EXEMPT_NORMALIZED="${EXEMPT_NORMALIZED}${exempt_token}
+"
+        ;;
+      *)
+        echo "ERROR: invalid exemption '$exempt_token' — expected FS-NNNN, PLAN-NNNN, or ADR-NNNN." >&2
+        echo "       Run with --help for usage." >&2
+        exit 2
+        ;;
+    esac
+  done
+  set +f
+  EXEMPT_NORMALIZED="$(printf '%s' "$EXEMPT_NORMALIZED" | sort -u)"
 fi
 
 # A token is in the exemption list when it appears in the normalized set.
@@ -125,10 +157,12 @@ if [ ! -s "$REGISTRY_FILE" ]; then
   exit 2
 fi
 
-# Scan governed documents for citations. We scan the same corpus the registry
-# is built from: FS/PLAN/ADR documents and their directory READMEs. Other
-# markdown files may also cite governed IDs, so the scan covers all tracked
-# .md files unless the caller narrows it.
+# Scan the governed corpus for citations: every markdown file at the top level
+# of the three registry directories (FS/PLAN/ADR documents plus their index
+# READMEs) and docs/operations/ARC42.md when present. Nothing else is scanned —
+# the legacy hand-curated docs/ARC42.md carries no `id:` front matter and is not
+# governed, and markdown elsewhere in the tree is out of scope for this gate.
+# Point CA_TARGET_REPO at another repository to check that one instead.
 status=0
 UNRESOLVED_FILE="$(mktemp)"
 trap 'rm -f "$REGISTRY_FILE" "$UNRESOLVED_FILE"' EXIT
