@@ -143,6 +143,7 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0050 | Run-batch tier-integrity check | implemented |
 | FS-0051 | First pilot — an authorized feature draft-spec produces one canonical draft FS PR | draft |
 | FS-0052 | Hermes Agent runtime binding — the second agent-runtime binding under ADR-0039 | draft |
+| FS-0057 | In-cycle re-review trace convention for changed PR heads | draft |
 
 | FS-0041 | Status-vs-delivery consistency audit — detect governed documents that lag shipped implementation | draft |
 | FS-0048 | Governance metadata and version source-of-truth reconciliation | draft |
