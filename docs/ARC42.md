@@ -425,8 +425,10 @@ Minimum bar for each guideline:
 ADRs live in `docs/decisions/`. The canonical machine-checkable index is
 [`docs/decisions/README.md`](./decisions/README.md) — it is regenerated
 from file front matter and is the source of truth for status, title, and
-ID. The list below is a categorized summary for human readers; if the two
-disagree, the README wins.
+ID. The list below is a categorized summary for human readers, maintained
+by hand: nothing checks it against the README. If the two disagree the
+README wins, and a row here that lags a newly merged ADR is a bug in this
+summary rather than a change to the decision.
 
 ## Documentation origins and templates
 
