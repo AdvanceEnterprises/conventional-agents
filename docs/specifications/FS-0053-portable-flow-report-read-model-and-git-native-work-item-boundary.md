@@ -14,7 +14,7 @@ supersedes: []
 requires: [FS-0018, FS-0035]
 tags: [flow-report, read-model, work-item-binding, substrate-neutrality, git, governance, visibility]
 created: 2026-10-27
-updated: 2026-10-28
+updated: 2026-10-29
 ---
 
 <!--
@@ -38,6 +38,7 @@ PARSING_HINTS:
 - No PLAN exists yet.
 - This is a proposal-class spec for issue [#146](https://github.com/AdvanceEnterprises/conventional-agents/issues/146); implementation is blocked until the spec reaches `approved` and a governing PLAN is approved.
 - **Prerequisite before this spec advances past `draft`:** the Git-native boundary decision must be recorded in an `accepted` companion ADR in `docs/decisions/` (see `SC-4`). `ADR-0042` defers that decision and cannot stand in for it.
+- **Transitive prerequisite:** `requires: [FS-0018, FS-0035]` means this spec inherits their readiness. `FS-0018` is `implemented`; `FS-0035` is `status: draft`, so `FS-0053` cannot advance to `approved` ahead of `FS-0035`, and the `SC-2` projection above is re-checked against `FS-0035`'s finalized `SC-2` at that point.
 
 ## Summary
 
@@ -93,7 +94,7 @@ Where the two specs appear to disagree, `FS-0035` governs the base contract and 
 
 ### SC-1: Report envelope (owned by `FS-0035`)
 
-The mandatory envelope is `FS-0035`'s `SC-1` and is **not** redefined here; a report conforming to this spec carries that envelope unchanged. The fields are restated below only as the context the `SC-2` projection attaches to:
+The mandatory envelope is `FS-0035`'s `SC-1` and is **not** redefined here; a report conforming to this spec carries that envelope unchanged. The fields are restated below only as the context the `SC-2` projection attaches to. This restatement is non-normative context: if `FS-0035`'s `SC-1` envelope changes, `FS-0035` governs and this criterion is corrected to match.
 
 Given a conforming generator run, the emitted report starts with an envelope containing mandatorily:
 
@@ -105,15 +106,21 @@ Given a conforming generator run, the emitted report starts with an envelope con
 
 ### SC-2: Work-item read-model
 
-Given the tick runs against a conforming work-item binding, the emitted JSON contains, for every in-scope work item (this per-work-item record is the projection this spec owns; the enclosing envelope is `FS-0035`'s `SC-1`):
+Given the tick runs against a conforming work-item binding, the emitted JSON contains one projection record for every in-scope artifact (work items, or `governed-document exceptions` when `source_binding` is `none`, per `FS-0035` `SC-2`; the enclosing report envelope remains `FS-0035`'s `SC-1`). Each record is the `FS-0035` `SC-2` governance record for that artifact **carried unchanged**, plus the projection-only fields this spec adds. `FS-0035`'s field names and semantics govern; this spec renames and drops nothing.
 
-- `id` — the work-item identifier.
+Carried unchanged from `FS-0035` `SC-2` (all mandatory on every projection record):
+
+- `id` and `links` — together realize `FS-0035`'s "identifier and external reference" bullet: `id` is the work-item identifier, and `links` carries the URL or binding-native handles for the item and its Git evidence.
+- `lifecycle_state` — the binding-native phase state reported verbatim; unset/invalid states are represented losslessly as `unset`/`invalid`, never folded into a guessed value. `FS-0035` names this field `lifecycle_state`, and so does this spec; `status` is not an alias for it anywhere in the report.
+- `type_classification` — the item's Type axis (feature/bug/task/other) plus Phase axis, as stored by the binding.
+- `evidence` — for each reported state, the exact artifact and location (file, section, commit, binding record) that backs the claim. Required on every projection record, not optional: approval state is evidenced per `ADR-0026`, where approval is a recorded act.
+- `human_decisions_required` — a READ-ONLY boolean-or-list marker of human-required actions awaiting a human decision. This is the same canonical field name used by `FS-0035` `SC-2` and by `SC-5` below; no shorter alias exists.
+
+Projection-only fields (added here, absent from `FS-0035` `SC-2`):
+
 - `substrate` — the binding-native substrate name.
-- `status` — the binding-native phase state, represented verbatim; unset/invalid states are `unset`/`invalid`.
 - `owner` — the accountable party as recorded by the binding.
 - `last_touched` — ISO-8601 timestamp of the most recent binding-native or Git evidence.
-- `human_decisions_required` — a READ-ONLY boolean-or-list marker of human-required actions awaiting a human. This is the same canonical field name used by `FS-0035` `SC-2` and by `SC-5` below; no shorter alias exists.
-- `links` — URLs or binding-native handles for the item and its Git evidence.
 
 ### SC-3: Determinism and lossless state (inherited from `FS-0035`)
 
@@ -154,13 +161,15 @@ Given the contract is documented, it is accompanied by one human-readable exampl
 
 ## Dependencies
 
-- `FS-0018` — the six substrate capabilities that define a conforming work-item binding.
-- `FS-0035` — the existing portable flow-report read-model contract this spec extends; `FS-0035` owns the base contract (envelope, determinism, planning profile, conformance claim) and this spec adds only the per-work-item projection and the Git-native boundary decision.
-- `ADR-0024` — platform-neutral core with shipped bindings.
-- `ADR-0026` — approval is a recorded act; evidence requirement.
-- `ADR-0037` — executable binding boundary.
-- `ADR-0042` — the report as a visibility profile, not a seventh capability.
+- `FS-0018` — the six substrate capabilities that define a conforming work-item binding (`implemented`).
+- `FS-0035` — the existing portable flow-report read-model contract this spec extends; `FS-0035` owns the base contract (envelope, determinism, planning profile, conformance claim) and this spec adds only the per-work-item projection and the Git-native boundary decision. `FS-0035` is `draft` at this revision, so the transitive prerequisite recorded in `Plan Status` applies.
+- `ADR-0024` — Platform-neutral core with shipped bindings.
+- `ADR-0026` — Approval is a recorded act (source of the mandatory `evidence` field in `SC-2`).
+- `ADR-0037` — Executable layer for the GitHub binding (the executable-binding boundary).
+- `ADR-0042` — Portable flow-report read-model — visibility profile, not a seventh capability (the report reports state; it is not a seventh substrate capability and not a work-item binding).
 - Issue [#146](https://github.com/AdvanceEnterprises/conventional-agents/issues/146).
+
+ADR titles above are verbatim from `docs/decisions/`; text in parentheses after a title is a non-normative gloss on why the decision matters to this spec.
 
 ## Rollout / Migration
 
