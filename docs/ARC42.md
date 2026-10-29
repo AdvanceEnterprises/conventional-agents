@@ -2,8 +2,8 @@
 title: "arc42 Architecture Documentation"
 system: "conventional-agents"
 version: "1.0.0"
-status: "Draft"
-last_updated: "2026-09-09"
+status: "Current"
+last_updated: "2026-10-27"
 ---
 
 # 1. Introduction and Goals
@@ -425,74 +425,93 @@ Minimum bar for each guideline:
 ADRs live in `docs/decisions/`. The canonical machine-checkable index is
 [`docs/decisions/README.md`](./decisions/README.md) — it is regenerated
 from file front matter and is the source of truth for status, title, and
-ID. The list below is a categorized summary for human readers; if the two
-disagree, the README wins.
+ID. The list below is a categorized summary for human readers, maintained
+by hand: nothing checks it against the README. If the two disagree the
+README wins, and a row here that lags a newly merged ADR is a bug in this
+summary rather than a change to the decision.
 
 ## Documentation origins and templates
 
-| ID | Title |
-| --- | --- |
-| ADR-0000 | Use MADR and arc42 template as documentation origins |
-| ADR-0001 | Incorporate cross-tool portable skills as SKILL.md |
-| ADR-0002 | Roles reference skills via convention and skills index |
-| ADR-0008 | Adopt markdownlint for ADR Formatting Consistency |
-| ADR-0009 | Feature Specification Template Selection |
-| ADR-0010 | Use Custom Change Plan Template Instead of Open Source Alternative |
+| ID | Title | Status |
+| --- | --- | --- |
+| ADR-0000 | Use MADR and arc42 template as documentation origins | accepted |
+| ADR-0001 | Incorporate cross-tool portable skills as SKILL.md | accepted |
+| ADR-0003 | Mirror arc42-template as an upstream-tracking git submodule | accepted |
+| ADR-0008 | Adopt markdownlint for ADR Formatting Consistency | accepted |
+| ADR-0009 | Feature Specification Template Selection | accepted |
+| ADR-0010 | Use Custom Change Plan Template Instead of Open Source Alternative | accepted |
+| ADR-0030 | Decision records versus current-state documents | accepted |
+| ADR-0032 | Template and instance repository forms | proposed |
+| ADR-0038 | Agent Skills as a profiled upstream standard | accepted |
+| ADR-0046 | Merge the governance and operations templates | accepted |
 
 ## Integration and consumer surface
 
-| ID | Title |
-| --- | --- |
-| ADR-0004 | AGENTS.md as Canonical Integration Surface |
-| ADR-0005 | Submodule-First Referencing Strategy |
-| ADR-0006 | Role-as-Skill-Card Format |
-| ADR-0007 | Adjacent-to-Spec-Kit Positioning |
-| ADR-0016 | Consumer conventions — local adaptations of the framework |
-| ADR-0017 | Framework vendor directory is internal; consumers must not reference nested submodules |
-| ADR-0024 | Platform-neutral core with shipped bindings |
-| ADR-0028 | Level-triggered reconciliation |
+| ID | Title | Status |
+| --- | --- | --- |
+| ADR-0004 | AGENTS.md as Canonical Integration Surface | accepted |
+| ADR-0005 | Submodule-First Referencing Strategy | accepted |
+| ADR-0007 | Adjacent-to-Spec-Kit Positioning | accepted |
+| ADR-0016 | Consumer conventions — local adaptations of the framework | accepted |
+| ADR-0017 | Framework vendor directory is internal; consumers must not reference nested submodules | accepted |
+| ADR-0024 | Platform-neutral core with shipped bindings | accepted |
+| ADR-0028 | Level-triggered reconciliation | accepted |
+| ADR-0034 | MCP tool category and GitHub skills consolidation | superseded |
+| ADR-0037 | Executable layer for the GitHub binding | accepted |
+| ADR-0039 | Agent-runtime integration bindings | accepted |
+| ADR-0042 | Portable flow-report read-model — visibility profile, not a seventh capability | proposed |
 
 ## Roles, sessions, and non-overridable gates
 
-| ID | Title |
-| --- | --- |
-| ADR-0012 | Introduce non-overridable gates ("super-gates") in ROLE_CONTRACT |
-| ADR-0013 | Multi-model session coordination model |
-| ADR-0014 | Background task governance |
-| ADR-0015 | Tool taxonomy and introduction process |
-| ADR-0022 | Autonomous and consensus are meta-modes, not session modes |
+| ID | Title | Status |
+| --- | --- | --- |
+| ADR-0002 | Roles reference skills via convention and skills index | accepted |
+| ADR-0006 | Role-as-Skill-Card Format | accepted |
+| ADR-0012 | Introduce non-overridable gates ("super-gates") in ROLE_CONTRACT | accepted |
+| ADR-0013 | Multi-model session coordination model | accepted |
+| ADR-0014 | Background task governance | accepted |
+| ADR-0015 | Tool taxonomy and introduction process | accepted |
+| ADR-0022 | Autonomous and consensus are meta-modes, not session modes | accepted |
+| ADR-0035 | Concurrent-session workspace isolation | proposed |
 
 ## Attribution, identity, and history
 
-| ID | Title |
-| --- | --- |
-| ADR-0011 | Adopt multi-identity GitHub model (human + agent-committer + agent-reviewer) |
-| ADR-0018 | Single-identity workflow with agent co-attribution |
-| ADR-0025 | Merge strategy preserves per-commit attribution |
-| ADR-0029 | Commit-author naming for multi-model agent frameworks |
-| ADR-0030 | Decision records versus current-state documents |
+| ID | Title | Status |
+| --- | --- | --- |
+| ADR-0011 | Adopt multi-identity GitHub model (human + agent-committer + agent-reviewer) | accepted |
+| ADR-0018 | Single-identity workflow with agent co-attribution | accepted |
+| ADR-0025 | Merge strategy preserves per-commit attribution | accepted |
+| ADR-0029 | Commit-author naming for multi-model agent frameworks | accepted |
+| ADR-0036 | Attribution vocabulary canon and history-integrity policy | proposed |
+| ADR-0047 | Authorized intent identity and the human grant | accepted |
+| ADR-0048 | Worker and publisher credential separation | accepted |
 
 ## Work-item layer and autonomous operation
 
-| ID | Title |
-| --- | --- |
-| ADR-0019 | Issue Type immutability and the autonomous gate |
-| ADR-0020 | The `question` label suppresses agent Issue actions |
-| ADR-0021 | Cron actor identity for unattended agents |
+| ID | Title | Status |
+| --- | --- | --- |
+| ADR-0019 | Issue Type immutability and the autonomous gate | accepted |
+| ADR-0020 | The `question` label suppresses agent Issue actions | accepted |
+| ADR-0021 | Cron actor identity for unattended agents | accepted |
+| ADR-0041 | Narrow direct-to-trunk merge exception for reversible maintenance categories, audited by a maintenance digest | proposed |
+| ADR-0043 | Planning fields are binding policy, not framework state — authority matrix for Priority, Iteration, and Milestone | proposed |
+| ADR-0045 | Bounded autonomous runs with batch proposal-acceptance | superseded |
+| ADR-0049 | Grant-based go signal for autonomous runs | accepted |
 
 ## Collaboration modes
 
-| ID | Title |
-| --- | --- |
-| ADR-0023 | Collaboration integrity constraints |
-| ADR-0031 | Structured multi-model collaboration |
+| ID | Title | Status |
+| --- | --- | --- |
+| ADR-0023 | Collaboration integrity constraints | accepted |
+| ADR-0031 | Structured multi-model collaboration | accepted |
 
 ## Approval and process gates
 
-| ID | Title |
-| --- | --- |
-| ADR-0026 | Approval is a recorded act |
-| ADR-0027 | PLAN self-approval within declared interfaces |
+| ID | Title | Status |
+| --- | --- | --- |
+| ADR-0026 | Approval is a recorded act | accepted |
+| ADR-0027 | PLAN self-approval within declared interfaces | accepted |
+| ADR-0033 | Governance gate target resolution and configuration | accepted |
 
 ADR-0003 is the historical decision that the framework *would* mirror
 upstream as a submodule (`vendor/arc42-template/`). `ADR-0017`
