@@ -51,8 +51,8 @@ claiming one ID once both PRs merged.
 Governed documents in this repository cite `FS-NNNN`, `PLAN-NNNN`, and
 `ADR-NNNN` IDs in prose and front matter. A citation that does not resolve to
 an existing document in the same repository's registries is a latent error:
-forward references are sometimes intentional, but an unresolved reference to a
-retired or miss-typed ID can persist undetected. This spec defines a local,
+forward references are sometimes intentional, but an unresolved reference to an
+absent ID (never-created, deleted, or mistyped) can persist undetected. This spec defines a local,
 read-only, offline governance gate (`scripts/check-citations.sh`) that resolves
 citations against the repository's own registries and reports unresolved ones.
 
@@ -87,8 +87,8 @@ specified by FS-0040 and implemented in
 
 ## Users / Stakeholders
 
-- Framework maintainers who want to detect stale or miss-typed citations before
-  they merge.
+- Framework maintainers who want to detect citations to absent IDs
+  (never-created, deleted, or mistyped) before they merge.
 - Consumer repositories that vendor the framework gates and want a local
   citation check they can run without GitHub credentials.
 - Reviewers evaluating whether a PR's new citations resolve.

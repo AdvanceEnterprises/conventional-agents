@@ -124,9 +124,12 @@ is_exempt() {
   esac
 }
 
-# Build a registry of governed IDs. For each registry directory we accept the
-# front-matter id: when present, otherwise derive from the filename token.
-# Either way, the filename must live in the correct directory for its type.
+# Build a registry of governed IDs. For each registry directory we take the
+# front-matter id: from the leading `---` block, and only when it matches this
+# directory's namespace (FS/PLAN/ADR); otherwise we derive the ID from the
+# filename token. Either way, the file must live in the correct directory for
+# its type — a body line that happens to start with `id:` (an example) or a
+# front-matter id: from a different namespace never registers the wrong ID.
 register_ids() {
   local dir="$1" prefix="$2"
   local file id
@@ -134,8 +137,27 @@ register_ids() {
     [ -f "$file" ] || continue
     id=""
     if [ -r "$file" ]; then
-      id="$(sed -nE 's/^id:[[:space:]]*"?([A-Z]+-[0-9][0-9][0-9][0-9])"?.*/\1/p' "$file" | head -n 1 || true)"
+      # Read only the leading --- front-matter block; stop at its closing ---.
+      id="$(awk '
+        /^---[[:space:]]*$/ {
+          if (fm) exit
+          fm = 1
+          next
+        }
+        fm && /^id:[[:space:]]*/ {
+          val = substr($0, index($0, ":") + 1)
+          sub(/^[[:space:]]*"?/, "", val)
+          sub(/"?[[:space:]]*$/, "", val)
+          if (val ~ /^[A-Z]+-[0-9][0-9][0-9][0-9]$/) { print val; exit }
+        }
+      ' "$file")"
     fi
+    # Accept the front-matter id only when it is this directory's namespace;
+    # a spec that carries `id: ADR-NNNN` falls back to its filename token.
+    case "$id" in
+      "$prefix"-*) ;;
+      *) id="" ;;
+    esac
     if [ -z "$id" ]; then
       id="$(basename "$file" | sed -nE 's/^([A-Z]+-[0-9][0-9][0-9][0-9])(-[^/]*)?\.md$/\1/p')"
     fi
@@ -170,24 +192,45 @@ trap 'rm -f "$REGISTRY_FILE" "$UNRESOLVED_FILE"' EXIT
 scan_files() {
   # Prefer ripgrep when available; fall back to grep for portability.
   if command -v rg >/dev/null 2>&1; then
-    rg --no-heading --with-filename --only-matching -e '\b(FS|PLAN|ADR)-[0-9][0-9][0-9][0-9]\b' "$@" 2>/dev/null || true
-  else
-    local f
-    for f in "$@"; do
-      [ -f "$f" ] || continue
-      grep -H -o -E '\b(FS|PLAN|ADR)-[0-9][0-9][0-9][0-9]\b' "$f" 2>/dev/null || true
-    done
+    # --no-config ignores an ambient RIPGREP_CONFIG_PATH so the caller's flags
+    # cannot change the scan (a bad config must not produce a false "OK"), and
+    # --no-line-number keeps each line as "path:token" so the `:` delimiter
+    # parsed below is unambiguous. rg exit 1 = no matches (an empty scan is not
+    # an error); exit >= 2 is a read error and must fail closed.
+    local rg_status=0
+    rg --no-config --no-heading --no-line-number --with-filename --only-matching \
+      -e '\b(FS|PLAN|ADR)-[0-9][0-9][0-9][0-9]\b' "$@" || rg_status=$?
+    if [ "$rg_status" -ge 2 ]; then
+      echo "ERROR: ripgrep failed while scanning the governed corpus (exit $rg_status)." >&2
+      return 2
+    fi
+    return 0
   fi
+
+  # grep fallback: exit 1 = no match in this file, exit >= 2 = read error.
+  local f grep_status
+  for f in "$@"; do
+    [ -f "$f" ] || continue
+    grep_status=0
+    grep -H -o -E '\b(FS|PLAN|ADR)-[0-9][0-9][0-9][0-9]\b' "$f" || grep_status=$?
+    if [ "$grep_status" -ge 2 ]; then
+      echo "ERROR: grep failed while scanning '$f' (exit $grep_status)." >&2
+      return 2
+    fi
+  done
+  return 0
 }
 
 SCAN_TARGETS=(
-  "$REPO_ROOT/docs/specifications"
-  "$REPO_ROOT/docs/change-plans"
-  "$REPO_ROOT/docs/decisions"
+  "docs/specifications"
+  "docs/change-plans"
+  "docs/decisions"
 )
 
 # Build a list of actual files, including READMEs and any .md under the
-# three registry directories.
+# three registry directories. Paths are emitted relative to REPO_ROOT (the
+# script cd'd there above) so the `file: token` parse below does not split on
+# a `:` that happens to appear in the absolute checkout path.
 SCAN_FILES=()
 for target in "${SCAN_TARGETS[@]}"; do
   [ -d "$target" ] || continue
@@ -198,8 +241,8 @@ done
 
 # Also include docs/operations/ARC42.md if it exists — it is governed and
 # cross-references decisions and specs.
-if [ -f "$REPO_ROOT/docs/operations/ARC42.md" ]; then
-  SCAN_FILES+=("$REPO_ROOT/docs/operations/ARC42.md")
+if [ -f "docs/operations/ARC42.md" ]; then
+  SCAN_FILES+=("docs/operations/ARC42.md")
 fi
 
 if [ "${#SCAN_FILES[@]}" -eq 0 ]; then

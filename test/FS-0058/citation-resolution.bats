@@ -264,3 +264,31 @@ EOF
 
   [ "$status" -eq 2 ]
 }
+
+@test "a bad RIPGREP_CONFIG_PATH does not produce a false OK" {
+  local repo="$BATS_TEST_TMPDIR/bad-ripgrep-config"
+  new_repo "$repo"; seed_docs "$repo"
+  cat > "$repo/docs/specifications/FS-0001-live.md" <<'EOF'
+---
+type: feature-spec
+id: FS-0001
+status: approved
+---
+# FS-0001
+See FS-9999.
+EOF
+  git -C "$repo" add -A
+  git -C "$repo" commit -q -m "cite missing fs"
+
+  # A config written for a newer rg: --definitely-not-a-flag is an unknown
+  # option, and the old code swallowed rg's error with `|| true`, reporting
+  # exit 0 "OK" from an empty scan. `--no-config` must ignore the ambient
+  # config so the real finding (FS-9999) is still reported, non-zero.
+  local bad_config="$BATS_TEST_TMPDIR/ripgrep.conf"
+  printf '%s\n' '--definitely-not-a-flag' > "$bad_config"
+
+  run env CA_TARGET_REPO="$repo" RIPGREP_CONFIG_PATH="$bad_config" bash "$SCRIPT"
+
+  [ "$status" -eq 1 ]
+  echo "$output" | grep -qF "FS-9999"
+}

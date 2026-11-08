@@ -218,6 +218,12 @@ under-declared plan fails later and louder.
   wiring is a reserved path (`.github/workflows/`) behind human approval, and
   ADR-0015 expects a clean corpus for a blocking check, which the framework
   does not have.
+* No change to the macOS `bash32-audit-compatibility` job
+  (`.github/workflows/lint-docs.yml:311-331`) to add the `test/FS-0058` suite.
+  The suite runs on Linux through `test-bats` and passes locally under GNU Bash
+  3.2.57; running it under macOS's stock Bash 3.2 — and thereby exercising the
+  BSD-grep fallback — is a reserved-path change (`.github/workflows/`) requiring
+  a human decision. Recorded here; not done in this PR.
 * No cleanup of the pre-existing unresolved citations the gate reports on
   `trunk`, and no exemption list committed for them: a repo-wide exemption
   would mask genuine debt for every consumer.
@@ -241,11 +247,21 @@ under-declared plan fails later and louder.
 
 ### Where the approval trailer must land
 
-Human approval is recorded in git, not in prose (ADR-0026). The `Approved-By:`
-trailer belongs on **the most recent commit that touches this plan file**, and
-its author email must differ from that commit's author email — a trailer whose
-`Approved-By:` matches its own commit author is malformed. `scripts/check-status.sh`
-reads approval evidence this way (`:963-966`, `:994-996`), and it also compares
-the `touches:` set recorded at the approving commit against the working tree, so
-**any later edit to this plan requires a fresh approval commit**. A trailer on a
-commit that does not touch this file records nothing.
+Human approval is recorded in git, not in prose (ADR-0026). `scripts/check-status.sh`
+reads approval evidence from **two corroborating sources** (`:864-909`):
+
+1. The plan's front matter must set `approved_by:` to a value containing an
+   `<email>` (for example `approved_by: Human Maintainer <human@example.com>`).
+   The trailer is never read unless `approved_by:` is set and carries that
+   `<email>` (`:875-891`; the check bails at `:878` when `approved_by:` is
+   absent). A trailer alone, without the front-matter `approved_by:` field, is
+   not read and still fails closed.
+2. The `Approved-By:` trailer must sit on **the most recent commit that touches
+   this plan file**, and its email must match the front-matter `approved_by:`
+   `<email>` and differ from that commit's author email — a trailer whose
+   `Approved-By:` matches its own commit author is malformed (`:881-891`).
+
+The check also compares the `touches:` set recorded at the approving commit
+against the working tree (`:897-906`), so **any later edit to this plan requires
+a fresh approval commit**. A trailer on a commit that does not touch this file
+records nothing.
