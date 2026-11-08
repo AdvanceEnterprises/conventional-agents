@@ -63,6 +63,22 @@ For this project (a documentation/standards kit), semver follows the
   regression-audited consumer-boundary cleanup. These documents remain drafts;
   they authorize no implementation or live ruleset changes.
 
+- **FS-0058 / PLAN-0063 (draft): local governed-ID citation resolution gate.**
+  Adds `scripts/check-citations.sh`, registered as `npm run check:citations`,
+  to resolve `FS-NNNN`, `PLAN-NNNN`, and `ADR-NNNN` citations against the
+  repository's own local registries. The gate is read-only, offline, and
+  detection-only: it reports unresolved citations but does not block CI by
+  default, and it is documented as optional tooling rather than an ADR-0015
+  Category 1 gate. Exemptions from `--exempt` and `CA_CITATION_EXEMPT` accept
+  comma- or space-separated lists, and a token that is not a governed ID exits
+  `2` with a diagnostic instead of aborting the scan. The bats regression suite
+  lives under `test/FS-0058/`. The gate is explicitly not the FS-0040 cross-PR
+  stale-citation audit (that layer remains in
+  `integrations/github/bin/gh-pr-claim-audit.sh`). The spec carries the `FS`
+  number `0058` rather than its original draft number, which an open PR already
+  claims. The documents remain drafts; they authorize no reserved-path
+  implementation without recorded human approval.
+
 - **Draft governance package for issue #212 (FS-0048, PLAN-0054).** Specifies a
   bounded reconciliation of the framework's governance metadata contract: one
   `updated:` policy for ADRs (template, lifecycle text, freshness coverage, and
