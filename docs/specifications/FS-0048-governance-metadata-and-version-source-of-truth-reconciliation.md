@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0048
-status: draft
+status: approved
 title: Governance metadata and version source-of-truth reconciliation
 owner: ajoeofalltrades
 test_required: true
@@ -33,7 +33,7 @@ requires:
   - FS-0027
 tags: [metadata, versioning, adr, freshness, index, source-of-truth]
 created: 2026-10-05
-updated: 2026-10-05
+updated: 2026-11-11
 ---
 <!--
 PARSING_HINTS:
@@ -48,17 +48,19 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Approved (recorded approval per ADR-0026, 2026-11-11).
 
 ## Plan Status
 
-- **PLAN-0054 is `draft`.** The initial package contains this spec, its plan,
-  index rows, and a draft CHANGELOG entry only. It does not authorize any
-  template, lifecycle, script, corpus, index, or marker change.
+- **PLAN-0054 is `approved`** (recorded approval per ADR-0026, 2026-11-11).
+  The governance package — this spec, its plan, the two index rows, and the
+  CHANGELOG entry — landed as drafts through the documentation revision; the
+  approving commit records the status transition and the exact reserved-path
+  scope.
 - The implementation touches ADR-0027 reserved paths (`docs/decisions/`,
-  `scripts/`, `package.json`). Implementation requires an approved FS and PLAN
-  plus a separate recorded human approval for the exact reserved-path
-  `touches:` set under ADR-0026/ADR-0027.
+  `scripts/`, `package.json`). PLAN-0054's `touches:` set is expanded to the
+  full `interfaces:` surface below, and the approving commit carries the
+  `Approved-By:` / `Approved-Artifacts:` trailers required by ADR-0026.
 
 ## Summary
 

@@ -70,6 +70,15 @@ For this project (a documentation/standards kit), semver follows the
   validated display markers, and one ADR status vocabulary plus a documented
   FS/PLAN index-ordering rule. The documents remain drafts; they authorize no
   template, script, corpus, marker, or index change.
+- **Approved governance package for issue #212 (FS-0048, PLAN-0054).**
+  Records the human approval of FS-0048 and PLAN-0054 and the exact
+  reserved-path implementation scope: `updated:` on every ADR and in the ADR
+  template, freshness coverage across ADRs/specs/change-plans, `package.json`
+  as the single version authority with display-marker validation in
+  `check-status.sh`, the aligned ADR status vocabulary, and the documented
+  FS/PLAN index ordering. The implementation ships in the follow-up
+  implementation PR; `AGENTS.md` `Last Updated` remains unchanged pending a
+  separate protected-file change.
 - **Claude Code runtime binding (`FS-0030`).** The framework's first agent-runtime
   binding ships under `integrations/runtimes/claude-code/`: a plugin manifest
   (`claude plugin validate` clean), synced skill copies sourced from
