@@ -2,23 +2,35 @@
 type: change-plan
 role: implementer
 language: bash
-status: draft
+status: approved
 related_specs:
   - FS-0048
-approved_by: ""
+approved_by: "Joey Clark <administrator@ajoeofalltrades.dev>"
 related_adrs:
   - ADR-0015
   - ADR-0026
   - ADR-0027
   - ADR-0030
 touches:
+  - templates/core/adr-full-madr.md
+  - workflows/document-lifecycle.md
+  - docs/decisions/README.md
+  - docs/decisions/ADR-*.md
+  - scripts/check-freshness.sh
+  - scripts/check-status.sh
+  - scripts/README.md
+  - package.json
+  - test/FS-0048/**
+  - README.md
+  - AGENTS.md
+  - INTEGRATION.md
   - docs/specifications/FS-0048-governance-metadata-and-version-source-of-truth-reconciliation.md
   - docs/change-plans/PLAN-0054-implement-fs-0048-governance-metadata-and-version-reconciliation.md
   - docs/specifications/README.md
   - docs/change-plans/README.md
   - CHANGELOG.md
 created: 2026-10-05
-updated: 2026-10-05
+updated: 2026-11-11
 ---
 
 # PLAN-0054: Implement FS-0048 — Governance metadata and version reconciliation
@@ -30,6 +42,12 @@ updated: 2026-10-05
 > touches ADR-0027 reserved paths (`docs/decisions/`, `scripts/`,
 > `package.json`), so it requires recorded human approval for the exact
 > implementation scope.
+>
+> **Approval (2026-11-11):** FS-0048 and PLAN-0054 are approved by Joey Clark
+> as a recorded approval per ADR-0026. The `touches:` set above is expanded to
+> the full FS-0048 `interfaces:` surface, and the approving commit carries the
+> contiguous `Approved-By:` / `Approved-Artifacts:` / `Agent-Attribution:`
+> trailer block that `scripts/check-status.sh` verifies.
 
 ## 1. Feature / Issue Reference
 
@@ -210,7 +228,7 @@ shared paths.
 
 ## 10. Readiness Check
 
-* [ ] Spec is approved
+* [x] Spec is approved
 * [x] Tests are clearly defined for the implementation revision
 * [x] Scope is minimal and explicit
 * [x] No implementation or corpus edit is included

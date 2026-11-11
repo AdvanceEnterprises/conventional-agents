@@ -8,6 +8,7 @@ related_specs:
   - FS-0003
   - FS-0017
 superseded_by: null
+updated: 2026-07-28
 ---
 
 # ADR-0025: Merge strategy preserves per-commit attribution

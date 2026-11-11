@@ -6,6 +6,7 @@ decision_scope: system
 reversible: unknown
 related_specs: []
 superseded_by: null
+updated: YYYY-MM-DD
 ---
 <!--
 PARSING_HINTS:
@@ -19,7 +20,7 @@ PARSING_HINTS:
 
 ## Status
 
-- Proposed | Accepted | Superseded | Deprecated
+- Proposed | Accepted | Rejected | Superseded | Deprecated
 
 ## Context and Problem Statement
 

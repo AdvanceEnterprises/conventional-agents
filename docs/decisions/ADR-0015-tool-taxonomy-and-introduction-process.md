@@ -11,6 +11,7 @@ related_specs:
   - FS-0014
   - FS-0022
 superseded_by: null
+updated: 2026-07-28
 ---
 
 # ADR-0015: Tool taxonomy and introduction process

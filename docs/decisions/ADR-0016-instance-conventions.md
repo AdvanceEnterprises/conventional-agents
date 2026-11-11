@@ -7,6 +7,7 @@ reversible: yes
 related_specs:
   - FS-0014
 superseded_by: null
+updated: 2026-07-26
 ---
 
 # ADR-0016: Consumer conventions — local adaptations of the framework

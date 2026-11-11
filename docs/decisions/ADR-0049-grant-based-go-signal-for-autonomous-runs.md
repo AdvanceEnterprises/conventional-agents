@@ -7,6 +7,7 @@ reversible: yes
 related_specs:
   - FS-0051
 superseded_by: null
+updated: 2026-10-18
 ---
 
 # ADR-0049: Grant-based go signal for autonomous runs
