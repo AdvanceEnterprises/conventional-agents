@@ -7,6 +7,7 @@ reversible: yes
 related_specs:
   - FS-0022
 superseded_by: null
+updated: 2026-07-28
 ---
 
 # ADR-0030: Decision records versus current-state documents

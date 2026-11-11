@@ -8,6 +8,7 @@ related_specs:
   - FS-0018
   - FS-0019
 superseded_by: null
+updated: 2026-07-28
 ---
 
 # ADR-0022: Autonomous and consensus are meta-modes, not session modes

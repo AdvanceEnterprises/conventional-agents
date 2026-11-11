@@ -1,5 +1,5 @@
 ---
-updated: 2026-10-23
+updated: 2026-10-27
 ---
 
 # Document Lifecycle
@@ -114,6 +114,7 @@ containment check — it is not seeking approval.
 | --- | --- | --- | --- |
 | `proposed` | Under consideration | Agent or human creates | Initial creation |
 | `accepted` | Decision made and binding | Human accepts (merge of ADR PR) | After review |
+| `rejected` | Explicitly decided not to adopt; rationale preserved | Human or agent | When the proposal is declined |
 | `deprecated` | No longer relevant | Human or agent | When context changes |
 | `superseded` | Replaced by a newer ADR | Human or agent | When new ADR is accepted |
 
@@ -255,7 +256,7 @@ If an `approved` spec has not been worked on for an extended period and is no lo
 
 ### Updated dates
 
-When modifying any FS, PLAN, or ADR, update the `updated:` field in YAML front matter to today's date.
+When modifying any FS, PLAN, ADR, or runbook, update the `updated:` field in YAML front matter to today's date.
 
 ### Cross-references
 

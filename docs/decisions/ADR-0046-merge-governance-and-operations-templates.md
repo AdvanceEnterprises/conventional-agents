@@ -6,6 +6,7 @@ decision_scope: architecture
 reversible: yes
 related_specs: []
 superseded_by: null
+updated: 2026-10-16
 ---
 
 # ADR-0046: Merge the governance and operations templates

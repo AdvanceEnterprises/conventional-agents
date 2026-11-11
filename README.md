@@ -310,4 +310,4 @@ MIT License. See [LICENSE](./LICENSE) for details.
 
 ---
 
-**Framework Version:** 2.1.0 | **Last Updated:** 2026-07-29
+**Framework Version:** 2.1.0 | **Last Updated:** 2026-10-27

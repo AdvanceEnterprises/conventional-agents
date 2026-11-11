@@ -7,6 +7,7 @@ reversible: yes
 related_specs:
   - FS-0010
 superseded_by: null
+updated: 2026-06-08
 ---
 
 # ADR-0012: Introduce non-overridable gates ("super-gates") in ROLE_CONTRACT
