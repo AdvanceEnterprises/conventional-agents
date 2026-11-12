@@ -36,7 +36,7 @@ can never satisfy its own review requirement. Every merge is therefore a bypass.
 The record shows this is not theoretical. The two most recent merges carry a review
 record, but the review state is `COMMENTED`, not `APPROVED`:
 
-```
+```text
 #252  merged 2026-11-12T00:03:53Z  author=ajoeofalltrades  reviews=1  states=[COMMENTED]
 #256  merged 2026-11-12T00:03:30Z  author=ajoeofalltrades  reviews=1  states=[COMMENTED]
 ```
@@ -135,7 +135,7 @@ enforces.
 A required status check runs on the pull request head, **before** the merge. At that
 moment there is no `merged_at`, no merge commit, and no review to inspect:
 
-```
+```text
 #250 (open): merged=False  merged_at=None  reviews=[]
 ```
 
@@ -164,7 +164,7 @@ Three consequences follow, and each is a constraint on the implementation:
 2. **Branch commits and merged commits are different objects.** A rebase merge
    produces a merged commit with the same author but a different committer:
 
-   ```
+   ```text
    PR head        a0d1ecbe  author=hermes-agent@…  committer=hermes-agent@…
    merged commit  9cffae5b  author=hermes-agent@…  committer=administrator@ajoeofalltrades.dev
    ```
