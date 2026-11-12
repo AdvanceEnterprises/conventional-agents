@@ -115,7 +115,7 @@ rule:
 | Point the runtime at the canonical `AGENTS.md` | `ADR-0004` |
 | Run the framework's gate scripts at the runtime's pre-commit / pre-PR point | `scripts/`, `FS-0024` |
 | Make `skills/` discoverable in the runtime's skill system, applying the runtime dialect at sync time | `ADR-0038` §5 |
-| Set commit identity and the `Agent-Attribution:` trailer | `ADR-0018` / `ADR-0029` / `ADR-0036` |
+| Set commit identity and the `Agent-Attribution:` trailer | `ADR-0018` / `ADR-0029` / proposed `ADR-0036` |
 | Optionally, MCP-server configuration | `ADR-0039` §4 |
 
 A runtime binding states, per requirement, whether the runtime **enforces** it,
