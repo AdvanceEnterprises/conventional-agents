@@ -13,6 +13,18 @@ For this project (a documentation/standards kit), semver follows the
 
 ### Added
 
+#### In-cycle re-review trace convention (FS-0057 / PLAN-0061, approved)
+
+- **Adds the `in-cycle-re-review` skill** and its `skills/index.md`
+  registration. When a reviewer re-verifies a changed PR head, it posts one
+  trace line naming the model, the 40-character head SHA, the round number and
+  the verdict, so a maintainer triaging a revised PR can see that
+  re-verification happened, on which commit, without breaking the once-per-PR
+  reviewer dedupe contract. The reviewer-role subsection in
+  `guidelines/ROLE_CONTRACT.md`, the mode subsection in
+  `workflows/session-modes.md`, and the parser tests land in a separate change.
+  Approved by recorded human approval; provisional until this PR merges.
+
 #### Public-flip preparation: CODEOWNERS (G9)
 
 - **Adds `CODEOWNERS`** routing every path to the human maintainer. With the
