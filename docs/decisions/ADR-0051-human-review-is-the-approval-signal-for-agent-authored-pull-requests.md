@@ -109,6 +109,34 @@ by adding a code owner, which is the move that breaks the asymmetry.
 The governed party must not be a required reviewer of the governance. This follows
 from the same rule that produced the invariant.
 
+**With a second agent identity this stops being a matter of taste and becomes the
+control that carries the gate.** One agent account cannot approve its own pull
+request — GitHub forbids self-approval — so a single-agent installation is blocked
+by construction. Two agent accounts remove that accident: account B can submit an
+`APPROVED` review on account A's pull request, and the review is non-author, so
+nothing in the review requirement objects.
+
+The remaining barrier is the code-owner requirement. `write` permission is
+sufficient to merge a pull request whose protection requirements are satisfied, so
+if agent identities were code owners, agent-approves-agent would be a complete merge
+path: A authors, B approves, B's approval satisfies the code-owner requirement, and
+either account merges. Human-only `CODEOWNERS` is what makes that path unavailable.
+
+Therefore, for any installation with more than one agent identity:
+
+- No agent account appears in `CODEOWNERS`, at any scope, for any reason.
+- An agent's `APPROVED` review is **evidence, never the approval signal**. It cannot
+  satisfy the invariant, and a check that accepted it would be measuring credentials
+  held by agents rather than human presence.
+- `write` and nothing higher — `maintain` can reach settings that `write` cannot.
+
+Separation of duties still improves with two identities: one account authors, a
+second reviews, and the human approves and merges. That is three distinct
+identities doing three distinct jobs, and it is strictly better than one account
+doing all of them. It is only safe while the code-owner requirement stays
+human-only, which is why that clause is stated as a prohibition rather than a
+preference.
+
 ### The agent account authors the pull request
 
 The human reviews and merges; the agent opens. This is the only shape in which the
