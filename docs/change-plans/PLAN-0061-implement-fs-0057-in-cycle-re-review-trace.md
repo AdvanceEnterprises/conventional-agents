@@ -14,15 +14,15 @@ related_adrs:
   - ADR-0050
 consensus_required: false
 touches:
-  - guidelines/ROLE_CONTRACT.md
-  - workflows/session-modes.md
   - skills/in-cycle-re-review/SKILL.md
   - skills/index.md
   - docs/specifications/FS-0057-in-cycle-re-review-trace-convention.md
   - docs/change-plans/PLAN-0061-implement-fs-0057-in-cycle-re-review-trace.md
+  - docs/specifications/README.md
+  - docs/change-plans/README.md
   - CHANGELOG.md
 created: 2026-10-27
-updated: 2026-10-27
+updated: 2026-11-12
 
 ---
 
@@ -49,6 +49,11 @@ under-declared plan fails later and louder.
 * Related ADR ID(s): ADR-0018, ADR-0022, ADR-0029, ADR-0036, ADR-0050
 * Issue / PR Reference: #220
 
+Human approval of FS-0057 and PLAN-0061 is recorded by Joey Clark in the
+approval commit carrying `Approved-By:` and `Approved-Artifacts:` trailers, per
+ADR-0026. The approved status is provisional while this PR is unmerged; it
+authorizes implementation only on this branch.
+
 ## 2. Scope of Change
 
 **This change WILL:**
@@ -64,20 +69,27 @@ under-declared plan fails later and louder.
 * Update `CHANGELOG.md` with a consumer-framed entry because the change touches
   exported surface (`guidelines/`, `workflows/`, `skills/`).
 
-**Delivery is staged.** FS-0057 is `status: draft`, and the spec's parsing hints
-say to not implement it unless `status: approved`. The draft PR carries only the
-draft artifacts — FS-0057, this plan, `skills/in-cycle-re-review/SKILL.md`, and
-the `skills/index.md` registration.
+**Delivery is staged.** FS-0057 and this plan are approved in this change by a
+recorded human approval (ADR-0026); the approval is provisional until the PR
+merges. This PR carries FS-0057, this plan, `skills/in-cycle-re-review/SKILL.md`,
+the `skills/index.md` registration, both index rows, and the `CHANGELOG.md`
+entry.
 
-The remaining items above are gated and land in a follow-up change:
+The remaining implementation items land in a follow-up change after approval:
 
 * `guidelines/ROLE_CONTRACT.md` and `workflows/session-modes.md` implement the
-  spec's declared `interfaces:`, so they are blocked by the draft status.
-* `CHANGELOG.md` sits outside FS-0057's `interfaces:`, so it needs an
-  `interfaces:` amendment plus the human approval recorded under ADR-0026.
-* `test/FS-0057/in-cycle-re-review-trace.bats` sits outside FS-0057's
-  `interfaces:` and is absent from `touches:`, so adding it now would
-  under-declare this change against the governing spec.
+  spec's declared `interfaces:` in the reviewer and mode documentation. They
+  are deferred to keep this change's diff reviewable, not because approval is
+  outstanding.
+* `test/FS-0057/in-cycle-re-review-trace.bats` is the parser test surface and
+  ships with the follow-up change that consumes it.
+
+`CHANGELOG.md` is **not** deferred: rule 7 (`scripts/check-status.sh:1005-1074`)
+requires a consumer-framed entry naming FS-0057 at the moment the spec reaches
+`approved`, so the entry lands in this change. `CHANGELOG.md` is exempt from
+rule 6 containment (`scripts/check-status.sh:943-948`), so no `interfaces:`
+entry is required for it; FS-0057 lists it only for consistency with sibling
+specs. The `touches:` set above is this PR's actual file set.
 
 **This change will NOT:**
 
@@ -98,51 +110,59 @@ The remaining items above are gated and land in a follow-up change:
   * `test_sc_3__dedupe_once_per_head_per_model`
   * `test_sc_4__parseable_format`
 
-The test file is defined here but deliberately not created in the draft PR: its
-path is outside FS-0057's `interfaces:` and absent from this plan's `touches:`,
-so adding it now would under-declare the change against the governing spec. It
-lands with the post-approval implementation change.
+The test file is defined here but deliberately not created in this PR: it is
+absent from this plan's `touches:`, so adding it now would under-declare the
+change against its own scope declaration. It lands with the follow-up
+implementation change that consumes it.
 
 ## 4. Files to Be Modified
 
 Only list files that will be changed.
 
-In this draft PR:
+In this PR:
 
 * `skills/in-cycle-re-review/SKILL.md`
 * `skills/index.md`
+* `docs/specifications/README.md` — FS-0057 index row
+* `docs/change-plans/README.md` — PLAN-0061 index row
 * `docs/specifications/FS-0057-in-cycle-re-review-trace-convention.md`
 * `docs/change-plans/PLAN-0061-implement-fs-0057-in-cycle-re-review-trace.md`
+* `CHANGELOG.md`
 
-Index rows in `docs/specifications/README.md` and `docs/change-plans/README.md`
-track the front-matter status of the two documents above and are kept in sync by
-`check:status`.
+The two index rows track the front-matter status of the documents above and are
+kept in sync by `check:status` (rule 2). They are declared in `touches:`
+because this PR writes them.
 
-Deferred to the post-approval implementation change (see "Delivery is staged"
+Deferred to the follow-up implementation change (see "Delivery is staged"
 in §2):
 
 * `guidelines/ROLE_CONTRACT.md`
 * `workflows/session-modes.md`
-* `CHANGELOG.md`
+* `test/FS-0057/in-cycle-re-review-trace.bats`
 
 ## 5. Implementation Steps (High-Level)
 
 Describe concrete steps without code.
 
-In this draft PR:
+At approval (this PR):
 
 1. Draft the exact trace-comment template and once-per-head dedupe rule in the
    new skill file.
-2. Register the skill in `skills/index.md`.
+2. Register the skill in `skills/index.md` and add the FS-0057/PLAN-0061 index
+   rows.
+3. Add the consumer-framed `CHANGELOG.md` entry naming FS-0057 (rule 7 requires
+   it at `approved`), **before** the approval record.
+4. Record the approval: flip FS-0057 and this plan to `approved`, set
+   `approved_by:`, and commit with `Approved-By:` / `Approved-Artifacts:`
+   trailers per ADR-0026.
 
-After FS-0057 is approved:
+After approval, in the follow-up change:
 
 1. Add the reviewer-role subsection to `guidelines/ROLE_CONTRACT.md` referencing
    the skill.
 2. Add the autonomous/consensus mode subsection to `workflows/session-modes.md`
    referencing the skill.
 3. Write the bats tests against the comment template parser.
-4. Add a consumer-framed `CHANGELOG.md` entry.
 
 ## 6. Constraints and Guardrails
 
@@ -191,9 +211,10 @@ State what will NOT be modified.
 
 ## 10. Readiness Check
 
-* [x] Spec is draft (implementation blocked until approved)
+* [x] Spec is approved (recorded approval under ADR-0026; provisional until
+  merge)
 * [x] Tests exist or are clearly defined — defined in §3; the file lands with the
-  post-approval implementation change
+  follow-up implementation change
 * [x] Scope is minimal and explicit
 * [x] No architectural changes implied
 

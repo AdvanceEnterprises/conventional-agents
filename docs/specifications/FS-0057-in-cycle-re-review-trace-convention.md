@@ -9,6 +9,13 @@ interfaces:
   - guidelines/ROLE_CONTRACT.md
   - workflows/session-modes.md
   - skills/in-cycle-re-review/SKILL.md
+  - skills/index.md
+  - docs/specifications/FS-0057-in-cycle-re-review-trace-convention.md
+  - docs/change-plans/PLAN-0061-implement-fs-0057-in-cycle-re-review-trace.md
+  - docs/specifications/README.md
+  - docs/change-plans/README.md
+  - CHANGELOG.md
+  - test/FS-0057/**
 related_adrs:
   - ADR-0018
   - ADR-0022
@@ -23,7 +30,7 @@ tags:
   - governance
   - traceability
 created: 2026-10-27
-updated: 2026-10-27
+updated: 2026-11-12
 ---
 <!--
 PARSING_HINTS:
@@ -84,6 +91,8 @@ consumers.
     modes describing when and how to post the trace comment.
   - A new skill `skills/in-cycle-re-review/SKILL.md` giving the exact comment
     template and the once-per-head dedupe rule.
+  - Registration and tracking: the skill is listed in `skills/index.md`, and
+    the spec/plan index rows and the `CHANGELOG.md` entry follow the change.
 
 ## Success Criteria
 
@@ -128,9 +137,10 @@ consumers.
 
 ## Rollout / Migration
 
+- Land the skill and its `skills/index.md` registration first, with the
+  `CHANGELOG.md` entry that rule 7 requires at approval.
 - Update `guidelines/ROLE_CONTRACT.md` and `workflows/session-modes.md` in the
-  same PR that lands the new skill.
-- Add the skill to `skills/index.md`.
+  follow-up change that completes the convention.
 - The convention applies to PRs created or revised after the skill lands;
   in-flight PRs are not retroactively patched.
 
