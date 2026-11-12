@@ -209,9 +209,13 @@ containing a directory separator. The residue is `REF_EXEMPT`, three entries for
 the framework tells a consumer to create in *their* repo — syntactically identical to
 references to ours, so they cannot be distinguished automatically.
 
-**`docs/ARC42.md` is stale** — already recorded below, but publication raises its
-priority. `status: Draft`, §9's ADR list stops at `ADR-0009`, and it references two
-guidelines that do not exist.
+**`docs/ARC42.md` refresh is in review, with one open question** — this was a
+publication-priority item. PR #247 (draft) moves the front-matter date to 2026-10-27
+and regenerates §9 from `docs/decisions/README.md`. Before the refresh §9 held 31 rows
+through `ADR-0031` across seven grouped sub-tables — the `ADR-0009` figure recorded
+here described only the first group. The two phantom guideline references were already
+annotated in §8.3/§8.4 rather than linked, so the refresh had nothing to remove. The
+refreshed `status:` value is itself open — see the note under Known gaps.
 
 **`ADR-0003`** mirrors arc42 as a submodule; that submodule was removed in v2.1.0.
 `docs/ARC42.md` records the removal, but the ADR's status does not.
@@ -556,10 +560,22 @@ standards and lost track of one. Its second-highest quality goal is Tool Neutral
 inventing — but only if the tracking is recorded. An adopted standard with no reference
 entry is the same class of gap as a rule with no ADR.
 
-### `docs/ARC42.md` is stale
+### `docs/ARC42.md` front-matter status has no defined vocabulary
 
-- `status: Draft` and `last_updated: 2026-07-12` lag the substantive refreshes
-  since (skill split #118, frontmatter conformance #116, binding-authoring #123).
+- The staleness recorded here — `status: Draft` and `last_updated: 2026-07-12` lagging
+  the substantive refreshes (skill split #118, frontmatter conformance #116,
+  binding-authoring #123) — is refreshed on `autonomy/arc42-refresh-2026-10-27`
+  (PR #247, draft): the date moves to 2026-10-27 and §9 is regenerated from
+  `docs/decisions/README.md`.
+- Still open: `workflows/document-lifecycle.md` defines no document class for
+  architecture documents, so no `status:` value is defined for this file. `Draft` and
+  the refresh's `Current` are equally outside the vocabulary, and the only `current` the
+  repository defines is the runbook-execution meaning
+  (`workflows/document-lifecycle.md:132`). Closing this needs an approved FS and PLAN —
+  the `FS-0023`/`PLAN-0023` precedent that established the Runbooks class. The smaller
+  alternative is the field set `templates/core/architecture-arc42.md` already carries
+  for architecture documents (`type`, `stability`, `updated`, `owner`, `related_adrs`),
+  which `docs/operations/ARC42.md` follows.
 
 ### Lint coverage is enumerated, not discovered
 
