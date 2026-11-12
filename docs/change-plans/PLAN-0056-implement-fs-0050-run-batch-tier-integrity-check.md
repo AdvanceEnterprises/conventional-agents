@@ -5,7 +5,7 @@ language: shell
 status: implemented
 related_specs: [FS-0050]
 approved_by: "Joey Clark <administrator@ajoeofalltrades.dev>"
-related_adrs: [ADR-0045, ADR-0026, ADR-0027]
+related_adrs: [ADR-0049, ADR-0026, ADR-0027]
 touches:
   - "scripts/check-run-batch.sh"
   - "test/FS-0050/run-batch-tier-integrity.bats"
@@ -17,7 +17,7 @@ touches:
   - "docs/change-plans/README.md"
   - "CHANGELOG.md"
 created: 2026-10-13
-updated: 2026-10-24
+updated: 2026-10-27
 ---
 
 # Change Plan: Implement FS-0050 run-batch tier-integrity check
@@ -31,7 +31,7 @@ updated: 2026-10-24
 ## 1. Feature / Issue Reference
 
 * Feature Spec ID(s): FS-0050
-* Related ADR ID(s): ADR-0045, ADR-0026
+* Related ADR ID(s): ADR-0049, ADR-0026
 * Issue / PR Reference: #223 (work item); this PR is #224
 
 ## 2. Scope of Change
@@ -54,7 +54,7 @@ updated: 2026-10-24
 * Implement branch protection, merge gating, or prevention.
 * Validate the run manifest's PR-body structure.
 * Enforce the 48-hour bound or work-item scope linkage.
-* Modify ADR-0045, ADR-0026, or the ADR-0027 reserved-path set.
+* Modify ADR-0049, ADR-0026, or the ADR-0027 reserved-path set.
 
 ## 3. Tests Driving This Change
 
@@ -93,7 +93,7 @@ updated: 2026-10-24
 
 * Spec constraints: FS-0050 Non-Goals and Out of Scope.
 * ADR constraints:
-  * ADR-0045 — batch acceptance is proposal-acceptance only.
+  * ADR-0049 — batch acceptance is proposal-acceptance only.
   * ADR-0026 — `Approved-By:` / `Approved-Artifacts:` trailer shape; author ≠ approver.
 * Architecture constraints: detection over prevention; platform-neutral, git-only,
   no GitHub API dependency.
@@ -109,7 +109,7 @@ updated: 2026-10-24
 
 * Tests expected to pass: `bats test/FS-0050/run-batch-tier-integrity.bats`.
 * Manual checks: `bash -n scripts/check-run-batch.sh`; run the check against the
-  ADR-0045 acceptance commit and against a synthetic overreaching commit.
+  ADR-0049 acceptance commit and against a synthetic overreaching commit.
 
 ## 9. Explicit Non-Changes
 

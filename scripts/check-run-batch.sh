@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # check-run-batch.sh — validate a batch-acceptance commit's tier integrity.
 #
-# Implements FS-0050 / ADR-0045. A *batch-acceptance commit* — a commit carrying
+# Implements FS-0050 / ADR-0049 (supersedes ADR-0045). A *batch-acceptance commit* — a commit carrying
 # an Approved-Artifacts: trailer (the batch list of a recorded approval, per
 # ADR-0026) — must accept only proposal-class documents and change no
 # implementation surface.
@@ -72,8 +72,10 @@ fi
 
 status=0
 
-# Changed paths in this commit only (not its parents).
-CHANGED="$(git diff-tree --no-commit-id --name-only -r "$COMMIT" 2>/dev/null || true)"
+# Changed paths in this commit only (not its parents). A merge commit needs -m
+# (plain `git diff-tree` prints nothing for it) and the root commit needs --root;
+# sort -u dedupes the per-parent union so conflict-resolution content is scanned.
+CHANGED="$(git diff-tree -m --root --no-commit-id --name-only -r "$COMMIT" 2>/dev/null | sort -u || true)"
 for path in $CHANGED; do
   [ -n "$path" ] || continue
   case "$path" in
