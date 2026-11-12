@@ -3,7 +3,7 @@ title: "arc42 Architecture Documentation"
 system: "conventional-agents"
 version: "1.0.0"
 status: "Draft"
-last_updated: "2026-09-09"
+last_updated: "2026-11-12"
 ---
 
 <!-- markdownlint-disable-file MD025 -->
@@ -298,7 +298,7 @@ Key elements (current set):
 - `skills/role-aware-session/` — session mode inference, role boundaries, safety gates.
 - `skills/document-lifecycle/` — FS/PLAN/ADR lifecycle, templates, front matter hygiene.
 - `skills/git-commit-identity/` — commit identity and `Agent-Attribution:` trailers
-  (`ADR-0011`/`ADR-0018`/`ADR-0029`/`ADR-0036`).
+  (`ADR-0011`/`ADR-0018`/`ADR-0029`; `ADR-0036` proposes a vocabulary canon).
 - `skills/git-branch-and-commit/` — branching, Conventional Commits, commit bodies.
 - `skills/gh-pr-workflow/` — pull-request lifecycle and the merge gate (`ADR-0012`).
 - `skills/versioning-and-releases/` — semver, changelogs, release process.

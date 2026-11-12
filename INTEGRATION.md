@@ -373,14 +373,21 @@ only surface later.
   project and board identifiers, absolute paths, real service definitions, records of
   what is actually running.
 
-### The rule (ADR-0032)
+### The proposed rule (ADR-0032)
 
 > **A template repository carries no instance data. An instance repository owes no one a
 > template.**
 
-Both halves matter. The first is the constraint; the second is the permission that makes
-it affordable. Without it, every repository inherits an obligation to generalize, and you
-pay the cost of a split before you have a second instance to justify it.
+This rule is currently **proposed** in `ADR-0032` and is recorded here as design
+reasoning, not as a present obligation. Until `ADR-0032` is accepted, projects
+may adopt it as project-specific guidance or accept it in their own convention
+set; it does not yet bind the framework itself. Both halves of the rule still
+matter for design clarity.
+
+- The first half is the constraint: template content should be reusable.
+- The second half is the permission that makes the constraint affordable.
+  Without it, every repository inherits an obligation to generalize, and you
+  pay the cost of a split before you have a second instance to justify it.
 
 Declare which form a repository is, in its `README.md`. A repository that cannot say
 which it is has not made the decision yet.

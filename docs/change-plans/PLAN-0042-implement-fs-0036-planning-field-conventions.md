@@ -12,7 +12,7 @@ touches:
   - docs/decisions/README.md
   - CHANGELOG.md
 created: 2026-09-16
-updated: 2026-09-16
+updated: 2026-10-27
 ---
 
 # PLAN-0042: Implement FS-0036 — Planning-field conventions for the GitHub binding

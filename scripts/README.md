@@ -150,10 +150,10 @@ you haven't.
 
 This repository does not create a populated `config/gates.yml` for itself.
 `RESERVED_PATHS` and `EXPORTED_PREFIXES` remain hardcoded in `check-status.sh`
-for the self-check case. Per `ADR-0032`, a template repository carries no
-instance data, and this repository's own reserved paths and exported surface
-are exactly that — facts a second adopter's copy would have to change. The
-self-check path exists so this repository need not create that file.
+for the self-check case. Per the proposed `ADR-0032`, a template repository
+carries no instance data, and this repository's own reserved paths and exported
+surface are exactly that — facts a second adopter's copy would have to change.
+The self-check path exists so this repository need not create that file.
 
 `check-current-state.sh` never had the resolution defect — see its own section
 below — but accepts `CA_TARGET_REPO` too, for symmetry: a caller should not need
@@ -287,8 +287,8 @@ target names a repository, not a directory within one.
    line and exits zero (assuming no other failure), distinguishable in its
    output from having run the rule and found nothing to flag. This is also
    the correct, permanent state for a repository with no exported surface at
-   all — a pure instance-form repository per `ADR-0032` that nobody vendors,
-   the concrete case this rule's design was checked against.
+   all — a pure instance-form repository under the proposed `ADR-0032` that
+   nobody vendors, the concrete case this rule's design was checked against.
 8. **Referenced-path resolution** (`FS-0022` §1c, extended by `FS-0037`).
    Every path a current-state document names in backticks must resolve,
    relative to the repository root or the naming document's own directory.

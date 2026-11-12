@@ -28,7 +28,7 @@ supersedes: []
 requires: []
 tags: [gates, portability, ci, scripts, consumer]
 created: 2026-08-02
-updated: 2026-08-02
+updated: 2026-10-27
 ---
 
 <!--
@@ -77,7 +77,7 @@ Fixing resolution alone is not enough. Two of the values these scripts check aga
 not portable defaults. A consumer's governing role contract, manifest format, and
 exported-surface directories are theirs, not this repository's to assume. This spec
 adds a per-repository configuration file, sourced from outside the vendored tree per
-`ADR-0032`, and defines what each configuration-dependent check does when that file is
+the proposed `ADR-0032`, and defines what each configuration-dependent check does when that file is
 absent — refusing to certify self-approval where the stakes are a safety hazard,
 skipping visibly where they are a documentation reminder.
 
@@ -96,7 +96,7 @@ skipping visibly where they are a documentation reminder.
   documents.
 - `RESERVED_PATHS` and `EXPORTED_PREFIXES` are sourced from a per-repository
   configuration file that does not ship inside the vendored tree, consistent with
-  `ADR-0032`.
+  `ADR-0032` (proposed).
 - Absence of that configuration is not silently treated as "nothing is reserved" —
   the self-approval check refuses to certify any PLAN until `reserved_paths` is set.
 - Absence of exported-surface configuration is not silently treated as a pass — the
@@ -128,8 +128,8 @@ skipping visibly where they are a documentation reminder.
   continues to use its hardcoded `RESERVED_PATHS` and `EXPORTED_PREFIXES` when
   checking itself, detected by comparing the resolved target against the script's own
   location. Creating a real, populated `config/gates.yml` at this repository's root
-  would itself be instance data inside a template repository, which `ADR-0032`
-  forbids — the self-check path exists precisely so this repository need not do that.
+  would itself be instance data inside a template repository, which the proposed
+  `ADR-0032` would exclude — the self-check path exists precisely so this repository need not do that.
 - **Implementing a YAML parser, or taking on a YAML library dependency.**
   `config/gates.example.yml` uses a flat, list-of-strings schema parseable by the same
   bash/awk approach `check-status.sh` already uses for markdown front matter. No new
@@ -290,7 +290,7 @@ notices, not merely that it runs and exits zero.
   two fields are read independently. One being configured does not imply anything
   about the other; rule 6 and rule 7 each check only the field they use.
   Fail-closed vs. skip applies per field, not per file.
-- **A template-form consumer (`ADR-0032`) configures `exported_prefixes` for their own
+- **A template-form consumer (per the proposed `ADR-0032`) configures `exported_prefixes` for their own
   downstream consumers.** Rule 7 then behaves for that consumer's specs exactly as it
   does for this framework's own — evaluated, not skipped.
 
@@ -321,7 +321,7 @@ notices, not merely that it runs and exits zero.
   and reserves `scripts/`, meaning PLAN-0024 cannot self-approve.
 - `ADR-0030`: Decision records versus current-state documents — `scripts/README.md`
   must update in the same change that accepts `ADR-0033`, per rule 3.
-- `ADR-0032`: Template and instance repository forms — governs where
+- `ADR-0032` (proposed): Template and instance repository forms — governs where
   `config/gates.yml` lives and why `config/gates.example.yml`, not a populated file,
   ships inside this repository.
 - `CONTRIBUTING.md` §"Changing a Governance Gate" — the test-writing standard every

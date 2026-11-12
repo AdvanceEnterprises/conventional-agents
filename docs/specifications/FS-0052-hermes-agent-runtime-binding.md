@@ -42,7 +42,7 @@ requires:
   - ADR-0038
 tags: [runtime-binding, hermes-agent, integrations, skills, mcp, exported-surface]
 created: 2026-10-18
-updated: 2026-10-18
+updated: 2026-10-27
 ---
 <!--
 PARSING_HINTS:
@@ -193,7 +193,7 @@ gate.
 - **SC-4.** Given any file under `integrations/runtimes/hermes-agent/`, when
   inspected, then it contains no organisation name, repository name, project
   number, node ID, field or option ID, model name, or secret value
-  (`ADR-0032`); parameterised placeholders are used instead.
+  (consistent with the proposed `ADR-0032`); parameterised placeholders are used instead.
 - **SC-5.** Given any file under `integrations/runtimes/`, when inspected, then
   it contains no `schedule:` trigger, no background monitor, and no hook or
   command that writes a `status:` field (`ADR-0007`, `ADR-0039` §3).

@@ -1,7 +1,7 @@
 ---
 type: feature-spec
 id: FS-0045
-status: draft
+status: approved
 title: Accepted-ADR authority check for current-state guidance
 owner: ajoeofalltrades
 test_required: true
@@ -41,7 +41,7 @@ supersedes: []
 requires: []
 tags: [adr-authority, current-state, validation]
 created: 2026-10-04
-updated: 2026-10-05
+updated: 2026-11-12
 ---
 <!--
 PARSING_HINTS:
@@ -56,17 +56,19 @@ PARSING_HINTS:
 
 ## Status
 
-- Draft
+- Approved (recorded approval per ADR-0026, 2026-11-12).
 
 ## Plan Status
 
-- **PLAN-0051 is `draft`.** The initial package contains this spec, its plan,
-  index rows, and a draft CHANGELOG entry only. It does not authorize the
-  checker, tests, npm registration, or CI changes.
+- **PLAN-0051 is `approved`** (recorded approval per ADR-0026, 2026-11-12).
+  The governance package — this spec, its plan, the two index rows, and the
+  CHANGELOG entry — landed as drafts through the documentation revision; the
+  approving commit records the status transition and the exact reserved-path
+  scope.
 - The implementation touches `scripts/` and `package.json`, which are reserved
-  by ADR-0027. Implementation requires an approved FS and PLAN plus a separate
-  recorded human approval for the exact reserved-path `touches:` set under
-  ADR-0026/ADR-0027.
+  by ADR-0027. PLAN-0051's `touches:` set is expanded to the full
+  `interfaces:` surface below, and the approving commit carries the
+  `Approved-By:` / `Approved-Artifacts:` trailers required by ADR-0026.
 
 ## Summary
 
