@@ -266,3 +266,4 @@ If validation fails:
 | ADR-0047 | Authorized intent identity and the human grant | accepted |
 | ADR-0048 | Worker and publisher credential separation | accepted |
 | ADR-0049 | Grant-based go signal for autonomous runs | accepted |
+| ADR-0051 | Human review is the approval signal for agent-authored pull requests | proposed |
