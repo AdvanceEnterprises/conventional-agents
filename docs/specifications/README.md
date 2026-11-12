@@ -146,4 +146,4 @@ All feature specs must use the template defined in `templates/core/feature-spec.
 | FS-0052 | Hermes Agent runtime binding — the second agent-runtime binding under ADR-0039 | draft |
 | FS-0053 | Portable flow-report read-model and Git-native work-item boundary | draft |
 | FS-0054 | Optional consumer conformance doctor — standalone package boundary and clean-adopter checks | draft |
-| FS-0057 | In-cycle re-review trace convention for changed PR heads | draft |
+| FS-0057 | In-cycle re-review trace convention for changed PR heads | approved |

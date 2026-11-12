@@ -3,7 +3,8 @@
 type: change-plan
 role: implementer
 language: n/a
-status: draft
+status: approved
+approved_by: "Joey Clark <administrator@ajoeofalltrades.dev>"
 related_specs:
   - FS-0057
 related_adrs:
@@ -56,7 +57,7 @@ authorizes implementation only on this branch.
 
 ## 2. Scope of Change
 
-**This change WILL:**
+**This plan WILL (across this PR and the follow-up change):**
 
 * Add a new subsection to `guidelines/ROLE_CONTRACT.md` recording the reviewer
   obligation to post a delta-review trace when a PR head changes after a model's
