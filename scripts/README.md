@@ -521,6 +521,7 @@ path, commit/date, test signal, and the human remediation. Existing files,
 partial history, documentation-only plans, terminal statuses, and missing
 optional tests are skipped rather than over-claimed. Missing history or a
 shallow checkout returns exit 2; one or more complete candidates returns exit
+
 1. The audit never changes document status or any repository bytes.
 
 **Limitations.** The evidence heuristic is intentionally weak on paths that
@@ -568,6 +569,7 @@ defaults; finding zero repositories is a hard failure that tells the caller
 to set `CA_REPO_DIRS` or `CA_TARGET_REPO`, never a silent pass.
 
 **Config.**
+
 - `COMMIT_RANGE` — git log range for the attribution check. Explicit ranges
   must already exist locally; the script never fetches a remote and fails
   closed unless the range resolves (issue #194). The *whole range* is
@@ -628,6 +630,7 @@ terminal `mode=autonomous`, a doc missing from its README index, or a duplicate
 FS/PLAN ID. The audit is read-only; it never amends historical commits.
 
 ## check-conformance.sh
+
 `npm run check:conformance` runs `bash scripts/check-conformance.sh`.
 **Purpose.** Read-only consumer-conformance doctor (FS-0034, issue #142).
 Diagnoses whether a repository that vendors this framework has adopted it
@@ -699,9 +702,10 @@ A test that deliberately exercises this script must opt out explicitly with
 **Dependencies.** `bats` and `rg` (ripgrep). Both are checked up front and both
 fail with an install hint. ripgrep is required because several suites call it
 directly with `-U` and `-A`, which have no clean POSIX equivalent — and because
-a missing `rg` used to surface as every assertion failing with "expected <file>
-to contain pattern" against files that matched perfectly well. The shared
-`assert_file_contains` helper now uses `grep -F` for exactly that reason.
+a missing `rg` used to surface as every assertion failing with
+"expected `<file>` to contain pattern" against files that matched perfectly
+well. The shared `assert_file_contains` helper now uses `grep -F` for exactly
+that reason.
 
 **Install hints** (when a dependency is absent):
 
