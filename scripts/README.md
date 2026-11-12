@@ -381,6 +381,36 @@ your checkout (or the equivalent for your runner). The failure is loud rather
 than silent, but its message points at the PLANs rather than at the clone
 depth, which is the wrong place to start looking.
 
+**Bash 3.2 compatibility — the opt-in test.** The script header claims
+"Bash 3.2+" support because stock macOS ships Bash 3.2, and the claim is only
+*verified* when a 3.2 binary actually parsed and ran the gate.
+`test/FS-0022/bash32-compat.bats` (issue #214) is that check:
+
+```sh
+CA_BASH32=/path/to/bash-3.2 bats test/FS-0022/bash32-compat.bats
+```
+
+The binary is resolved `BASH32_BIN` → `CA_BASH32` → `bash-3.2` on `PATH`. Three
+outcomes are possible, and only one of them is evidence:
+
+- **Verified** — a binary reporting `BASH_VERSINFO` 3.2 parsed the script, ran
+  it from the repository root, and printed `All status checks passed.`. The
+  test prints the interpreter it used (`# using GNU bash, version 3.2.39...`),
+  so a CI log distinguishes the version that produced the result.
+- **Skipped** — no binary was supplied or found. The suite reports a visible
+  `skip` that names this opt-in. A skip is **not** a pass: nothing about Bash
+  3.2 was exercised, and no compatibility claim is supported by that run.
+- **Failed** — a supplied path is not executable, or the binary is not Bash 3.2.
+  A typo in `CA_BASH32` is an error rather than a skip (`FS-0049`), and a
+  Bash 5 binary cannot stand in as the 3.2 oracle: the test reads
+  `BASH_VERSINFO` and rejects anything but 3.2.
+
+The fixture also scans every tracked `.sh` file that advertises Bash 3.2
+compatibility for the substitution shape Bash 3.2's parser mis-closes — the
+`case` pattern's `)` closes `$(...)` early unless the pattern is parenthesized.
+That scan needs no 3.2 binary, so a host or runner without one still gets a
+structural guard; the real-shell tests are the ones that skip.
+
 **Performance.** ~7s on a clean tree. The script spawns `awk` per PLAN per
 `interfaces:` row and `grep -F` per ADR; this is acceptable for CI. A future
 optimization could cache file reads in bash arrays.
