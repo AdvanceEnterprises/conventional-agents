@@ -2,10 +2,10 @@
 type: change-plan
 role: implementer
 language: bash
-status: draft
+status: approved
 related_specs:
   - FS-0045
-approved_by: ""
+approved_by: "Joey Clark <administrator@ajoeofalltrades.dev>"
 related_adrs:
   - ADR-0009
   - ADR-0015
@@ -15,13 +15,31 @@ related_adrs:
   - ADR-0030
   - ADR-0033
 touches:
+  - scripts/check-adr-authority.sh
+  - scripts/README.md
+  - scripts/run-validation.sh
+  - package.json
+  - .github/workflows/lint-docs.yml
+  - test/FS-0045/**
+  - INTEGRATION.md
+  - README.md
+  - AGENTS.md
+  - CONTRIBUTING.md
+  - guidelines/**/*.md
+  - roles/*.md
+  - skills/**/*.md
+  - templates/**/*.md
+  - workflows/*.md
+  - integrations/**/*.md
+  - runbooks/**/*.md
+  - docs/ARC42.md
   - docs/specifications/FS-0045-accepted-adr-authority-check.md
   - docs/change-plans/PLAN-0051-implement-fs-0045-accepted-adr-authority-check.md
   - docs/specifications/README.md
   - docs/change-plans/README.md
   - CHANGELOG.md
 created: 2026-10-04
-updated: 2026-10-05
+updated: 2026-11-12
 ---
 
 # PLAN-0051: Implement FS-0045 — Accepted-ADR authority check
@@ -32,6 +50,12 @@ updated: 2026-10-05
 > touches ADR-0027 reserved paths (`scripts/` and `package.json`) and requires a
 > separate recorded human approval under ADR-0026/ADR-0027. The existing CI
 > workflow is verified read-only; no workflow edit is planned.
+>
+> **Approval (2026-11-12):** FS-0045 and PLAN-0051 are approved by Joey Clark
+> as a recorded approval per ADR-0026. The `touches:` set above is expanded to
+> the full FS-0045 `interfaces:` surface, and the approving commit carries the
+> contiguous `Approved-By:` / `Approved-Artifacts:` / `Agent-Attribution:`
+> trailer block that `scripts/check-status.sh` verifies.
 
 ## 1. Feature / Issue Reference
 
@@ -225,7 +249,7 @@ shared-file ownership before editing.
 
 ## 10. Readiness Check
 
-* [ ] Spec is approved
+* [x] Spec is approved
 * [x] Tests are clearly defined for the implementation revision
 * [x] Scope is minimal and explicit
 * [x] No implementation or reserved-path change is included
