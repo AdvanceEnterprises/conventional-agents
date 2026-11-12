@@ -58,7 +58,8 @@ For this project (a documentation/standards kit), semver follows the
   boundary, so the audit result is no longer buried in per-commit `INFO`
   lines. This resolves the remaining digest-count item from issue #187
   without changing the ADR-0021 boundary or the grandfathering semantics;
-  `scripts/README.md` documents the output and the FS-0043 fixtures assert it.
+  `scripts/README.md` documents the output, the FS-0043 fixtures assert it,
+  and FS-0043 gains SC-8 pinning the line's shape and partition invariant.
   The counts partition the audited set
   (`audited = missing + unreadable timestamp + grandfathered + ok`): a cron
   commit with no trailer, or with one Git's trailer parser cannot reach, counts

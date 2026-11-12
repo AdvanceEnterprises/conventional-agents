@@ -18,7 +18,7 @@ supersedes: []
 requires: [FS-0017]
 tags: [attribution, cron, autonomous, quality-gates, history, detection]
 created: 2026-10-03
-updated: 2026-10-24
+updated: 2026-11-12
 ---
 
 <!--
@@ -107,6 +107,19 @@ ends with `mode=autonomous`.
   README checks, and duplicate checks retain their current behavior.
 - **SC-7 — no history mutation.** The source and fixtures prove that the audit
   only reads Git history and emits diagnostics.
+- **SC-8 — the digest line is a stable, partitional output contract.** When
+  cron identities are configured, the audit emits one line per repository of
+  the form `DIGEST <repo>: cron attribution — <n> audited, <n> missing
+  mode=autonomous, <n> unreadable timestamp, <n> grandfathered (boundary:
+  <ISO-8601>)`. The four counts partition the audited set exactly
+  (`audited = missing + unreadable + grandfathered + ok`): every audited
+  commit that fails the rule lands in a failure bucket rather than in the
+  implied remainder, and a commit whose marker was never evaluated because its
+  committer timestamp is unreadable is reported as `unreadable timestamp`,
+  never as `missing mode=autonomous`. The line summarizes the cron-attribution
+  rule only; structural trailer-format failures remain reported by the
+  per-commit `BAD` lines and the aggregate failure count (SC-6). The line is
+  suppressed when no cron identity is configured.
 
 ## Edge Cases
 
